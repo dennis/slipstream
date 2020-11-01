@@ -18,14 +18,13 @@ namespace Slipstream
 
             using (ServiceProvider serviceProvider = services.BuildServiceProvider())
             {
-                var form1 = serviceProvider.GetRequiredService<Form1>();
-                Application.Run(form1);
+                Application.Run(serviceProvider.GetRequiredService<UI.MainWindow>());
             }
         }
 
         private static void ConfigureServices(ServiceCollection services)
         {
-            services.AddScoped<Form1>();
+            services.AddScoped<UI.MainWindow>();
         }
     }
 }

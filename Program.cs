@@ -16,10 +16,8 @@ namespace Slipstream
 
             ConfigureServices(services);
 
-            using (ServiceProvider serviceProvider = services.BuildServiceProvider())
-            {
-                Application.Run(serviceProvider.GetRequiredService<UI.MainWindow>());
-            }
+            using ServiceProvider serviceProvider = services.BuildServiceProvider();
+            Application.Run(serviceProvider.GetRequiredService<UI.MainWindow>());
         }
 
         private static void ConfigureServices(ServiceCollection services)

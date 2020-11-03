@@ -17,12 +17,28 @@ namespace Slipstream
             ConfigureServices(services);
 
             using ServiceProvider serviceProvider = services.BuildServiceProvider();
-            Application.Run(serviceProvider.GetRequiredService<UI.MainWindow>());
+
+            Start(serviceProvider);
+        }
+
+        private static void Start(ServiceProvider serviceProvider)
+        {
+            var engine = serviceProvider.GetRequiredService<Backend.IEngine>();
+
+            engine.Start();
+
+            Application.Run(serviceProvider.GetRequiredService<Frontend.MainWindow>());
+
+            engine.Dispose();
         }
 
         private static void ConfigureServices(ServiceCollection services)
         {
-            services.AddScoped<UI.MainWindow>();
+            services.AddScoped<Frontend.MainWindow>();
+            services.AddScoped<Shared.IEventBus, Backend.EventBus>();
+            services.AddScoped<Shared.IEventProducer>(x => x.GetService<Backend.EventBus>());
+            services.AddScoped<Shared.IEventListener>(x => x.GetService<Frontend.MainWindow>());
+            services.AddScoped<Backend.IEngine, Backend.Engine>();
         }
     }
 }

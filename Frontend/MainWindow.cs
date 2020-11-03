@@ -1,7 +1,6 @@
 ﻿#nullable enable
 
 using Slipstream.Shared;
-using Slipstream.Shared.Events.Internal;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -27,8 +26,6 @@ namespace Slipstream.Frontend
 
             Load += MainWindow_Load;
             FormClosing += MainWindow_FormClosing;
-
-            LogAreaTextBox.Text += "Hello world\r\n";
         }
 
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
@@ -45,8 +42,11 @@ namespace Slipstream.Frontend
             EventHandlerThread = new Thread(new ThreadStart(this.EventListenerMain));
             EventHandlerThread.Start();
 
+            // Plugins..
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginLoad() { PluginName = "DebugOutputPlugin", Enabled = true });
+
             // Tell backend that we're ready
-            EventBus.PublishEvent(new FrontendReady());
+            EventBus.PublishEvent(new Shared.Events.Internal.FrontendReady());
         }
 
         private void AppendMessages(string msg)
@@ -85,25 +85,39 @@ namespace Slipstream.Frontend
 
                 switch (e)
                 {
-                    case PluginStateChanged ev:
+                    case Shared.Events.Internal.PluginLoad ev:
+                        PendingMessages.Add($"{e.GetType().Name}: {ev.PluginName} enabled: {ev.Enabled}");
+                        break;
+                    case Shared.Events.Internal.PluginEnable ev:
+                        PendingMessages.Add($"{e.GetType().Name}: {ev.PluginName}");
+                        break;
+                    case Shared.Events.Internal.PluginDisable ev:
+                        PendingMessages.Add($"{e.GetType().Name}: {ev.PluginName}");
+                        break;
+                    case Shared.Events.Internal.PluginStateChanged ev:
                         OnPluginStateChanged(ev);
+                        PendingMessages.Add($"PluginStateChanged: {ev.PluginName} -> {ev.PluginStatus}");
+                        break;
+                    case null:
+                        // Ignore
+                        break;
+                    default:
+                        PendingMessages.Add($"{e.GetType().Name}");
                         break;
                 }
-
-                PendingMessages.Add($"Got Event: {e}");
             }
         }
 
-        private void OnPluginStateChanged(PluginStateChanged e)
+        private void OnPluginStateChanged(Shared.Events.Internal.PluginStateChanged e)
         {
             switch (e.PluginStatus)
             {
-                case PluginStatus.Registered:
+                case Shared.Events.Internal.PluginStatus.Registered:
                     {
                         var item = new ToolStripMenuItem
                         {
                             Checked = true,
-                            CheckState = System.Windows.Forms.CheckState.Unchecked,
+                            CheckState = CheckState.Unchecked,
                             Name = e.PluginName,
                             Size = new System.Drawing.Size(180, 22),
                             Text = e.PluginName
@@ -111,10 +125,10 @@ namespace Slipstream.Frontend
                         item.Click += PluginMenuItem_Click;
                         MenuPluginItems.Add(e.PluginName, item);
 
-                        ExecuteSecure(() => PluginsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { item }));
+                        ExecuteSecure(() => PluginsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { item }));
                     }
                     break;
-                case PluginStatus.Unregistered:
+                case Shared.Events.Internal.PluginStatus.Unregistered:
                     {
                         var item = MenuPluginItems[e.PluginName];
                         MenuPluginItems.Remove(e.PluginName);
@@ -122,14 +136,14 @@ namespace Slipstream.Frontend
                         ExecuteSecure(() => PluginsToolStripMenuItem.DropDownItems.Remove(item));
                     }
                     break;
-                case PluginStatus.Enabled:
+                case Shared.Events.Internal.PluginStatus.Enabled:
                     {
                         var item = MenuPluginItems[e.PluginName];
 
                         ExecuteSecure(() => item.CheckState = CheckState.Checked);
                     }
                     break;
-                case PluginStatus.Disabled:
+                case Shared.Events.Internal.PluginStatus.Disabled:
                     {
                         var item = MenuPluginItems[e.PluginName];
 
@@ -146,11 +160,11 @@ namespace Slipstream.Frontend
 
             if (item.CheckState == CheckState.Checked)
             {
-                EventBus.PublishEvent(new PluginDisable() { PluginName = item.Name });
+                EventBus.PublishEvent(new Shared.Events.Internal.PluginDisable() { PluginName = item.Name });
             }
             else
             {
-                EventBus.PublishEvent(new PluginEnable() { PluginName = item.Name });
+                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { PluginName = item.Name });
             }
         }
         #endregion

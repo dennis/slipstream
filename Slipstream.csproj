@@ -85,6 +85,7 @@
     <Compile Include="Backend\EventBus.cs" />
     <Compile Include="Backend\EventBusSubscription.cs" />
     <Compile Include="Backend\IEngine.cs" />
+    <Compile Include="Shared\Events\Internal\PluginLoad.cs" />
     <Compile Include="Shared\Events\Internal\PluginEnable.cs" />
     <Compile Include="Shared\Events\Internal\PluginDisable.cs" />
     <Compile Include="Shared\Events\Internal\FrontendReady.cs" />

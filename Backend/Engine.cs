@@ -2,8 +2,9 @@
 
 using Slipstream.Backend.Plugins;
 using Slipstream.Shared;
-using Slipstream.Shared.Events.Internal;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Slipstream.Backend
 {
@@ -15,10 +16,7 @@ namespace Slipstream.Backend
         public Engine(IEventBus eventBus)
         {
             EventBus = eventBus;
-            Plugins = new List<IPlugin>
-            {
-                new DebugOutputPlugin(),
-            };
+            Plugins = new List<IPlugin>();
         }
 
         public IEventBusSubscription RegisterListener(IEventListener listener)
@@ -31,23 +29,15 @@ namespace Slipstream.Backend
             EventBus.UnregisterListener(listener);
         }
 
-        private void EmitePluginStateChanged(IPlugin plugin, PluginStatus status)
+        private void EmitePluginStateChanged(IPlugin plugin, Shared.Events.Internal.PluginStatus status)
         {
-            EventBus.PublishEvent(new PluginStateChanged() { PluginName = plugin.Name, PluginStatus = status });
-        }
-
-        private void RegisterPlugins()
-        {
-            foreach (var p in Plugins)
-            {
-                RegisterPlugin(p);
-            }
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginStateChanged() { PluginName = plugin.Name, PluginStatus = status });
         }
 
         private void RegisterPlugin(IPlugin p)
         {
             p.RegisterPlugin(this);
-            EmitePluginStateChanged(p, PluginStatus.Registered);
+            EmitePluginStateChanged(p, Shared.Events.Internal.PluginStatus.Registered);
         }
 
         private void UnregisterPlugins()
@@ -60,21 +50,13 @@ namespace Slipstream.Backend
         private void UnregisterPlugin(IPlugin p)
         {
             p.UnregisterPlugin(this);
-            EmitePluginStateChanged(p, PluginStatus.Unregistered);
-        }
-
-        private void EnablePlugins()
-        {
-            foreach (var p in Plugins)
-            {
-                EnablePlugin(p);
-            }
+            EmitePluginStateChanged(p, Shared.Events.Internal.PluginStatus.Unregistered);
         }
 
         private void EnablePlugin(IPlugin p)
         {
             p.Enable(this);
-            EmitePluginStateChanged(p, PluginStatus.Enabled);
+            EmitePluginStateChanged(p, Shared.Events.Internal.PluginStatus.Enabled);
         }
 
         private void DisablePlugins()
@@ -88,7 +70,7 @@ namespace Slipstream.Backend
         private void DisablePlugin(IPlugin p)
         {
             p.Disable(this);
-            EmitePluginStateChanged(p, PluginStatus.Disabled);
+            EmitePluginStateChanged(p, Shared.Events.Internal.PluginStatus.Disabled);
         }
 
         override protected void Main()
@@ -105,10 +87,16 @@ namespace Slipstream.Backend
                 if(e == null)
                     continue;
 
-                frontendReady = e switch
+                 switch(e)
                 {
-                    FrontendReady _ => true,
-                    _ => throw new System.Exception($"Unexpect message doring pre-boot: {e.GetType()}"),
+                    case Shared.Events.Internal.FrontendReady _:
+                        frontendReady = true;
+                        break;
+                    case Shared.Events.Internal.PluginLoad ev:
+                        OnLoadPlugin(ev);
+                        break;
+                    default:
+                        throw new System.Exception($"Unexpect message doring pre-boot: {e.GetType()}");
                 };
             }
 
@@ -121,9 +109,6 @@ namespace Slipstream.Backend
 
             // Frontend is ready, do our part
 
-            RegisterPlugins();
-            EnablePlugins();
-
             while (!Stopped)
             {
                 var e = subscription.NextEvent(1000);
@@ -131,12 +116,12 @@ namespace Slipstream.Backend
                 {
                     switch(e)
                     {
-                        case PluginEnable ev:
+                        case Shared.Events.Internal.PluginEnable ev:
                             foreach (var p in Plugins)
                                 if (p.Name == ev.PluginName)
                                     EnablePlugin(p);
                             break;
-                        case PluginDisable ev:
+                        case Shared.Events.Internal.PluginDisable ev:
                             foreach (var p in Plugins)
                                 if (p.Name == ev.PluginName)
                                     DisablePlugin(p);
@@ -149,6 +134,24 @@ namespace Slipstream.Backend
 
             DisablePlugins();
             UnregisterPlugins();
+        }
+
+        private void OnLoadPlugin(Shared.Events.Internal.PluginLoad e)
+        {
+            switch(e.PluginName)
+            {
+                case "DebugOutputPlugin":
+                    var plugin = new DebugOutputPlugin();
+                    Plugins.Add(plugin);
+                    RegisterPlugin(plugin);
+                    if (e.Enabled != null && e.Enabled == true)
+                        EnablePlugin(plugin);
+                    break;
+
+                default:
+                    Debug.WriteLine("Unexpected pluginname ${e.PluginName}");
+                    break;
+            }
         }
     }
 }

@@ -10,13 +10,13 @@ namespace Slipstream.Backend
 {
     class Engine : Worker, IEngine
     {
-        private readonly List<IPlugin> Plugins;
+        private readonly IDictionary<string, IPlugin> Plugins;
         private readonly IEventBus EventBus;
 
         public Engine(IEventBus eventBus)
         {
             EventBus = eventBus;
-            Plugins = new List<IPlugin>();
+            Plugins = new Dictionary<string, IPlugin>();
         }
 
         public IEventBusSubscription RegisterListener(IEventListener listener)
@@ -44,7 +44,7 @@ namespace Slipstream.Backend
         {
             foreach (var p in Plugins)
             {
-                UnregisterPlugin(p);
+                UnregisterPlugin(p.Value);
             }
         }
         private void UnregisterPlugin(IPlugin p)
@@ -63,7 +63,7 @@ namespace Slipstream.Backend
         {
             foreach (var p in Plugins)
             {
-                DisablePlugin(p);
+                DisablePlugin(p.Value);
             }
         }
 
@@ -87,19 +87,18 @@ namespace Slipstream.Backend
                 if(e == null)
                     continue;
 
-                 switch(e)
+                switch (e)
                 {
                     case Shared.Events.Internal.FrontendReady _:
                         frontendReady = true;
                         break;
                     case Shared.Events.Internal.PluginLoad ev:
-                        OnLoadPlugin(ev);
+                        OnPluginLoad(ev);
                         break;
                     default:
                         throw new System.Exception($"Unexpect message doring pre-boot: {e.GetType()}");
                 };
             }
-
 
             if (Stopped)
             {
@@ -117,14 +116,12 @@ namespace Slipstream.Backend
                     switch(e)
                     {
                         case Shared.Events.Internal.PluginEnable ev:
-                            foreach (var p in Plugins)
-                                if (p.Name == ev.PluginName)
-                                    EnablePlugin(p);
+#pragma warning disable CS8604 // Possible null reference argument.
+                            FindPluginAndExecute(ev.PluginName, (plugin) => EnablePlugin(plugin));
                             break;
                         case Shared.Events.Internal.PluginDisable ev:
-                            foreach (var p in Plugins)
-                                if (p.Name == ev.PluginName)
-                                    DisablePlugin(p);
+                            FindPluginAndExecute(ev.PluginName, (plugin) => DisablePlugin(plugin));
+#pragma warning restore CS8604 // Possible null reference argument.
                             break;
                     }
                 }
@@ -136,22 +133,42 @@ namespace Slipstream.Backend
             UnregisterPlugins();
         }
 
-        private void OnLoadPlugin(Shared.Events.Internal.PluginLoad e)
+        private void OnPluginLoad(Shared.Events.Internal.PluginLoad ev)
         {
-            switch(e.PluginName)
+            switch(ev.PluginName)
             {
                 case "DebugOutputPlugin":
-                    var plugin = new DebugOutputPlugin();
-                    Plugins.Add(plugin);
-                    RegisterPlugin(plugin);
-                    if (e.Enabled != null && e.Enabled == true)
-                        EnablePlugin(plugin);
+                    InitializePlugin(new DebugOutputPlugin(), ev.Enabled != null && ev.Enabled == true);
                     break;
-
+                case "FileMonitorPlugin":
+                    if(ev.Settings != null)
+                        InitializePlugin(new FileMonitorPlugin(ev.Settings, EventBus), ev.Enabled != null && ev.Enabled == true);
+                    else
+                        throw new Exception($"Missing settings for plugin '{ev.PluginName}'");
+                    break;
                 default:
-                    Debug.WriteLine("Unexpected pluginname ${e.PluginName}");
-                    break;
+                    throw new Exception($"Unknown plugin '{ev.PluginName}'");
             }
+        }
+
+        private void FindPluginAndExecute(string pluginName, Action<IPlugin> a)
+        {
+            if (Plugins.TryGetValue(pluginName, out IPlugin plugin))
+            {
+                a(plugin);
+            }
+            else
+            {
+                Debug.WriteLine($"Plugin not found '{pluginName}'");
+            }
+        }
+
+        private void InitializePlugin(IPlugin plugin, bool enabled)
+        {
+            Plugins.Add(plugin.Name, plugin);
+            RegisterPlugin(plugin);
+            if (enabled)
+                EnablePlugin(plugin);
         }
     }
 }

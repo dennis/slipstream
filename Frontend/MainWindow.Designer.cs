@@ -31,11 +31,13 @@
             this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
             this.LogAreaTextBox = new System.Windows.Forms.TextBox();
-            this.LogMessageUpdateTimer = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.FileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.PluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.PluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.LogMessageUpdateTimer = new System.Windows.Forms.Timer(this.components);
+            this.HelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.OpenScriptsDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -62,17 +64,12 @@
             this.LogAreaTextBox.TabIndex = 0;
             this.LogAreaTextBox.WordWrap = false;
             // 
-            // LogMessageUpdateTimer
-            // 
-            this.LogMessageUpdateTimer.Enabled = true;
-            this.LogMessageUpdateTimer.Interval = 250;
-            this.LogMessageUpdateTimer.Tick += new System.EventHandler(this.LogMessageUpdate_Tick);
-            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileToolStripMenuItem,
-            this.PluginsToolStripMenuItem});
+            this.PluginsToolStripMenuItem,
+            this.HelpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(800, 24);
@@ -87,12 +84,6 @@
             this.FileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.FileToolStripMenuItem.Text = "&File";
             // 
-            // PluginsToolStripMenuItem
-            // 
-            this.PluginsToolStripMenuItem.Name = "PluginsToolStripMenuItem";
-            this.PluginsToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
-            this.PluginsToolStripMenuItem.Text = "&Plugins";
-            // 
             // ExitToolStripMenuItem
             // 
             this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
@@ -100,6 +91,33 @@
             this.ExitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.ExitToolStripMenuItem.Text = "Exit";
             this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
+            // 
+            // PluginsToolStripMenuItem
+            // 
+            this.PluginsToolStripMenuItem.Name = "PluginsToolStripMenuItem";
+            this.PluginsToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
+            this.PluginsToolStripMenuItem.Text = "&Plugins";
+            // 
+            // LogMessageUpdateTimer
+            // 
+            this.LogMessageUpdateTimer.Enabled = true;
+            this.LogMessageUpdateTimer.Interval = 250;
+            this.LogMessageUpdateTimer.Tick += new System.EventHandler(this.LogMessageUpdate_Tick);
+            // 
+            // HelpToolStripMenuItem
+            // 
+            this.HelpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.OpenScriptsDirectoryToolStripMenuItem});
+            this.HelpToolStripMenuItem.Name = "HelpToolStripMenuItem";
+            this.HelpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.HelpToolStripMenuItem.Text = "Help";
+            // 
+            // OpenScriptsDirectoryToolStripMenuItem
+            // 
+            this.OpenScriptsDirectoryToolStripMenuItem.Name = "OpenScriptsDirectoryToolStripMenuItem";
+            this.OpenScriptsDirectoryToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.OpenScriptsDirectoryToolStripMenuItem.Text = "Open Scripts Directory";
+            this.OpenScriptsDirectoryToolStripMenuItem.Click += new System.EventHandler(this.OpenScriptsDirectoryToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -127,6 +145,8 @@
         private System.Windows.Forms.ToolStripMenuItem FileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem PluginsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ExitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem HelpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem OpenScriptsDirectoryToolStripMenuItem;
     }
 }
 

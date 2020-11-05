@@ -15,6 +15,7 @@ namespace Slipstream.Frontend
         private Thread? EventHandlerThread;
         private readonly IEventBus EventBus;
         private IEventBusSubscription? EventBusSubscription;
+        private readonly string ScriptsPath;
         private readonly BlockingCollection<string> PendingMessages = new BlockingCollection<string>();
         private readonly IDictionary<string, ToolStripMenuItem> MenuPluginItems = new Dictionary<string, ToolStripMenuItem>();
 
@@ -23,6 +24,9 @@ namespace Slipstream.Frontend
             EventBus = eventBus;
 
             InitializeComponent();
+
+            ScriptsPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $@"\Slipstream\Scripts\";
+            System.IO.Directory.CreateDirectory(ScriptsPath);
 
             Load += MainWindow_Load;
             FormClosing += MainWindow_FormClosing;
@@ -43,7 +47,8 @@ namespace Slipstream.Frontend
             EventHandlerThread.Start();
 
             // Plugins..
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginLoad() { PluginName = "DebugOutputPlugin", Enabled = true });
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginLoad () { PluginName = "DebugOutputPlugin", Enabled = true });
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginLoad() { PluginName = "FileMonitorPlugin", Enabled = true, Settings = new Shared.Events.Internal.FileMonitorSettings { Paths = new string[] { ScriptsPath } } });
 
             // Tell backend that we're ready
             EventBus.PublishEvent(new Shared.Events.Internal.FrontendReady());
@@ -96,7 +101,19 @@ namespace Slipstream.Frontend
                         break;
                     case Shared.Events.Internal.PluginStateChanged ev:
                         OnPluginStateChanged(ev);
-                        PendingMessages.Add($"PluginStateChanged: {ev.PluginName} -> {ev.PluginStatus}");
+                        PendingMessages.Add($"{e.GetType().Name}: {ev.PluginName} -> {ev.PluginStatus}");
+                        break;
+                    case Shared.Events.Internal.FileMonitorFileCreated ev:
+                        PendingMessages.Add($"{e.GetType().Name}: {ev.FilePath}");
+                        break;
+                    case Shared.Events.Internal.FileMonitorFileChanged ev:
+                        PendingMessages.Add($"{e.GetType().Name}: {ev.FilePath}");
+                        break;
+                    case Shared.Events.Internal.FileMonitorFileDeleted ev:
+                        PendingMessages.Add($"{e.GetType().Name}: {ev.FilePath}");
+                        break;
+                    case Shared.Events.Internal.FileMonitorFileRenamed ev:
+                        PendingMessages.Add($"{e.GetType().Name}: {ev.OldFilePath} -> {ev.FilePath}");
                         break;
                     case null:
                         // Ignore
@@ -172,6 +189,11 @@ namespace Slipstream.Frontend
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void OpenScriptsDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start(ScriptsPath);
         }
     }
 }

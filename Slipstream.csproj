@@ -85,6 +85,12 @@
     <Compile Include="Backend\EventBus.cs" />
     <Compile Include="Backend\EventBusSubscription.cs" />
     <Compile Include="Backend\IEngine.cs" />
+    <Compile Include="Backend\Plugins\FileMonitorPlugin.cs" />
+    <Compile Include="Shared\Events\Internal\FileMonitorFileChanged.cs" />
+    <Compile Include="Shared\Events\Internal\FileMonitorFileDeleted.cs" />
+    <Compile Include="Shared\Events\Internal\FileMonitorFileRenamed.cs" />
+    <Compile Include="Shared\Events\Internal\FileMonitorFileCreated.cs" />
+    <Compile Include="Shared\Events\Internal\FileMonitorSettings.cs" />
     <Compile Include="Shared\Events\Internal\PluginLoad.cs" />
     <Compile Include="Shared\Events\Internal\PluginEnable.cs" />
     <Compile Include="Shared\Events\Internal\PluginDisable.cs" />

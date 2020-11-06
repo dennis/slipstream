@@ -12,6 +12,8 @@ namespace Slipstream.Backend
         private readonly IEngine Engine;
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, IPlugin> Plugins;
+        private readonly IList<IPlugin> PendingPluginsForEnable = new List<IPlugin>();
+
 
         public PluginManager(IEngine engine, IEventBus eventBus)
         {
@@ -59,6 +61,14 @@ namespace Slipstream.Backend
             }
         }
 
+        public void EnablePendingPlugins()
+        {
+            foreach (var plugin in PendingPluginsForEnable)
+                EnablePlugin(plugin);
+
+            PendingPluginsForEnable.Clear();
+        }
+
         public void DisablePlugin(IPlugin p)
         {
             p.Disable(Engine);
@@ -69,8 +79,8 @@ namespace Slipstream.Backend
         {
             Plugins.Add(plugin.Name, plugin);
             RegisterPlugin(plugin);
-            if (enabled)
-                EnablePlugin(plugin);
+            if(enabled)
+                PendingPluginsForEnable.Add(plugin);
         }
 
         public void FindPluginAndExecute(string pluginName, Action<IPlugin> a)

@@ -3,8 +3,6 @@
 using Slipstream.Backend.Plugins;
 using Slipstream.Shared;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace Slipstream.Backend
 {
@@ -51,6 +49,8 @@ namespace Slipstream.Backend
             // Frontend is ready, do our part
 
             PluginManager.EnablePendingPlugins();
+
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginsReady());
 
             eventHandler = new Shared.EventHandler();
 #pragma warning disable CS8604 // Possible null reference argument.

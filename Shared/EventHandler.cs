@@ -46,6 +46,12 @@ namespace Slipstream.Shared
         public delegate void OnInternalFrontendReadyHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FrontendReady> e);
         public event OnInternalFrontendReadyHandler? OnInternalFrontendReady;
 
+        public delegate void OnInternalPluginsReadyHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginsReady> e);
+        public event OnInternalPluginsReadyHandler? OnInternalPluginsReady;
+
+        public delegate void OnFileMonitorSettingsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FileMonitorSettings> e);
+        public event OnFileMonitorSettingsHandler? OnFileMonitorSettings;
+
         public void HandleEvent(IEvent? ev)
         {
             switch (ev)
@@ -106,6 +112,18 @@ namespace Slipstream.Shared
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnInternalFrontendReady.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FrontendReady>(tev));
+                    break;
+                case Shared.Events.Internal.PluginsReady tev:
+                    if (OnInternalPluginsReady == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnInternalPluginsReady.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginsReady>(tev));
+                    break;
+                case Shared.Events.Internal.FileMonitorSettings tev:
+                    if (OnFileMonitorSettings == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnFileMonitorSettings.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FileMonitorSettings>(tev));
                     break;
                 default:
                     throw new Exception($"Unknown event '{ev}");

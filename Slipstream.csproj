@@ -93,6 +93,7 @@
     <Compile Include="Shared\Events\Internal\FileMonitorFileRenamed.cs" />
     <Compile Include="Shared\Events\Internal\FileMonitorFileCreated.cs" />
     <Compile Include="Shared\Events\Internal\FileMonitorSettings.cs" />
+    <Compile Include="Shared\Events\Internal\PluginsReady.cs" />
     <Compile Include="Shared\Events\Internal\PluginLoad.cs" />
     <Compile Include="Shared\Events\Internal\PluginEnable.cs" />
     <Compile Include="Shared\Events\Internal\PluginDisable.cs" />

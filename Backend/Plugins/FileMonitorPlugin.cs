@@ -16,13 +16,15 @@ namespace Slipstream.Backend.Plugins
         private IEventBusSubscription? EventBusSubscription;
         private readonly IEventBus EventBus;
         private readonly IList<FileSystemWatcher> fileSystemWatchers = new List<FileSystemWatcher>();
-        private bool InitialFileNotificationsSent = false;
 
         public FileMonitorPlugin(IEvent settings, IEventBus eventBus)
         {
             this.EventBus = eventBus;
 
-            HandleEvent(settings);
+            if (settings is FileMonitorSettings typedSettings)
+                OnFileMonitorSettings(typedSettings);
+            else
+                throw new System.Exception($"Unexpected event as Exception {settings}");
         }
 
         public void Disable(IEngine engine)
@@ -43,19 +45,6 @@ namespace Slipstream.Backend.Plugins
             Enabled = true;
 
             UpdateWatchers();
-
-            if(!InitialFileNotificationsSent)
-            {
-                foreach(var watcher in fileSystemWatchers)
-                {
-                    foreach(var path in Directory.GetFiles(watcher.Path, "*.*"))
-                    {
-                        EventBus.PublishEvent(new FileMonitorFileCreated { FilePath = path });
-                    }
-                }
-
-                InitialFileNotificationsSent = true;
-            }
         }
 
         public void RegisterPlugin(IEngine engine)
@@ -72,26 +61,35 @@ namespace Slipstream.Backend.Plugins
             Stop();
         }
 
+
         protected override void Main()
         {
+            EventHandler eventHandler = new EventHandler();
+            eventHandler.OnInternalPluginsReady += EventHandler_OnInternalPluginsReady;
+            eventHandler.OnFileMonitorSettings += (s, e) => OnFileMonitorSettings(e.Event);
+
             while (!Stopped)
             {
                 var e = EventBusSubscription?.NextEvent(250);
 
-                if (Enabled && e != null)
+                if (Enabled)
                 {
-                    HandleEvent(e);
+                    eventHandler.HandleEvent(e);
                 }
             }
         }
 
-        private void HandleEvent(IEvent e)
+        private void EventHandler_OnInternalPluginsReady(EventHandler source, EventHandler.EventHandlerArgs<PluginsReady> e)
         {
-            switch(e)
+            foreach (var watcher in fileSystemWatchers)
             {
-                case FileMonitorSettings ev:
-                    OnFileMonitorSettings(ev);
-                    break;
+                foreach (var path in Directory.GetFiles(watcher.Path, "*.*"))
+                {
+                    EventBus.PublishEvent(new FileMonitorFileCreated
+                    {
+                        FilePath = path
+                    });
+                }
             }
         }
 

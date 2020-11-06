@@ -30,23 +30,14 @@ namespace Slipstream.Backend
 
             var subscription = EventBus.RegisterListener("Engine");
 
+            Shared.EventHandler eventHandler = new Shared.EventHandler();
+            eventHandler.OnInternalFrontendReady += (s, e) => frontendReady = true;
+            eventHandler.OnInternalPluginLoad += (s, e) => OnPluginLoad(e.Event);
+            eventHandler.OnDefault += (s, e) => throw new System.Exception($"Unexpect message doring pre-boot: {e.Event.GetType()}");
+
             while (!frontendReady && !Stopped)
             {
-                IEvent? e = subscription.NextEvent(200);
-                if(e == null)
-                    continue;
-
-                switch (e)
-                {
-                    case Shared.Events.Internal.FrontendReady _:
-                        frontendReady = true;
-                        break;
-                    case Shared.Events.Internal.PluginLoad ev:
-                        OnPluginLoad(ev);
-                        break;
-                    default:
-                        throw new System.Exception($"Unexpect message doring pre-boot: {e.GetType()}");
-                };
+                eventHandler.HandleEvent(subscription.NextEvent(200));
             }
 
             if (Stopped)
@@ -57,23 +48,15 @@ namespace Slipstream.Backend
 
             // Frontend is ready, do our part
 
+            eventHandler = new Shared.EventHandler();
+#pragma warning disable CS8604 // Possible null reference argument.
+            eventHandler.OnInternalPluginEnable += (s, e) => PluginManager.FindPluginAndExecute(e.Event.PluginName, (plugin) => PluginManager.EnablePlugin(plugin));
+            eventHandler.OnInternalPluginDisable += (s, e) => PluginManager.FindPluginAndExecute(e.Event.PluginName, (plugin) => PluginManager.DisablePlugin(plugin));
+#pragma warning restore CS8604 // Possible null reference argument.
+
             while (!Stopped)
             {
-                var e = subscription.NextEvent(1000);
-                if(e != null)
-                {
-                    switch(e)
-                    {
-                        case Shared.Events.Internal.PluginEnable ev:
-#pragma warning disable CS8604 // Possible null reference argument.
-                            PluginManager.FindPluginAndExecute(ev.PluginName, (plugin) => PluginManager.EnablePlugin(plugin));
-                            break;
-                        case Shared.Events.Internal.PluginDisable ev:
-                            PluginManager.FindPluginAndExecute(ev.PluginName, (plugin) => PluginManager.DisablePlugin(plugin));
-#pragma warning restore CS8604 // Possible null reference argument.
-                            break;
-                    }
-                }
+                eventHandler.HandleEvent(subscription.NextEvent(500));
             }
 
             EventBus.UnregisterListener("Engine");

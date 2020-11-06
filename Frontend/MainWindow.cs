@@ -80,53 +80,30 @@ namespace Slipstream.Frontend
         }
 
         #region EventHandlerThread methods
+        private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
         private void EventListenerMain()
         {
             Debug.Assert(EventBusSubscription != null);
 
+            EventHandler.OnInternalPluginLoad += (s, e) => PendingMessages.Add($"{e.Event.GetType().Name}: {e.Event.PluginName} enabled: {e.Event.Enabled}");
+            EventHandler.OnInternalPluginEnable += (s, e) => PendingMessages.Add($"{e.Event.GetType().Name}: {e.Event.PluginName}");
+            EventHandler.OnInternalPluginDisable += (s, e) => PendingMessages.Add($"{e.Event.GetType().Name}: {e.Event.PluginName}");
+            EventHandler.OnInternalPluginStateChanged += (s, e) => EventHandler_OnInternalPluginStateChanged(e.Event);
+            EventHandler.OnInternalFileMonitorFileCreated += (s, e) => PendingMessages.Add($"{e.Event.GetType().Name}: {e.Event.FilePath}");
+            EventHandler.OnInternalFileMonitorFileChanged += (s, e) => PendingMessages.Add($"{e.Event.GetType().Name}: {e.Event.FilePath}");
+            EventHandler.OnInternalFileMonitorFileDeleted += (s, e) => PendingMessages.Add($"{e.Event.GetType().Name}: {e.Event.FilePath}");
+            EventHandler.OnInternalFileMonitorFileRenamed += (s, e) => PendingMessages.Add($"{e.Event.GetType().Name}: {e.Event.FilePath}");
+
             while (true)
             {
-                IEvent? e = EventBusSubscription?.NextEvent();
-
-                switch (e)
-                {
-                    case Shared.Events.Internal.PluginLoad ev:
-                        PendingMessages.Add($"{e.GetType().Name}: {ev.PluginName} enabled: {ev.Enabled}");
-                        break;
-                    case Shared.Events.Internal.PluginEnable ev:
-                        PendingMessages.Add($"{e.GetType().Name}: {ev.PluginName}");
-                        break;
-                    case Shared.Events.Internal.PluginDisable ev:
-                        PendingMessages.Add($"{e.GetType().Name}: {ev.PluginName}");
-                        break;
-                    case Shared.Events.Internal.PluginStateChanged ev:
-                        OnPluginStateChanged(ev);
-                        PendingMessages.Add($"{e.GetType().Name}: {ev.PluginName} -> {ev.PluginStatus}");
-                        break;
-                    case Shared.Events.Internal.FileMonitorFileCreated ev:
-                        PendingMessages.Add($"{e.GetType().Name}: {ev.FilePath}");
-                        break;
-                    case Shared.Events.Internal.FileMonitorFileChanged ev:
-                        PendingMessages.Add($"{e.GetType().Name}: {ev.FilePath}");
-                        break;
-                    case Shared.Events.Internal.FileMonitorFileDeleted ev:
-                        PendingMessages.Add($"{e.GetType().Name}: {ev.FilePath}");
-                        break;
-                    case Shared.Events.Internal.FileMonitorFileRenamed ev:
-                        PendingMessages.Add($"{e.GetType().Name}: {ev.OldFilePath} -> {ev.FilePath}");
-                        break;
-                    case null:
-                        // Ignore
-                        break;
-                    default:
-                        PendingMessages.Add($"{e.GetType().Name}");
-                        break;
-                }
+                EventHandler.HandleEvent(EventBusSubscription?.NextEvent());
             }
         }
 
-        private void OnPluginStateChanged(Shared.Events.Internal.PluginStateChanged e)
+        private void EventHandler_OnInternalPluginStateChanged(Shared.Events.Internal.PluginStateChanged e)
         {
+            PendingMessages.Add($"{e.GetType().Name}: {e.PluginName} -> {e.PluginStatus}");
+
             switch (e.PluginStatus)
             {
                 case Shared.Events.Internal.PluginStatus.Registered:

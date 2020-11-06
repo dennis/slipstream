@@ -1,6 +1,6 @@
 ﻿namespace Slipstream.Shared.Events.Internal
 {
-    enum PluginStatus
+    public enum PluginStatus
     {
         /// <summary>
         /// Plugin is registered, but not enabled/disabled (which implies the Plugin is Registered)
@@ -20,7 +20,7 @@
         Disabled
     };
 
-    class PluginStateChanged : IEvent
+    public class PluginStateChanged : IEvent
     {
         public PluginStatus PluginStatus { get; internal set; }
         public string PluginName { get; internal set; } = "<UNSET PLUGINNAME>";

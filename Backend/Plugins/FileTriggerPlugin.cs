@@ -38,14 +38,15 @@ namespace Slipstream.Backend.Plugins
 
         public void RegisterPlugin(IEngine engine)
         {
-            EventBusSubscription = engine.RegisterListener(this);
+            EventBusSubscription = engine.RegisterListener();
 
             Start();
         }
 
         public void UnregisterPlugin(IEngine engine)
         {
-            engine.UnregisterListener(this);
+            EventBusSubscription?.Dispose();
+            EventBusSubscription = null;
 
             Stop();
         }

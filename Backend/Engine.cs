@@ -18,9 +18,9 @@ namespace Slipstream.Backend
             PluginManager = new PluginManager(this, eventBus);
         }
 
-        public IEventBusSubscription RegisterListener(IEventListener listener)
+        public IEventBusSubscription RegisterListener()
         {
-            return EventBus.RegisterListener(listener);
+            return EventBus.RegisterListener();
         }
 
         override protected void Main()
@@ -29,7 +29,7 @@ namespace Slipstream.Backend
             // This is to avoid that we have plugins that are not shown in the log window
             bool frontendReady = false;
 
-            var subscription = EventBus.RegisterListener("Engine");
+            var subscription = EventBus.RegisterListener();
 
             Shared.EventHandler eventHandler = new Shared.EventHandler();
             eventHandler.OnInternalFrontendReady += (s, e) => frontendReady = true;
@@ -43,7 +43,7 @@ namespace Slipstream.Backend
 
             if (Stopped)
             {
-                EventBus.UnregisterListener("Engine");
+                subscription.Dispose();
                 return;
             }
 
@@ -66,7 +66,7 @@ namespace Slipstream.Backend
                 eventHandler.HandleEvent(subscription.NextEvent(500));
             }
 
-            EventBus.UnregisterListener("Engine");
+            subscription.Dispose();
 
             PluginManager.DisablePlugins();
             PluginManager.UnregisterPlugins();
@@ -77,9 +77,9 @@ namespace Slipstream.Backend
             PluginManager.UnregisterPlugin(ev.Id);
         }
 
-        public void UnregisterListener(IEventListener listener)
+        public void UnregisterSubscription(IEventBusSubscription subscription)
         {
-            EventBus.UnregisterListener(listener);
+            EventBus.UnregisterSubscription(subscription);
         }
 
         private void OnPluginRegister(Shared.Events.Internal.PluginRegister ev)
@@ -100,7 +100,7 @@ namespace Slipstream.Backend
                     break;
                 case "LuaPlugin":
                     if (ev.Settings != null)
-                        PluginManager.InitializePlugin(new LuaPlugin(ev.Settings) { Id = ev.Id }, ev.Enabled != null && ev.Enabled == true);
+                        PluginManager.InitializePlugin(new LuaPlugin(ev.Settings, EventBus) { Id = ev.Id }, ev.Enabled != null && ev.Enabled == true);
                     else
                         throw new Exception($"Missing settings for plugin '{ev.PluginName}'");
                     break;

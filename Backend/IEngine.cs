@@ -4,8 +4,8 @@ namespace Slipstream.Backend
 {
     interface IEngine
     {
-        IEventBusSubscription RegisterListener(IEventListener listener);
-        void UnregisterListener(IEventListener listener);
+        IEventBusSubscription RegisterListener();
+        void UnregisterSubscription(IEventBusSubscription subscription);
         void Start();
         void Stop();
         void Dispose();

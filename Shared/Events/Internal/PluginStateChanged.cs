@@ -26,6 +26,7 @@ namespace Slipstream.Shared.Events.Internal
 
     public class PluginStateChanged : IEvent
     {
+        public string EventType => "PluginStateChanged";
         public System.Guid Id { get; set; }
         public string? PluginName { get; set; }
         public string? DisplayName { get; set; }

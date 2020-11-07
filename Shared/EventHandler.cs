@@ -19,6 +19,7 @@ namespace Slipstream.Shared
         public delegate void OnDefaultHandler(EventHandler source, EventHandlerArgs<IEvent> e);
         public event OnDefaultHandler? OnDefault;
 
+        #region Events: Internal
         public delegate void OnInternalPluginRegisterHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginRegister> e);
         public event OnInternalPluginRegisterHandler? OnInternalPluginRegister;
 
@@ -52,8 +53,14 @@ namespace Slipstream.Shared
         public delegate void OnInternalPluginsReadyHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginsReady> e);
         public event OnInternalPluginsReadyHandler? OnInternalPluginsReady;
 
-        public delegate void OnFileMonitorSettingsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FileMonitorSettings> e);
-        public event OnFileMonitorSettingsHandler? OnFileMonitorSettings;
+        public delegate void OnInternalFileMonitorSettingsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FileMonitorSettings> e);
+        public event OnInternalFileMonitorSettingsHandler? OnInternalFileMonitorSettings;
+        #endregion
+
+        #region Events: Utility
+        public delegate void OnUtilityWriteToConsoleHandler(EventHandler source, EventHandlerArgs<Shared.Events.Utility.WriteToConsole> e);
+        public event OnUtilityWriteToConsoleHandler? OnUtilityWriteToConsole;
+        #endregion
 
         public void HandleEvent(IEvent? ev)
         {
@@ -62,6 +69,9 @@ namespace Slipstream.Shared
                 case null:
                     // ignore
                     break;
+
+                // Internal
+
                 case Shared.Events.Internal.PluginRegister tev:
                     if (OnInternalPluginRegister == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
@@ -129,11 +139,21 @@ namespace Slipstream.Shared
                         OnInternalPluginsReady.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginsReady>(tev));
                     break;
                 case Shared.Events.Internal.FileMonitorSettings tev:
-                    if (OnFileMonitorSettings == null)
+                    if (OnInternalFileMonitorSettings == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnFileMonitorSettings.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FileMonitorSettings>(tev));
+                        OnInternalFileMonitorSettings.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FileMonitorSettings>(tev));
                     break;
+
+                // Utility
+
+                case Shared.Events.Utility.WriteToConsole tev:
+                    if (OnUtilityWriteToConsole == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnUtilityWriteToConsole.Invoke(this, new EventHandlerArgs<Shared.Events.Utility.WriteToConsole>(tev));
+                    break;
+
                 default:
                     throw new Exception($"Unknown event '{ev}");
             }

@@ -5,8 +5,7 @@ namespace Slipstream.Backend
 {
     public class EventBus : IEventBus
     {
-        // TODO - use WeakReference  ?
-        private readonly IDictionary<string, EventBusSubscription> Listeners = new Dictionary<string, EventBusSubscription>();
+        private readonly IList<EventBusSubscription> Listeners = new List<EventBusSubscription>();
 
         public void PublishEvent(IEvent e)
         {
@@ -14,40 +13,29 @@ namespace Slipstream.Backend
             {
                 foreach (var l in Listeners)
                 {
-                    l.Value.Add(e);
+                    l.Add(e);
                 }
             }
         }
 
-        public IEventBusSubscription RegisterListener(IEventListener listener)
+        public IEventBusSubscription RegisterListener()
         {
-            return RegisterListener(listener.Name);
-        }
-
-        public IEventBusSubscription RegisterListener(string listenerName)
-        {
-            var subscription = new EventBusSubscription();
+            var subscription = new EventBusSubscription(this);
 
             lock (Listeners)
             {
-                Listeners.Add(listenerName, subscription);
+                Listeners.Add(subscription);
             }
 
             return subscription;
         }
 
-        public void UnregisterListener(IEventListener listener)
-        {
-            UnregisterListener(listener.Name);
-        }
-
-        public void UnregisterListener(string listenerName)
+        public void UnregisterSubscription(IEventBusSubscription subscription)
         {
             lock (Listeners)
             {
-                Listeners.Remove(listenerName);
+                Listeners.Remove(subscription as EventBusSubscription);
             }
         }
-
     }
 }

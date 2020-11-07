@@ -8,10 +8,21 @@ namespace Slipstream.Backend
     class EventBusSubscription : IEventBusSubscription
     {
         private readonly BlockingCollection<IEvent> Events = new BlockingCollection<IEvent>();
+        private readonly IEventBus EventBus;
+
+        public EventBusSubscription(IEventBus eventBus)
+        {
+            EventBus = eventBus;
+        }
 
         public void Add(IEvent ev)
         {
             Events.Add(ev);
+        }
+
+        public void Dispose()
+        {
+            EventBus.UnregisterSubscription(this);
         }
 
         public IEvent NextEvent()

@@ -2,7 +2,7 @@
 
 namespace Slipstream.Shared
 {
-    public interface IEventBusSubscription
+    public interface IEventBusSubscription : System.IDisposable
     {
         IEvent NextEvent();
         IEvent? NextEvent(int millisecondsTimeout);

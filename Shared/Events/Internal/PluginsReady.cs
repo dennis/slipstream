@@ -2,5 +2,6 @@
 {
     public class PluginsReady : IEvent
     {
+        public string EventType => "PluginsReady";
     }
 }

@@ -1,8 +1,12 @@
-﻿namespace Slipstream.Backend
+﻿using System;
+
+namespace Slipstream.Backend
 {
     interface IPlugin
     {
+        public Guid Id { get; }
         public string Name { get; }
+        public string DisplayName { get; }
         public bool Enabled { get; }
         void RegisterPlugin(IEngine engine);
         void UnregisterPlugin(IEngine engine);

@@ -1,4 +1,4 @@
-﻿using Slipstream.Shared;
+using Slipstream.Shared;
 using Slipstream.Shared.Events.Internal;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +10,9 @@ namespace Slipstream.Backend.Plugins
 {
     class FileMonitorPlugin : Worker, IPlugin, IEventListener
     {
+        public System.Guid Id { get; set; }
         public string Name => "FileMonitorPlugin";
+        public string DisplayName => Name;
 
         public bool Enabled { get; internal set; }
         private IEventBusSubscription? EventBusSubscription;
@@ -19,6 +21,7 @@ namespace Slipstream.Backend.Plugins
 
         public FileMonitorPlugin(IEvent settings, IEventBus eventBus)
         {
+            Id = System.Guid.NewGuid();
             this.EventBus = eventBus;
 
             if (settings is FileMonitorSettings typedSettings)
@@ -60,7 +63,6 @@ namespace Slipstream.Backend.Plugins
 
             Stop();
         }
-
 
         protected override void Main()
         {

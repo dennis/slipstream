@@ -1,4 +1,8 @@
-﻿namespace Slipstream.Shared.Events.Internal
+﻿#nullable enable
+
+using System;
+
+namespace Slipstream.Shared.Events.Internal
 {
     public enum PluginStatus
     {
@@ -22,7 +26,14 @@
 
     public class PluginStateChanged : IEvent
     {
+        public System.Guid Id { get; set; }
+        public string? PluginName { get; set; }
+        public string? DisplayName { get; set; }
         public PluginStatus PluginStatus { get; internal set; }
-        public string PluginName { get; internal set; } = "<UNSET PLUGINNAME>";
+
+        public PluginStateChanged()
+        {
+            Id = Guid.NewGuid();
+        }
     }
 }

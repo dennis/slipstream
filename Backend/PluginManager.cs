@@ -11,15 +11,14 @@ namespace Slipstream.Backend
     {
         private readonly IEngine Engine;
         private readonly IEventBus EventBus;
-        private readonly IDictionary<string, IPlugin> Plugins;
+        private readonly IDictionary<Guid, IPlugin> Plugins = new Dictionary<Guid, IPlugin>();
         private readonly IList<IPlugin> PendingPluginsForEnable = new List<IPlugin>();
-
+        private bool DisablePendingEnable;
 
         public PluginManager(IEngine engine, IEventBus eventBus)
         {
             Engine = engine;
             EventBus = eventBus;
-            Plugins = new Dictionary<string, IPlugin>();
         }
 
         public void UnregisterPlugins()
@@ -38,7 +37,7 @@ namespace Slipstream.Backend
 
         private void EmitePluginStateChanged(IPlugin plugin, Shared.Events.Internal.PluginStatus status)
         {
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginStateChanged() { PluginName = plugin.Name, PluginStatus = status });
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginStateChanged() { Id = plugin.Id, PluginName = plugin.Name, PluginStatus = status, DisplayName = plugin.DisplayName });
         }
 
         public void RegisterPlugin(IPlugin p)
@@ -67,6 +66,8 @@ namespace Slipstream.Backend
                 EnablePlugin(plugin);
 
             PendingPluginsForEnable.Clear();
+
+            DisablePendingEnable = true;
         }
 
         public void DisablePlugin(IPlugin p)
@@ -77,22 +78,33 @@ namespace Slipstream.Backend
 
         public void InitializePlugin(IPlugin plugin, bool enabled)
         {
-            Plugins.Add(plugin.Name, plugin);
+
+            Plugins.Add(plugin.Id, plugin);
             RegisterPlugin(plugin);
             if(enabled)
-                PendingPluginsForEnable.Add(plugin);
+            {
+                if (DisablePendingEnable)
+                    EnablePlugin(plugin);
+                else
+                    PendingPluginsForEnable.Add(plugin);
+            }
         }
 
-        public void FindPluginAndExecute(string pluginName, Action<IPlugin> a)
+        public void FindPluginAndExecute(Guid pluginId, Action<IPlugin> a)
         {
-            if (Plugins.TryGetValue(pluginName, out IPlugin plugin))
+            if (Plugins.TryGetValue(pluginId, out IPlugin plugin))
             {
                 a(plugin);
             }
             else
             {
-                Debug.WriteLine($"Plugin not found '{pluginName}'");
+                Debug.WriteLine($"Plugin not found '{pluginId}'");
             }
+        }
+
+        public void UnregisterPlugin(Guid id)
+        {
+            UnregisterPlugin(Plugins[id]);            
         }
     }
 }

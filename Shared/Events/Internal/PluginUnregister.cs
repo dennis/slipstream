@@ -4,11 +4,11 @@ using System;
 
 namespace Slipstream.Shared.Events.Internal
 {
-    public class PluginDisable : IEvent
+    public class PluginUnregister : IEvent
     {
         public Guid Id { get; set; }
 
-        public PluginDisable()
+        public PluginUnregister()
         {
             Id = Guid.NewGuid();
         }

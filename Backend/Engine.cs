@@ -2,6 +2,7 @@
 
 using Slipstream.Backend.Plugins;
 using Slipstream.Shared;
+using Slipstream.Shared.Events.Internal;
 using System;
 
 namespace Slipstream.Backend
@@ -32,7 +33,7 @@ namespace Slipstream.Backend
 
             Shared.EventHandler eventHandler = new Shared.EventHandler();
             eventHandler.OnInternalFrontendReady += (s, e) => frontendReady = true;
-            eventHandler.OnInternalPluginLoad += (s, e) => OnPluginLoad(e.Event);
+            eventHandler.OnInternalPluginRegister += (s, e) => OnPluginRegister(e.Event);
             eventHandler.OnDefault += (s, e) => throw new System.Exception($"Unexpect message doring pre-boot: {e.Event.GetType()}");
 
             while (!frontendReady && !Stopped)
@@ -54,8 +55,10 @@ namespace Slipstream.Backend
 
             eventHandler = new Shared.EventHandler();
 #pragma warning disable CS8604 // Possible null reference argument.
-            eventHandler.OnInternalPluginEnable += (s, e) => PluginManager.FindPluginAndExecute(e.Event.PluginName, (plugin) => PluginManager.EnablePlugin(plugin));
-            eventHandler.OnInternalPluginDisable += (s, e) => PluginManager.FindPluginAndExecute(e.Event.PluginName, (plugin) => PluginManager.DisablePlugin(plugin));
+            eventHandler.OnInternalPluginRegister += (s, e) => OnPluginRegister(e.Event);
+            eventHandler.OnInternalPluginUnregister += (s, e) => OnPluginUnregister(e.Event);
+            eventHandler.OnInternalPluginEnable += (s, e) => PluginManager.FindPluginAndExecute(e.Event.Id, (plugin) => PluginManager.EnablePlugin(plugin));
+            eventHandler.OnInternalPluginDisable += (s, e) => PluginManager.FindPluginAndExecute(e.Event.Id, (plugin) => PluginManager.DisablePlugin(plugin));
 #pragma warning restore CS8604 // Possible null reference argument.
 
             while (!Stopped)
@@ -69,21 +72,35 @@ namespace Slipstream.Backend
             PluginManager.UnregisterPlugins();
         }
 
+        private void OnPluginUnregister(PluginUnregister ev)
+        {
+            PluginManager.UnregisterPlugin(ev.Id);
+        }
+
         public void UnregisterListener(IEventListener listener)
         {
             EventBus.UnregisterListener(listener);
         }
 
-        private void OnPluginLoad(Shared.Events.Internal.PluginLoad ev)
+        private void OnPluginRegister(Shared.Events.Internal.PluginRegister ev)
         {
             switch(ev.PluginName)
             {
                 case "DebugOutputPlugin":
-                    PluginManager.InitializePlugin(new DebugOutputPlugin(), ev.Enabled != null && ev.Enabled == true);
+                    PluginManager.InitializePlugin(new DebugOutputPlugin() { Id = ev.Id }, ev.Enabled != null && ev.Enabled == true);
                     break;
                 case "FileMonitorPlugin":
                     if(ev.Settings != null)
-                        PluginManager.InitializePlugin(new FileMonitorPlugin(ev.Settings, EventBus), ev.Enabled != null && ev.Enabled == true);
+                        PluginManager.InitializePlugin(new FileMonitorPlugin(ev.Settings, EventBus) { Id = ev.Id }, ev.Enabled != null && ev.Enabled == true);
+                    else
+                        throw new Exception($"Missing settings for plugin '{ev.PluginName}'");
+                    break;
+                case "FileTriggerPlugin":
+                    PluginManager.InitializePlugin(new FileTriggerPlugin(EventBus) { Id = ev.Id }, ev.Enabled != null && ev.Enabled == true);
+                    break;
+                case "LuaPlugin":
+                    if (ev.Settings != null)
+                        PluginManager.InitializePlugin(new LuaPlugin(ev.Settings) { Id = ev.Id }, ev.Enabled != null && ev.Enabled == true);
                     else
                         throw new Exception($"Missing settings for plugin '{ev.PluginName}'");
                     break;

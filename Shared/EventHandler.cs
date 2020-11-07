@@ -19,8 +19,11 @@ namespace Slipstream.Shared
         public delegate void OnDefaultHandler(EventHandler source, EventHandlerArgs<IEvent> e);
         public event OnDefaultHandler? OnDefault;
 
-        public delegate void OnInternalPluginLoadHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginLoad> e);
-        public event OnInternalPluginLoadHandler? OnInternalPluginLoad;
+        public delegate void OnInternalPluginRegisterHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginRegister> e);
+        public event OnInternalPluginRegisterHandler? OnInternalPluginRegister;
+
+        public delegate void OnInternalPluginUnregisterHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginUnregister> e);
+        public event OnInternalPluginUnregisterHandler? OnInternalPluginUnregister;
 
         public delegate void OnInternalPluginEnableHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginEnable> e);
         public event OnInternalPluginEnableHandler? OnInternalPluginEnable;
@@ -59,11 +62,17 @@ namespace Slipstream.Shared
                 case null:
                     // ignore
                     break;
-                case Shared.Events.Internal.PluginLoad tev:
-                    if(OnInternalPluginLoad == null)
+                case Shared.Events.Internal.PluginRegister tev:
+                    if(OnInternalPluginRegister == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnInternalPluginLoad.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginLoad>(tev));
+                        OnInternalPluginRegister.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginRegister>(tev));
+                    break;
+                case Shared.Events.Internal.PluginUnregister tev:
+                    if (OnInternalPluginUnregister == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnInternalPluginUnregister.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginUnregister>(tev));
                     break;
                 case Shared.Events.Internal.PluginEnable tev:
                     if (OnInternalPluginEnable == null)

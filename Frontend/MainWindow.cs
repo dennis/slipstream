@@ -17,7 +17,7 @@ namespace Slipstream.Frontend
         private IEventBusSubscription? EventBusSubscription;
         private readonly string ScriptsPath;
         private readonly BlockingCollection<string> PendingMessages = new BlockingCollection<string>();
-        private readonly IDictionary<string, ToolStripMenuItem> MenuPluginItems = new Dictionary<string, ToolStripMenuItem>();
+        private readonly IDictionary<Guid, ToolStripMenuItem> MenuPluginItems = new Dictionary<Guid, ToolStripMenuItem>();
 
         public MainWindow(IEventBus eventBus)
         {
@@ -47,8 +47,9 @@ namespace Slipstream.Frontend
             EventHandlerThread.Start();
 
             // Plugins..
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginLoad () { PluginName = "DebugOutputPlugin", Enabled = true });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginLoad() { PluginName = "FileMonitorPlugin", Enabled = true, Settings = new Shared.Events.Internal.FileMonitorSettings { Paths = new string[] { ScriptsPath } } });
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { PluginName = "DebugOutputPlugin", Enabled = true });
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { PluginName = "FileMonitorPlugin", Enabled = true, Settings = new Shared.Events.Internal.FileMonitorSettings { Paths = new string[] { ScriptsPath } } });
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { PluginName = "FileTriggerPlugin", Enabled = true }); 
 
             // Tell backend that we're ready
             EventBus.PublishEvent(new Shared.Events.Internal.FrontendReady());
@@ -85,9 +86,9 @@ namespace Slipstream.Frontend
         {
             Debug.Assert(EventBusSubscription != null);
 
-            EventHandler.OnInternalPluginLoad += (s, e) => PendingMessages.Add($"{e.Event.GetType().Name}: {e.Event.PluginName} enabled: {e.Event.Enabled}");
-            EventHandler.OnInternalPluginEnable += (s, e) => PendingMessages.Add($"{e.Event.GetType().Name}: {e.Event.PluginName}");
-            EventHandler.OnInternalPluginDisable += (s, e) => PendingMessages.Add($"{e.Event.GetType().Name}: {e.Event.PluginName}");
+            EventHandler.OnInternalPluginRegister += (s, e) => PendingMessages.Add($"{e.Event.GetType().Name}: {e.Event.Id} name: {e.Event.PluginName} enabled: {e.Event.Enabled}");
+            EventHandler.OnInternalPluginEnable += (s, e) => PendingMessages.Add($"{e.Event.GetType().Name}: {e.Event.Id}");
+            EventHandler.OnInternalPluginDisable += (s, e) => PendingMessages.Add($"{e.Event.GetType().Name}: {e.Event.Id}");
             EventHandler.OnInternalPluginStateChanged += (s, e) => EventHandler_OnInternalPluginStateChanged(e.Event);
             EventHandler.OnInternalFileMonitorFileCreated += (s, e) => PendingMessages.Add($"{e.Event.GetType().Name}: {e.Event.FilePath}");
             EventHandler.OnInternalFileMonitorFileChanged += (s, e) => PendingMessages.Add($"{e.Event.GetType().Name}: {e.Event.FilePath}");
@@ -112,34 +113,34 @@ namespace Slipstream.Frontend
                         {
                             Checked = true,
                             CheckState = CheckState.Unchecked,
-                            Name = e.PluginName,
+                            Name = e.Id.ToString(),
                             Size = new System.Drawing.Size(180, 22),
-                            Text = e.PluginName
+                            Text = e.DisplayName
                         };
                         item.Click += PluginMenuItem_Click;
-                        MenuPluginItems.Add(e.PluginName, item);
+                        MenuPluginItems.Add(e.Id, item);
 
                         ExecuteSecure(() => PluginsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { item }));
                     }
                     break;
                 case Shared.Events.Internal.PluginStatus.Unregistered:
                     {
-                        var item = MenuPluginItems[e.PluginName];
-                        MenuPluginItems.Remove(e.PluginName);
+                        var item = MenuPluginItems[e.Id];
+                        MenuPluginItems.Remove(e.Id);
 
                         ExecuteSecure(() => PluginsToolStripMenuItem.DropDownItems.Remove(item));
                     }
                     break;
                 case Shared.Events.Internal.PluginStatus.Enabled:
                     {
-                        var item = MenuPluginItems[e.PluginName];
+                        var item = MenuPluginItems[e.Id];
 
                         ExecuteSecure(() => item.CheckState = CheckState.Checked);
                     }
                     break;
                 case Shared.Events.Internal.PluginStatus.Disabled:
                     {
-                        var item = MenuPluginItems[e.PluginName];
+                        var item = MenuPluginItems[e.Id];
 
                         ExecuteSecure(() => item.CheckState = CheckState.Unchecked);
                     }
@@ -154,11 +155,11 @@ namespace Slipstream.Frontend
 
             if (item.CheckState == CheckState.Checked)
             {
-                EventBus.PublishEvent(new Shared.Events.Internal.PluginDisable() { PluginName = item.Name });
+                EventBus.PublishEvent(new Shared.Events.Internal.PluginDisable() { Id = Guid.Parse(item.Name) });
             }
             else
             {
-                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { PluginName = item.Name });
+                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = Guid.Parse(item.Name) });
             }
         }
         #endregion

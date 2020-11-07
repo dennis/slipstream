@@ -35,9 +35,9 @@
             this.FileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.LogMessageUpdateTimer = new System.Windows.Forms.Timer(this.components);
             this.HelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenScriptsDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.LogMessageUpdateTimer = new System.Windows.Forms.Timer(this.components);
             this.panel1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -55,6 +55,7 @@
             // LogAreaTextBox
             // 
             this.LogAreaTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LogAreaTextBox.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.LogAreaTextBox.Location = new System.Drawing.Point(0, 24);
             this.LogAreaTextBox.Multiline = true;
             this.LogAreaTextBox.Name = "LogAreaTextBox";
@@ -88,7 +89,7 @@
             // 
             this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
             this.ExitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
             this.ExitToolStripMenuItem.Text = "Exit";
             this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
@@ -97,12 +98,6 @@
             this.PluginsToolStripMenuItem.Name = "PluginsToolStripMenuItem";
             this.PluginsToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
             this.PluginsToolStripMenuItem.Text = "&Plugins";
-            // 
-            // LogMessageUpdateTimer
-            // 
-            this.LogMessageUpdateTimer.Enabled = true;
-            this.LogMessageUpdateTimer.Interval = 250;
-            this.LogMessageUpdateTimer.Tick += new System.EventHandler(this.LogMessageUpdate_Tick);
             // 
             // HelpToolStripMenuItem
             // 
@@ -118,6 +113,12 @@
             this.OpenScriptsDirectoryToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.OpenScriptsDirectoryToolStripMenuItem.Text = "Open Scripts Directory";
             this.OpenScriptsDirectoryToolStripMenuItem.Click += new System.EventHandler(this.OpenScriptsDirectoryToolStripMenuItem_Click);
+            // 
+            // LogMessageUpdateTimer
+            // 
+            this.LogMessageUpdateTimer.Enabled = true;
+            this.LogMessageUpdateTimer.Interval = 250;
+            this.LogMessageUpdateTimer.Tick += new System.EventHandler(this.LogMessageUpdate_Tick);
             // 
             // MainWindow
             // 

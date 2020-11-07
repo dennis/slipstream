@@ -84,13 +84,13 @@ namespace Slipstream.Backend
 
         private void OnPluginRegister(Shared.Events.Internal.PluginRegister ev)
         {
-            switch(ev.PluginName)
+            switch (ev.PluginName)
             {
                 case "DebugOutputPlugin":
                     PluginManager.InitializePlugin(new DebugOutputPlugin() { Id = ev.Id }, ev.Enabled != null && ev.Enabled == true);
                     break;
                 case "FileMonitorPlugin":
-                    if(ev.Settings != null)
+                    if (ev.Settings != null)
                         PluginManager.InitializePlugin(new FileMonitorPlugin(ev.Settings, EventBus) { Id = ev.Id }, ev.Enabled != null && ev.Enabled == true);
                     else
                         throw new Exception($"Missing settings for plugin '{ev.PluginName}'");

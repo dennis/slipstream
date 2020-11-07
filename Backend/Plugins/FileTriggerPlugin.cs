@@ -11,7 +11,7 @@ namespace Slipstream.Backend.Plugins
 {
     class FileTriggerPlugin : Worker, IPlugin, IEventListener
     {
-        public System.Guid Id { get; set;  }
+        public System.Guid Id { get; set; }
         public string Name => "FileTriggerPlugin";
         public string DisplayName => Name;
 

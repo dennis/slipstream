@@ -81,7 +81,7 @@ namespace Slipstream.Backend
 
             Plugins.Add(plugin.Id, plugin);
             RegisterPlugin(plugin);
-            if(enabled)
+            if (enabled)
             {
                 if (DisablePendingEnable)
                     EnablePlugin(plugin);
@@ -104,7 +104,7 @@ namespace Slipstream.Backend
 
         public void UnregisterPlugin(Guid id)
         {
-            UnregisterPlugin(Plugins[id]);            
+            UnregisterPlugin(Plugins[id]);
         }
     }
 }

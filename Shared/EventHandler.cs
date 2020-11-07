@@ -63,7 +63,7 @@ namespace Slipstream.Shared
                     // ignore
                     break;
                 case Shared.Events.Internal.PluginRegister tev:
-                    if(OnInternalPluginRegister == null)
+                    if (OnInternalPluginRegister == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnInternalPluginRegister.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginRegister>(tev));

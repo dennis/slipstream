@@ -98,17 +98,17 @@ namespace Slipstream.Backend.Plugins
         private void OnFileMonitorSettings(FileMonitorSettings ev)
         {
             // Delete all watchers, and then recreate them
-            foreach(var watcher in fileSystemWatchers)
+            foreach (var watcher in fileSystemWatchers)
                 watcher.Dispose();
             fileSystemWatchers.Clear();
 
             if (ev.Paths == null)
                 return;
 
-            foreach(var path in ev.Paths)
+            foreach (var path in ev.Paths)
             {
                 Debug.WriteLine($"OnFileMonitorSettings: Adding watcher for {path}");
-    
+
                 var watcher = new FileSystemWatcher(path);
                 watcher.Created += WatcherOnCreated;
                 watcher.Changed += WatcherOnChanged;

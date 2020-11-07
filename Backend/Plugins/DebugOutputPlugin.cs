@@ -46,7 +46,7 @@ namespace Slipstream.Backend.Plugins
                 var e = EventBusSubscription?.NextEvent(250);
                 if (Enabled && e != null)
                 {
-                    if(e is Slipstream.Shared.Events.Internal.PluginStateChanged ev)
+                    if (e is Slipstream.Shared.Events.Internal.PluginStateChanged ev)
                     {
                         Debug.WriteLine($"DebugOutputPlugin got event: {e} {ev.Id} {ev.PluginName} {ev.PluginStatus}");
                     }
@@ -54,7 +54,7 @@ namespace Slipstream.Backend.Plugins
                     {
                         Debug.WriteLine($"DebugOutputPlugin got event: {e}");
                     }
-                    
+
                 }
             }
         }

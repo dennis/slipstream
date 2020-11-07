@@ -49,7 +49,7 @@ namespace Slipstream.Frontend
             // Plugins..
             EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { PluginName = "DebugOutputPlugin", Enabled = true });
             EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { PluginName = "FileMonitorPlugin", Enabled = true, Settings = new Shared.Events.Internal.FileMonitorSettings { Paths = new string[] { ScriptsPath } } });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { PluginName = "FileTriggerPlugin", Enabled = true }); 
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { PluginName = "FileTriggerPlugin", Enabled = true });
 
             // Tell backend that we're ready
             EventBus.PublishEvent(new Shared.Events.Internal.FrontendReady());

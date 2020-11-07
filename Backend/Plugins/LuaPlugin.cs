@@ -8,7 +8,7 @@ using System.IO;
 
 namespace Slipstream.Backend.Plugins
 {
-    class LuaPlugin : Worker, IPlugin, IEventListener
+    class LuaPlugin : Worker, IPlugin
     {
         public System.Guid Id { get; set; }
         public string Name => "LuaPlugin";

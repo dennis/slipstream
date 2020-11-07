@@ -9,7 +9,7 @@ using EventHandler = Slipstream.Shared.EventHandler;
 
 namespace Slipstream.Backend.Plugins
 {
-    class FileTriggerPlugin : Worker, IPlugin, IEventListener
+    class FileTriggerPlugin : Worker, IPlugin
     {
         public System.Guid Id { get; set; }
         public string Name => "FileTriggerPlugin";

@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Slipstream.Backend.Plugins
 {
-    class DebugOutputPlugin : Worker, IPlugin, IEventListener
+    class DebugOutputPlugin : Worker, IPlugin
     {
         public Guid Id { get; set; }
         public string Name => "DebugOutputPlugin";

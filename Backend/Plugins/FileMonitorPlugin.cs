@@ -8,7 +8,7 @@ using System.IO;
 
 namespace Slipstream.Backend.Plugins
 {
-    class FileMonitorPlugin : Worker, IPlugin, IEventListener
+    class FileMonitorPlugin : Worker, IPlugin
     {
         public System.Guid Id { get; set; }
         public string Name => "FileMonitorPlugin";

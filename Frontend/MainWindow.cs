@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Slipstream.Frontend
 {
-    public partial class MainWindow : Form, IEventListener
+    public partial class MainWindow : Form
     {
         private Thread? EventHandlerThread;
         private readonly IEventBus EventBus;

@@ -37,7 +37,6 @@ namespace Slipstream
             services.AddScoped<Frontend.MainWindow>();
             services.AddScoped<Shared.IEventBus, Backend.EventBus>();
             services.AddScoped<Shared.IEventProducer>(x => x.GetService<Backend.EventBus>());
-            services.AddScoped<Shared.IEventListener>(x => x.GetService<Frontend.MainWindow>());
             services.AddScoped<Backend.IEngine, Backend.Engine>();
         }
     }

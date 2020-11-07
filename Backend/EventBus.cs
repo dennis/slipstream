@@ -34,7 +34,8 @@ namespace Slipstream.Backend
         {
             lock (Listeners)
             {
-                Listeners.Remove(subscription as EventBusSubscription);
+                if (subscription is EventBusSubscription a)
+                    _ = Listeners.Remove(a);
             }
         }
     }

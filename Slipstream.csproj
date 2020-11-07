@@ -118,7 +118,6 @@
     <Compile Include="Backend\Engine.cs" />
     <Compile Include="Backend\IPlugin.cs" />
     <Compile Include="Shared\IEvent.cs" />
-    <Compile Include="Shared\IEventListener.cs" />
     <Compile Include="Shared\IEventProducer.cs" />
     <Compile Include="Backend\Worker.cs" />
     <Compile Include="Frontend\MainWindow.cs">

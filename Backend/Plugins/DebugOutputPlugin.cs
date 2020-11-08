@@ -40,23 +40,20 @@ namespace Slipstream.Backend.Plugins
             Stop();
         }
 
-        protected override void Main()
+        protected override void Loop()
         {
-            while (!Stopped)
+            var e = EventBusSubscription?.NextEvent(250);
+            if (Enabled && e != null)
             {
-                var e = EventBusSubscription?.NextEvent(250);
-                if (Enabled && e != null)
+                if (e is Slipstream.Shared.Events.Internal.PluginStateChanged ev)
                 {
-                    if (e is Slipstream.Shared.Events.Internal.PluginStateChanged ev)
-                    {
-                        Debug.WriteLine($"DebugOutputPlugin got event: {e} {ev.Id} {ev.PluginName} {ev.PluginStatus}");
-                    }
-                    else
-                    {
-                        Debug.WriteLine($"DebugOutputPlugin got event: {e}");
-                    }
-
+                    Debug.WriteLine($"DebugOutputPlugin got event: {e} {ev.Id} {ev.PluginName} {ev.PluginStatus}");
                 }
+                else
+                {
+                    Debug.WriteLine($"DebugOutputPlugin got event: {e}");
+                }
+
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿using NAudio.Wave;
+using NAudio.Wave;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Setting;
 using Slipstream.Shared.Events.Utility;
@@ -22,6 +22,7 @@ namespace Slipstream.Backend.Plugins
         private IEventBusSubscription? Subscription;
         private string? Path;
         private readonly SpeechSynthesizer Synthesizer;
+        private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
 
         public AudioPlugin(IEvent settings, IEventBus eventBus)
         {
@@ -35,6 +36,9 @@ namespace Slipstream.Backend.Plugins
 
             Synthesizer = new SpeechSynthesizer();
             Synthesizer.SetOutputToDefaultAudioDevice();
+
+            EventHandler.OnUtilitySay += EventHandler_OnUtilitySay;
+            EventHandler.OnPlayAudio += EventHandler_OnPlayAudio;
         }
 
         private void OnAudioSettings(AudioSettings typedSettings)
@@ -64,21 +68,14 @@ namespace Slipstream.Backend.Plugins
             Subscription = null;
             Stop();
         }
-        protected override void Main()
+
+        protected override void Loop()
         {
-            Shared.EventHandler eventHandler = new Shared.EventHandler();
+            var e = Subscription?.NextEvent(100);
 
-            eventHandler.OnUtilitySay += EventHandler_OnUtilitySay;
-            eventHandler.OnPlayAudio += EventHandler_OnPlayAudio;
-
-            while (!Stopped)
+            if (Enabled)
             {
-                var e = Subscription?.NextEvent(250);
-
-                if (Enabled)
-                {
-                    eventHandler.HandleEvent(e);
-                }
+                EventHandler.HandleEvent(e);
             }
         }
 

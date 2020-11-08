@@ -19,11 +19,17 @@ namespace Slipstream.Backend.Plugins
         private IEventBusSubscription? EventBusSubscription;
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, Guid> Scripts = new Dictionary<string, Guid>();
+        private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
 
         public FileTriggerPlugin(IEventBus eventBus)
         {
             this.Id = Guid.NewGuid();
             this.EventBus = eventBus;
+
+            EventHandler.OnInternalFileMonitorFileCreated += EventHandler_OnInternalFileMonitorFileCreated;
+            EventHandler.OnInternalFileMonitorFileDeleted += EventHandler_OnInternalFileMonitorFileDeleted;
+            EventHandler.OnInternalFileMonitorFileChanged += EventHandler_OnInternalFileMonitorFileChanged;
+            EventHandler.OnInternalFileMonitorFileRenamed += EventHandler_OnInternalFileMonitorFileRenamed;
         }
 
         public void Disable(IEngine engine)
@@ -51,23 +57,13 @@ namespace Slipstream.Backend.Plugins
             Stop();
         }
 
-        protected override void Main()
+        protected override void Loop()
         {
-            Shared.EventHandler eventHandler = new Shared.EventHandler();
+            var e = EventBusSubscription?.NextEvent(250);
 
-            eventHandler.OnInternalFileMonitorFileCreated += EventHandler_OnInternalFileMonitorFileCreated;
-            eventHandler.OnInternalFileMonitorFileDeleted += EventHandler_OnInternalFileMonitorFileDeleted;
-            eventHandler.OnInternalFileMonitorFileChanged += EventHandler_OnInternalFileMonitorFileChanged;
-            eventHandler.OnInternalFileMonitorFileRenamed += EventHandler_OnInternalFileMonitorFileRenamed;
-
-            while (!Stopped)
+            if (Enabled)
             {
-                var e = EventBusSubscription?.NextEvent(250);
-
-                if (Enabled)
-                {
-                    eventHandler.HandleEvent(e);
-                }
+                EventHandler.HandleEvent(e);
             }
         }
 

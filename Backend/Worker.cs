@@ -41,7 +41,18 @@ namespace Slipstream.Backend
             }
         }
 
-        abstract protected void Main();
+        virtual protected void Main()
+        {
+            while (!Stopped)
+            {
+                Loop();
+            }
+        }
+
+        virtual protected void Loop()
+        {
+            Thread.Sleep(100);
+        }
 
         public void Dispose()
         {

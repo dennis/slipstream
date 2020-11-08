@@ -18,6 +18,12 @@ namespace Slipstream.Backend.Plugins
         private readonly string FilePath;
         private readonly IEventBus EventBus;
 
+        private readonly Lua Lua = new Lua();
+        private readonly LuaFunction? HandleFunc;
+        private readonly EventHandler EventHandler = new EventHandler();
+        private readonly LuaApi Api;
+
+
         public LuaPlugin(IEvent settings, IEventBus eventBus)
         {
             if (!(settings is LuaSettings typedSettings))
@@ -31,6 +37,31 @@ namespace Slipstream.Backend.Plugins
             Id = System.Guid.NewGuid();
             DisplayName = $"Lua: {Path.GetFileName(FilePath)}";
             EventBus = eventBus;
+
+            Api = new LuaApi(EventBus, Path.GetFileName(FilePath));
+
+            try
+            {
+                Lua.RegisterFunction("print", Api, typeof(LuaApi).GetMethod("Print", new[] { typeof(string) }));
+                Lua.RegisterFunction("say", Api, typeof(LuaApi).GetMethod("Say", new[] { typeof(string), typeof(float) }));
+                Lua.RegisterFunction("play", Api, typeof(LuaApi).GetMethod("Play", new[] { typeof(string), typeof(float) }));
+
+                var f = Lua.LoadFile(FilePath);
+
+                f.Call();
+
+                HandleFunc = Lua["handle"] as LuaFunction;
+                
+                // Avoid that WriteToConsole is evaluated by Lua, that in turn will 
+                // add more WriteToConsole events, making a endless loop
+                EventHandler.OnUtilityWriteToConsole += (s, e) => { };
+                EventHandler.OnDefault += (s, e) => HandleFunc?.Call(e.Event);
+            }
+            catch (NLua.Exceptions.LuaScriptException e)
+            {
+                Api.Print($"ERROR: {e.Message}");
+                EventBus.PublishEvent(new Shared.Events.Internal.PluginUnregister() { Id = this.Id });
+            }
         }
 
         public void Disable(IEngine engine)
@@ -83,43 +114,19 @@ namespace Slipstream.Backend.Plugins
             }
         }
 
-        protected override void Main()
-        {
-            LuaApi api
-                = new LuaApi(EventBus, Path.GetFileName(FilePath));
 
+        override protected void Loop()
+        {
             try
             {
-                using var lua = new Lua();
-                LuaFunction? handleFunc;
+                var e = Subscription?.NextEvent(250);
 
-                lua.RegisterFunction("print", api, typeof(LuaApi).GetMethod("Print", new[] { typeof(string) }));
-                lua.RegisterFunction("say", api, typeof(LuaApi).GetMethod("Say", new[] { typeof(string), typeof(float) }));
-                lua.RegisterFunction("play", api, typeof(LuaApi).GetMethod("Play", new[] { typeof(string), typeof(float) }));
-
-                var f = lua.LoadFile(FilePath);
-
-                f.Call();
-
-                handleFunc = lua["handle"] as LuaFunction;
-
-                EventHandler eventHandler = new EventHandler();
-                // Avoid that WriteToConsole is evaluated by Lua, that in turn will 
-                // add more WriteToConsole events, making a endless loop
-                eventHandler.OnUtilityWriteToConsole += (s, e) => {};
-                eventHandler.OnDefault += (s, e) => handleFunc?.Call(e.Event);
-
-                while (!Stopped)
-                {
-                    var e = Subscription?.NextEvent(250);
-
-                    if (Enabled)
-                        eventHandler.HandleEvent(e);
-                }
+                if (Enabled)
+                    EventHandler.HandleEvent(e);
             }
             catch (NLua.Exceptions.LuaScriptException e)
             {
-                api.Print($"ERROR: {e.Message}");
+                Api.Print($"ERROR: {e.Message}");
                 EventBus.PublishEvent(new Shared.Events.Internal.PluginUnregister() { Id = this.Id });
             }
         }

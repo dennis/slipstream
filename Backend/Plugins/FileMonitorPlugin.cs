@@ -19,6 +19,7 @@ namespace Slipstream.Backend.Plugins
         private IEventBusSubscription? EventBusSubscription;
         private readonly IEventBus EventBus;
         private readonly IList<FileSystemWatcher> fileSystemWatchers = new List<FileSystemWatcher>();
+        private readonly EventHandler EventHandler = new EventHandler();
 
         public FileMonitorPlugin(IEvent settings, IEventBus eventBus)
         {
@@ -29,6 +30,9 @@ namespace Slipstream.Backend.Plugins
                 OnFileMonitorSettings(typedSettings);
             else
                 throw new System.Exception($"Unexpected event as Exception {settings}");
+
+            EventHandler.OnInternalPluginsReady += EventHandler_OnInternalPluginsReady;
+            EventHandler.OnSettingFileMonitorSettings += (s, e) => OnFileMonitorSettings(e.Event);
         }
 
         public void Disable(IEngine engine)
@@ -66,20 +70,13 @@ namespace Slipstream.Backend.Plugins
             Stop();
         }
 
-        protected override void Main()
+        protected override void Loop()
         {
-            EventHandler eventHandler = new EventHandler();
-            eventHandler.OnInternalPluginsReady += EventHandler_OnInternalPluginsReady;
-            eventHandler.OnSettingFileMonitorSettings += (s, e) => OnFileMonitorSettings(e.Event);
+            var e = EventBusSubscription?.NextEvent(100);
 
-            while (!Stopped)
+            if (Enabled)
             {
-                var e = EventBusSubscription?.NextEvent(250);
-
-                if (Enabled)
-                {
-                    eventHandler.HandleEvent(e);
-                }
+                EventHandler.HandleEvent(e);
             }
         }
 

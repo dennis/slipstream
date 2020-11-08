@@ -39,7 +39,7 @@ namespace Slipstream.Backend.Plugins
             Synthesizer.SetOutputToDefaultAudioDevice();
 
             EventHandler.OnUtilitySay += EventHandler_OnUtilitySay;
-            EventHandler.OnPlayAudio += EventHandler_OnPlayAudio;
+            EventHandler.OnUtilityPlayAudio += EventHandler_OnUtilityPlayAudio;
         }
 
         private void OnAudioSettings(AudioSettings typedSettings)
@@ -78,7 +78,7 @@ namespace Slipstream.Backend.Plugins
             }
         }
 
-        private void EventHandler_OnPlayAudio(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Utility.PlayAudio> e)
+        private void EventHandler_OnUtilityPlayAudio(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Utility.PlayAudio> e)
         {
             var filename = e.Event.Filename;
             var volume = e.Event.Volume;

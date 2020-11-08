@@ -94,16 +94,8 @@ namespace Slipstream.Frontend
 
             var now = DateTime.Now.ToString("s");
 
-            EventHandler.OnInternalPluginRegister += (s, e) => PendingMessages.Add($"{now} {e.Event.GetType().Name}: {e.Event.Id} name: {e.Event.PluginName} enabled: {e.Event.Enabled}");
-            EventHandler.OnInternalPluginEnable += (s, e) => PendingMessages.Add($"{now} {e.Event.GetType().Name}: {e.Event.Id}");
-            EventHandler.OnInternalPluginDisable += (s, e) => PendingMessages.Add($"{now} {e.Event.GetType().Name}: {e.Event.Id}");
             EventHandler.OnInternalPluginStateChanged += (s, e) => EventHandler_OnInternalPluginStateChanged(e.Event);
-            EventHandler.OnInternalFileMonitorFileCreated += (s, e) => PendingMessages.Add($"{now} {e.Event.GetType().Name}: {e.Event.FilePath}");
-            EventHandler.OnInternalFileMonitorFileChanged += (s, e) => PendingMessages.Add($"{now} {e.Event.GetType().Name}: {e.Event.FilePath}");
-            EventHandler.OnInternalFileMonitorFileDeleted += (s, e) => PendingMessages.Add($"{now} {e.Event.GetType().Name}: {e.Event.FilePath}");
-            EventHandler.OnInternalFileMonitorFileRenamed += (s, e) => PendingMessages.Add($"{now} {e.Event.GetType().Name}: {e.Event.FilePath}");
             EventHandler.OnUtilityWriteToConsole += (s, e) => PendingMessages.Add($"{now} {e.Event.Message}");
-            EventHandler.OnDefault += (s, e) => PendingMessages.Add($"{now} {e.Event.GetType().Name}");
 
             while (true)
             {
@@ -113,10 +105,6 @@ namespace Slipstream.Frontend
 
         private void EventHandler_OnInternalPluginStateChanged(Shared.Events.Internal.PluginStateChanged e)
         {
-            var now = DateTime.Now.ToString("s");
-
-            PendingMessages.Add($"{now} {e.GetType().Name}: {e.PluginName} -> {e.PluginStatus}");
-
             switch (e.PluginStatus)
             {
                 case Shared.Events.Internal.PluginStatus.Registered:

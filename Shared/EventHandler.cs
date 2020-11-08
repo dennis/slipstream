@@ -62,8 +62,8 @@ namespace Slipstream.Shared
         public delegate void OnUtilitySayHandler(EventHandler source, EventHandlerArgs<Shared.Events.Utility.Say> e);
         public event OnUtilitySayHandler? OnUtilitySay;
 
-        public delegate void OnPlayAudioHandler(EventHandler source, EventHandlerArgs<Shared.Events.Utility.PlayAudio> e);
-        public event OnPlayAudioHandler? OnPlayAudio;
+        public delegate void OnUtilityPlayAudioHandler(EventHandler source, EventHandlerArgs<Shared.Events.Utility.PlayAudio> e);
+        public event OnUtilityPlayAudioHandler? OnUtilityPlayAudio;
         #endregion
 
         #region Events: Setting
@@ -168,10 +168,10 @@ namespace Slipstream.Shared
                     break;
 
                 case Shared.Events.Utility.PlayAudio tev:
-                    if (OnPlayAudio == null)
+                    if (OnUtilityPlayAudio == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnPlayAudio.Invoke(this, new EventHandlerArgs<Shared.Events.Utility.PlayAudio>(tev));
+                        OnUtilityPlayAudio.Invoke(this, new EventHandlerArgs<Shared.Events.Utility.PlayAudio>(tev));
                     break;
 
                 // Setting

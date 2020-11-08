@@ -1,5 +1,6 @@
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Internal;
+using Slipstream.Shared.Events.Setting;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -69,7 +70,7 @@ namespace Slipstream.Backend.Plugins
         {
             EventHandler eventHandler = new EventHandler();
             eventHandler.OnInternalPluginsReady += EventHandler_OnInternalPluginsReady;
-            eventHandler.OnInternalFileMonitorSettings += (s, e) => OnFileMonitorSettings(e.Event);
+            eventHandler.OnSettingFileMonitorSettings += (s, e) => OnFileMonitorSettings(e.Event);
 
             while (!Stopped)
             {

@@ -38,6 +38,7 @@
             this.HelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenScriptsDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LogMessageUpdateTimer = new System.Windows.Forms.Timer(this.components);
+            this.OpenAudioDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -102,6 +103,7 @@
             // HelpToolStripMenuItem
             // 
             this.HelpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.OpenAudioDirectoryToolStripMenuItem,
             this.OpenScriptsDirectoryToolStripMenuItem});
             this.HelpToolStripMenuItem.Name = "HelpToolStripMenuItem";
             this.HelpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
@@ -119,6 +121,13 @@
             this.LogMessageUpdateTimer.Enabled = true;
             this.LogMessageUpdateTimer.Interval = 250;
             this.LogMessageUpdateTimer.Tick += new System.EventHandler(this.LogMessageUpdate_Tick);
+            // 
+            // OpenAudioDirectoryToolStripMenuItem
+            // 
+            this.OpenAudioDirectoryToolStripMenuItem.Name = "OpenAudioDirectoryToolStripMenuItem";
+            this.OpenAudioDirectoryToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.OpenAudioDirectoryToolStripMenuItem.Text = "Open Audio Directory";
+            this.OpenAudioDirectoryToolStripMenuItem.Click += new System.EventHandler(this.OpenAudioDirectoryToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -148,6 +157,7 @@
         private System.Windows.Forms.ToolStripMenuItem ExitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem HelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem OpenScriptsDirectoryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem OpenAudioDirectoryToolStripMenuItem;
     }
 }
 

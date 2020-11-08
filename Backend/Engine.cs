@@ -104,6 +104,12 @@ namespace Slipstream.Backend
                     else
                         throw new Exception($"Missing settings for plugin '{ev.PluginName}'");
                     break;
+                case "AudioPlugin":
+                    if (ev.Settings != null)
+                        PluginManager.InitializePlugin(new AudioPlugin(ev.Settings, EventBus) { Id = ev.Id }, ev.Enabled != null && ev.Enabled == true);
+                    else
+                        throw new Exception($"Missing settings for plugin '{ev.PluginName}'");
+                    break;
                 default:
                     throw new Exception($"Unknown plugin '{ev.PluginName}'");
             }

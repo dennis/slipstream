@@ -1,7 +1,6 @@
 ﻿using NLua;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Internal;
-using System.Diagnostics;
 using System.IO;
 
 #nullable enable
@@ -72,6 +71,16 @@ namespace Slipstream.Backend.Plugins
             {
                 EventBus.PublishEvent(new Shared.Events.Utility.WriteToConsole() { Message = $"{Prefix}: {s}" });
             }
+
+            public void Say(string message, float volume)
+            {
+                EventBus.PublishEvent(new Shared.Events.Utility.Say() { Message = message, Volume = volume });
+            }
+
+            public void Play(string filename, float volume)
+            {
+                EventBus.PublishEvent(new Shared.Events.Utility.PlayAudio() { Filename = filename, Volume = volume });
+            }
         }
 
         protected override void Main()
@@ -85,6 +94,9 @@ namespace Slipstream.Backend.Plugins
                 LuaFunction? handleFunc;
 
                 lua.RegisterFunction("print", api, typeof(LuaApi).GetMethod("Print", new[] { typeof(string) }));
+                lua.RegisterFunction("say", api, typeof(LuaApi).GetMethod("Say", new[] { typeof(string), typeof(float) }));
+                lua.RegisterFunction("play", api, typeof(LuaApi).GetMethod("Play", new[] { typeof(string), typeof(float) }));
+
                 var f = lua.LoadFile(FilePath);
 
                 f.Call();

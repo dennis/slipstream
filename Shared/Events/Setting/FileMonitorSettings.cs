@@ -1,6 +1,6 @@
 ﻿#nullable enable
 
-namespace Slipstream.Shared.Events.Internal
+namespace Slipstream.Shared.Events.Setting
 {
     public class FileMonitorSettings : IEvent
     {

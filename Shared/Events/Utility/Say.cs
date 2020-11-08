@@ -2,9 +2,10 @@
 
 namespace Slipstream.Shared.Events.Utility
 {
-    public class WriteToConsole : IEvent
+    public class Say : IEvent
     {
-        public string EventType => "WriteToConsole";
+        public string EventType => "Say";
         public string? Message { get; set; }
+        public float? Volume{ get; set; }
     }
 }

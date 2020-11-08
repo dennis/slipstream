@@ -68,6 +68,9 @@
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=3.1.9.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Extensions.DependencyInjection.Abstractions.3.1.9\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="NAudio, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\NAudio.1.10.0\lib\net35\NAudio.dll</HintPath>
+    </Reference>
     <Reference Include="NLua, Version=1.5.4.0, Culture=neutral, PublicKeyToken=6a194c04b9c89217, processorArchitecture=MSIL">
       <HintPath>packages\NLua.1.5.4\lib\net45\NLua.dll</HintPath>
     </Reference>
@@ -76,6 +79,7 @@
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
+    <Reference Include="System.Speech" />
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
@@ -94,6 +98,7 @@
     <Compile Include="Backend\EventBusSubscription.cs" />
     <Compile Include="Backend\IEngine.cs" />
     <Compile Include="Backend\PluginManager.cs" />
+    <Compile Include="Backend\Plugins\AudioPlugin.cs" />
     <Compile Include="Backend\Plugins\LuaPlugin.cs" />
     <Compile Include="Backend\Plugins\FileTriggerPlugin.cs" />
     <Compile Include="Backend\Plugins\FileMonitorPlugin.cs" />
@@ -103,13 +108,16 @@
     <Compile Include="Shared\Events\Internal\FileMonitorFileRenamed.cs" />
     <Compile Include="Shared\Events\Internal\FileMonitorFileCreated.cs" />
     <Compile Include="Shared\Events\Internal\LuaSettings.cs" />
-    <Compile Include="Shared\Events\Internal\FileMonitorSettings.cs" />
+    <Compile Include="Shared\Events\Setting\FileMonitorSettings.cs" />
     <Compile Include="Shared\Events\Internal\PluginUnregister.cs" />
     <Compile Include="Shared\Events\Internal\PluginsReady.cs" />
     <Compile Include="Shared\Events\Internal\PluginRegister.cs" />
     <Compile Include="Shared\Events\Internal\PluginEnable.cs" />
     <Compile Include="Shared\Events\Internal\PluginDisable.cs" />
     <Compile Include="Shared\Events\Internal\FrontendReady.cs" />
+    <Compile Include="Shared\Events\Setting\AudioSettings.cs" />
+    <Compile Include="Shared\Events\Utility\PlayAudio.cs" />
+    <Compile Include="Shared\Events\Utility\Say.cs" />
     <Compile Include="Shared\Events\Utility\WriteToConsole.cs" />
     <Compile Include="Shared\IEventBus.cs" />
     <Compile Include="Shared\IEventBusSubscription.cs" />

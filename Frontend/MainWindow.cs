@@ -16,6 +16,7 @@ namespace Slipstream.Frontend
         private readonly IEventBus EventBus;
         private IEventBusSubscription? EventBusSubscription;
         private readonly string ScriptsPath;
+        private readonly string AudioPath;
         private readonly BlockingCollection<string> PendingMessages = new BlockingCollection<string>();
         private readonly IDictionary<Guid, ToolStripMenuItem> MenuPluginItems = new Dictionary<Guid, ToolStripMenuItem>();
 
@@ -27,6 +28,9 @@ namespace Slipstream.Frontend
 
             ScriptsPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $@"\Slipstream\Scripts\";
             System.IO.Directory.CreateDirectory(ScriptsPath);
+
+            AudioPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $@"\Slipstream\Audio\";
+            System.IO.Directory.CreateDirectory(AudioPath);
 
             Load += MainWindow_Load;
             FormClosing += MainWindow_FormClosing;
@@ -49,8 +53,9 @@ namespace Slipstream.Frontend
 
             // Plugins..
             EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { PluginName = "DebugOutputPlugin", Enabled = true });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { PluginName = "FileMonitorPlugin", Enabled = true, Settings = new Shared.Events.Internal.FileMonitorSettings { Paths = new string[] { ScriptsPath } } });
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { PluginName = "FileMonitorPlugin", Enabled = true, Settings = new Shared.Events.Setting.FileMonitorSettings { Paths = new string[] { ScriptsPath } } });
             EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { PluginName = "FileTriggerPlugin", Enabled = true });
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { PluginName = "AudioPlugin", Enabled = true, Settings = new Shared.Events.Setting.AudioSettings { Path = AudioPath }});
 
             // Tell backend that we're ready
             EventBus.PublishEvent(new Shared.Events.Internal.FrontendReady());
@@ -132,10 +137,13 @@ namespace Slipstream.Frontend
                     break;
                 case Shared.Events.Internal.PluginStatus.Unregistered:
                     {
-                        var item = MenuPluginItems[e.Id];
-                        MenuPluginItems.Remove(e.Id);
+                        if(MenuPluginItems.ContainsKey(e.Id))
+                        {
+                            var item = MenuPluginItems[e.Id];
+                            MenuPluginItems.Remove(e.Id);
 
-                        ExecuteSecure(() => PluginsToolStripMenuItem.DropDownItems.Remove(item));
+                            ExecuteSecure(() => PluginsToolStripMenuItem.DropDownItems.Remove(item));
+                        }
                     }
                     break;
                 case Shared.Events.Internal.PluginStatus.Enabled:
@@ -179,6 +187,11 @@ namespace Slipstream.Frontend
         private void OpenScriptsDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Process.Start(ScriptsPath);
+        }
+
+        private void OpenAudioDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start(AudioPath);
         }
     }
 }

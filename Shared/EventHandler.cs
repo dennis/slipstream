@@ -53,13 +53,25 @@ namespace Slipstream.Shared
         public delegate void OnInternalPluginsReadyHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginsReady> e);
         public event OnInternalPluginsReadyHandler? OnInternalPluginsReady;
 
-        public delegate void OnInternalFileMonitorSettingsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FileMonitorSettings> e);
-        public event OnInternalFileMonitorSettingsHandler? OnInternalFileMonitorSettings;
         #endregion
 
         #region Events: Utility
         public delegate void OnUtilityWriteToConsoleHandler(EventHandler source, EventHandlerArgs<Shared.Events.Utility.WriteToConsole> e);
         public event OnUtilityWriteToConsoleHandler? OnUtilityWriteToConsole;
+
+        public delegate void OnUtilitySayHandler(EventHandler source, EventHandlerArgs<Shared.Events.Utility.Say> e);
+        public event OnUtilitySayHandler? OnUtilitySay;
+
+        public delegate void OnPlayAudioHandler(EventHandler source, EventHandlerArgs<Shared.Events.Utility.PlayAudio> e);
+        public event OnPlayAudioHandler? OnPlayAudio;
+        #endregion
+
+        #region Events: Setting
+        public delegate void OnSettingFileMonitorSettingsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Setting.FileMonitorSettings> e);
+        public event OnSettingFileMonitorSettingsHandler? OnSettingFileMonitorSettings;
+
+        public delegate void OnSettingAudioSettingsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Setting.AudioSettings> e);
+        public event OnSettingAudioSettingsHandler? OnSettingAudioSettings;
         #endregion
 
         public void HandleEvent(IEvent? ev)
@@ -138,12 +150,6 @@ namespace Slipstream.Shared
                     else
                         OnInternalPluginsReady.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginsReady>(tev));
                     break;
-                case Shared.Events.Internal.FileMonitorSettings tev:
-                    if (OnInternalFileMonitorSettings == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalFileMonitorSettings.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FileMonitorSettings>(tev));
-                    break;
 
                 // Utility
 
@@ -152,6 +158,36 @@ namespace Slipstream.Shared
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnUtilityWriteToConsole.Invoke(this, new EventHandlerArgs<Shared.Events.Utility.WriteToConsole>(tev));
+                    break;
+
+                case Shared.Events.Utility.Say tev:
+                    if (OnUtilitySay == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnUtilitySay.Invoke(this, new EventHandlerArgs<Shared.Events.Utility.Say>(tev));
+                    break;
+
+                case Shared.Events.Utility.PlayAudio tev:
+                    if (OnPlayAudio == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnPlayAudio.Invoke(this, new EventHandlerArgs<Shared.Events.Utility.PlayAudio>(tev));
+                    break;
+
+                // Setting
+
+                case Shared.Events.Setting.FileMonitorSettings tev:
+                    if (OnSettingFileMonitorSettings == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnSettingFileMonitorSettings.Invoke(this, new EventHandlerArgs<Shared.Events.Setting.FileMonitorSettings>(tev));
+                    break;
+
+                case Shared.Events.Setting.AudioSettings tev:
+                    if (OnSettingAudioSettings == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnSettingAudioSettings.Invoke(this, new EventHandlerArgs<Shared.Events.Setting.AudioSettings>(tev));
                     break;
 
                 default:

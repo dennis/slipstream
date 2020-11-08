@@ -7,12 +7,13 @@ using System.IO;
 
 namespace Slipstream.Backend.Plugins
 {
-    class LuaPlugin : Worker, IPlugin
+    class LuaPlugin : IPlugin
     {
-        public System.Guid Id { get; set; }
+        public string Id { get; set; }
         public string Name => "LuaPlugin";
         public string DisplayName { get; }
         public bool Enabled { get; internal set; }
+        public string WorkerName => "Lua";
 
         private IEventBusSubscription? Subscription;
         private readonly string FilePath;
@@ -23,18 +24,17 @@ namespace Slipstream.Backend.Plugins
         private readonly EventHandler EventHandler = new EventHandler();
         private readonly LuaApi Api;
 
-
-        public LuaPlugin(IEvent settings, IEventBus eventBus)
+        public LuaPlugin(string id, IEvent settings, IEventBus eventBus)
         {
+            Id = id;
             if (!(settings is LuaSettings typedSettings))
                 throw new System.Exception($"Unexpected event as Exception {settings}");
-            if(typedSettings == null)
+            if (typedSettings == null)
                 throw new System.Exception($"Unexpected settings was null");
 
 #pragma warning disable CS8601 // Possible null reference assignment.
             FilePath = typedSettings.FilePath;
 #pragma warning restore CS8601 // Possible null reference assignment.
-            Id = System.Guid.NewGuid();
             DisplayName = $"Lua: {Path.GetFileName(FilePath)}";
             EventBus = eventBus;
 
@@ -51,7 +51,7 @@ namespace Slipstream.Backend.Plugins
                 f.Call();
 
                 HandleFunc = Lua["handle"] as LuaFunction;
-                
+
                 // Avoid that WriteToConsole is evaluated by Lua, that in turn will 
                 // add more WriteToConsole events, making a endless loop
                 EventHandler.OnUtilityWriteToConsole += (s, e) => { };
@@ -79,12 +79,10 @@ namespace Slipstream.Backend.Plugins
 
         public void RegisterPlugin(IEngine engine)
         {
-            Start();
         }
 
         public void UnregisterPlugin(IEngine engine)
         {
-            Stop();
         }
 
         class LuaApi
@@ -115,7 +113,7 @@ namespace Slipstream.Backend.Plugins
         }
 
 
-        override protected void Loop()
+        public void Loop()
         {
             try
             {

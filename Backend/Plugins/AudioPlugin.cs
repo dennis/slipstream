@@ -11,12 +11,13 @@ using System.Threading;
 
 namespace Slipstream.Backend.Plugins
 {
-    class AudioPlugin : Worker, IPlugin
+    class AudioPlugin : IPlugin
     {
-        public Guid Id { get; set; }
+        public string Id { get; }
         public string Name => "AudioPlugin";
         public string DisplayName => Name;
         public bool Enabled { get; internal set; }
+        public string WorkerName => "Core";
 
         private readonly IEventBus EventBus;
         private IEventBusSubscription? Subscription;
@@ -24,9 +25,9 @@ namespace Slipstream.Backend.Plugins
         private readonly SpeechSynthesizer Synthesizer;
         private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
 
-        public AudioPlugin(IEvent settings, IEventBus eventBus)
+        public AudioPlugin(string id, IEvent settings, IEventBus eventBus)
         {
-            Id = Guid.Parse("ee6c135a-9b61-4674-8f5b-9f61ecd15f2c");
+            Id = id;
             EventBus = eventBus;
 
             if (settings is AudioSettings typedSettings)
@@ -59,17 +60,15 @@ namespace Slipstream.Backend.Plugins
         public void RegisterPlugin(IEngine engine)
         {
             Subscription = engine.RegisterListener();
-            Start();
         }
 
         public void UnregisterPlugin(IEngine engine)
         {
             Subscription?.Dispose();
             Subscription = null;
-            Stop();
         }
 
-        protected override void Loop()
+        public void Loop()
         {
             var e = Subscription?.NextEvent(100);
 

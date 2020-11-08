@@ -1,19 +1,23 @@
 ﻿using Slipstream.Shared;
-using System;
 using System.Diagnostics;
 
 #nullable enable
 
 namespace Slipstream.Backend.Plugins
 {
-    class DebugOutputPlugin : Worker, IPlugin
+    class DebugOutputPlugin : IPlugin
     {
-        public Guid Id { get; set; }
+        public string Id { get; }
         public string Name => "DebugOutputPlugin";
         public string DisplayName => Name;
-
         public bool Enabled { get; internal set; }
+        public string WorkerName => "Core";
         private IEventBusSubscription? EventBusSubscription;
+
+        public DebugOutputPlugin(string id)
+        {
+            Id = id;
+        }
 
         public void Disable(IEngine engine)
         {
@@ -28,19 +32,15 @@ namespace Slipstream.Backend.Plugins
         public void RegisterPlugin(IEngine engine)
         {
             EventBusSubscription = engine.RegisterListener();
-
-            Start();
         }
 
         public void UnregisterPlugin(IEngine engine)
         {
             EventBusSubscription?.Dispose();
             EventBusSubscription = null;
-
-            Stop();
         }
 
-        protected override void Loop()
+        public void Loop()
         {
             var e = EventBusSubscription?.NextEvent(250);
             if (Enabled && e != null)

@@ -18,7 +18,7 @@ namespace Slipstream.Frontend
         private readonly string ScriptsPath;
         private readonly string AudioPath;
         private readonly BlockingCollection<string> PendingMessages = new BlockingCollection<string>();
-        private readonly IDictionary<Guid, ToolStripMenuItem> MenuPluginItems = new Dictionary<Guid, ToolStripMenuItem>();
+        private readonly IDictionary<string, ToolStripMenuItem> MenuPluginItems = new Dictionary<string, ToolStripMenuItem>();
 
         public MainWindow(IEventBus eventBus)
         {
@@ -52,10 +52,10 @@ namespace Slipstream.Frontend
             EventHandlerThread.Start();
 
             // Plugins..
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { PluginName = "DebugOutputPlugin", Enabled = true });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { PluginName = "FileMonitorPlugin", Enabled = true, Settings = new Shared.Events.Setting.FileMonitorSettings { Paths = new string[] { ScriptsPath } } });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { PluginName = "FileTriggerPlugin", Enabled = true });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { PluginName = "AudioPlugin", Enabled = true, Settings = new Shared.Events.Setting.AudioSettings { Path = AudioPath }});
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "DebugOutputPlugin", PluginName = "DebugOutputPlugin", Enabled = true });
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "FileMonitorPlugin", PluginName = "FileMonitorPlugin", Enabled = true, Settings = new Shared.Events.Setting.FileMonitorSettings { Paths = new string[] { ScriptsPath } } });
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "FileTriggerPlugin", PluginName = "FileTriggerPlugin", Enabled = true });
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "AudioPlugin", PluginName = "AudioPlugin", Enabled = true, Settings = new Shared.Events.Setting.AudioSettings { Path = AudioPath } });
 
             // Tell backend that we're ready
             EventBus.PublishEvent(new Shared.Events.Internal.FrontendReady());
@@ -137,7 +137,7 @@ namespace Slipstream.Frontend
                     break;
                 case Shared.Events.Internal.PluginStatus.Unregistered:
                     {
-                        if(MenuPluginItems.ContainsKey(e.Id))
+                        if (MenuPluginItems.ContainsKey(e.Id))
                         {
                             var item = MenuPluginItems[e.Id];
                             MenuPluginItems.Remove(e.Id);
@@ -170,11 +170,11 @@ namespace Slipstream.Frontend
 
             if (item.CheckState == CheckState.Checked)
             {
-                EventBus.PublishEvent(new Shared.Events.Internal.PluginDisable() { Id = Guid.Parse(item.Name) });
+                EventBus.PublishEvent(new Shared.Events.Internal.PluginDisable() { Id = item.Name });
             }
             else
             {
-                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = Guid.Parse(item.Name) });
+                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = item.Name });
             }
         }
         #endregion

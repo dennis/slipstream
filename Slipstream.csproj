@@ -102,6 +102,7 @@
     <Compile Include="Backend\Plugins\LuaPlugin.cs" />
     <Compile Include="Backend\Plugins\FileTriggerPlugin.cs" />
     <Compile Include="Backend\Plugins\FileMonitorPlugin.cs" />
+    <Compile Include="Backend\PluginWorker.cs" />
     <Compile Include="Shared\EventHandler.cs" />
     <Compile Include="Shared\Events\Internal\FileMonitorFileChanged.cs" />
     <Compile Include="Shared\Events\Internal\FileMonitorFileDeleted.cs" />

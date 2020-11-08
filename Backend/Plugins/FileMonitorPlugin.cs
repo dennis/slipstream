@@ -9,21 +9,21 @@ using System.IO;
 
 namespace Slipstream.Backend.Plugins
 {
-    class FileMonitorPlugin : Worker, IPlugin
+    class FileMonitorPlugin : IPlugin
     {
-        public System.Guid Id { get; set; }
+        public string Id { get; }
         public string Name => "FileMonitorPlugin";
         public string DisplayName => Name;
-
         public bool Enabled { get; internal set; }
+        public string WorkerName => "Core";
         private IEventBusSubscription? EventBusSubscription;
         private readonly IEventBus EventBus;
         private readonly IList<FileSystemWatcher> fileSystemWatchers = new List<FileSystemWatcher>();
         private readonly EventHandler EventHandler = new EventHandler();
 
-        public FileMonitorPlugin(IEvent settings, IEventBus eventBus)
+        public FileMonitorPlugin(string id, IEvent settings, IEventBus eventBus)
         {
-            Id = System.Guid.NewGuid();
+            Id = id;
             this.EventBus = eventBus;
 
             if (settings is FileMonitorSettings typedSettings)
@@ -58,19 +58,15 @@ namespace Slipstream.Backend.Plugins
         public void RegisterPlugin(IEngine engine)
         {
             EventBusSubscription = engine.RegisterListener();
-
-            Start();
         }
 
         public void UnregisterPlugin(IEngine engine)
         {
             EventBusSubscription?.Dispose();
             EventBusSubscription = null;
-
-            Stop();
         }
 
-        protected override void Loop()
+        public void Loop()
         {
             var e = EventBusSubscription?.NextEvent(100);
 

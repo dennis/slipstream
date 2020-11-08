@@ -1,6 +1,4 @@
-﻿using Slipstream.Backend;
-
-namespace Slipstream.Shared
+﻿namespace Slipstream.Shared
 {
     public interface IEventBus : IEventProducer
     {

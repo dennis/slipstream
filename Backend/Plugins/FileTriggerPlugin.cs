@@ -1,5 +1,4 @@
 ﻿using Slipstream.Shared;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -9,21 +8,21 @@ using EventHandler = Slipstream.Shared.EventHandler;
 
 namespace Slipstream.Backend.Plugins
 {
-    class FileTriggerPlugin : Worker, IPlugin
+    class FileTriggerPlugin : IPlugin
     {
-        public System.Guid Id { get; set; }
+        public string Id { get; }
         public string Name => "FileTriggerPlugin";
         public string DisplayName => Name;
-
         public bool Enabled { get; internal set; }
+        public string WorkerName => "Core";
         private IEventBusSubscription? EventBusSubscription;
         private readonly IEventBus EventBus;
-        private readonly IDictionary<string, Guid> Scripts = new Dictionary<string, Guid>();
+        private readonly IDictionary<string, string> Scripts = new Dictionary<string, string>();
         private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
 
-        public FileTriggerPlugin(IEventBus eventBus)
+        public FileTriggerPlugin(string id, IEventBus eventBus)
         {
-            this.Id = Guid.NewGuid();
+            Id = id;
             this.EventBus = eventBus;
 
             EventHandler.OnInternalFileMonitorFileCreated += EventHandler_OnInternalFileMonitorFileCreated;
@@ -45,19 +44,15 @@ namespace Slipstream.Backend.Plugins
         public void RegisterPlugin(IEngine engine)
         {
             EventBusSubscription = engine.RegisterListener();
-
-            Start();
         }
 
         public void UnregisterPlugin(IEngine engine)
         {
             EventBusSubscription?.Dispose();
             EventBusSubscription = null;
-
-            Stop();
         }
 
-        protected override void Loop()
+        public void Loop()
         {
             var e = EventBusSubscription?.NextEvent(250);
 
@@ -73,7 +68,7 @@ namespace Slipstream.Backend.Plugins
 
             string pluginName = "LuaPlugin";
 
-            var ev = new Shared.Events.Internal.PluginRegister() { PluginName = pluginName, Enabled = true, Settings = new Slipstream.Shared.Events.Internal.LuaSettings() { FilePath = filePath } };
+            var ev = new Shared.Events.Internal.PluginRegister() { Id = filePath, PluginName = pluginName, Enabled = true, Settings = new Slipstream.Shared.Events.Internal.LuaSettings() { FilePath = filePath } };
 
             EventBus.PublishEvent(ev);
 

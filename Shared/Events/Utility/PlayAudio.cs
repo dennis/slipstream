@@ -6,6 +6,6 @@ namespace Slipstream.Shared.Events.Utility
     {
         public string EventType => "PlayAudio";
         public string? Filename { get; set; }
-        public float? Volume{ get; set; }
+        public float? Volume { get; set; }
     }
 }

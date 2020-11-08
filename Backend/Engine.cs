@@ -7,69 +7,52 @@ using System;
 
 namespace Slipstream.Backend
 {
-    class Engine : Worker, IEngine
+    class Engine : Worker, IEngine, IDisposable
     {
         private readonly IEventBus EventBus;
         private readonly PluginManager PluginManager;
+        private readonly IEventBusSubscription Subscription;
+        private bool FrontendReady = false;
 
-        public Engine(IEventBus eventBus)
+        // Before UI is ready:
+        private readonly Shared.EventHandler PreEventHandler = new Shared.EventHandler();
+
+        // After UI is ready
+        private readonly Shared.EventHandler PostEventHandler = new Shared.EventHandler();
+
+        public Engine(IEventBus eventBus) : base("engine")
         {
             EventBus = eventBus;
             PluginManager = new PluginManager(this, eventBus);
+
+            Subscription = EventBus.RegisterListener();
+
+            PreEventHandler.OnInternalFrontendReady += (s, e) => OnFrontendReady(e.Event);
+            PreEventHandler.OnInternalPluginRegister += (s, e) => OnPluginRegister(e.Event);
+            PreEventHandler.OnDefault += (s, e) => throw new System.Exception($"Unexpect message doring pre-boot: {e.Event.GetType()}");
+
+
+#pragma warning disable CS8604 // Possible null reference argument.
+            PostEventHandler.OnInternalPluginRegister += (s, e) => OnPluginRegister(e.Event);
+            PostEventHandler.OnInternalPluginUnregister += (s, e) => OnPluginUnregister(e.Event);
+            PostEventHandler.OnInternalPluginEnable += (s, e) => PluginManager.FindPluginAndExecute(e.Event.Id, (plugin) => PluginManager.EnablePlugin(plugin));
+            PostEventHandler.OnInternalPluginDisable += (s, e) => PluginManager.FindPluginAndExecute(e.Event.Id, (plugin) => PluginManager.DisablePlugin(plugin));
+#pragma warning restore CS8604 // Possible null reference argument.
+
+        }
+
+        private void OnFrontendReady(FrontendReady _)
+        {
+            FrontendReady = true;
+
+            PluginManager.EnablePendingPlugins();
+
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginsReady());
         }
 
         public IEventBusSubscription RegisterListener()
         {
             return EventBus.RegisterListener();
-        }
-
-        override protected void Main()
-        {
-            // We need to wait for frontend to be ready, before starting our plugins.
-            // This is to avoid that we have plugins that are not shown in the log window
-            bool frontendReady = false;
-
-            var subscription = EventBus.RegisterListener();
-
-            Shared.EventHandler eventHandler = new Shared.EventHandler();
-            eventHandler.OnInternalFrontendReady += (s, e) => frontendReady = true;
-            eventHandler.OnInternalPluginRegister += (s, e) => OnPluginRegister(e.Event);
-            eventHandler.OnDefault += (s, e) => throw new System.Exception($"Unexpect message doring pre-boot: {e.Event.GetType()}");
-
-            while (!frontendReady && !Stopped)
-            {
-                eventHandler.HandleEvent(subscription.NextEvent(200));
-            }
-
-            if (Stopped)
-            {
-                subscription.Dispose();
-                return;
-            }
-
-            // Frontend is ready, do our part
-
-            PluginManager.EnablePendingPlugins();
-
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginsReady());
-
-            eventHandler = new Shared.EventHandler();
-#pragma warning disable CS8604 // Possible null reference argument.
-            eventHandler.OnInternalPluginRegister += (s, e) => OnPluginRegister(e.Event);
-            eventHandler.OnInternalPluginUnregister += (s, e) => OnPluginUnregister(e.Event);
-            eventHandler.OnInternalPluginEnable += (s, e) => PluginManager.FindPluginAndExecute(e.Event.Id, (plugin) => PluginManager.EnablePlugin(plugin));
-            eventHandler.OnInternalPluginDisable += (s, e) => PluginManager.FindPluginAndExecute(e.Event.Id, (plugin) => PluginManager.DisablePlugin(plugin));
-#pragma warning restore CS8604 // Possible null reference argument.
-
-            while (!Stopped)
-            {
-                eventHandler.HandleEvent(subscription.NextEvent(500));
-            }
-
-            subscription.Dispose();
-
-            PluginManager.DisablePlugins();
-            PluginManager.UnregisterPlugins();
         }
 
         private void OnPluginUnregister(PluginUnregister ev)
@@ -87,32 +70,58 @@ namespace Slipstream.Backend
             switch (ev.PluginName)
             {
                 case "DebugOutputPlugin":
-                    PluginManager.InitializePlugin(new DebugOutputPlugin() { Id = ev.Id }, ev.Enabled != null && ev.Enabled == true);
+                    PluginManager.InitializePlugin(new DebugOutputPlugin(ev.Id), ev.Enabled);
                     break;
                 case "FileMonitorPlugin":
                     if (ev.Settings != null)
-                        PluginManager.InitializePlugin(new FileMonitorPlugin(ev.Settings, EventBus) { Id = ev.Id }, ev.Enabled != null && ev.Enabled == true);
+                        PluginManager.InitializePlugin(new FileMonitorPlugin(ev.Id, ev.Settings, EventBus), ev.Enabled);
                     else
                         throw new Exception($"Missing settings for plugin '{ev.PluginName}'");
                     break;
                 case "FileTriggerPlugin":
-                    PluginManager.InitializePlugin(new FileTriggerPlugin(EventBus) { Id = ev.Id }, ev.Enabled != null && ev.Enabled == true);
+                    PluginManager.InitializePlugin(new FileTriggerPlugin(ev.Id, EventBus), ev.Enabled);
                     break;
                 case "LuaPlugin":
                     if (ev.Settings != null)
-                        PluginManager.InitializePlugin(new LuaPlugin(ev.Settings, EventBus) { Id = ev.Id }, ev.Enabled != null && ev.Enabled == true);
+                        PluginManager.InitializePlugin(new LuaPlugin(ev.Id, ev.Settings, EventBus), ev.Enabled);
                     else
                         throw new Exception($"Missing settings for plugin '{ev.PluginName}'");
                     break;
                 case "AudioPlugin":
                     if (ev.Settings != null)
-                        PluginManager.InitializePlugin(new AudioPlugin(ev.Settings, EventBus) { Id = ev.Id }, ev.Enabled != null && ev.Enabled == true);
+                        PluginManager.InitializePlugin(new AudioPlugin(ev.Id, ev.Settings, EventBus), ev.Enabled);
                     else
                         throw new Exception($"Missing settings for plugin '{ev.PluginName}'");
                     break;
                 default:
                     throw new Exception($"Unknown plugin '{ev.PluginName}'");
             }
+        }
+
+        protected override void Main()
+        {
+            while (!Stopped)
+            {
+                if (!FrontendReady)
+                {
+                    // We need to wait for frontend to be ready, before starting our plugins.
+                    // This is to avoid that we have plugins that are not shown in the log window
+
+                    PreEventHandler.HandleEvent(Subscription.NextEvent(200));
+                }
+                else
+                {
+                    // Frontend is ready, do our part
+
+                    PostEventHandler.HandleEvent(Subscription.NextEvent(200));
+                }
+            }
+        }
+
+        public new void Dispose()
+        {
+            PluginManager.Dispose();
+            base.Dispose();
         }
     }
 }

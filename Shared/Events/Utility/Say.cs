@@ -6,6 +6,6 @@ namespace Slipstream.Shared.Events.Utility
     {
         public string EventType => "Say";
         public string? Message { get; set; }
-        public float? Volume{ get; set; }
+        public float? Volume { get; set; }
     }
 }

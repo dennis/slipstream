@@ -7,7 +7,6 @@ namespace Slipstream.Backend
         IEventBusSubscription RegisterListener();
         void UnregisterSubscription(IEventBusSubscription subscription);
         void Start();
-        void Stop();
         void Dispose();
     }
 }

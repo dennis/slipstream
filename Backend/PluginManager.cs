@@ -11,7 +11,8 @@ namespace Slipstream.Backend
     {
         private readonly IEngine Engine;
         private readonly IEventBus EventBus;
-        private readonly IDictionary<Guid, IPlugin> Plugins = new Dictionary<Guid, IPlugin>();
+        private readonly IDictionary<string, IPlugin> Plugins = new Dictionary<string, IPlugin>();
+        private readonly IDictionary<string, PluginWorker> PluginWorkers = new Dictionary<string, PluginWorker>();
         private readonly IList<IPlugin> PendingPluginsForEnable = new List<IPlugin>();
         private bool DisablePendingEnable;
 
@@ -23,33 +24,58 @@ namespace Slipstream.Backend
 
         public void UnregisterPlugins()
         {
-            foreach (var p in Plugins)
+            lock (Plugins)
             {
-                UnregisterPlugin(p.Value);
+                foreach (var p in Plugins)
+                {
+                    UnregisterPlugin(p.Value);
+                }
+                Plugins.Clear();
             }
         }
 
         private void UnregisterPlugin(IPlugin p)
         {
             p.UnregisterPlugin(Engine);
-            EmitePluginStateChanged(p, Shared.Events.Internal.PluginStatus.Unregistered);
+            PluginWorkers[p.WorkerName].RemovePlugin(p);
+            EmitPluginStateChanged(p, Shared.Events.Internal.PluginStatus.Unregistered);
         }
 
-        private void EmitePluginStateChanged(IPlugin plugin, Shared.Events.Internal.PluginStatus status)
+        private void EmitPluginStateChanged(IPlugin plugin, Shared.Events.Internal.PluginStatus status)
         {
             EventBus.PublishEvent(new Shared.Events.Internal.PluginStateChanged() { Id = plugin.Id, PluginName = plugin.Name, PluginStatus = status, DisplayName = plugin.DisplayName });
         }
 
-        public void RegisterPlugin(IPlugin p)
+        public void RegisterPlugin(IPlugin plugin)
         {
-            p.RegisterPlugin(Engine);
-            EmitePluginStateChanged(p, Shared.Events.Internal.PluginStatus.Registered);
+            lock (Plugins)
+            {
+                PluginWorker? worker;
+
+                if (PluginWorkers.ContainsKey(plugin.WorkerName))
+                {
+                    worker = PluginWorkers[plugin.WorkerName];
+                }
+                else
+                {
+                    worker = new PluginWorker(plugin.WorkerName);
+                    worker.Start();
+                    PluginWorkers.Add(worker.Name, worker);
+                }
+
+                worker.AddPlugin(plugin);
+
+                plugin.RegisterPlugin(Engine);
+                Plugins.Add(plugin.Id, plugin);
+
+                EmitPluginStateChanged(plugin, Shared.Events.Internal.PluginStatus.Registered);
+            }
         }
 
         public void EnablePlugin(IPlugin p)
         {
             p.Enable(Engine);
-            EmitePluginStateChanged(p, Shared.Events.Internal.PluginStatus.Enabled);
+            EmitPluginStateChanged(p, Shared.Events.Internal.PluginStatus.Enabled);
         }
 
         public void DisablePlugins()
@@ -73,14 +99,15 @@ namespace Slipstream.Backend
         public void DisablePlugin(IPlugin p)
         {
             p.Disable(Engine);
-            EmitePluginStateChanged(p, Shared.Events.Internal.PluginStatus.Disabled);
+            EmitPluginStateChanged(p, Shared.Events.Internal.PluginStatus.Disabled);
         }
 
         public void InitializePlugin(IPlugin plugin, bool enabled)
         {
+            Debug.WriteLine($"Plugin {plugin.Name} wants WorkerName {plugin.WorkerName}");
 
-            Plugins.Add(plugin.Id, plugin);
             RegisterPlugin(plugin);
+
             if (enabled)
             {
                 if (DisablePendingEnable)
@@ -90,7 +117,7 @@ namespace Slipstream.Backend
             }
         }
 
-        public void FindPluginAndExecute(Guid pluginId, Action<IPlugin> a)
+        public void FindPluginAndExecute(string pluginId, Action<IPlugin> a)
         {
             if (Plugins.TryGetValue(pluginId, out IPlugin plugin))
             {
@@ -102,9 +129,27 @@ namespace Slipstream.Backend
             }
         }
 
-        public void UnregisterPlugin(Guid id)
+        public void UnregisterPlugin(string id)
         {
-            UnregisterPlugin(Plugins[id]);
+            lock (Plugins)
+            {
+                if (Plugins.ContainsKey(id))
+                {
+                    UnregisterPlugin(Plugins[id]);
+                    Plugins.Remove(id);
+                }
+            }
+        }
+
+        internal void Dispose()
+        {
+            DisablePlugins();
+            UnregisterPlugins();
+            Plugins.Clear();
+            foreach (var worker in PluginWorkers)
+            {
+                worker.Value.Dispose();
+            }
         }
     }
 }

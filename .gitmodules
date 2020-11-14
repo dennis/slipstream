@@ -1,0 +1,3 @@
+[submodule "iRacingSDK.Net"]
+	path = iRacingSDK.Net
+	url = https://github.com/MerlinCooper/iRacingSDK.Net.git

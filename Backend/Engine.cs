@@ -93,6 +93,9 @@ namespace Slipstream.Backend
                     else
                         throw new Exception($"Missing settings for plugin '{ev.PluginName}'");
                     break;
+                case "IRacingPlugin":
+                    PluginManager.InitializePlugin(new IRacingPlugin(ev.Id, EventBus), ev.Enabled);
+                    break;
                 default:
                     throw new Exception($"Unknown plugin '{ev.PluginName}'");
             }

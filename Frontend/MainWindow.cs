@@ -56,7 +56,8 @@ namespace Slipstream.Frontend
             EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "FileMonitorPlugin", PluginName = "FileMonitorPlugin", Enabled = true, Settings = new Shared.Events.Setting.FileMonitorSettings { Paths = new string[] { ScriptsPath } } });
             EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "FileTriggerPlugin", PluginName = "FileTriggerPlugin", Enabled = true });
             EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "AudioPlugin", PluginName = "AudioPlugin", Enabled = true, Settings = new Shared.Events.Setting.AudioSettings { Path = AudioPath } });
-
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "IRacingPlugin", PluginName = "IRacingPlugin", Enabled = true });
+            
             // Tell backend that we're ready
             EventBus.PublishEvent(new Shared.Events.Internal.FrontendReady());
         }

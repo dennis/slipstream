@@ -74,6 +74,41 @@ namespace Slipstream.Shared
         public event OnSettingAudioSettingsHandler? OnSettingAudioSettings;
         #endregion
 
+        #region Events: IRacing
+        public delegate void OnIRacingConnectedHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingConnected> e);
+        public event OnIRacingConnectedHandler? OnIRacingConnected;
+
+        public delegate void OnIRacingDisconnectedHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingDisconnected> e);
+        public event OnIRacingDisconnectedHandler? OnIRacingDisconnected;
+
+        public delegate void OnIRacingTrackInfoHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingTrackInfo> e);
+        public event OnIRacingTrackInfoHandler? OnIRacingTrackInfo;
+
+        public delegate void OnIRacingWeatherInfoHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingWeatherInfo> e);
+        public event OnIRacingWeatherInfoHandler? OnIRacingWeatherInfo;
+
+        public delegate void OnIRacingCurrentSessionHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCurrentSession> e);
+        public event OnIRacingCurrentSessionHandler? OnIRacingCurrentSession;
+
+        public delegate void OnIRacingCarInfoHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCarInfo> e);
+        public event OnIRacingCarInfoHandler? OnIRacingCarInfo;
+
+        public delegate void OnIRacingRaceFlagsHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingRaceFlags> e);
+        public event OnIRacingRaceFlagsHandler? OnIRacingRaceFlags;
+
+        public delegate void OnIRacingSessionStateHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingSessionState> e);
+        public event OnIRacingSessionStateHandler? OnIRacingSessionState;
+
+        public delegate void OnIRacingCarCompletedLapHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCarCompletedLap> e);
+        public event OnIRacingCarCompletedLapHandler? OnIRacingCarCompletedLap;
+
+        public delegate void OnIRacingPitEnterHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingPitEnter> e);
+        public event OnIRacingPitEnterHandler? OnIRacingPitEnter;
+
+        public delegate void OnIRacingPitExitHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingPitExit> e);
+        public event OnIRacingPitExitHandler? OnIRacingPitExit;
+        #endregion
+
         public void HandleEvent(IEvent? ev)
         {
             switch (ev)
@@ -188,6 +223,85 @@ namespace Slipstream.Shared
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnSettingAudioSettings.Invoke(this, new EventHandlerArgs<Shared.Events.Setting.AudioSettings>(tev));
+                    break;
+
+                // IRacing
+
+                case Shared.Events.IRacing.IRacingConnected tev:
+                    if (OnIRacingConnected == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingConnected.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingConnected>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingDisconnected tev:
+                    if (OnIRacingDisconnected == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingDisconnected.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingDisconnected>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingTrackInfo tev:
+                    if (OnIRacingTrackInfo == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingTrackInfo.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingTrackInfo>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingWeatherInfo tev:
+                    if (OnIRacingWeatherInfo == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingWeatherInfo.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingWeatherInfo>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingCurrentSession tev:
+                    if (OnIRacingCurrentSession == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingCurrentSession.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCurrentSession>(tev));
+                    break;
+                    
+                case Shared.Events.IRacing.IRacingCarInfo tev:
+                    if (OnIRacingCarInfo == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingCarInfo.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCarInfo>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingRaceFlags tev:
+                    if (OnIRacingRaceFlags == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingRaceFlags.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingRaceFlags>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingSessionState tev:
+                    if (OnIRacingSessionState == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingSessionState.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingSessionState>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingCarCompletedLap tev:
+                    if (OnIRacingCarCompletedLap == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingCarCompletedLap.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCarCompletedLap>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingPitEnter tev:
+                    if (OnIRacingPitEnter == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingPitEnter.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingPitEnter>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingPitExit tev:
+                    if (OnIRacingPitExit == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingPitExit.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingPitExit>(tev));
                     break;
 
                 default:

@@ -1,7 +1,11 @@
 ﻿using NLua;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Internal;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using EventHandler = Slipstream.Shared.EventHandler;
 
 #nullable enable
 
@@ -45,7 +49,8 @@ namespace Slipstream.Backend.Plugins
                 Lua.RegisterFunction("print", Api, typeof(LuaApi).GetMethod("Print", new[] { typeof(string) }));
                 Lua.RegisterFunction("say", Api, typeof(LuaApi).GetMethod("Say", new[] { typeof(string), typeof(float) }));
                 Lua.RegisterFunction("play", Api, typeof(LuaApi).GetMethod("Play", new[] { typeof(string), typeof(float) }));
-
+                Lua.RegisterFunction("debounce", Api, typeof(LuaApi).GetMethod("Debounce", new[] { typeof(string), typeof(LuaFunction), typeof(float) }));
+                
                 var f = Lua.LoadFile(FilePath);
 
                 f.Call();
@@ -89,6 +94,18 @@ namespace Slipstream.Backend.Plugins
         {
             private readonly IEventBus EventBus;
             private readonly string Prefix;
+            private readonly IDictionary<string, DebounceInfo> DebouncedFunctions = new Dictionary<string, DebounceInfo>();
+            private class DebounceInfo
+            {
+                public LuaFunction Function;
+                public DateTime TriggersAt;
+
+                public DebounceInfo(LuaFunction luaFunction, DateTime triggersAt)
+                {
+                    Function = luaFunction;
+                    TriggersAt = triggersAt;
+                }
+            }
 
             public LuaApi(IEventBus eventBus, string prefix)
             {
@@ -110,8 +127,33 @@ namespace Slipstream.Backend.Plugins
             {
                 EventBus.PublishEvent(new Shared.Events.Utility.PlayAudio() { Filename = filename, Volume = volume });
             }
-        }
 
+            public void Debounce(string name, LuaFunction func, float debounceLength)
+            {
+                Debug.WriteLine($"Debounce!  {func.GetHashCode()}");
+                DebouncedFunctions[name] = new DebounceInfo(func, DateTime.Now.AddSeconds(debounceLength));
+            }
+
+            public void Loop()
+            {
+                string? deleteKey = null;
+
+                foreach(var d in DebouncedFunctions)
+                {
+                    if(d.Value.TriggersAt < DateTime.Now)
+                    {
+                        d.Value.Function.Call();
+                        deleteKey = d.Key;
+                        break;
+                    }
+                }
+
+                if (deleteKey != null)
+                {
+                    DebouncedFunctions.Remove(deleteKey);
+                }
+            }
+        }
 
         public void Loop()
         {
@@ -121,6 +163,8 @@ namespace Slipstream.Backend.Plugins
 
                 if (Enabled)
                     EventHandler.HandleEvent(e);
+
+                Api.Loop();
             }
             catch (NLua.Exceptions.LuaScriptException e)
             {

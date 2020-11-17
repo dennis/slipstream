@@ -55,7 +55,8 @@ namespace Slipstream.Backend.Plugins
             public double LastLapTime { get; set; }
             public float FuelLevelLastLap { get; set; }
             public IRacingCarInfo CarInfo { get; set; } = new IRacingCarInfo();
-            public int ObservedCrossFinishingLine { get; internal set; }
+            public int ObservedCrossFinishingLine { get; set; }
+            public double? PitEnteredAt { get; set; }
         }
 
         private readonly IDictionary<long, CarState> CarsTracked = new Dictionary<long, CarState>();
@@ -172,10 +173,17 @@ namespace Slipstream.Backend.Plugins
                     if (onPitRoad)
                     {
                         EventBus.PublishEvent(new IRacingPitEnter { CarIdx = i, LocalUser = localUser, SessionTime = now });
+                        carState.PitEnteredAt = data.Telemetry.SessionTime;
                     }
                     else
                     {
-                        EventBus.PublishEvent(new IRacingPitExit { CarIdx = i, LocalUser = localUser, SessionTime = now });
+                        double? duration = null;
+
+                        if (carState.PitEnteredAt != null)
+                            duration = data.Telemetry.SessionTime - carState.PitEnteredAt;
+
+                        EventBus.PublishEvent(new IRacingPitExit { CarIdx = i, LocalUser = localUser, SessionTime = now, Duration = duration });
+                        carState.PitEnteredAt = null;
                     }
 
                     carState.LastOnPitRoad = onPitRoad;

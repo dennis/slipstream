@@ -1,4 +1,6 @@
-﻿namespace Slipstream.Shared.Events.IRacing
+﻿#nullable enable
+
+namespace Slipstream.Shared.Events.IRacing
 {
     public class IRacingPitExit : IEvent
     {
@@ -6,5 +8,6 @@
         public double SessionTime { get; set; }
         public long CarIdx { get; set; }
         public bool LocalUser { get; set; }
+        public double? Duration { get; set; }
     }
 }

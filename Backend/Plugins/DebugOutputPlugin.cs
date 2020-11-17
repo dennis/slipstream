@@ -42,7 +42,7 @@ namespace Slipstream.Backend.Plugins
         private void EventHandler_OnIRacingPitExit(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.IRacing.IRacingPitExit> e)
         {
             var ev = e.Event;
-            Debug.WriteLine($"$$ {ev} SessionTime={ev.SessionTime}, LocalUser={ev.LocalUser}, CarIdx={ev.CarIdx}");
+            Debug.WriteLine($"$$ {ev} SessionTime={ev.SessionTime}, LocalUser={ev.LocalUser}, CarIdx={ev.CarIdx}, Duration={ev.Duration}");
         }
 
         private void EventHandler_OnIRacingPitEnter(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.IRacing.IRacingPitEnter> e)

@@ -107,6 +107,10 @@ namespace Slipstream.Shared
 
         public delegate void OnIRacingPitExitHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingPitExit> e);
         public event OnIRacingPitExitHandler? OnIRacingPitExit;
+
+        public delegate void OnIRacingCarStatusHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCarStatus> e);
+        public event OnIRacingCarStatusHandler? OnIRacingCarStatus;
+        
         #endregion
 
         public void HandleEvent(IEvent? ev)
@@ -302,6 +306,13 @@ namespace Slipstream.Shared
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnIRacingPitExit.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingPitExit>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingCarStatus tev:
+                    if (OnIRacingCarStatus == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingCarStatus.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCarStatus>(tev));
                     break;
 
                 default:

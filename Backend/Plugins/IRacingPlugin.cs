@@ -174,6 +174,27 @@ namespace Slipstream.Backend.Plugins
                     {
                         EventBus.PublishEvent(new IRacingPitEnter { CarIdx = i, LocalUser = localUser, SessionTime = now });
                         carState.PitEnteredAt = data.Telemetry.SessionTime;
+
+                        if (localUser)
+                        {
+                            var status = new IRacingCarStatus
+                            {
+                                SessionTime = now,
+                                CarIdx = i,
+
+                                TempLFL = data.Telemetry.LFtempCL, TempLFM = data.Telemetry.LFtempCM, TempLFR = data.Telemetry.LFtempCR,
+                                TempRFL = data.Telemetry.RFtempCL, TempRFM = data.Telemetry.RFtempCM, TempRFR = data.Telemetry.RFtempCR,
+                                TempLRL = data.Telemetry.RFtempCL, TempLRM = data.Telemetry.LRtempCM, TempLRR = data.Telemetry.LRtempCR,
+                                TempRRL = data.Telemetry.RFtempCL, TempRRM = data.Telemetry.RRtempCM, TempRRR = data.Telemetry.RRtempCR,
+
+                                WearLFL = data.Telemetry.LFwearL, WearLFM = data.Telemetry.LFwearM, WearLFR = data.Telemetry.LFwearR,
+                                WearRFL = data.Telemetry.RFwearL, WearRFM = data.Telemetry.RFwearM, WearRFR = data.Telemetry.RFwearR,
+                                WearLRL = data.Telemetry.LRwearL, WearLRM = data.Telemetry.LRwearM, WearLRR = data.Telemetry.LRwearR,
+                                WearRRL = data.Telemetry.RRwearL, WearRRM = data.Telemetry.RRwearM, WearRRR = data.Telemetry.RRwearR,
+                            };
+
+                            EventBus.PublishEvent(status);
+                        }
                     }
                     else
                     {

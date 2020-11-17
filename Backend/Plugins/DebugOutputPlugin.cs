@@ -37,6 +37,23 @@ namespace Slipstream.Backend.Plugins
             EventHandler.OnIRacingCarCompletedLap += EventHandler_OnIRacingCarCompletedLap;
             EventHandler.OnIRacingPitEnter += EventHandler_OnIRacingPitEnter;
             EventHandler.OnIRacingPitExit += EventHandler_OnIRacingPitExit;
+            EventHandler.OnIRacingCarStatus += EventHandler_OnIRacingCarStatus;
+        }
+
+        private void EventHandler_OnIRacingCarStatus(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.IRacing.IRacingCarStatus> e)
+        {
+            var ev = e.Event;
+            Debug.WriteLine($"$$ {ev} SessionTime={ev.SessionTime}, CarIdx={ev.CarIdx}");
+            Debug.WriteLine($"  {ev} Temperatures:");
+            Debug.WriteLine($"  {ev}   LF {ev.TempLFL}/{ev.TempLFM}/{ev.TempLFR}");
+            Debug.WriteLine($"  {ev}   RF {ev.TempLRL}/{ev.TempLRM}/{ev.TempLRR}");
+            Debug.WriteLine($"  {ev}   LR {ev.TempRFL}/{ev.TempRFM}/{ev.TempRFR}");
+            Debug.WriteLine($"  {ev}   RR {ev.TempRRL}/{ev.TempRRM}/{ev.TempRRR}");
+            Debug.WriteLine($"  {ev} Wear:");
+            Debug.WriteLine($"  {ev}   LF {ev.WearLFL}/{ev.WearLFM}/{ev.WearLFR}");
+            Debug.WriteLine($"  {ev}   RF {ev.WearLRL}/{ev.WearLRM}/{ev.WearLRR}");
+            Debug.WriteLine($"  {ev}   LR {ev.WearRFL}/{ev.WearRFM}/{ev.WearRFR}");
+            Debug.WriteLine($"  {ev}   RR {ev.WearRRL}/{ev.WearRRM}/{ev.WearRRR}");
         }
 
         private void EventHandler_OnIRacingPitExit(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.IRacing.IRacingPitExit> e)

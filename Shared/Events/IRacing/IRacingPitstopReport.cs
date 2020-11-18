@@ -55,5 +55,9 @@ namespace Slipstream.Shared.Events.IRacing
         public uint WearRRM { get; set; }
         public uint WearRRR { get; set; }
         #endregion
+
+        public long Laps { get; set; }
+        public float FuelDiff { get; set; }
+        public double Duration { get; set; }
     }
 }

@@ -43,7 +43,7 @@ namespace Slipstream.Backend.Plugins
         private void EventHandler_OnIRacingPitstopReport(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.IRacing.IRacingPitstopReport> e)
         {
             var ev = e.Event;
-            Debug.WriteLine($"$$ {ev} SessionTime={ev.SessionTime}, CarIdx={ev.CarIdx}");
+            Debug.WriteLine($"$$ {ev} SessionTime={ev.SessionTime}, CarIdx={ev.CarIdx}, Laps={ev.Laps}, FuelDiff={ev.FuelDiff}, Duration={ev.Duration}");
             Debug.WriteLine($"  {ev} Temperatures:");
             Debug.WriteLine($"  {ev}   LF {ev.TempLFL}/{ev.TempLFM}/{ev.TempLFR}");
             Debug.WriteLine($"  {ev}   RF {ev.TempLRL}/{ev.TempLRM}/{ev.TempLRR}");

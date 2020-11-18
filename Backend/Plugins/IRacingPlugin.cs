@@ -11,20 +11,6 @@ using System.Threading;
 
 namespace Slipstream.Backend.Plugins
 {
-    static class Helpers
-    {
-        public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key) where TValue : new()
-        {
-            if (!dict.TryGetValue(key, out TValue val))
-            {
-                val = new TValue();
-                dict.Add(key, val);
-            }
-
-            return val;
-        }
-    }
-
     class IRacingPlugin : IPlugin
     {
         public string Id { get; }
@@ -57,6 +43,9 @@ namespace Slipstream.Backend.Plugins
             public IRacingCarInfo CarInfo { get; set; } = new IRacingCarInfo();
             public int ObservedCrossFinishingLine { get; set; }
             public double? PitEnteredAt { get; set; }
+            public int StintStartLap { get; set; }
+            public float StintFuelLevel { get; set; }
+            public double StintStartTime { get; set; }
         }
 
         private readonly IDictionary<long, CarState> CarsTracked = new Dictionary<long, CarState>();
@@ -158,13 +147,27 @@ namespace Slipstream.Backend.Plugins
             HandlePitUsage(data);
         }
 
+        private CarState GetCarState(long idx, DataSample data)
+        {
+            if (!CarsTracked.TryGetValue(idx, out CarState val))
+            {
+                val = new CarState();
+                val.StintStartLap = data.Telemetry.CarIdxLapCompleted[idx];
+                val.StintFuelLevel = data.Telemetry.FuelLevel;
+                val.StintStartTime = data.Telemetry.SessionTime;
+                CarsTracked.Add(idx, val);
+            }
+
+            return val;
+        }
+
         private void HandlePitUsage(DataSample data)
         {
             for (int i = 0; i < data.Telemetry.CarIdxOnPitRoad.Length; i++)
             {
                 var onPitRoad = data.Telemetry.CarIdxOnPitRoad[i];
 
-                var carState = CarsTracked.GetOrCreate(i);
+                var carState = GetCarState(i, data);
 
                 if (carState.LastOnPitRoad != onPitRoad)
                 {
@@ -174,7 +177,6 @@ namespace Slipstream.Backend.Plugins
                     {
                         EventBus.PublishEvent(new IRacingPitEnter { CarIdx = i, LocalUser = localUser, SessionTime = now });
                         carState.PitEnteredAt = data.Telemetry.SessionTime;
-
                     }
                     else
                     {
@@ -196,11 +198,11 @@ namespace Slipstream.Backend.Plugins
                                 TempLFL = (uint)Math.Round(data.Telemetry.LFtempCL),
                                 TempLFM = (uint)Math.Round(data.Telemetry.LFtempCM),
                                 TempLFR = (uint)Math.Round(data.Telemetry.LFtempCR),
-                                
+
                                 TempRFL = (uint)Math.Round(data.Telemetry.RFtempCL),
                                 TempRFM = (uint)Math.Round(data.Telemetry.RFtempCM),
                                 TempRFR = (uint)Math.Round(data.Telemetry.RFtempCR),
-                                
+
                                 TempLRL = (uint)Math.Round(data.Telemetry.LRtempCL),
                                 TempLRM = (uint)Math.Round(data.Telemetry.LRtempCM),
                                 TempLRR = (uint)Math.Round(data.Telemetry.LRtempCR),
@@ -224,10 +226,18 @@ namespace Slipstream.Backend.Plugins
                                 WearRRL = (uint)Math.Round(data.Telemetry.RRwearL * 100),
                                 WearRRM = (uint)Math.Round(data.Telemetry.RRwearM * 100),
                                 WearRRR = (uint)Math.Round(data.Telemetry.RRwearR * 100),
+
+                                Laps = data.Telemetry.CarIdxLapCompleted[i] - carState.StintStartLap,
+                                FuelDiff = carState.StintFuelLevel - data.Telemetry.FuelLevel,
+                                Duration = carState.StintStartTime - now,
                             };
 
                             EventBus.PublishEvent(status);
                         }
+
+                        carState.StintStartLap = data.Telemetry.CarIdxLapCompleted[i];
+                        carState.StintFuelLevel = data.Telemetry.FuelLevel;
+                        carState.StintStartTime = now;
                     }
 
                     carState.LastOnPitRoad = onPitRoad;
@@ -246,7 +256,7 @@ namespace Slipstream.Backend.Plugins
 
             for (int i = 0; i < data.Telemetry.Cars.Count(); i++)
             {
-                var carState = CarsTracked.GetOrCreate(i);
+                var carState = GetCarState(i, data);
                 var lapsCompleted = data.Telemetry.CarIdxLapCompleted[i];
 
                 if (lapsCompleted != -1 && carState.LastLap != lapsCompleted)
@@ -362,7 +372,7 @@ namespace Slipstream.Backend.Plugins
                 if (driver.IsPaceCar)
                     continue;
 
-                var carState = CarsTracked.GetOrCreate(driver.CarIdx);
+                var carState = GetCarState(driver.CarIdx, data);
 
                 var @event = new IRacingCarInfo
                 {

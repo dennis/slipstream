@@ -99,6 +99,7 @@
     <Compile Include="Backend\IEngine.cs" />
     <Compile Include="Backend\PluginManager.cs" />
     <Compile Include="Backend\Plugins\AudioPlugin.cs" />
+    <Compile Include="Shared\Events\IRacing\IRacingPitstopReport.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingPitExit.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingPitEnter.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingCarCompletedLap.cs" />

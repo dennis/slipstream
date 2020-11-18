@@ -37,10 +37,10 @@ namespace Slipstream.Backend.Plugins
             EventHandler.OnIRacingCarCompletedLap += EventHandler_OnIRacingCarCompletedLap;
             EventHandler.OnIRacingPitEnter += EventHandler_OnIRacingPitEnter;
             EventHandler.OnIRacingPitExit += EventHandler_OnIRacingPitExit;
-            EventHandler.OnIRacingCarStatus += EventHandler_OnIRacingCarStatus;
+            EventHandler.OnIRacingPitstopReport += EventHandler_OnIRacingPitstopReport;
         }
 
-        private void EventHandler_OnIRacingCarStatus(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.IRacing.IRacingCarStatus> e)
+        private void EventHandler_OnIRacingPitstopReport(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.IRacing.IRacingPitstopReport> e)
         {
             var ev = e.Event;
             Debug.WriteLine($"$$ {ev} SessionTime={ev.SessionTime}, CarIdx={ev.CarIdx}");

@@ -175,26 +175,6 @@ namespace Slipstream.Backend.Plugins
                         EventBus.PublishEvent(new IRacingPitEnter { CarIdx = i, LocalUser = localUser, SessionTime = now });
                         carState.PitEnteredAt = data.Telemetry.SessionTime;
 
-                        if (localUser)
-                        {
-                            var status = new IRacingCarStatus
-                            {
-                                SessionTime = now,
-                                CarIdx = i,
-
-                                TempLFL = data.Telemetry.LFtempCL, TempLFM = data.Telemetry.LFtempCM, TempLFR = data.Telemetry.LFtempCR,
-                                TempRFL = data.Telemetry.RFtempCL, TempRFM = data.Telemetry.RFtempCM, TempRFR = data.Telemetry.RFtempCR,
-                                TempLRL = data.Telemetry.RFtempCL, TempLRM = data.Telemetry.LRtempCM, TempLRR = data.Telemetry.LRtempCR,
-                                TempRRL = data.Telemetry.RFtempCL, TempRRM = data.Telemetry.RRtempCM, TempRRR = data.Telemetry.RRtempCR,
-
-                                WearLFL = data.Telemetry.LFwearL, WearLFM = data.Telemetry.LFwearM, WearLFR = data.Telemetry.LFwearR,
-                                WearRFL = data.Telemetry.RFwearL, WearRFM = data.Telemetry.RFwearM, WearRFR = data.Telemetry.RFwearR,
-                                WearLRL = data.Telemetry.LRwearL, WearLRM = data.Telemetry.LRwearM, WearLRR = data.Telemetry.LRwearR,
-                                WearRRL = data.Telemetry.RRwearL, WearRRM = data.Telemetry.RRwearM, WearRRR = data.Telemetry.RRwearR,
-                            };
-
-                            EventBus.PublishEvent(status);
-                        }
                     }
                     else
                     {
@@ -205,6 +185,49 @@ namespace Slipstream.Backend.Plugins
 
                         EventBus.PublishEvent(new IRacingPitExit { CarIdx = i, LocalUser = localUser, SessionTime = now, Duration = duration });
                         carState.PitEnteredAt = null;
+
+                        if (localUser)
+                        {
+                            var status = new IRacingPitstopReport
+                            {
+                                SessionTime = now,
+                                CarIdx = i,
+
+                                TempLFL = (uint)Math.Round(data.Telemetry.LFtempCL),
+                                TempLFM = (uint)Math.Round(data.Telemetry.LFtempCM),
+                                TempLFR = (uint)Math.Round(data.Telemetry.LFtempCR),
+                                
+                                TempRFL = (uint)Math.Round(data.Telemetry.RFtempCL),
+                                TempRFM = (uint)Math.Round(data.Telemetry.RFtempCM),
+                                TempRFR = (uint)Math.Round(data.Telemetry.RFtempCR),
+                                
+                                TempLRL = (uint)Math.Round(data.Telemetry.LRtempCL),
+                                TempLRM = (uint)Math.Round(data.Telemetry.LRtempCM),
+                                TempLRR = (uint)Math.Round(data.Telemetry.LRtempCR),
+
+                                TempRRL = (uint)Math.Round(data.Telemetry.RRtempCL),
+                                TempRRM = (uint)Math.Round(data.Telemetry.RRtempCM),
+                                TempRRR = (uint)Math.Round(data.Telemetry.RRtempCR),
+
+                                WearLFL = (uint)Math.Round(data.Telemetry.LFwearL * 100),
+                                WearLFM = (uint)Math.Round(data.Telemetry.LFwearM * 100),
+                                WearLFR = (uint)Math.Round(data.Telemetry.LFwearR * 100),
+
+                                WearRFL = (uint)Math.Round(data.Telemetry.RFwearL * 100),
+                                WearRFM = (uint)Math.Round(data.Telemetry.RFwearM * 100),
+                                WearRFR = (uint)Math.Round(data.Telemetry.RFwearR * 100),
+
+                                WearLRL = (uint)Math.Round(data.Telemetry.LRwearL * 100),
+                                WearLRM = (uint)Math.Round(data.Telemetry.LRwearM * 100),
+                                WearLRR = (uint)Math.Round(data.Telemetry.LRwearR * 100),
+
+                                WearRRL = (uint)Math.Round(data.Telemetry.RRwearL * 100),
+                                WearRRM = (uint)Math.Round(data.Telemetry.RRwearM * 100),
+                                WearRRR = (uint)Math.Round(data.Telemetry.RRwearR * 100),
+                            };
+
+                            EventBus.PublishEvent(status);
+                        }
                     }
 
                     carState.LastOnPitRoad = onPitRoad;

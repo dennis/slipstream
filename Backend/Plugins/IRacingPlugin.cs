@@ -249,11 +249,6 @@ namespace Slipstream.Backend.Plugins
                 var carState = CarsTracked.GetOrCreate(i);
                 var lapsCompleted = data.Telemetry.CarIdxLapCompleted[i];
 
-                if (i == data.SessionData.DriverInfo.DriverCarIdx)
-                {
-                    //Debug.WriteLine($"FuelLevel={data.Telemetry.FuelLevel}, FuelLevelPct={data.Telemetry.FuelLevelPct}, FuelPress={data.Telemetry.FuelPress}, FuelUsePerHour={data.Telemetry.FuelUsePerHour}");
-                }
-
                 if (lapsCompleted != -1 && carState.LastLap != lapsCompleted)
                 {
                     carState.ObservedCrossFinishingLine += 1;

@@ -94,7 +94,7 @@ namespace Slipstream.Frontend
             Debug.Assert(EventBusSubscription != null);
 
             EventHandler.OnInternalPluginStateChanged += (s, e) => EventHandler_OnInternalPluginStateChanged(e.Event);
-            EventHandler.OnUtilityWriteToConsole += (s, e) => PendingMessages.Add($"{DateTime.Now.ToString("s")} {e.Event.Message}");
+            EventHandler.OnUtilityWriteToConsole += (s, e) => PendingMessages.Add($"{DateTime.Now:s} {e.Event.Message}");
 
             while (true)
             {

@@ -13,8 +13,12 @@ namespace Slipstream.Backend
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, IPlugin> Plugins = new Dictionary<string, IPlugin>();
         private readonly IDictionary<string, PluginWorker> PluginWorkers = new Dictionary<string, PluginWorker>();
-        private readonly IList<IPlugin> PendingPluginsForEnable = new List<IPlugin>();
-        private bool DisablePendingEnable;
+
+        // No events are sent while we are in Warmup. Nor do we enable Plugins. Once engine performs 
+        // WarmupDone(), these will be handled
+        private bool Warmup = true; 
+        private readonly IList<IEvent> PendingEvents = new List<IEvent>();
+        private readonly IList<IPlugin> PendingPluginActivation = new List<IPlugin>();
 
         public PluginManager(IEngine engine, IEventBus eventBus)
         {
@@ -43,7 +47,7 @@ namespace Slipstream.Backend
 
         private void EmitPluginStateChanged(IPlugin plugin, Shared.Events.Internal.PluginStatus status)
         {
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginStateChanged() { Id = plugin.Id, PluginName = plugin.Name, PluginStatus = status, DisplayName = plugin.DisplayName });
+            EmitEvent(new Shared.Events.Internal.PluginStateChanged() { Id = plugin.Id, PluginName = plugin.Name, PluginStatus = status, DisplayName = plugin.DisplayName });
         }
 
         public void RegisterPlugin(IPlugin plugin)
@@ -86,14 +90,28 @@ namespace Slipstream.Backend
             }
         }
 
-        public void EnablePendingPlugins()
+        public void WarmupDone()
         {
-            foreach (var plugin in PendingPluginsForEnable)
-                EnablePlugin(plugin);
+            Debug.Assert(Warmup);
 
-            PendingPluginsForEnable.Clear();
+            Warmup = false;
 
-            DisablePendingEnable = true;
+            foreach (var e in PendingEvents)
+                EmitEvent(e);
+
+            foreach (var p in PendingPluginActivation)
+                EnablePlugin(p);
+
+            PendingEvents.Clear();
+            PendingPluginActivation.Clear();
+        }
+
+        private void EmitEvent(IEvent e)
+        {
+            if (Warmup)
+                PendingEvents.Add(e);
+            else
+                EventBus.PublishEvent(e);
         }
 
         public void DisablePlugin(IPlugin p)
@@ -104,16 +122,18 @@ namespace Slipstream.Backend
 
         public void InitializePlugin(IPlugin plugin, bool enabled)
         {
-            Debug.WriteLine($"Plugin {plugin.Name} wants WorkerName {plugin.WorkerName}");
-
             RegisterPlugin(plugin);
 
             if (enabled)
             {
-                if (DisablePendingEnable)
-                    EnablePlugin(plugin);
+                if (Warmup)
+                {
+                    PendingPluginActivation.Add(plugin);
+                }
                 else
-                    PendingPluginsForEnable.Add(plugin);
+                {
+                    EnablePlugin(plugin);
+                }
             }
         }
 

@@ -45,7 +45,7 @@ namespace Slipstream.Backend
         {
             FrontendReady = true;
 
-            PluginManager.EnablePendingPlugins();
+            PluginManager.WarmupDone();
 
             EventBus.PublishEvent(new Shared.Events.Internal.PluginsReady());
         }

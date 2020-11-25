@@ -57,7 +57,8 @@ namespace Slipstream.Frontend
             EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "FileTriggerPlugin", PluginName = "FileTriggerPlugin", Enabled = true });
             EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "AudioPlugin", PluginName = "AudioPlugin", Enabled = true, Settings = new Shared.Events.Setting.AudioSettings { Path = AudioPath } });
             EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "IRacingPlugin", PluginName = "IRacingPlugin", Enabled = true });
-            
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "TwitchPlugin", PluginName = "TwitchPlugin", Enabled = true, Settings = GetTwitchSettings() });
+
             // Tell backend that we're ready
             EventBus.PublishEvent(new Shared.Events.Internal.FrontendReady());
         }
@@ -179,6 +180,21 @@ namespace Slipstream.Frontend
         private void OpenAudioDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Process.Start(AudioPath);
+        }
+
+        private void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _ = new SettingsForm().ShowDialog(this);
+
+            // Just spam settings to everyone that wants it
+            EventBus.PublishEvent(GetTwitchSettings());
+        }
+
+        private Shared.Events.Setting.TwitchSettings GetTwitchSettings()
+        {
+            var settings = Properties.Settings.Default;
+
+            return new Shared.Events.Setting.TwitchSettings { TwitchUsername = settings.TwitchUsername, TwitchToken = settings.TwitchToken };
         }
     }
 }

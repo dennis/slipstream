@@ -36,9 +36,10 @@
             this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.OpenAudioDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenScriptsDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LogMessageUpdateTimer = new System.Windows.Forms.Timer(this.components);
-            this.OpenAudioDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -81,6 +82,7 @@
             // FileToolStripMenuItem
             // 
             this.FileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.SettingsToolStripMenuItem,
             this.ExitToolStripMenuItem});
             this.FileToolStripMenuItem.Name = "FileToolStripMenuItem";
             this.FileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -90,7 +92,7 @@
             // 
             this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
             this.ExitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.ExitToolStripMenuItem.Text = "Exit";
             this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
@@ -109,6 +111,13 @@
             this.HelpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.HelpToolStripMenuItem.Text = "Help";
             // 
+            // OpenAudioDirectoryToolStripMenuItem
+            // 
+            this.OpenAudioDirectoryToolStripMenuItem.Name = "OpenAudioDirectoryToolStripMenuItem";
+            this.OpenAudioDirectoryToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.OpenAudioDirectoryToolStripMenuItem.Text = "Open Audio Directory";
+            this.OpenAudioDirectoryToolStripMenuItem.Click += new System.EventHandler(this.OpenAudioDirectoryToolStripMenuItem_Click);
+            // 
             // OpenScriptsDirectoryToolStripMenuItem
             // 
             this.OpenScriptsDirectoryToolStripMenuItem.Name = "OpenScriptsDirectoryToolStripMenuItem";
@@ -122,12 +131,12 @@
             this.LogMessageUpdateTimer.Interval = 250;
             this.LogMessageUpdateTimer.Tick += new System.EventHandler(this.LogMessageUpdate_Tick);
             // 
-            // OpenAudioDirectoryToolStripMenuItem
+            // SettingsToolStripMenuItem
             // 
-            this.OpenAudioDirectoryToolStripMenuItem.Name = "OpenAudioDirectoryToolStripMenuItem";
-            this.OpenAudioDirectoryToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.OpenAudioDirectoryToolStripMenuItem.Text = "Open Audio Directory";
-            this.OpenAudioDirectoryToolStripMenuItem.Click += new System.EventHandler(this.OpenAudioDirectoryToolStripMenuItem_Click);
+            this.SettingsToolStripMenuItem.Name = "SettingsToolStripMenuItem";
+            this.SettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.SettingsToolStripMenuItem.Text = "Settings";
+            this.SettingsToolStripMenuItem.Click += new System.EventHandler(this.SettingsToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -158,6 +167,7 @@
         private System.Windows.Forms.ToolStripMenuItem HelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem OpenScriptsDirectoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem OpenAudioDirectoryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem SettingsToolStripMenuItem;
     }
 }
 

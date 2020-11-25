@@ -38,6 +38,48 @@ namespace Slipstream.Backend.Plugins
             EventHandler.OnIRacingPitEnter += EventHandler_OnIRacingPitEnter;
             EventHandler.OnIRacingPitExit += EventHandler_OnIRacingPitExit;
             EventHandler.OnIRacingPitstopReport += EventHandler_OnIRacingPitstopReport;
+            EventHandler.OnTwitchConnected += EventHandler_OnTwitchConnected;
+            EventHandler.OnTwitchDisconnected += EventHandler_OnTwitchDisconnected;
+            EventHandler.OnTwitchReceivedCommand += EventHandler_OnTwitchReceivedCommand;
+            EventHandler.OnSettingAudioSettings += EventHandler_OnSettingAudioSettings;
+            EventHandler.OnSettingFileMonitorSettings += EventHandler_OnSettingFileMonitorSettings;
+            EventHandler.OnSettingTwitchSettings += EventHandler_OnSettingTwitchSettings;
+        }
+
+        private void EventHandler_OnSettingTwitchSettings(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Setting.TwitchSettings> e)
+        {
+            var ev = e.Event;
+            Debug.WriteLine($"$$ {ev}");
+        }
+
+        private void EventHandler_OnSettingFileMonitorSettings(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Setting.FileMonitorSettings> e)
+        {
+            var ev = e.Event;
+            Debug.WriteLine($"$$ {ev}");
+        }
+
+        private void EventHandler_OnSettingAudioSettings(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Setting.AudioSettings> e)
+        {
+            var ev = e.Event;
+            Debug.WriteLine($"$$ {ev}");
+        }
+
+        private void EventHandler_OnTwitchReceivedCommand(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedCommand> e)
+        {
+            var ev = e.Event;
+            Debug.WriteLine($"$$ {ev} {ev.From} {ev.Message} isModerator={ev.Moderator}, isVip={ev.Vip}, isSubscriber={ev.Subscriber}, isBroadcaster={ev.Broadcaster}");
+        }
+
+        private void EventHandler_OnTwitchDisconnected(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Twitch.TwitchDisconnected> e)
+        {
+            var ev = e.Event;
+            Debug.WriteLine($"$$ {ev}");
+        }
+
+        private void EventHandler_OnTwitchConnected(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Twitch.TwitchConnected> e)
+        {
+            var ev = e.Event;
+            Debug.WriteLine($"$$ {ev}");
         }
 
         private void EventHandler_OnIRacingPitstopReport(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.IRacing.IRacingPitstopReport> e)

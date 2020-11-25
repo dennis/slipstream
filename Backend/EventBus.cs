@@ -1,5 +1,6 @@
 ﻿using Slipstream.Shared;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Slipstream.Backend
 {
@@ -9,6 +10,8 @@ namespace Slipstream.Backend
 
         public void PublishEvent(IEvent e)
         {
+            Debug.WriteLine($"PublishEvent {e}");
+
             lock (Listeners)
             {
                 foreach (var l in Listeners)

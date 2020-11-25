@@ -72,6 +72,9 @@ namespace Slipstream.Shared
 
         public delegate void OnSettingAudioSettingsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Setting.AudioSettings> e);
         public event OnSettingAudioSettingsHandler? OnSettingAudioSettings;
+
+        public delegate void OnSettingTwitchSettingsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Setting.TwitchSettings> e);
+        public event OnSettingTwitchSettingsHandler? OnSettingTwitchSettings;
         #endregion
 
         #region Events: IRacing
@@ -110,7 +113,17 @@ namespace Slipstream.Shared
 
         public delegate void OnIRacingPitstopReportHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingPitstopReport> e);
         public event OnIRacingPitstopReportHandler? OnIRacingPitstopReport;
-        
+        #endregion
+
+        #region Twitch
+        public delegate void OnTwitchConnectedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchConnected> e);
+        public event OnTwitchConnectedHandler? OnTwitchConnected;
+
+        public delegate void OnTwitchDisconnectedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchDisconnected> e);
+        public event OnTwitchDisconnectedHandler? OnTwitchDisconnected;
+
+        public delegate void OnTwitchReceivedCommandHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedCommand> e);
+        public event OnTwitchReceivedCommandHandler? OnTwitchReceivedCommand;
         #endregion
 
         public void HandleEvent(IEvent? ev)
@@ -229,6 +242,13 @@ namespace Slipstream.Shared
                         OnSettingAudioSettings.Invoke(this, new EventHandlerArgs<Shared.Events.Setting.AudioSettings>(tev));
                     break;
 
+                case Shared.Events.Setting.TwitchSettings tev:
+                    if (OnSettingTwitchSettings == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnSettingTwitchSettings.Invoke(this, new EventHandlerArgs<Shared.Events.Setting.TwitchSettings>(tev));
+                    break;
+
                 // IRacing
 
                 case Shared.Events.IRacing.IRacingConnected tev:
@@ -313,6 +333,29 @@ namespace Slipstream.Shared
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnIRacingPitstopReport.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingPitstopReport>(tev));
+                    break;
+
+                // Twitch
+
+                case Shared.Events.Twitch.TwitchConnected tev:
+                    if (OnTwitchConnected == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnTwitchConnected.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchConnected>(tev));
+                    break;
+
+                case Shared.Events.Twitch.TwitchDisconnected tev:
+                    if (OnTwitchDisconnected == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnTwitchDisconnected.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchDisconnected>(tev));
+                    break;
+
+                case Shared.Events.Twitch.TwitchReceivedCommand tev:
+                    if (OnTwitchReceivedCommand == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnTwitchReceivedCommand.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedCommand>(tev));
                     break;
 
                 default:

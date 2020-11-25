@@ -151,10 +151,12 @@ namespace Slipstream.Backend.Plugins
         {
             if (!CarsTracked.TryGetValue(idx, out CarState val))
             {
-                val = new CarState();
-                val.StintStartLap = data.Telemetry.CarIdxLapCompleted[idx];
-                val.StintFuelLevel = data.Telemetry.FuelLevel;
-                val.StintStartTime = data.Telemetry.SessionTime;
+                val = new CarState
+                {
+                    StintStartLap = data.Telemetry.CarIdxLapCompleted[idx],
+                    StintFuelLevel = data.Telemetry.FuelLevel,
+                    StintStartTime = data.Telemetry.SessionTime
+                };
                 CarsTracked.Add(idx, val);
             }
 
@@ -398,7 +400,6 @@ namespace Slipstream.Backend.Plugins
                     EventBus.PublishEvent(@event);
 
                     carState.CarInfo = @event;
-                    Debug.WriteLine($"SEnding CArInfo {@event}");
                 }
             }
         }

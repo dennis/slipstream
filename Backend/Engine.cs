@@ -29,16 +29,12 @@ namespace Slipstream.Backend
 
             PreEventHandler.OnInternalFrontendReady += (s, e) => OnFrontendReady(e.Event);
             PreEventHandler.OnInternalPluginRegister += (s, e) => OnPluginRegister(e.Event);
-            PreEventHandler.OnDefault += (s, e) => throw new System.Exception($"Unexpect message doring pre-boot: {e.Event.GetType()}");
+            PreEventHandler.OnDefault += (s, e) => throw new Exception($"Unexpect message doring pre-boot: {e.Event.GetType()}");
 
-
-#pragma warning disable CS8604 // Possible null reference argument.
             PostEventHandler.OnInternalPluginRegister += (s, e) => OnPluginRegister(e.Event);
             PostEventHandler.OnInternalPluginUnregister += (s, e) => OnPluginUnregister(e.Event);
             PostEventHandler.OnInternalPluginEnable += (s, e) => PluginManager.FindPluginAndExecute(e.Event.Id, (plugin) => PluginManager.EnablePlugin(plugin));
             PostEventHandler.OnInternalPluginDisable += (s, e) => PluginManager.FindPluginAndExecute(e.Event.Id, (plugin) => PluginManager.DisablePlugin(plugin));
-#pragma warning restore CS8604 // Possible null reference argument.
-
         }
 
         private void OnFrontendReady(FrontendReady _)
@@ -95,6 +91,12 @@ namespace Slipstream.Backend
                     break;
                 case "IRacingPlugin":
                     PluginManager.InitializePlugin(new IRacingPlugin(ev.Id, EventBus), ev.Enabled);
+                    break;
+                case "TwitchPlugin":
+                    if (ev.Settings != null)
+                        PluginManager.InitializePlugin(new TwitchPlugin(ev.Id, ev.Settings, EventBus), ev.Enabled);
+                    else
+                        throw new Exception($"Missing settings for plugin '{ev.PluginName}'");
                     break;
                 default:
                     throw new Exception($"Unknown plugin '{ev.PluginName}'");

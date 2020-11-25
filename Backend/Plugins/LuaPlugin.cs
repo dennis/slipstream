@@ -36,9 +36,7 @@ namespace Slipstream.Backend.Plugins
             if (typedSettings == null)
                 throw new System.Exception($"Unexpected settings was null");
 
-#pragma warning disable CS8601 // Possible null reference assignment.
             FilePath = typedSettings.FilePath;
-#pragma warning restore CS8601 // Possible null reference assignment.
             DisplayName = $"Lua: {Path.GetFileName(FilePath)}";
             EventBus = eventBus;
 

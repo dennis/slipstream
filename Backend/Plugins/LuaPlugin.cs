@@ -42,7 +42,7 @@ namespace Slipstream.Backend.Plugins
             DisplayName = $"Lua: {Path.GetFileName(FilePath)}";
             EventBus = eventBus;
 
-            Api = new LuaApi(EventBus, Path.GetFileName(FilePath));
+            Api = new LuaApi(EventBus, Path.GetFileName(FilePath), Path.GetDirectoryName(FilePath));
 
             try
             {
@@ -50,7 +50,8 @@ namespace Slipstream.Backend.Plugins
                 Lua.RegisterFunction("say", Api, typeof(LuaApi).GetMethod("Say", new[] { typeof(string), typeof(float) }));
                 Lua.RegisterFunction("play", Api, typeof(LuaApi).GetMethod("Play", new[] { typeof(string), typeof(float) }));
                 Lua.RegisterFunction("debounce", Api, typeof(LuaApi).GetMethod("Debounce", new[] { typeof(string), typeof(LuaFunction), typeof(float) }));
-                
+                Lua.RegisterFunction("write", Api, typeof(LuaApi).GetMethod("Write", new[] { typeof(string), typeof(string) }));
+
                 var f = Lua.LoadFile(FilePath);
 
                 f.Call();
@@ -95,6 +96,8 @@ namespace Slipstream.Backend.Plugins
             private readonly IEventBus EventBus;
             private readonly string Prefix;
             private readonly IDictionary<string, DebounceInfo> DebouncedFunctions = new Dictionary<string, DebounceInfo>();
+            private readonly string WorkDirectory;
+
             private class DebounceInfo
             {
                 public LuaFunction Function;
@@ -107,10 +110,11 @@ namespace Slipstream.Backend.Plugins
                 }
             }
 
-            public LuaApi(IEventBus eventBus, string prefix)
+            public LuaApi(IEventBus eventBus, string prefix, string workDirectory)
             {
                 EventBus = eventBus;
                 Prefix = prefix;
+                WorkDirectory = workDirectory;
             }
 
             public void Print(string s)
@@ -132,6 +136,19 @@ namespace Slipstream.Backend.Plugins
             {
                 Debug.WriteLine($"Debounce!  {func.GetHashCode()}");
                 DebouncedFunctions[name] = new DebounceInfo(func, DateTime.Now.AddSeconds(debounceLength));
+            }
+
+            public void Write(string filePath, string content)
+            {
+                string fileDirectory = Path.GetDirectoryName(filePath);
+
+                if(fileDirectory.Length == 0)
+                {
+                    filePath = WorkDirectory + @"\" + filePath;
+                }
+
+                using StreamWriter sw = File.AppendText(filePath);
+                sw.WriteLine(content);
             }
 
             public void Loop()

@@ -58,6 +58,10 @@ namespace Slipstream.Backend.Plugins
                     Connnect();
                 }
             };
+            EventHandler.OnTwitchSendMessage += (s, e) =>
+            {
+                Client?.SendMessage(TwitchUsername, e.Event.Message);
+            };
         }
 
         public void Disable(IEngine engine)

@@ -50,6 +50,8 @@ namespace Slipstream.Backend.Plugins
                 Lua.RegisterFunction("debounce", Api, typeof(LuaApi).GetMethod("Debounce", new[] { typeof(string), typeof(LuaFunction), typeof(float) }));
                 Lua.RegisterFunction("wait", Api, typeof(LuaApi).GetMethod("Wait", new[] { typeof(string), typeof(LuaFunction), typeof(float) }));
                 Lua.RegisterFunction("write", Api, typeof(LuaApi).GetMethod("Write", new[] { typeof(string), typeof(string) }));
+                Lua.RegisterFunction("send_twitch_message", Api, typeof(LuaApi).GetMethod("SendTwitchMessage", new[] { typeof(string) }));
+                
 
                 var f = Lua.LoadFile(FilePath);
 
@@ -130,6 +132,11 @@ namespace Slipstream.Backend.Plugins
             public void Play(string filename, float volume)
             {
                 EventBus.PublishEvent(new Shared.Events.Utility.PlayAudio() { Filename = filename, Volume = volume });
+            }
+
+            public void SendTwitchMessage(string message)
+            {
+                EventBus.PublishEvent(new Shared.Events.Twitch.TwitchSendMessage() { Message = message });
             }
 
             public void Debounce(string name, LuaFunction func, float debounceLength)

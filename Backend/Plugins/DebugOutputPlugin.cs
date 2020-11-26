@@ -44,6 +44,13 @@ namespace Slipstream.Backend.Plugins
             EventHandler.OnSettingAudioSettings += EventHandler_OnSettingAudioSettings;
             EventHandler.OnSettingFileMonitorSettings += EventHandler_OnSettingFileMonitorSettings;
             EventHandler.OnSettingTwitchSettings += EventHandler_OnSettingTwitchSettings;
+            EventHandler.OnTwitchSendMessage += EventHandler_OnTwitchSendMessage;
+        }
+
+        private void EventHandler_OnTwitchSendMessage(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Twitch.TwitchSendMessage> e)
+        {
+            var ev = e.Event;
+            Debug.WriteLine($"$$ {ev} {ev.Message}");
         }
 
         private void EventHandler_OnSettingTwitchSettings(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Setting.TwitchSettings> e)

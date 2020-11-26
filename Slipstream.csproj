@@ -153,6 +153,7 @@
     <Compile Include="Shared\Events\Internal\FrontendReady.cs" />
     <Compile Include="Shared\Events\Setting\AudioSettings.cs" />
     <Compile Include="Shared\Events\Setting\TwitchSettings.cs" />
+    <Compile Include="Shared\Events\Twitch\TwitchSendMessage.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchReceivedCommand.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchDisconnected.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchConnected.cs" />

@@ -146,7 +146,7 @@ namespace Slipstream.Backend.Plugins
                 }
 
                 using StreamWriter sw = File.AppendText(filePath);
-                sw.WriteLine(content);
+                sw.Write(content);
             }
 
             public void Loop()

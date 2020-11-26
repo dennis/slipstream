@@ -103,6 +103,9 @@ namespace Slipstream.Backend.Plugins
 
         public void Loop()
         {
+            if (!Enabled)
+                return;
+
             // Dont send any events until all plugins are ready
             if (!SeenPluginsReady)
             {

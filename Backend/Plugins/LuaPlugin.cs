@@ -48,6 +48,7 @@ namespace Slipstream.Backend.Plugins
                 Lua.RegisterFunction("say", Api, typeof(LuaApi).GetMethod("Say", new[] { typeof(string), typeof(float) }));
                 Lua.RegisterFunction("play", Api, typeof(LuaApi).GetMethod("Play", new[] { typeof(string), typeof(float) }));
                 Lua.RegisterFunction("debounce", Api, typeof(LuaApi).GetMethod("Debounce", new[] { typeof(string), typeof(LuaFunction), typeof(float) }));
+                Lua.RegisterFunction("wait", Api, typeof(LuaApi).GetMethod("Wait", new[] { typeof(string), typeof(LuaFunction), typeof(float) }));
                 Lua.RegisterFunction("write", Api, typeof(LuaApi).GetMethod("Write", new[] { typeof(string), typeof(string) }));
 
                 var f = Lua.LoadFile(FilePath);
@@ -93,15 +94,16 @@ namespace Slipstream.Backend.Plugins
         {
             private readonly IEventBus EventBus;
             private readonly string Prefix;
-            private readonly IDictionary<string, DebounceInfo> DebouncedFunctions = new Dictionary<string, DebounceInfo>();
+            private readonly IDictionary<string, DelayedExecution> DebouncedFunctions = new Dictionary<string, DelayedExecution>();
+            private readonly IDictionary<string, DelayedExecution> WaitingFunctions = new Dictionary<string, DelayedExecution>();
             private readonly string WorkDirectory;
 
-            private class DebounceInfo
+            private class DelayedExecution
             {
                 public LuaFunction Function;
                 public DateTime TriggersAt;
 
-                public DebounceInfo(LuaFunction luaFunction, DateTime triggersAt)
+                public DelayedExecution(LuaFunction luaFunction, DateTime triggersAt)
                 {
                     Function = luaFunction;
                     TriggersAt = triggersAt;
@@ -132,8 +134,29 @@ namespace Slipstream.Backend.Plugins
 
             public void Debounce(string name, LuaFunction func, float debounceLength)
             {
-                Debug.WriteLine($"Debounce!  {func.GetHashCode()}");
-                DebouncedFunctions[name] = new DebounceInfo(func, DateTime.Now.AddSeconds(debounceLength));
+                if(func != null)
+                {
+                    Debug.WriteLine($"Debounce!  {func.GetHashCode()}");
+                    DebouncedFunctions[name] = new DelayedExecution(func, DateTime.Now.AddSeconds(debounceLength));
+                }
+                else
+                {
+                    Print("Can't debounce without a function");
+                }
+            }
+
+            public void Wait(string name, LuaFunction func, float duration)
+            {
+                Debug.WriteLine($"Wait!  {func.GetHashCode()}");
+                if(func != null)
+                {
+                    if (!WaitingFunctions.ContainsKey(name))
+                        WaitingFunctions[name] = new DelayedExecution(func, DateTime.Now.AddSeconds(duration));
+                }
+                else
+                {
+                    Print("Can't wait without a function");
+                }
             }
 
             public void Write(string filePath, string content)
@@ -149,13 +172,13 @@ namespace Slipstream.Backend.Plugins
                 sw.Write(content);
             }
 
-            public void Loop()
+            private  void HandleDelayedExecution(IDictionary<string, DelayedExecution> functions)
             {
                 string? deleteKey = null;
 
-                foreach(var d in DebouncedFunctions)
+                foreach (var d in functions)
                 {
-                    if(d.Value.TriggersAt < DateTime.Now)
+                    if (d.Value.TriggersAt < DateTime.Now)
                     {
                         d.Value.Function.Call();
                         deleteKey = d.Key;
@@ -165,8 +188,14 @@ namespace Slipstream.Backend.Plugins
 
                 if (deleteKey != null)
                 {
-                    DebouncedFunctions.Remove(deleteKey);
+                    functions.Remove(deleteKey);
                 }
+            }
+
+            public void Loop()
+            {
+                HandleDelayedExecution(DebouncedFunctions);
+                HandleDelayedExecution(WaitingFunctions);
             }
         }
 

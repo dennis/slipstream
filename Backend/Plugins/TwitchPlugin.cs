@@ -23,14 +23,13 @@ namespace Slipstream.Backend.Plugins
         public string DisplayName => Name;
         public bool Enabled { get; set; }
         public string WorkerName => Name;
+        public EventHandler EventHandler { get; } = new EventHandler();
 
         private TwitchClient? Client;
         private readonly IEventBus EventBus;
 
         private string TwitchUsername;
         private string TwitchToken;
-        private IEventBusSubscription? Subscription;
-        private readonly EventHandler EventHandler = new EventHandler();
 
         public TwitchPlugin(string id, IEvent settings, IEventBus eventBus)
         {
@@ -66,9 +65,6 @@ namespace Slipstream.Backend.Plugins
 
         public void Disable(IEngine engine)
         {
-            Enabled = false;
-            Subscription?.Dispose();
-            Subscription = null;
             Disconnect();
         }
 
@@ -87,11 +83,7 @@ namespace Slipstream.Backend.Plugins
                 return;
             }
 
-            Enabled = true;
-
             Connnect();
-
-            Subscription = EventBus.RegisterListener();
         }
 
         private void Connnect()
@@ -168,9 +160,6 @@ namespace Slipstream.Backend.Plugins
 
         public void Loop()
         {
-            var e = Subscription?.NextEvent(100);
-
-            EventHandler.HandleEvent(e);
         }
 
         public void RegisterPlugin(IEngine engine)

@@ -62,7 +62,7 @@ namespace Slipstream.Backend
                 }
                 else
                 {
-                    worker = new PluginWorker(plugin.WorkerName);
+                    worker = new PluginWorker(plugin.WorkerName, Engine.RegisterListener());
                     worker.Start();
                     PluginWorkers.Add(worker.Name, worker);
                 }
@@ -78,6 +78,7 @@ namespace Slipstream.Backend
 
         public void EnablePlugin(IPlugin p)
         {
+            p.EventHandler.Enabled = true;
             p.Enable(Engine);
             EmitPluginStateChanged(p, Shared.Events.Internal.PluginStatus.Enabled);
         }
@@ -116,6 +117,7 @@ namespace Slipstream.Backend
 
         public void DisablePlugin(IPlugin p)
         {
+            p.EventHandler.Enabled = false;
             p.Disable(Engine);
             EmitPluginStateChanged(p, Shared.Events.Internal.PluginStatus.Disabled);
         }

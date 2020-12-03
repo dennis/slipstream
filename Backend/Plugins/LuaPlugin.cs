@@ -18,14 +18,13 @@ namespace Slipstream.Backend.Plugins
         public string DisplayName { get; }
         public bool Enabled { get; internal set; }
         public string WorkerName => "Lua";
+        public EventHandler EventHandler { get; } = new EventHandler();
 
-        private IEventBusSubscription? Subscription;
         private readonly string FilePath;
         private readonly IEventBus EventBus;
 
         private readonly Lua Lua = new Lua();
         private readonly LuaFunction? HandleFunc;
-        private readonly EventHandler EventHandler = new EventHandler();
         private readonly LuaApi Api;
 
         public LuaPlugin(string id, IEvent settings, IEventBus eventBus)
@@ -73,15 +72,10 @@ namespace Slipstream.Backend.Plugins
 
         public void Disable(IEngine engine)
         {
-            Enabled = false;
-            Subscription?.Dispose();
-            Subscription = null;
         }
 
         public void Enable(IEngine engine)
         {
-            Enabled = true;
-            Subscription = engine.RegisterListener();
         }
 
         public void RegisterPlugin(IEngine engine)
@@ -210,11 +204,6 @@ namespace Slipstream.Backend.Plugins
         {
             try
             {
-                var e = Subscription?.NextEvent(250);
-
-                if (Enabled)
-                    EventHandler.HandleEvent(e);
-
                 Api.Loop();
             }
             catch (NLua.Exceptions.LuaScriptException e)

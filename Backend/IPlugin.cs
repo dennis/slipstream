@@ -1,4 +1,6 @@
-﻿namespace Slipstream.Backend
+﻿using Slipstream.Shared;
+
+namespace Slipstream.Backend
 {
     interface IPlugin
     {
@@ -7,6 +9,7 @@
         public string DisplayName { get; }
         public bool Enabled { get; }
         public string WorkerName { get; }
+        public EventHandler EventHandler { get; }
         void RegisterPlugin(IEngine engine);
         void UnregisterPlugin(IEngine engine);
         void Enable(IEngine engine);

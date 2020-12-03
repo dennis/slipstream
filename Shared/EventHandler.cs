@@ -16,6 +16,8 @@ namespace Slipstream.Shared
             }
         }
 
+        public bool Enabled { get; set; } = true;
+
         public delegate void OnDefaultHandler(EventHandler source, EventHandlerArgs<IEvent> e);
         public event OnDefaultHandler? OnDefault;
 
@@ -131,6 +133,9 @@ namespace Slipstream.Shared
 
         public void HandleEvent(IEvent? ev)
         {
+            if (!Enabled)
+                return;
+
             switch (ev)
             {
                 case null:

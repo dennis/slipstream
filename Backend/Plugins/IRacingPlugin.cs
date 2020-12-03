@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using EventHandler = Slipstream.Shared.EventHandler;
 
 #nullable enable
 
@@ -18,6 +19,7 @@ namespace Slipstream.Backend.Plugins
         public string DisplayName => Name;
         public bool Enabled { get; set; }
         public string WorkerName => Name;
+        public EventHandler EventHandler { get; } = new EventHandler();
 
         private readonly iRacingConnection Connection = new iRacingConnection();
         private readonly Shared.IEventBus EventBus;
@@ -30,8 +32,6 @@ namespace Slipstream.Backend.Plugins
             { "Warmup", IRacingCurrentSession.SessionTypes.Warmup }
         };
 
-        private IEventBusSubscription? Subscription;
-        private readonly Shared.EventHandler PreEventHandler = new Shared.EventHandler();
         private bool SeenPluginsReady;
 
         private class CarState
@@ -70,26 +70,28 @@ namespace Slipstream.Backend.Plugins
         {
             Id = id;
             EventBus = eventBus;
-            Subscription = EventBus.RegisterListener();
 
-            PreEventHandler.OnInternalPluginsReady += (s, e) =>
+            EventHandler.OnInternalPluginsReady += (s, e) =>
             {
-                Subscription.Dispose();
-                Subscription = null;
                 SeenPluginsReady = true;
 
                 Thread.Sleep(1000); // Let other plugins be ready
+
+                EventHandler.Enabled = false;
             };
         }
 
         public void Disable(IEngine engine)
         {
             Enabled = false;
+            EventHandler.Enabled = Enabled && !SeenPluginsReady;
         }
 
         public void Enable(IEngine engine)
         {
             Enabled = true;
+            EventHandler.Enabled = Enabled && !SeenPluginsReady;
+
             Reset();
         }
 
@@ -103,13 +105,10 @@ namespace Slipstream.Backend.Plugins
 
         public void Loop()
         {
-            if (!Enabled)
-                return;
-
             // Dont send any events until all plugins are ready
             if (!SeenPluginsReady)
             {
-                PreEventHandler.HandleEvent(Subscription?.NextEvent(10));
+                // EventHandler will change SeenPluginsReady to true and disable itself
                 return;
             }
 

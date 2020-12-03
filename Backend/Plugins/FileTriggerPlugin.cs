@@ -15,10 +15,10 @@ namespace Slipstream.Backend.Plugins
         public string DisplayName => Name;
         public bool Enabled { get; internal set; }
         public string WorkerName => "Core";
-        private IEventBusSubscription? EventBusSubscription;
+        public EventHandler EventHandler { get; } = new EventHandler();
+
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, string> Scripts = new Dictionary<string, string>();
-        private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
 
         public FileTriggerPlugin(string id, IEventBus eventBus)
         {
@@ -33,33 +33,22 @@ namespace Slipstream.Backend.Plugins
 
         public void Disable(IEngine engine)
         {
-            Enabled = false;
         }
 
         public void Enable(IEngine engine)
         {
-            Enabled = true;
         }
 
         public void RegisterPlugin(IEngine engine)
         {
-            EventBusSubscription = engine.RegisterListener();
         }
 
         public void UnregisterPlugin(IEngine engine)
         {
-            EventBusSubscription?.Dispose();
-            EventBusSubscription = null;
         }
 
         public void Loop()
         {
-            var e = EventBusSubscription?.NextEvent(250);
-
-            if (Enabled)
-            {
-                EventHandler.HandleEvent(e);
-            }
         }
 
         private void NewFile(string filePath)

@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Speech.Synthesis;
 using System.Threading;
+using EventHandler = Slipstream.Shared.EventHandler;
 
 #nullable enable
 
@@ -18,12 +19,11 @@ namespace Slipstream.Backend.Plugins
         public string DisplayName => Name;
         public bool Enabled { get; internal set; }
         public string WorkerName => "Core";
+        public EventHandler EventHandler { get; } = new EventHandler();
 
         private readonly IEventBus EventBus;
-        private IEventBusSubscription? Subscription;
         private string? Path;
         private readonly SpeechSynthesizer Synthesizer;
-        private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
 
         public AudioPlugin(string id, IEvent settings, IEventBus eventBus)
         {
@@ -49,33 +49,22 @@ namespace Slipstream.Backend.Plugins
 
         public void Disable(IEngine engine)
         {
-            Enabled = false;
         }
 
         public void Enable(IEngine engine)
         {
-            Enabled = true;
         }
 
         public void RegisterPlugin(IEngine engine)
         {
-            Subscription = engine.RegisterListener();
         }
 
         public void UnregisterPlugin(IEngine engine)
         {
-            Subscription?.Dispose();
-            Subscription = null;
         }
 
         public void Loop()
         {
-            var e = Subscription?.NextEvent(100);
-
-            if (Enabled)
-            {
-                EventHandler.HandleEvent(e);
-            }
         }
 
         private void EventHandler_OnUtilityPlayAudio(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Utility.PlayAudio> e)

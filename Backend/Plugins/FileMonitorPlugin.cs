@@ -16,10 +16,10 @@ namespace Slipstream.Backend.Plugins
         public string DisplayName => Name;
         public bool Enabled { get; internal set; }
         public string WorkerName => "Core";
-        private IEventBusSubscription? EventBusSubscription;
+        public EventHandler EventHandler { get; } = new EventHandler();
+
         private readonly IEventBus EventBus;
         private readonly IList<FileSystemWatcher> fileSystemWatchers = new List<FileSystemWatcher>();
-        private readonly EventHandler EventHandler = new EventHandler();
 
         public FileMonitorPlugin(string id, IEvent settings, IEventBus eventBus)
         {
@@ -37,8 +37,6 @@ namespace Slipstream.Backend.Plugins
 
         public void Disable(IEngine engine)
         {
-            Enabled = false;
-
             UpdateWatchers();
         }
 
@@ -50,30 +48,19 @@ namespace Slipstream.Backend.Plugins
 
         public void Enable(IEngine engine)
         {
-            Enabled = true;
-
             UpdateWatchers();
         }
 
         public void RegisterPlugin(IEngine engine)
         {
-            EventBusSubscription = engine.RegisterListener();
         }
 
         public void UnregisterPlugin(IEngine engine)
         {
-            EventBusSubscription?.Dispose();
-            EventBusSubscription = null;
         }
 
         public void Loop()
         {
-            var e = EventBusSubscription?.NextEvent(100);
-
-            if (Enabled)
-            {
-                EventHandler.HandleEvent(e);
-            }
         }
 
         private void EventHandler_OnInternalPluginsReady(EventHandler source, EventHandler.EventHandlerArgs<PluginsReady> e)

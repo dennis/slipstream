@@ -1,6 +1,5 @@
 ﻿using Slipstream.Shared;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 
 namespace Slipstream.Backend
@@ -20,11 +19,6 @@ namespace Slipstream.Backend
             lock (Plugins)
             {
                 Plugins.Add(plugin);
-                Debug.WriteLine($"[PluginWorker-{Name}] Adding plugin {plugin.Name} {plugin.Id}. Total of {Plugins.Count} plugins");
-                foreach (var p in Plugins)
-                {
-                    Debug.WriteLine($" - {p.Id} {p.Name} {p.DisplayName}");
-                }
             }
         }
 
@@ -33,11 +27,6 @@ namespace Slipstream.Backend
             lock (Plugins)
             {
                 Plugins.Remove(plugin);
-                Debug.WriteLine($"[PluginWorker-{Name}] Remove plugin  {plugin.Name} {plugin.Id}. Total of {Plugins.Count} plugins");
-                foreach (var p in Plugins)
-                {
-                    Debug.WriteLine($" - {p.Id} {p.Name} {p.DisplayName}");
-                }
             }
         }
 

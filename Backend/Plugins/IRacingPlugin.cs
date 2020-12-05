@@ -266,7 +266,6 @@ namespace Slipstream.Backend.Plugins
                 if (lapsCompleted != -1 && carState.LastLap != lapsCompleted)
                 {
                     carState.ObservedCrossFinishingLine += 1;
-                    Debug.WriteLine($"car-{i} passing finishing line at {now} at count {carState.ObservedCrossFinishingLine}");
 
                     // 1st time is when leaving the pits / or whatever lap it is on when we join
                     // 2nd time is start of first real lap (that we see in full)
@@ -281,9 +280,6 @@ namespace Slipstream.Backend.Plugins
 
                         float? usedFuel = fuelLeft - carState.FuelLevelLastLap;
                         carState.FuelLevelLastLap = fuelLeft;
-
-                        Debug.WriteLine($"car-{i} now={now}, LastLapTime={carState.LastLapTime}, LastLap={carState.LastLap}, lapsCompleted={lapsCompleted}, fuelLeft={fuelLeft}, usedFuel={usedFuel}");
-                        Debug.WriteLine($"car-{i} lap {lapsCompleted} time {lapTime} fuel {usedFuel}");
 
                         var @event = new IRacingCarCompletedLap
                         {

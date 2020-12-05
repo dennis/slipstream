@@ -3,7 +3,6 @@ using Slipstream.Shared;
 using Slipstream.Shared.Events.Setting;
 using Slipstream.Shared.Events.Utility;
 using System;
-using System.Diagnostics;
 using System.Speech.Synthesis;
 using System.Threading;
 using EventHandler = Slipstream.Shared.EventHandler;
@@ -76,8 +75,6 @@ namespace Slipstream.Backend.Plugins
                 return;
 
             var filePath = System.IO.Path.Combine(Path, filename);
-
-            Debug.WriteLine($"Playing {filePath}");
 
             try
             {

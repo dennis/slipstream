@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
 
 namespace Slipstream.Backend
@@ -32,7 +31,6 @@ namespace Slipstream.Backend
         {
             if (!started)
             {
-                Debug.WriteLine($"[Worker-{Name}] Starting worker group");
                 WorkerThread.Start();
                 started = true;
             }
@@ -42,14 +40,11 @@ namespace Slipstream.Backend
         {
             if (!stop)
             {
-                Debug.WriteLine($"[Worker-{Name}] Stopping worker group");
                 lock (StopLock)
                 {
                     stop = true;
                 }
-                Debug.WriteLine($"[Worker-{Name}] Waiting for it to stop");
                 WorkerThread.Join();
-                Debug.WriteLine($"[Worker-{Name}] Stopped");
             }
         }
 

@@ -147,7 +147,7 @@ namespace Slipstream.Backend
             }
             else
             {
-                Debug.WriteLine($"Plugin not found '{pluginId}'");
+                throw new Exception($"Can't find plugin '{pluginId}'");
             }
         }
 

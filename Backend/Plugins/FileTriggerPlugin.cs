@@ -1,6 +1,5 @@
 ﻿using Slipstream.Shared;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using EventHandler = Slipstream.Shared.EventHandler;
 
@@ -53,8 +52,6 @@ namespace Slipstream.Backend.Plugins
 
         private void NewFile(string filePath)
         {
-            Debug.WriteLine($"New file seen! {filePath}");
-
             string pluginName = "LuaPlugin";
 
             var ev = new Shared.Events.Internal.PluginRegister() { Id = filePath, PluginName = pluginName, Enabled = true, Settings = new Slipstream.Shared.Events.Internal.LuaSettings() { FilePath = filePath } };
@@ -66,8 +63,6 @@ namespace Slipstream.Backend.Plugins
 
         private void DeletedFile(string filePath)
         {
-            Debug.WriteLine($"Deleted file seen! {filePath}");
-
             var ev = new Shared.Events.Internal.PluginUnregister() { Id = Scripts[filePath] };
 
             EventBus.PublishEvent(ev);

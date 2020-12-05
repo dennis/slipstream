@@ -2,7 +2,6 @@ using Slipstream.Shared;
 using Slipstream.Shared.Events.Internal;
 using Slipstream.Shared.Events.Setting;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 
 #nullable enable
@@ -89,8 +88,6 @@ namespace Slipstream.Backend.Plugins
 
             foreach (var path in ev.Paths)
             {
-                Debug.WriteLine($"OnFileMonitorSettings: Adding watcher for {path}");
-
                 var watcher = new FileSystemWatcher(path);
                 watcher.Created += WatcherOnCreated;
                 watcher.Changed += WatcherOnChanged;

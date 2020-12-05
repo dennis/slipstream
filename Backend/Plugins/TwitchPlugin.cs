@@ -120,7 +120,8 @@ namespace Slipstream.Backend.Plugins
 
         private void Client_OnError(object sender, OnErrorEventArgs e)
         {
-            Debug.WriteLine($"Twitch: ERROR: {e.Exception.Message}");
+            EventBus.PublishEvent(new WriteToConsole { Message = $"Twitch Error: {e.Exception.Message}" });
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginDisable() { Id = this.Id });
         }
 
         private void OnDisconnect(object sender, OnDisconnectedEventArgs e)

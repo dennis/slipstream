@@ -3,7 +3,6 @@ using Slipstream.Shared;
 using Slipstream.Shared.Events.Internal;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using EventHandler = Slipstream.Shared.EventHandler;
 
@@ -137,7 +136,6 @@ namespace Slipstream.Backend.Plugins
             {
                 if(func != null)
                 {
-                    Debug.WriteLine($"Debounce!  {func.GetHashCode()}");
                     DebouncedFunctions[name] = new DelayedExecution(func, DateTime.Now.AddSeconds(debounceLength));
                 }
                 else
@@ -148,7 +146,6 @@ namespace Slipstream.Backend.Plugins
 
             public void Wait(string name, LuaFunction func, float duration)
             {
-                Debug.WriteLine($"Wait!  {func.GetHashCode()}");
                 if(func != null)
                 {
                     if (!WaitingFunctions.ContainsKey(name))

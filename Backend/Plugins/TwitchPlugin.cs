@@ -1,5 +1,4 @@
 using Slipstream.Shared;
-using Slipstream.Shared.Events.Setting;
 using Slipstream.Shared.Events.Twitch;
 using Slipstream.Shared.Events.Utility;
 using System;
@@ -28,23 +27,13 @@ namespace Slipstream.Backend.Plugins
         private TwitchClient? Client;
         private readonly IEventBus EventBus;
 
-        private string TwitchUsername;
-        private string TwitchToken;
+        private string? TwitchUsername;
+        private string? TwitchToken;
 
-        public TwitchPlugin(string id, IEvent settings, IEventBus eventBus)
+        public TwitchPlugin(string id, IEventBus eventBus)
         {
             Id = id;
             EventBus = eventBus;
-
-            if (settings is TwitchSettings typedSettings)
-            {
-                TwitchUsername = typedSettings.TwitchUsername;
-                TwitchToken = typedSettings.TwitchToken;
-            }                
-            else
-            { 
-                throw new System.Exception($"Unexpected event as Exception {settings}");
-            }
 
             EventHandler.OnSettingTwitchSettings += (s, e) =>
             {
@@ -65,6 +54,7 @@ namespace Slipstream.Backend.Plugins
 
         public void Disable(IEngine engine)
         {
+            Enabled = false;
             Disconnect();
         }
 
@@ -76,12 +66,7 @@ namespace Slipstream.Backend.Plugins
 
         public void Enable(IEngine engine)
         {
-            if (TwitchUsername.Length == 0 || TwitchToken.Length == 0)
-            {
-                EventBus.PublishEvent(new WriteToConsole { Message = "Twitch not configured" });
-                EventBus.PublishEvent(new Shared.Events.Internal.PluginUnregister() { Id = this.Id });
-                return;
-            }
+            Enabled = true;
 
             Connnect();
         }
@@ -89,6 +74,9 @@ namespace Slipstream.Backend.Plugins
         private void Connnect()
         {
             if (!Enabled)
+                return;
+
+            if (TwitchUsername == null || TwitchToken == null)
                 return;
 
             ConnectionCredentials credentials = new ConnectionCredentials(TwitchUsername, TwitchToken, "ws://irc-ws.chat.twitch.tv:80");

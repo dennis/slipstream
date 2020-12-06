@@ -77,6 +77,9 @@ namespace Slipstream.Shared
 
         public delegate void OnSettingTwitchSettingsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Setting.TwitchSettings> e);
         public event OnSettingTwitchSettingsHandler? OnSettingTwitchSettings;
+
+        public delegate void OnSettingLuaSettingsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Setting.LuaSettings> e);
+        public event OnSettingLuaSettingsHandler? OnSettingLuaSettings;
         #endregion
 
         #region Events: IRacing
@@ -255,6 +258,13 @@ namespace Slipstream.Shared
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnSettingTwitchSettings.Invoke(this, new EventHandlerArgs<Shared.Events.Setting.TwitchSettings>(tev));
+                    break;
+
+                case Shared.Events.Setting.LuaSettings tev:
+                    if (OnSettingLuaSettings == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnSettingLuaSettings.Invoke(this, new EventHandlerArgs<Shared.Events.Setting.LuaSettings>(tev));
                     break;
 
                 // IRacing

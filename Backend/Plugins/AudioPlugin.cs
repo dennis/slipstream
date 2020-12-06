@@ -24,21 +24,22 @@ namespace Slipstream.Backend.Plugins
         private string? Path;
         private readonly SpeechSynthesizer Synthesizer;
 
-        public AudioPlugin(string id, IEvent settings, IEventBus eventBus)
+        public AudioPlugin(string id, IEventBus eventBus)
         {
             Id = id;
             EventBus = eventBus;
-
-            if (settings is AudioSettings typedSettings)
-                OnAudioSettings(typedSettings);
-            else
-                throw new System.Exception($"Unexpected event as Exception {settings}");
 
             Synthesizer = new SpeechSynthesizer();
             Synthesizer.SetOutputToDefaultAudioDevice();
 
             EventHandler.OnUtilitySay += EventHandler_OnUtilitySay;
             EventHandler.OnUtilityPlayAudio += EventHandler_OnUtilityPlayAudio;
+            EventHandler.OnSettingAudioSettings += EventHandler_OnSettingAudioSettings;
+        }
+
+        private void EventHandler_OnSettingAudioSettings(EventHandler source, EventHandler.EventHandlerArgs<AudioSettings> e)
+        {
+            Path = e.Event.Path;
         }
 
         private void OnAudioSettings(AudioSettings typedSettings)
@@ -48,10 +49,12 @@ namespace Slipstream.Backend.Plugins
 
         public void Disable(IEngine engine)
         {
+            Enabled = false;
         }
 
         public void Enable(IEngine engine)
         {
+            Enabled = true;
         }
 
         public void RegisterPlugin(IEngine engine)
@@ -71,7 +74,7 @@ namespace Slipstream.Backend.Plugins
             var filename = e.Event.Filename;
             var volume = e.Event.Volume;
 
-            if (filename == null || volume == null)
+            if (filename == null || volume == null || Path == null)
                 return;
 
             var filePath = System.IO.Path.Combine(Path, filename);

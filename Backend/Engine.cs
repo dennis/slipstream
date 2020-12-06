@@ -66,37 +66,25 @@ namespace Slipstream.Backend
             switch (ev.PluginName)
             {
                 case "DebugOutputPlugin":
-                    PluginManager.InitializePlugin(new DebugOutputPlugin(ev.Id), ev.Enabled);
+                    PluginManager.RegisterPlugin(new DebugOutputPlugin(ev.Id));
                     break;
                 case "FileMonitorPlugin":
-                    if (ev.Settings != null)
-                        PluginManager.InitializePlugin(new FileMonitorPlugin(ev.Id, ev.Settings, EventBus), ev.Enabled);
-                    else
-                        throw new Exception($"Missing settings for plugin '{ev.PluginName}'");
+                    PluginManager.RegisterPlugin(new FileMonitorPlugin(ev.Id, EventBus));
                     break;
                 case "FileTriggerPlugin":
-                    PluginManager.InitializePlugin(new FileTriggerPlugin(ev.Id, EventBus), ev.Enabled);
+                    PluginManager.RegisterPlugin(new FileTriggerPlugin(ev.Id, EventBus));
                     break;
                 case "LuaPlugin":
-                    if (ev.Settings != null)
-                        PluginManager.InitializePlugin(new LuaPlugin(ev.Id, ev.Settings, EventBus), ev.Enabled);
-                    else
-                        throw new Exception($"Missing settings for plugin '{ev.PluginName}'");
+                    PluginManager.RegisterPlugin(new LuaPlugin(ev.Id, EventBus));
                     break;
                 case "AudioPlugin":
-                    if (ev.Settings != null)
-                        PluginManager.InitializePlugin(new AudioPlugin(ev.Id, ev.Settings, EventBus), ev.Enabled);
-                    else
-                        throw new Exception($"Missing settings for plugin '{ev.PluginName}'");
+                    PluginManager.RegisterPlugin(new AudioPlugin(ev.Id, EventBus));
                     break;
                 case "IRacingPlugin":
-                    PluginManager.InitializePlugin(new IRacingPlugin(ev.Id, EventBus), ev.Enabled);
+                    PluginManager.RegisterPlugin(new IRacingPlugin(ev.Id, EventBus));
                     break;
                 case "TwitchPlugin":
-                    if (ev.Settings != null)
-                        PluginManager.InitializePlugin(new TwitchPlugin(ev.Id, ev.Settings, EventBus), ev.Enabled);
-                    else
-                        throw new Exception($"Missing settings for plugin '{ev.PluginName}'");
+                    PluginManager.RegisterPlugin(new TwitchPlugin(ev.Id, EventBus));
                     break;
                 default:
                     throw new Exception($"Unknown plugin '{ev.PluginName}'");

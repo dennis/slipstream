@@ -20,15 +20,10 @@ namespace Slipstream.Backend.Plugins
         private readonly IEventBus EventBus;
         private readonly IList<FileSystemWatcher> fileSystemWatchers = new List<FileSystemWatcher>();
 
-        public FileMonitorPlugin(string id, IEvent settings, IEventBus eventBus)
+        public FileMonitorPlugin(string id, IEventBus eventBus)
         {
             Id = id;
             this.EventBus = eventBus;
-
-            if (settings is FileMonitorSettings typedSettings)
-                OnFileMonitorSettings(typedSettings);
-            else
-                throw new System.Exception($"Unexpected event as Exception {settings}");
 
             EventHandler.OnInternalPluginsReady += EventHandler_OnInternalPluginsReady;
             EventHandler.OnSettingFileMonitorSettings += (s, e) => OnFileMonitorSettings(e.Event);
@@ -36,6 +31,7 @@ namespace Slipstream.Backend.Plugins
 
         public void Disable(IEngine engine)
         {
+            Enabled = false;
             UpdateWatchers();
         }
 
@@ -47,6 +43,7 @@ namespace Slipstream.Backend.Plugins
 
         public void Enable(IEngine engine)
         {
+            Enabled = true;
             UpdateWatchers();
         }
 
@@ -63,6 +60,11 @@ namespace Slipstream.Backend.Plugins
         }
 
         private void EventHandler_OnInternalPluginsReady(EventHandler source, EventHandler.EventHandlerArgs<PluginsReady> e)
+        {
+            RescanExistingFiles();
+        }
+
+        private void RescanExistingFiles()
         {
             foreach (var watcher in fileSystemWatchers)
             {
@@ -93,9 +95,12 @@ namespace Slipstream.Backend.Plugins
                 watcher.Changed += WatcherOnChanged;
                 watcher.Deleted += WatcherOnDeleted;
                 watcher.Renamed += WatcherOnRenamed;
+                watcher.EnableRaisingEvents = Enabled;
 
                 fileSystemWatchers.Add(watcher);
             }
+
+            RescanExistingFiles();
         }
 
         private void WatcherOnRenamed(object sender, RenamedEventArgs e)

@@ -236,7 +236,7 @@ namespace Slipstream.Backend.Plugins
         private void EventHandler_OnInternalPluginRegister(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.PluginRegister> e)
         {
             var ev = e.Event;
-            Debug.WriteLine($"$$ {ev} {ev.Id} pluginname={ev.PluginName}, enabled={ev.Enabled}");
+            Debug.WriteLine($"$$ {ev} Id={ev.Id} PluginName={ev.PluginName}");
         }
 
         private void EventHandler_OnUtilitySay(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Utility.Say> e)
@@ -264,10 +264,12 @@ namespace Slipstream.Backend.Plugins
 
         public void Disable(IEngine engine)
         {
+            Enabled = false;
         }
 
         public void Enable(IEngine engine)
         {
+            Enabled = true;
         }
 
         public void RegisterPlugin(IEngine engine)

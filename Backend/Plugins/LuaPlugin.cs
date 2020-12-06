@@ -1,6 +1,6 @@
 ﻿using NLua;
 using Slipstream.Shared;
-using Slipstream.Shared.Events.Internal;
+using Slipstream.Shared.Events.Setting;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,34 +14,47 @@ namespace Slipstream.Backend.Plugins
     {
         public string Id { get; set; }
         public string Name => "LuaPlugin";
-        public string DisplayName { get; }
+        public string DisplayName { get; set; } = "LuaPlugin";
         public bool Enabled { get; internal set; }
         public string WorkerName => "Lua";
         public EventHandler EventHandler { get; } = new EventHandler();
 
-        private readonly string FilePath;
         private readonly IEventBus EventBus;
-
         private readonly Lua Lua = new Lua();
-        private readonly LuaFunction? HandleFunc;
-        private readonly LuaApi Api;
 
-        public LuaPlugin(string id, IEvent settings, IEventBus eventBus)
+        private string? FilePath;
+        private LuaFunction? HandleFunc;
+        private LuaApi? Api;
+
+        public LuaPlugin(string id, IEventBus eventBus)
         {
             Id = id;
-            if (!(settings is LuaSettings typedSettings))
-                throw new System.Exception($"Unexpected event as Exception {settings}");
-            if (typedSettings == null)
-                throw new System.Exception($"Unexpected settings was null");
-
-            FilePath = typedSettings.FilePath;
-            DisplayName = $"Lua: {Path.GetFileName(FilePath)}";
             EventBus = eventBus;
 
-            Api = new LuaApi(EventBus, Path.GetFileName(FilePath), Path.GetDirectoryName(FilePath));
+            EventHandler.OnSettingLuaSettings += (s, e) => OnLuaSettings(e.Event);
+        }
+
+        private void OnLuaSettings(LuaSettings @event)
+        {
+            if (Id != @event.PluginId)
+                return;
+
+            FilePath = @event.FilePath;
+
+            StartLua();
+        }
+
+        private void StartLua()
+         {
+            if (!Enabled || FilePath == null)
+                return;
 
             try
             {
+                Api = new LuaApi(EventBus, Path.GetFileName(FilePath), Path.GetDirectoryName(FilePath));
+
+                DisplayName = "Lua: " + Path.GetFileName(FilePath);
+
                 Lua.RegisterFunction("print", Api, typeof(LuaApi).GetMethod("Print", new[] { typeof(string) }));
                 Lua.RegisterFunction("say", Api, typeof(LuaApi).GetMethod("Say", new[] { typeof(string), typeof(float) }));
                 Lua.RegisterFunction("play", Api, typeof(LuaApi).GetMethod("Play", new[] { typeof(string), typeof(float) }));
@@ -49,7 +62,6 @@ namespace Slipstream.Backend.Plugins
                 Lua.RegisterFunction("wait", Api, typeof(LuaApi).GetMethod("Wait", new[] { typeof(string), typeof(LuaFunction), typeof(float) }));
                 Lua.RegisterFunction("write", Api, typeof(LuaApi).GetMethod("Write", new[] { typeof(string), typeof(string) }));
                 Lua.RegisterFunction("send_twitch_message", Api, typeof(LuaApi).GetMethod("SendTwitchMessage", new[] { typeof(string) }));
-                
 
                 var f = Lua.LoadFile(FilePath);
 
@@ -64,17 +76,21 @@ namespace Slipstream.Backend.Plugins
             }
             catch (NLua.Exceptions.LuaScriptException e)
             {
-                Api.Print($"ERROR: {e.Message}");
+                Api?.Print($"ERROR: {e.Message}");
                 EventBus.PublishEvent(new Shared.Events.Internal.PluginUnregister() { Id = this.Id });
             }
         }
 
         public void Disable(IEngine engine)
         {
+            Enabled = false;
+            Api = null;
         }
 
         public void Enable(IEngine engine)
         {
+            Enabled = true;
+            StartLua();
         }
 
         public void RegisterPlugin(IEngine engine)
@@ -199,13 +215,16 @@ namespace Slipstream.Backend.Plugins
 
         public void Loop()
         {
+            if (!Enabled || FilePath == null)
+                return;
+
             try
             {
-                Api.Loop();
+                Api?.Loop();
             }
             catch (NLua.Exceptions.LuaScriptException e)
             {
-                Api.Print($"ERROR: {e.Message}");
+                Api?.Print($"ERROR: {e.Message}");
                 EventBus.PublishEvent(new Shared.Events.Internal.PluginUnregister() { Id = this.Id });
             }
         }

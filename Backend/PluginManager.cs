@@ -80,7 +80,8 @@ namespace Slipstream.Backend
         {
             p.EventHandler.Enabled = true;
             p.Enable(Engine);
-            EmitPluginStateChanged(p, Shared.Events.Internal.PluginStatus.Enabled);
+            if(p.Enabled)
+                EmitPluginStateChanged(p, Shared.Events.Internal.PluginStatus.Enabled);
         }
 
         public void DisablePlugins()
@@ -119,7 +120,8 @@ namespace Slipstream.Backend
         {
             p.EventHandler.Enabled = false;
             p.Disable(Engine);
-            EmitPluginStateChanged(p, Shared.Events.Internal.PluginStatus.Disabled);
+            if (!p.Enabled)
+                EmitPluginStateChanged(p, Shared.Events.Internal.PluginStatus.Disabled);
         }
 
         public void InitializePlugin(IPlugin plugin, bool enabled)

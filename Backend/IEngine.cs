@@ -2,7 +2,7 @@
 
 namespace Slipstream.Backend
 {
-    interface IEngine
+    public interface IEngine
     {
         IEventBusSubscription RegisterListener();
         void UnregisterSubscription(IEventBusSubscription subscription);

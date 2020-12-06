@@ -114,6 +114,7 @@
     <Compile Include="Backend\IEngine.cs" />
     <Compile Include="Backend\PluginManager.cs" />
     <Compile Include="Backend\Plugins\AudioPlugin.cs" />
+    <Compile Include="Backend\Plugins\BasePlugin.cs" />
     <Compile Include="Backend\Plugins\TwitchPlugin.cs" />
     <Compile Include="Frontend\SettingsForm.cs">
       <SubType>Form</SubType>
@@ -141,7 +142,7 @@
     <Compile Include="Shared\Events\Internal\FileMonitorFileDeleted.cs" />
     <Compile Include="Shared\Events\Internal\FileMonitorFileRenamed.cs" />
     <Compile Include="Shared\Events\Internal\FileMonitorFileCreated.cs" />
-    <Compile Include="Shared\Events\Internal\LuaSettings.cs" />
+    <Compile Include="Shared\Events\Setting\LuaSettings.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingDisconnected.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingConnected.cs" />
     <Compile Include="Shared\Events\Setting\FileMonitorSettings.cs" />

@@ -65,16 +65,6 @@ namespace Slipstream.Frontend
             EventBus.PublishEvent(new Shared.Events.Internal.FrontendReady());
         }
 
-        private AudioSettings GetAudioSettings()
-        {
-            return new Shared.Events.Setting.AudioSettings { Path = AudioPath };
-        }
-
-        private FileMonitorSettings GetFileMonitorSettings()
-        {
-            return new Shared.Events.Setting.FileMonitorSettings { Paths = new string[] { ScriptsPath } };
-        }
-
         private void AppendMessages(string msg)
         {
             ExecuteSecure(() => this.LogAreaTextBox.AppendText(msg));
@@ -106,7 +96,6 @@ namespace Slipstream.Frontend
         {
             Debug.Assert(EventBusSubscription != null);
 
-            EventHandler.OnInternalPluginsReady += (s, e) => EventHandler_OnInternalPluginsReady(e.Event);
             EventHandler.OnInternalPluginStateChanged += (s, e) => EventHandler_OnInternalPluginStateChanged(e.Event);
             EventHandler.OnUtilityWriteToConsole += (s, e) =>
             {
@@ -119,12 +108,9 @@ namespace Slipstream.Frontend
             }
         }
 
-        private void EventHandler_OnInternalPluginsReady(PluginsReady @event)
-        {
-        }
-
         private void EventHandler_OnInternalPluginStateChanged(Shared.Events.Internal.PluginStateChanged e)
         {
+            Debug.WriteLine($"Got PluginStateChanged {e.Id} {e.PluginStatus} {e.DisplayName}");
             switch (e.PluginStatus)
             {
                 case Shared.Events.Internal.PluginStatus.Registered:
@@ -201,13 +187,22 @@ namespace Slipstream.Frontend
                         var item = MenuPluginItems[e.Id];
 
                         ExecuteSecure(() => item.CheckState = CheckState.Checked);
+                        ExecuteSecure(() => item.Text = e.DisplayName);
                     }
                     break;
                 case Shared.Events.Internal.PluginStatus.Disabled:
                     {
-                        var item = MenuPluginItems[e.Id];
+                        if(MenuPluginItems.ContainsKey(e.Id))
+                        {
+                            var item = MenuPluginItems[e.Id];
 
-                        ExecuteSecure(() => item.CheckState = CheckState.Unchecked);
+                            ExecuteSecure(() => item.CheckState = CheckState.Unchecked);
+                            ExecuteSecure(() => item.Text = e.DisplayName);
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"Can't disable plugin i dont know: {e.Id}");
+                        }
                     }
                     break;
             }

@@ -8,23 +8,15 @@ using EventHandler = Slipstream.Shared.EventHandler;
 
 namespace Slipstream.Backend.Plugins
 {
-    class FileTriggerPlugin : IPlugin
+    class FileTriggerPlugin : BasePlugin
     {
-        public string Id { get; }
-        public string Name => "FileTriggerPlugin";
-        public string DisplayName => Name;
-        public bool Enabled { get; internal set; }
-        public string WorkerName => "Core";
-        public EventHandler EventHandler { get; } = new EventHandler();
-
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, string> Scripts = new Dictionary<string, string>();
         private readonly IDictionary<string, IEvent> RegisteredPluginQueue = new Dictionary<string, IEvent>(); // Send out this event when we see it registered
         private readonly IDictionary<string, IEvent> EnabledPluginQueue = new Dictionary<string, IEvent>(); // Send out this event when we see it enabled
 
-        public FileTriggerPlugin(string id, IEventBus eventBus)
+        public FileTriggerPlugin(string id, IEventBus eventBus) : base(id, "FileTriggerPlugin", "FileTriggerPlugin", "Core")
         {
-            Id = id;
             this.EventBus = eventBus;
 
             EventHandler.OnInternalFileMonitorFileCreated += EventHandler_OnInternalFileMonitorFileCreated;
@@ -46,28 +38,6 @@ namespace Slipstream.Backend.Plugins
                 EventBus.PublishEvent(EnabledPluginQueue[e.Event.Id]);
                 EnabledPluginQueue.Remove(e.Event.Id);
             }
-        }
-
-        public void Disable(IEngine engine)
-        {
-            Enabled = false;
-        }
-
-        public void Enable(IEngine engine)
-        {
-            Enabled = true;
-        }
-
-        public void RegisterPlugin(IEngine engine)
-        {
-        }
-
-        public void UnregisterPlugin(IEngine engine)
-        {
-        }
-
-        public void Loop()
-        {
         }
 
         private void NewFile(string filePath)

@@ -10,15 +10,8 @@ using EventHandler = Slipstream.Shared.EventHandler;
 
 namespace Slipstream.Backend.Plugins
 {
-    class LuaPlugin : IPlugin
+    class LuaPlugin : BasePlugin
     {
-        public string Id { get; set; }
-        public string Name => "LuaPlugin";
-        public string DisplayName { get; set; } = "LuaPlugin";
-        public bool Enabled { get; internal set; }
-        public string WorkerName => "Lua";
-        public EventHandler EventHandler { get; } = new EventHandler();
-
         private readonly IEventBus EventBus;
         private readonly Lua Lua = new Lua();
 
@@ -26,9 +19,8 @@ namespace Slipstream.Backend.Plugins
         private LuaFunction? HandleFunc;
         private LuaApi? Api;
 
-        public LuaPlugin(string id, IEventBus eventBus)
+        public LuaPlugin(string id, IEventBus eventBus) : base(id, "LuaPLugin", "LuaPlugin", "Lua")
         {
-            Id = id;
             EventBus = eventBus;
 
             EventHandler.OnSettingLuaSettings += (s, e) => OnLuaSettings(e.Event);
@@ -81,24 +73,14 @@ namespace Slipstream.Backend.Plugins
             }
         }
 
-        public void Disable(IEngine engine)
+        protected override void OnDisable(IEngine engine)
         {
-            Enabled = false;
             Api = null;
         }
 
-        public void Enable(IEngine engine)
+        protected override void OnEnable(IEngine engine)
         {
-            Enabled = true;
             StartLua();
-        }
-
-        public void RegisterPlugin(IEngine engine)
-        {
-        }
-
-        public void UnregisterPlugin(IEngine engine)
-        {
         }
 
         class LuaApi
@@ -213,7 +195,7 @@ namespace Slipstream.Backend.Plugins
             }
         }
 
-        public void Loop()
+        public override void Loop()
         {
             if (!Enabled || FilePath == null)
                 return;

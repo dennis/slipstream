@@ -12,15 +12,8 @@ using EventHandler = Slipstream.Shared.EventHandler;
 
 namespace Slipstream.Backend.Plugins
 {
-    class IRacingPlugin : IPlugin
+    class IRacingPlugin : BasePlugin
     {
-        public string Id { get; }
-        public string Name => "IRacingPlugin";
-        public string DisplayName => Name;
-        public bool Enabled { get; set; }
-        public string WorkerName => Name;
-        public EventHandler EventHandler { get; } = new EventHandler();
-
         private readonly iRacingConnection Connection = new iRacingConnection();
         private readonly Shared.IEventBus EventBus;
         private readonly Dictionary<string, IRacingCurrentSession.SessionTypes> SessionTypeMapping = new Dictionary<string, IRacingCurrentSession.SessionTypes>() {
@@ -66,9 +59,8 @@ namespace Slipstream.Backend.Plugins
         private IRacingWeatherInfo? lastWeatherInfo;
         private bool connected;
 
-        public IRacingPlugin(string id, IEventBus eventBus)
+        public IRacingPlugin(string id, IEventBus eventBus) : base(id, "IRacingPlugin", "IRacingPlugin", "IRacingPlugin")
         {
-            Id = id;
             EventBus = eventBus;
 
             EventHandler.OnInternalPluginsReady += (s, e) =>
@@ -81,29 +73,19 @@ namespace Slipstream.Backend.Plugins
             };
         }
 
-        public void Disable(IEngine engine)
+        protected override void OnDisable(IEngine engine)
         {
-            Enabled = false;
             EventHandler.Enabled = Enabled && !SeenPluginsReady;
         }
 
-        public void Enable(IEngine engine)
+        protected override void OnEnable(IEngine engine)
         {
-            Enabled = true;
             EventHandler.Enabled = Enabled && !SeenPluginsReady;
 
             Reset();
         }
 
-        public void RegisterPlugin(IEngine engine)
-        {
-        }
-
-        public void UnregisterPlugin(IEngine engine)
-        {
-        }
-
-        public void Loop()
+        public override void Loop()
         {
             // Dont send any events until all plugins are ready
             if (!SeenPluginsReady)

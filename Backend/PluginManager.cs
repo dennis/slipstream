@@ -14,11 +14,10 @@ namespace Slipstream.Backend
         private readonly IDictionary<string, IPlugin> Plugins = new Dictionary<string, IPlugin>();
         private readonly IDictionary<string, PluginWorker> PluginWorkers = new Dictionary<string, PluginWorker>();
 
-        // No events are sent while we are in Warmup. Nor do we enable Plugins. Once engine performs 
+        // No events are sent while we are in Warmup. Once engine performs 
         // WarmupDone(), these will be handled
         private bool Warmup = true; 
         private readonly IList<IEvent> PendingEvents = new List<IEvent>();
-        private readonly IList<IPlugin> PendingPluginActivation = new List<IPlugin>();
 
         public PluginManager(IEngine engine, IEventBus eventBus)
         {
@@ -62,7 +61,7 @@ namespace Slipstream.Backend
                 }
                 else
                 {
-                    worker = new PluginWorker(plugin.WorkerName, Engine.RegisterListener());
+                    worker = new PluginWorker(plugin.WorkerName, Engine.RegisterListener(), EventBus);
                     worker.Start();
                     PluginWorkers.Add(worker.Name, worker);
                 }
@@ -78,10 +77,7 @@ namespace Slipstream.Backend
 
         public void EnablePlugin(IPlugin p)
         {
-            p.EventHandler.Enabled = true;
             p.Enable(Engine);
-            if(p.Enabled)
-                EmitPluginStateChanged(p, Shared.Events.Internal.PluginStatus.Enabled);
         }
 
         public void DisablePlugins()
@@ -101,11 +97,7 @@ namespace Slipstream.Backend
             foreach (var e in PendingEvents)
                 EmitEvent(e);
 
-            foreach (var p in PendingPluginActivation)
-                EnablePlugin(p);
-
             PendingEvents.Clear();
-            PendingPluginActivation.Clear();
         }
 
         private void EmitEvent(IEvent e)
@@ -118,27 +110,7 @@ namespace Slipstream.Backend
 
         public void DisablePlugin(IPlugin p)
         {
-            p.EventHandler.Enabled = false;
             p.Disable(Engine);
-            if (!p.Enabled)
-                EmitPluginStateChanged(p, Shared.Events.Internal.PluginStatus.Disabled);
-        }
-
-        public void InitializePlugin(IPlugin plugin, bool enabled)
-        {
-            RegisterPlugin(plugin);
-
-            if (enabled)
-            {
-                if (Warmup)
-                {
-                    PendingPluginActivation.Add(plugin);
-                }
-                else
-                {
-                    EnablePlugin(plugin);
-                }
-            }
         }
 
         public void FindPluginAndExecute(string pluginId, Action<IPlugin> a)

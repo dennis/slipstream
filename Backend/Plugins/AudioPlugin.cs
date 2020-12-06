@@ -11,22 +11,14 @@ using EventHandler = Slipstream.Shared.EventHandler;
 
 namespace Slipstream.Backend.Plugins
 {
-    class AudioPlugin : IPlugin
+    class AudioPlugin : BasePlugin
     {
-        public string Id { get; }
-        public string Name => "AudioPlugin";
-        public string DisplayName => Name;
-        public bool Enabled { get; internal set; }
-        public string WorkerName => "Core";
-        public EventHandler EventHandler { get; } = new EventHandler();
-
         private readonly IEventBus EventBus;
         private string? Path;
         private readonly SpeechSynthesizer Synthesizer;
 
-        public AudioPlugin(string id, IEventBus eventBus)
+        public AudioPlugin(string id, IEventBus eventBus) : base(id, "AudioPlugin", "AudioPlugin", "Core")
         {
-            Id = id;
             EventBus = eventBus;
 
             Synthesizer = new SpeechSynthesizer();
@@ -40,33 +32,6 @@ namespace Slipstream.Backend.Plugins
         private void EventHandler_OnSettingAudioSettings(EventHandler source, EventHandler.EventHandlerArgs<AudioSettings> e)
         {
             Path = e.Event.Path;
-        }
-
-        private void OnAudioSettings(AudioSettings typedSettings)
-        {
-            Path = typedSettings.Path;
-        }
-
-        public void Disable(IEngine engine)
-        {
-            Enabled = false;
-        }
-
-        public void Enable(IEngine engine)
-        {
-            Enabled = true;
-        }
-
-        public void RegisterPlugin(IEngine engine)
-        {
-        }
-
-        public void UnregisterPlugin(IEngine engine)
-        {
-        }
-
-        public void Loop()
-        {
         }
 
         private void EventHandler_OnUtilityPlayAudio(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Utility.PlayAudio> e)

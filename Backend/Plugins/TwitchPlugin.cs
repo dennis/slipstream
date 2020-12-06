@@ -15,24 +15,16 @@ using EventHandler = Slipstream.Shared.EventHandler;
 
 namespace Slipstream.Backend.Plugins
 {
-    class TwitchPlugin : IPlugin
+    class TwitchPlugin : BasePlugin
     {
-        public string Id { get; }
-        public string Name => "TwitchPlugin";
-        public string DisplayName => Name;
-        public bool Enabled { get; set; }
-        public string WorkerName => Name;
-        public EventHandler EventHandler { get; } = new EventHandler();
-
         private TwitchClient? Client;
         private readonly IEventBus EventBus;
 
         private string? TwitchUsername;
         private string? TwitchToken;
 
-        public TwitchPlugin(string id, IEventBus eventBus)
+        public TwitchPlugin(string id, IEventBus eventBus) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin")
         {
-            Id = id;
             EventBus = eventBus;
 
             EventHandler.OnSettingTwitchSettings += (s, e) =>
@@ -52,9 +44,8 @@ namespace Slipstream.Backend.Plugins
             };
         }
 
-        public void Disable(IEngine engine)
+        protected override void OnDisable(IEngine engine)
         {
-            Enabled = false;
             Disconnect();
         }
 
@@ -64,10 +55,8 @@ namespace Slipstream.Backend.Plugins
             Client = null;
         }
 
-        public void Enable(IEngine engine)
+        protected override void OnEnable(IEngine engine)
         {
-            Enabled = true;
-
             Connnect();
         }
 
@@ -145,18 +134,6 @@ namespace Slipstream.Backend.Plugins
         private void OnLog(object sender, OnLogArgs e)
         {
             Debug.WriteLine($"Twitch: {e.DateTime} {e.Data}");
-        }
-
-        public void Loop()
-        {
-        }
-
-        public void RegisterPlugin(IEngine engine)
-        {
-        }
-
-        public void UnregisterPlugin(IEngine engine)
-        {
         }
     }
 }

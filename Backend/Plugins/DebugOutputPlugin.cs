@@ -5,19 +5,10 @@ using System.Diagnostics;
 
 namespace Slipstream.Backend.Plugins
 {
-    class DebugOutputPlugin : IPlugin
+    class DebugOutputPlugin : BasePlugin
     {
-        public string Id { get; }
-        public string Name => "DebugOutputPlugin";
-        public string DisplayName => Name;
-        public bool Enabled { get; internal set; }
-        public string WorkerName => "Core";
-        public EventHandler EventHandler { get; } = new EventHandler();
-
-        public DebugOutputPlugin(string id)
+        public DebugOutputPlugin(string id) : base(id, "DebugOutputPlugin", "DebugOutputPlugin", "Core")
         {
-            Id = id;
-
             EventHandler.OnDefault += EventHandler_OnDefault;
             EventHandler.OnInternalPluginStateChanged += EventHandler_OnInternalPluginStateChanged;
             EventHandler.OnInternalPluginRegister += EventHandler_OnInternalPluginRegister;
@@ -260,28 +251,6 @@ namespace Slipstream.Backend.Plugins
         private void EventHandler_OnDefault(EventHandler source, EventHandler.EventHandlerArgs<IEvent> e)
         {
             Debug.WriteLine($"$$ {e.Event}");
-        }
-
-        public void Disable(IEngine engine)
-        {
-            Enabled = false;
-        }
-
-        public void Enable(IEngine engine)
-        {
-            Enabled = true;
-        }
-
-        public void RegisterPlugin(IEngine engine)
-        {
-        }
-
-        public void UnregisterPlugin(IEngine engine)
-        {
-        }
-
-        public void Loop()
-        {
         }
     }
 }

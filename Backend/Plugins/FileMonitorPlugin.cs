@@ -8,30 +8,21 @@ using System.IO;
 
 namespace Slipstream.Backend.Plugins
 {
-    class FileMonitorPlugin : IPlugin
+    class FileMonitorPlugin : BasePlugin
     {
-        public string Id { get; }
-        public string Name => "FileMonitorPlugin";
-        public string DisplayName => Name;
-        public bool Enabled { get; internal set; }
-        public string WorkerName => "Core";
-        public EventHandler EventHandler { get; } = new EventHandler();
-
         private readonly IEventBus EventBus;
         private readonly IList<FileSystemWatcher> fileSystemWatchers = new List<FileSystemWatcher>();
 
-        public FileMonitorPlugin(string id, IEventBus eventBus)
+        public FileMonitorPlugin(string id, IEventBus eventBus) : base(id, "FileMonitorPlugin", "FileMonitorPlugin", "Core")
         {
-            Id = id;
-            this.EventBus = eventBus;
+            EventBus = eventBus;
 
             EventHandler.OnInternalPluginsReady += EventHandler_OnInternalPluginsReady;
             EventHandler.OnSettingFileMonitorSettings += (s, e) => OnFileMonitorSettings(e.Event);
         }
 
-        public void Disable(IEngine engine)
+        protected override void OnDisable(IEngine engine)
         {
-            Enabled = false;
             UpdateWatchers();
         }
 
@@ -41,22 +32,9 @@ namespace Slipstream.Backend.Plugins
                 watcher.EnableRaisingEvents = Enabled;
         }
 
-        public void Enable(IEngine engine)
+        protected override void OnEnable(IEngine _)
         {
-            Enabled = true;
             UpdateWatchers();
-        }
-
-        public void RegisterPlugin(IEngine engine)
-        {
-        }
-
-        public void UnregisterPlugin(IEngine engine)
-        {
-        }
-
-        public void Loop()
-        {
         }
 
         private void EventHandler_OnInternalPluginsReady(EventHandler source, EventHandler.EventHandlerArgs<PluginsReady> e)

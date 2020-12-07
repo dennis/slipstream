@@ -9,79 +9,71 @@ namespace Slipstream.Backend.Plugins
     {
         public DebugOutputPlugin(string id) : base(id, "DebugOutputPlugin", "DebugOutputPlugin", "Core")
         {
-            EventHandler.OnDefault += EventHandler_OnDefault;
-            EventHandler.OnInternalPluginStateChanged += EventHandler_OnInternalPluginStateChanged;
-            EventHandler.OnInternalPluginRegister += EventHandler_OnInternalPluginRegister;
-            EventHandler.OnInternalPluginUnregister += EventHandler_OnInternalPluginUnregister;
-            EventHandler.OnInternalPluginEnable += EventHandler_OnInternalPluginEnable;
-            EventHandler.OnInternalPluginDisable += EventHandler_OnInternalPluginDisable;
-            EventHandler.OnUtilityWriteToConsole += EventHandler_OnUtilityWriteToConsole;
-            EventHandler.OnUtilitySay += EventHandler_OnUtilitySay;
-            EventHandler.OnUtilityPlayAudio += EventHandler_OnUtilityPlayAudio;
-            EventHandler.OnIRacingTrackInfo += EventHandler_OnIRacingTrackInfo;
-            EventHandler.OnIRacingWeatherInfo += EventHandler_OnIRacingWeatherInfo;
-            EventHandler.OnIRacingCurrentSession += EventHandler_OnIRacingCurrentSession;
-            EventHandler.OnIRacingCarInfo += EventHandler_OnIRacingCarInfo;
-            EventHandler.OnIRacingRaceFlags += EventHandler_OnIRacingRaceFlags;
-            EventHandler.OnIRacingSessionState += EventHandler_OnIRacingSessionState;
-            EventHandler.OnIRacingCarCompletedLap += EventHandler_OnIRacingCarCompletedLap;
-            EventHandler.OnIRacingPitEnter += EventHandler_OnIRacingPitEnter;
-            EventHandler.OnIRacingPitExit += EventHandler_OnIRacingPitExit;
-            EventHandler.OnIRacingPitstopReport += EventHandler_OnIRacingPitstopReport;
-            EventHandler.OnTwitchConnected += EventHandler_OnTwitchConnected;
-            EventHandler.OnTwitchDisconnected += EventHandler_OnTwitchDisconnected;
-            EventHandler.OnTwitchReceivedCommand += EventHandler_OnTwitchReceivedCommand;
-            EventHandler.OnSettingAudioSettings += EventHandler_OnSettingAudioSettings;
-            EventHandler.OnSettingFileMonitorSettings += EventHandler_OnSettingFileMonitorSettings;
-            EventHandler.OnSettingTwitchSettings += EventHandler_OnSettingTwitchSettings;
-            EventHandler.OnTwitchSendMessage += EventHandler_OnTwitchSendMessage;
+            EventHandler.OnDefault += (s, e) => EventHandler_OnDefault(e.Event);
+            EventHandler.OnInternalPluginStateChanged += (s, e) => EventHandler_OnInternalPluginStateChanged(e.Event);
+            EventHandler.OnInternalPluginRegister += (s, e) => EventHandler_OnInternalPluginRegister(e.Event);
+            EventHandler.OnInternalPluginUnregister += (s, e) => EventHandler_OnInternalPluginUnregister(e.Event);
+            EventHandler.OnInternalPluginEnable += (s, e) => EventHandler_OnInternalPluginEnable(e.Event);
+            EventHandler.OnInternalPluginDisable += (s, e) => EventHandler_OnInternalPluginDisable(e.Event);
+            EventHandler.OnUtilityWriteToConsole += (s, e) => EventHandler_OnUtilityWriteToConsole(e.Event);
+            EventHandler.OnUtilitySay += (s, e) => EventHandler_OnUtilitySay(e.Event);
+            EventHandler.OnUtilityPlayAudio += (s, e) => EventHandler_OnUtilityPlayAudio(e.Event);
+            EventHandler.OnIRacingTrackInfo += (s, e) => EventHandler_OnIRacingTrackInfo(e.Event);
+            EventHandler.OnIRacingWeatherInfo += (s, e) => EventHandler_OnIRacingWeatherInfo(e.Event);
+            EventHandler.OnIRacingCurrentSession += (s, e) => EventHandler_OnIRacingCurrentSession(e.Event);
+            EventHandler.OnIRacingCarInfo += (s, e) => EventHandler_OnIRacingCarInfo(e.Event);
+            EventHandler.OnIRacingRaceFlags += (s, e) => EventHandler_OnIRacingRaceFlags(e.Event);
+            EventHandler.OnIRacingSessionState += (s, e) => EventHandler_OnIRacingSessionState(e.Event);
+            EventHandler.OnIRacingCarCompletedLap += (s, e) => EventHandler_OnIRacingCarCompletedLap(e.Event);
+            EventHandler.OnIRacingPitEnter += (s, e) => EventHandler_OnIRacingPitEnter(e.Event);
+            EventHandler.OnIRacingPitExit += (s, e) => EventHandler_OnIRacingPitExit(e.Event);
+            EventHandler.OnIRacingPitstopReport += (s, e) => EventHandler_OnIRacingPitstopReport(e.Event);
+            EventHandler.OnTwitchConnected += (s, e) => EventHandler_OnTwitchConnected(e.Event);
+            EventHandler.OnTwitchDisconnected += (s, e) => EventHandler_OnTwitchDisconnected(e.Event);
+            EventHandler.OnTwitchReceivedCommand += (s, e) => EventHandler_OnTwitchReceivedCommand(e.Event);
+            EventHandler.OnSettingAudioSettings += (s, e) => EventHandler_OnSettingAudioSettings(e.Event);
+            EventHandler.OnSettingFileMonitorSettings += (s, e) => EventHandler_OnSettingFileMonitorSettings(e.Event);
+            EventHandler.OnSettingTwitchSettings += (s, e) => EventHandler_OnSettingTwitchSettings(e.Event);
+            EventHandler.OnTwitchSendMessage += (s, e) => EventHandler_OnTwitchSendMessage(e.Event);
         }
 
-        private void EventHandler_OnTwitchSendMessage(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Twitch.TwitchSendMessage> e)
+        private void EventHandler_OnTwitchSendMessage(Shared.Events.Twitch.TwitchSendMessage ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev} {ev.Message}");
         }
 
-        private void EventHandler_OnSettingTwitchSettings(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Setting.TwitchSettings> e)
+        private void EventHandler_OnSettingTwitchSettings(Shared.Events.Setting.TwitchSettings ev)
         {
-            var ev = e.Event;
-            Debug.WriteLine($"$$ {ev}");
+            Debug.WriteLine($"$$ {ev} {ev.TwitchUsername}");
         }
 
-        private void EventHandler_OnSettingFileMonitorSettings(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Setting.FileMonitorSettings> e)
+        private void EventHandler_OnSettingFileMonitorSettings(Shared.Events.Setting.FileMonitorSettings ev)
         {
-            var ev = e.Event;
-            Debug.WriteLine($"$$ {ev}");
+            Debug.WriteLine($"$$ {ev} {ev.Paths}");
         }
 
-        private void EventHandler_OnSettingAudioSettings(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Setting.AudioSettings> e)
+        private void EventHandler_OnSettingAudioSettings(Shared.Events.Setting.AudioSettings ev)
         {
-            var ev = e.Event;
-            Debug.WriteLine($"$$ {ev}");
+            Debug.WriteLine($"$$ {ev} {ev.Path}");
         }
 
-        private void EventHandler_OnTwitchReceivedCommand(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedCommand> e)
+        private void EventHandler_OnTwitchReceivedCommand(Shared.Events.Twitch.TwitchReceivedCommand ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev} {ev.From} {ev.Message} isModerator={ev.Moderator}, isVip={ev.Vip}, isSubscriber={ev.Subscriber}, isBroadcaster={ev.Broadcaster}");
         }
 
-        private void EventHandler_OnTwitchDisconnected(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Twitch.TwitchDisconnected> e)
+        private void EventHandler_OnTwitchDisconnected(Shared.Events.Twitch.TwitchDisconnected ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev}");
         }
 
-        private void EventHandler_OnTwitchConnected(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Twitch.TwitchConnected> e)
+        private void EventHandler_OnTwitchConnected(Shared.Events.Twitch.TwitchConnected ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev}");
         }
 
-        private void EventHandler_OnIRacingPitstopReport(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.IRacing.IRacingPitstopReport> e)
+        private void EventHandler_OnIRacingPitstopReport(Shared.Events.IRacing.IRacingPitstopReport ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev} SessionTime={ev.SessionTime}, CarIdx={ev.CarIdx}, Laps={ev.Laps}, FuelDiff={ev.FuelDiff}, Duration={ev.Duration}");
             Debug.WriteLine($"  {ev} Temperatures:");
             Debug.WriteLine($"  {ev}   LF {ev.TempLFL}/{ev.TempLFM}/{ev.TempLFR}");
@@ -95,33 +87,28 @@ namespace Slipstream.Backend.Plugins
             Debug.WriteLine($"  {ev}   RR {ev.WearRRL}/{ev.WearRRM}/{ev.WearRRR}");
         }
 
-        private void EventHandler_OnIRacingPitExit(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.IRacing.IRacingPitExit> e)
+        private void EventHandler_OnIRacingPitExit(Shared.Events.IRacing.IRacingPitExit ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev} SessionTime={ev.SessionTime}, LocalUser={ev.LocalUser}, CarIdx={ev.CarIdx}, Duration={ev.Duration}");
         }
 
-        private void EventHandler_OnIRacingPitEnter(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.IRacing.IRacingPitEnter> e)
+        private void EventHandler_OnIRacingPitEnter(Shared.Events.IRacing.IRacingPitEnter ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev} SessionTime={ev.SessionTime}, LocalUser={ev.LocalUser}, CarIdx={ev.CarIdx}");
         }
 
-        private void EventHandler_OnIRacingCarCompletedLap(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.IRacing.IRacingCarCompletedLap> e)
+        private void EventHandler_OnIRacingCarCompletedLap(Shared.Events.IRacing.IRacingCarCompletedLap ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev} SessionTime={ev.SessionTime}, LocalUser={ev.LocalUser}, LapsComplete={ev.LapsComplete}, Time={ev.Time}, CarIndx={ev.CarIdx}, Fuel={ev.FuelDiff}");
         }
 
-        private void EventHandler_OnIRacingSessionState(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.IRacing.IRacingSessionState> e)
+        private void EventHandler_OnIRacingSessionState(Shared.Events.IRacing.IRacingSessionState ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev} SessionTime={ev.SessionTime}, State={ev.State}");
         }
 
-        private void EventHandler_OnIRacingRaceFlags(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.IRacing.IRacingRaceFlags> e)
+        private void EventHandler_OnIRacingRaceFlags(Shared.Events.IRacing.IRacingRaceFlags ev)
         {
-            var ev = e.Event;
             Debug.Write($"$$ {ev} SessionTime={ev.SessionTime} ");
 
             if (ev.Black)
@@ -176,81 +163,69 @@ namespace Slipstream.Backend.Plugins
             Debug.WriteLine("");
         }
 
-        private void EventHandler_OnIRacingCarInfo(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.IRacing.IRacingCarInfo> e)
+        private void EventHandler_OnIRacingCarInfo(Shared.Events.IRacing.IRacingCarInfo ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev} SessionTime={ev.SessionTime}, LocalUser={ev.LocalUser}, CarIdx={ev.CarIdx}, CarNumber={ev.CarNumber}, CarName={ev.CarName}, CarNameShort={ev.CarNameShort}, CurrentDriverName={ev.CurrentDriverName}, CurrentDriverUserID={ev.CurrentDriverUserID}, CurrentDriverIRating={ev.CurrentDriverIRating}, TeamID={ev.TeamID}, TeamName={ev.TeamName}, Spectator={ev.Spectator}");
         }
 
-        private void EventHandler_OnIRacingCurrentSession(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.IRacing.IRacingCurrentSession> e)
+        private void EventHandler_OnIRacingCurrentSession(Shared.Events.IRacing.IRacingCurrentSession ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev} LapsLimited={ev.LapsLimited}, SessionLaps={ev.TotalSessionLaps}, SessionType={ev.SessionType}, TimeLimited={ev.TimeLimited}, SessionTime={ev.TotalSessionTime}");
         }
 
-        private void EventHandler_OnIRacingWeatherInfo(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.IRacing.IRacingWeatherInfo> e)
+        private void EventHandler_OnIRacingWeatherInfo(Shared.Events.IRacing.IRacingWeatherInfo ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev} SessionTime={ev.SessionTime}, AirTemp={ev.AirTemp}, SurfaceTemp={ev.SurfaceTemp}, FogLevel={ev.FogLevel}");
         }
 
-        private void EventHandler_OnIRacingTrackInfo(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.IRacing.IRacingTrackInfo> e)
+        private void EventHandler_OnIRacingTrackInfo(Shared.Events.IRacing.IRacingTrackInfo ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev} TrackDisplayShortName={ev.TrackDisplayShortName}, TrackCity={ev.TrackCity}, TrackConfigName={ev.TrackConfigName}, TrackDisplayName={ev.TrackDisplayName}, TrackId={ev.TrackId}, TrackLength={ev.TrackLength}, TrackType={ev.TrackType}");
         }
 
-        private void EventHandler_OnUtilityPlayAudio(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Utility.PlayAudio> e)
+        private void EventHandler_OnUtilityPlayAudio(Shared.Events.Utility.PlayAudio ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev} message=\"{ev.Filename}\", volume={ev.Volume}");
         }
 
-        private void EventHandler_OnInternalPluginDisable(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.PluginDisable> e)
+        private void EventHandler_OnInternalPluginDisable(Shared.Events.Internal.PluginDisable ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev} {ev.Id}");
         }
 
-        private void EventHandler_OnInternalPluginEnable(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.PluginEnable> e)
+        private void EventHandler_OnInternalPluginEnable(Shared.Events.Internal.PluginEnable ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev} {ev.Id}");
         }
 
-        private void EventHandler_OnInternalPluginUnregister(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.PluginUnregister> e)
+        private void EventHandler_OnInternalPluginUnregister(Shared.Events.Internal.PluginUnregister ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev} {ev.Id}");
         }
 
-        private void EventHandler_OnInternalPluginRegister(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.PluginRegister> e)
+        private void EventHandler_OnInternalPluginRegister(Shared.Events.Internal.PluginRegister ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev} Id={ev.Id} PluginName={ev.PluginName}");
         }
 
-        private void EventHandler_OnUtilitySay(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Utility.Say> e)
+        private void EventHandler_OnUtilitySay(Shared.Events.Utility.Say ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev} message=\"{ev.Message}\" @ volume={ev.Volume}");
         }
 
-        private void EventHandler_OnUtilityWriteToConsole(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Utility.WriteToConsole> e)
+        private void EventHandler_OnUtilityWriteToConsole(Shared.Events.Utility.WriteToConsole ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev} {ev.Message}");
         }
 
-        private void EventHandler_OnInternalPluginStateChanged(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.PluginStateChanged> e)
+        private void EventHandler_OnInternalPluginStateChanged(Shared.Events.Internal.PluginStateChanged ev)
         {
-            var ev = e.Event;
             Debug.WriteLine($"$$ {ev} {ev.Id} {ev.PluginName} {ev.PluginStatus}");
         }
 
-        private void EventHandler_OnDefault(EventHandler source, EventHandler.EventHandlerArgs<IEvent> e)
+        private void EventHandler_OnDefault(IEvent @event)
         {
-            Debug.WriteLine($"$$ {e.Event}");
+            Debug.WriteLine($"$$ {@event}");
         }
     }
 }

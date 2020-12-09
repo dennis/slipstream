@@ -86,6 +86,9 @@ namespace Slipstream.Backend
                 case "TwitchPlugin":
                     PluginManager.RegisterPlugin(new TwitchPlugin(ev.Id, EventBus));
                     break;
+                case "StatePlugin":
+                    PluginManager.RegisterPlugin(new StatePlugin(ev.Id, EventBus));
+                    break;
                 default:
                     throw new Exception($"Unknown plugin '{ev.PluginName}'");
             }

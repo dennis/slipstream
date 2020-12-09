@@ -115,6 +115,7 @@
     <Compile Include="Backend\PluginManager.cs" />
     <Compile Include="Backend\Plugins\AudioPlugin.cs" />
     <Compile Include="Backend\Plugins\BasePlugin.cs" />
+    <Compile Include="Backend\Plugins\StatePlugin.cs" />
     <Compile Include="Backend\Plugins\TwitchPlugin.cs" />
     <Compile Include="Frontend\SettingsForm.cs">
       <SubType>Form</SubType>
@@ -154,6 +155,9 @@
     <Compile Include="Shared\Events\Internal\FrontendReady.cs" />
     <Compile Include="Shared\Events\Setting\AudioSettings.cs" />
     <Compile Include="Shared\Events\Setting\TwitchSettings.cs" />
+    <Compile Include="Shared\Events\State\StateValue.cs" />
+    <Compile Include="Shared\Events\State\StateGetValue.cs" />
+    <Compile Include="Shared\Events\State\StateSetValue.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchSendMessage.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchReceivedCommand.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchDisconnected.cs" />

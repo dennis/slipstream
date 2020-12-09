@@ -134,6 +134,17 @@ namespace Slipstream.Shared
         public event OnTwitchSendMessageHandler? OnTwitchSendMessage;
         #endregion
 
+        #region State
+        public delegate void OnStateGetValueHandler(EventHandler source, EventHandlerArgs<Shared.Events.State.StateGetValue> e);
+        public event OnStateGetValueHandler? OnStateGetValue;
+
+        public delegate void OnStateSetValueHandler(EventHandler source, EventHandlerArgs<Shared.Events.State.StateSetValue> e);
+        public event OnStateSetValueHandler? OnStateSetValue;
+
+        public delegate void OnStateValueHandler(EventHandler source, EventHandlerArgs<Shared.Events.State.StateValue> e);
+        public event OnStateValueHandler? OnStateValue;
+        #endregion
+
         public void HandleEvent(IEvent? ev)
         {
             if (!Enabled)
@@ -381,6 +392,29 @@ namespace Slipstream.Shared
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnTwitchSendMessage.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchSendMessage>(tev));
+                    break;
+
+                // State
+
+                case Shared.Events.State.StateGetValue tev:
+                    if (OnStateGetValue == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnStateGetValue.Invoke(this, new EventHandlerArgs<Shared.Events.State.StateGetValue>(tev));
+                    break;
+
+                case Shared.Events.State.StateSetValue tev:
+                    if (OnStateSetValue == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnStateSetValue.Invoke(this, new EventHandlerArgs<Shared.Events.State.StateSetValue>(tev));
+                    break;
+
+                case Shared.Events.State.StateValue tev:
+                    if (OnStateValue == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnStateValue.Invoke(this, new EventHandlerArgs<Shared.Events.State.StateValue>(tev));
                     break;
 
                 default:

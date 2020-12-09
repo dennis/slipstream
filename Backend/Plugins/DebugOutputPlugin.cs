@@ -35,6 +35,24 @@ namespace Slipstream.Backend.Plugins
             EventHandler.OnSettingFileMonitorSettings += (s, e) => EventHandler_OnSettingFileMonitorSettings(e.Event);
             EventHandler.OnSettingTwitchSettings += (s, e) => EventHandler_OnSettingTwitchSettings(e.Event);
             EventHandler.OnTwitchSendMessage += (s, e) => EventHandler_OnTwitchSendMessage(e.Event);
+            EventHandler.OnStateGetValue += (s, e) => EventHandler_OnStateGetValue(e.Event);
+            EventHandler.OnStateSetValue += (s, e) => EventHandler_OnStateSetValue(e.Event);
+            EventHandler.OnStateValue += (s, e) => EventHandler_OnStateValue(e.Event);
+        }
+
+        private void EventHandler_OnStateGetValue(Shared.Events.State.StateGetValue ev)
+        {
+            Debug.WriteLine($"$$ {ev} Key={ev.Key}");
+        }
+
+        private void EventHandler_OnStateSetValue(Shared.Events.State.StateSetValue ev)
+        {
+            Debug.WriteLine($"$$ {ev} Key={ev.Key} Value='{ev.Value}'");
+        }
+
+        private void EventHandler_OnStateValue(Shared.Events.State.StateValue ev)
+        {
+            Debug.WriteLine($"$$ {ev} Key={ev.Key} '{ev.Value}'");
         }
 
         private void EventHandler_OnTwitchSendMessage(Shared.Events.Twitch.TwitchSendMessage ev)

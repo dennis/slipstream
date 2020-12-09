@@ -60,6 +60,7 @@ namespace Slipstream.Frontend
             EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "AudioPlugin", PluginName = "AudioPlugin" });
             EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "IRacingPlugin", PluginName = "IRacingPlugin" });
             EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "TwitchPlugin", PluginName = "TwitchPlugin" });
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "StatePlugin", PluginName = "StatePlugin" });
 
             // Tell backend that we're ready
             EventBus.PublishEvent(new Shared.Events.Internal.FrontendReady());
@@ -138,6 +139,10 @@ namespace Slipstream.Frontend
 
                             case "TwitchPlugin":
                                 EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = "TwitchPlugin" });
+                                break;
+
+                            case "StatePlugin":
+                                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = "StatePlugin" });
                                 break;
                         }
 

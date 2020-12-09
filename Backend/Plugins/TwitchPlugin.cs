@@ -71,6 +71,9 @@ namespace Slipstream.Backend.Plugins
             if (TwitchUsername == null || TwitchToken == null)
                 return;
 
+            if (Client != null && Client.IsConnected)
+                return;
+
             ConnectionCredentials credentials = new ConnectionCredentials(TwitchUsername, TwitchToken, "ws://irc-ws.chat.twitch.tv:80");
             var clientOptions = new ClientOptions
             {
@@ -88,8 +91,6 @@ namespace Slipstream.Backend.Plugins
             Client.OnDisconnected += OnDisconnect;
             Client.OnError += Client_OnError;
             Client.OnIncorrectLogin += Client_OnIncorrectLogin;
-
-            Debug.WriteLine("CONNECTING TO TWITCH");
 
             Client.Connect();
         }

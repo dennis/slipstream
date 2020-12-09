@@ -40,7 +40,10 @@ namespace Slipstream.Backend.Plugins
             };
             EventHandler.OnTwitchSendMessage += (s, e) =>
             {
-                Client?.SendMessage(TwitchUsername, e.Event.Message);
+                if (Client != null && Client.JoinedChannels.Count > 0)
+                {
+                    Client.SendMessage(TwitchUsername, e.Event.Message);
+                }
             };
         }
 
@@ -85,6 +88,8 @@ namespace Slipstream.Backend.Plugins
             Client.OnDisconnected += OnDisconnect;
             Client.OnError += Client_OnError;
             Client.OnIncorrectLogin += Client_OnIncorrectLogin;
+
+            Debug.WriteLine("CONNECTING TO TWITCH");
 
             Client.Connect();
         }

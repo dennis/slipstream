@@ -73,14 +73,13 @@ namespace Slipstream.Backend.Plugins
             };
         }
 
-        protected override void OnDisable(IEngine engine)
-        {
-            EventHandler.Enabled = Enabled && !SeenPluginsReady;
-        }
-
         protected override void OnEnable(IEngine engine)
         {
-            EventHandler.Enabled = Enabled && !SeenPluginsReady;
+            if (!SeenPluginsReady)
+            {
+                Disable(engine);
+                return;
+            }
 
             Reset();
         }
@@ -88,7 +87,7 @@ namespace Slipstream.Backend.Plugins
         public override void Loop()
         {
             // Dont send any events until all plugins are ready
-            if (!SeenPluginsReady)
+            if (!SeenPluginsReady || !Enabled)
             {
                 // EventHandler will change SeenPluginsReady to true and disable itself
                 return;

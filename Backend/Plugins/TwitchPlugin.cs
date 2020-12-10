@@ -74,25 +74,28 @@ namespace Slipstream.Backend.Plugins
             if (Client != null && Client.IsConnected)
                 return;
 
-            ConnectionCredentials credentials = new ConnectionCredentials(TwitchUsername, TwitchToken, "ws://irc-ws.chat.twitch.tv:80");
-            var clientOptions = new ClientOptions
+            if(Client == null)
             {
-                MessagesAllowedInPeriod = 750,
-                ThrottlingPeriod = TimeSpan.FromSeconds(30)
-            };
+                ConnectionCredentials credentials = new ConnectionCredentials(TwitchUsername, TwitchToken, "ws://irc-ws.chat.twitch.tv:80");
+                var clientOptions = new ClientOptions
+                {
+                    MessagesAllowedInPeriod = 750,
+                    ThrottlingPeriod = TimeSpan.FromSeconds(30)
+                };
 
-            WebSocketClient customClient = new WebSocketClient(clientOptions);
-            Client = new TwitchClient(customClient);
-            Client.Initialize(credentials, TwitchUsername);
+                WebSocketClient customClient = new WebSocketClient(clientOptions);
+                Client = new TwitchClient(customClient);
+                Client.Initialize(credentials, TwitchUsername);
 
-            Client.OnLog += OnLog;
-            Client.OnConnected += OnConnected;
-            Client.OnChatCommandReceived += OnChatCommandReceived;
-            Client.OnDisconnected += OnDisconnect;
-            Client.OnError += Client_OnError;
-            Client.OnIncorrectLogin += Client_OnIncorrectLogin;
+                Client.OnLog += OnLog;
+                Client.OnConnected += OnConnected;
+                Client.OnChatCommandReceived += OnChatCommandReceived;
+                Client.OnDisconnected += OnDisconnect;
+                Client.OnError += Client_OnError;
+                Client.OnIncorrectLogin += Client_OnIncorrectLogin;
 
-            Client.Connect();
+                Client.Connect();
+            }
         }
 
         private void Client_OnIncorrectLogin(object sender, OnIncorrectLoginArgs e)
@@ -110,6 +113,7 @@ namespace Slipstream.Backend.Plugins
         private void OnDisconnect(object sender, OnDisconnectedEventArgs e)
         {
             EventBus.PublishEvent(new TwitchDisconnected());
+            Disconnect();
         }
 
         private void OnChatCommandReceived(object sender, OnChatCommandReceivedArgs e)

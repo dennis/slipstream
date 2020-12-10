@@ -147,7 +147,7 @@ namespace Slipstream.Shared
 
         public void HandleEvent(IEvent? ev)
         {
-            if (!Enabled)
+            if (ev == null || !Enabled)
                 return;
 
             switch (ev)

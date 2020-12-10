@@ -103,13 +103,13 @@ namespace Slipstream.Backend
                     // We need to wait for frontend to be ready, before starting our plugins.
                     // This is to avoid that we have plugins that are not shown in the log window
 
-                    PreEventHandler.HandleEvent(Subscription.NextEvent(200));
+                    PreEventHandler.HandleEvent(Subscription.NextEvent(10));
                 }
                 else
                 {
                     // Frontend is ready, do our part
 
-                    PostEventHandler.HandleEvent(Subscription.NextEvent(200));
+                    PostEventHandler.HandleEvent(Subscription.NextEvent(10));
                 }
             }
         }

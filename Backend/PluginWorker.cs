@@ -3,6 +3,8 @@ using Slipstream.Shared.Events.Internal;
 using System.Collections.Generic;
 using System.Threading;
 
+#nullable enable
+
 namespace Slipstream.Backend
 {
     class PluginWorker : Worker
@@ -48,9 +50,9 @@ namespace Slipstream.Backend
             {
                 int invoked = 0;
 
-                IEvent e;
+                IEvent? e;
 
-                while ((e = Subscription?.NextEvent(100)) != null)
+                while ((e = Subscription?.NextEvent(10)) != null)
                 {
                     lock (Plugins)
                     {
@@ -74,7 +76,7 @@ namespace Slipstream.Backend
                 if (invoked == 0)
                 {
                     // Avoid busy-looping if there are no plugins
-                    Thread.Sleep(50);
+                    Thread.Sleep(10);
                 }
             }
         }

@@ -17,7 +17,7 @@ namespace Slipstream.Backend.Plugins
         private string? Path;
         private readonly SpeechSynthesizer Synthesizer;
 
-        public AudioPlugin(string id, IEventBus eventBus) : base(id, "AudioPlugin", "AudioPlugin", "Core")
+        public AudioPlugin(string id, IEventBus eventBus) : base(id, "AudioPlugin", "AudioPlugin", "Audio")
         {
             EventBus = eventBus;
 

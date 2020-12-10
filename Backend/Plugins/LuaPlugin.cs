@@ -1,4 +1,5 @@
 ﻿using NLua;
+using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Setting;
 using System;
@@ -14,14 +15,16 @@ namespace Slipstream.Backend.Plugins
     {
         private readonly IEventBus EventBus;
         private readonly Lua Lua = new Lua();
+        private readonly IStateService StateService;
 
         private string? FilePath;
         private LuaFunction? HandleFunc;
         private LuaApi? Api;
 
-        public LuaPlugin(string id, IEventBus eventBus) : base(id, "LuaPLugin", "LuaPlugin", "Lua")
+        public LuaPlugin(string id, IEventBus eventBus, IStateService stateService) : base(id, "LuaPLugin", "LuaPlugin", "Lua")
         {
             EventBus = eventBus;
+            StateService = stateService;
 
             EventHandler.OnSettingLuaSettings += (s, e) => OnLuaSettings(e.Event);
         }
@@ -43,7 +46,7 @@ namespace Slipstream.Backend.Plugins
 
             try
             {
-                Api = new LuaApi(EventBus, Path.GetFileName(FilePath), Path.GetDirectoryName(FilePath));
+                Api = new LuaApi(EventBus, StateService, Path.GetFileName(FilePath), Path.GetDirectoryName(FilePath));
 
                 DisplayName = "Lua: " + Path.GetFileName(FilePath);
 
@@ -55,7 +58,7 @@ namespace Slipstream.Backend.Plugins
                 Lua.RegisterFunction("write", Api, typeof(LuaApi).GetMethod("Write", new[] { typeof(string), typeof(string) }));
                 Lua.RegisterFunction("send_twitch_message", Api, typeof(LuaApi).GetMethod("SendTwitchMessage", new[] { typeof(string) }));
                 Lua.RegisterFunction("set_state", Api, typeof(LuaApi).GetMethod("SetState", new[] { typeof(string), typeof(string) }));
-                Lua.RegisterFunction("request_state", Api, typeof(LuaApi).GetMethod("GetState", new[] { typeof(string) }));
+                Lua.RegisterFunction("get_state", Api, typeof(LuaApi).GetMethod("GetState", new[] { typeof(string) }));
 
                 var f = Lua.LoadFile(FilePath);
 
@@ -92,6 +95,7 @@ namespace Slipstream.Backend.Plugins
             private readonly IDictionary<string, DelayedExecution> DebouncedFunctions = new Dictionary<string, DelayedExecution>();
             private readonly IDictionary<string, DelayedExecution> WaitingFunctions = new Dictionary<string, DelayedExecution>();
             private readonly string WorkDirectory;
+            private readonly IStateService StateService;
 
             private class DelayedExecution
             {
@@ -105,11 +109,12 @@ namespace Slipstream.Backend.Plugins
                 }
             }
 
-            public LuaApi(IEventBus eventBus, string prefix, string workDirectory)
+            public LuaApi(IEventBus eventBus, IStateService stateService, string prefix, string workDirectory)
             {
                 EventBus = eventBus;
                 Prefix = prefix;
                 WorkDirectory = workDirectory;
+                StateService = stateService;
             }
 
             public void Print(string s)
@@ -134,12 +139,12 @@ namespace Slipstream.Backend.Plugins
 
             public void SetState(string key, string value)
             {
-                EventBus.PublishEvent(new Shared.Events.State.StateSetValue() { Key = key, Value = value });
+                StateService.SetState(key, value);
             }
 
-            public void GetState(string key)
+            public string GetState(string key)
             {
-                EventBus.PublishEvent(new Shared.Events.State.StateGetValue() { Key = key });
+                return StateService.GetState(key);
             }
 
             public void Debounce(string name, LuaFunction func, float debounceLength)

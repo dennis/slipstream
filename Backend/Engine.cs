@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using Slipstream.Backend.Plugins;
+using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Internal;
 using System;
@@ -12,6 +13,7 @@ namespace Slipstream.Backend
         private readonly IEventBus EventBus;
         private readonly PluginManager PluginManager;
         private readonly IEventBusSubscription Subscription;
+        private readonly IStateService StateService;
         private bool FrontendReady = false;
 
         // Before UI is ready:
@@ -20,9 +22,10 @@ namespace Slipstream.Backend
         // After UI is ready
         private readonly Shared.EventHandler PostEventHandler = new Shared.EventHandler();
 
-        public Engine(IEventBus eventBus) : base("engine")
+        public Engine(IEventBus eventBus, IStateService stateService) : base("engine")
         {
             EventBus = eventBus;
+            StateService = stateService;
             PluginManager = new PluginManager(this, eventBus);
 
             Subscription = EventBus.RegisterListener();
@@ -75,7 +78,7 @@ namespace Slipstream.Backend
                     PluginManager.RegisterPlugin(new FileTriggerPlugin(ev.Id, EventBus));
                     break;
                 case "LuaPlugin":
-                    PluginManager.RegisterPlugin(new LuaPlugin(ev.Id, EventBus));
+                    PluginManager.RegisterPlugin(new LuaPlugin(ev.Id, EventBus, StateService));
                     break;
                 case "AudioPlugin":
                     PluginManager.RegisterPlugin(new AudioPlugin(ev.Id, EventBus));
@@ -85,9 +88,6 @@ namespace Slipstream.Backend
                     break;
                 case "TwitchPlugin":
                     PluginManager.RegisterPlugin(new TwitchPlugin(ev.Id, EventBus));
-                    break;
-                case "StatePlugin":
-                    PluginManager.RegisterPlugin(new StatePlugin(ev.Id, EventBus));
                     break;
                 default:
                     throw new Exception($"Unknown plugin '{ev.PluginName}'");

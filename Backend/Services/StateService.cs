@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
 using Slipstream.Shared;
 
 #nullable enable
@@ -10,7 +9,6 @@ namespace Slipstream.Backend.Services
 {
     public class StateService : IStateService
     {
-        private const string ALLOWED_KEY_CHARACTER_REGEX = @"^([\-\.a-zA-Z 0-9]+)$";
         private readonly IDictionary<string, string> KeyValues = new Dictionary<string, string>();
         private readonly IEventBus EventBus;
         private readonly string FilePath;
@@ -20,15 +18,20 @@ namespace Slipstream.Backend.Services
             EventBus = eventBus;
             FilePath = filePath;
 
-            // Read existing values
-            if(File.Exists(FilePath))
+            ReadStateFromFile();
+            WriteStateToFile();
+        }
+
+        private void ReadStateFromFile()
+        {
+            if (File.Exists(FilePath))
             {
                 using StreamReader r = new StreamReader(FilePath);
 
                 string line;
                 while ((line = r.ReadLine()) != null)
                 {
-                    var f = line.Split(new string[] { "=" }, 2, StringSplitOptions.None);
+                    var f = line.Split(new string[] { "\t" }, 2, StringSplitOptions.None);
                     if (f.Length != 2)
                         return;
 
@@ -38,18 +41,20 @@ namespace Slipstream.Backend.Services
 
                     }
 
-                    if(f[1].Length > 0)
+                    if (f[1].Length > 0)
                     {
                         KeyValues.Add(f[0], f[1]);
                     }
                 }
             }
+        }
 
-            // Write cleaned up version
+        private void WriteStateToFile()
+        {
             using StreamWriter Writer = new StreamWriter(FilePath);
             foreach (var pair in KeyValues)
             {
-                Writer.WriteLine($"{pair.Key}={pair.Value}");
+                Writer.WriteLine($"{pair.Key}\t{pair.Value}");
             }
         }
 
@@ -73,7 +78,7 @@ namespace Slipstream.Backend.Services
                 KeyValues.Add(key, value);
             }
 
-            Writer.WriteLine($"{key}={value}");
+            Writer.WriteLine($"{key}\t{value}");
         }
 
         public string GetState(string key)
@@ -90,7 +95,7 @@ namespace Slipstream.Backend.Services
 
         private bool IsValidKey(string value)
         {
-            return Regex.IsMatch(value, ALLOWED_KEY_CHARACTER_REGEX);
+            return value.IndexOf('\t') == -1;
         }
 
         public void Dispose()

@@ -28,10 +28,10 @@ namespace Slipstream.Frontend
 
             InitializeComponent();
 
-            ScriptsPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $@"\Slipstream\Scripts\";
+            ScriptsPath = @"Scripts\";
             System.IO.Directory.CreateDirectory(ScriptsPath);
 
-            AudioPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $@"\Slipstream\Audio\";
+            AudioPath = @"Audio\";
             System.IO.Directory.CreateDirectory(AudioPath);
 
             Load += MainWindow_Load;

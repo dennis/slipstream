@@ -61,6 +61,9 @@ namespace Slipstream.Backend.Plugins
                 Lua.RegisterFunction("set_state", Api, typeof(LuaApi).GetMethod("SetState", new[] { typeof(string), typeof(string) }));
                 Lua.RegisterFunction("get_state", Api, typeof(LuaApi).GetMethod("GetState", new[] { typeof(string) }));
 
+                var ScriptPath = Path.GetDirectoryName(FilePath).Replace("\\", "\\\\");
+                Lua.DoString($"package.path = \"{ScriptPath}\\\\?.lua;\" .. package.path;");
+
                 var f = Lua.LoadFile(FilePath);
 
                 f.Call();

@@ -17,6 +17,9 @@ namespace Slipstream
             ConfigureServices(services);
 
             using ServiceProvider serviceProvider = services.BuildServiceProvider();
+            string cwd = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $@"\Slipstream\";
+            System.IO.Directory.CreateDirectory(cwd);
+            System.IO.Directory.SetCurrentDirectory(cwd);
 
             Start(serviceProvider);
         }

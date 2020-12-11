@@ -2,7 +2,6 @@ using Slipstream.Shared;
 using Slipstream.Shared.Events.Twitch;
 using Slipstream.Shared.Events.Utility;
 using System;
-using System.Diagnostics;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
@@ -29,7 +28,7 @@ namespace Slipstream.Backend.Plugins
 
             EventHandler.OnSettingTwitchSettings += (s, e) =>
             {
-                if(TwitchUsername != e.Event.TwitchUsername || TwitchToken != e.Event.TwitchToken)
+                if (TwitchUsername != e.Event.TwitchUsername || TwitchToken != e.Event.TwitchToken)
                 {
                     TwitchUsername = e.Event.TwitchUsername;
                     TwitchToken = e.Event.TwitchToken;
@@ -47,7 +46,7 @@ namespace Slipstream.Backend.Plugins
             };
         }
 
-        protected override void OnDisable(IEngine engine)
+        public override void OnDisable()
         {
             Disconnect();
         }
@@ -58,7 +57,7 @@ namespace Slipstream.Backend.Plugins
             Client = null;
         }
 
-        protected override void OnEnable(IEngine engine)
+        public override void OnEnable()
         {
             Connnect();
         }
@@ -87,7 +86,6 @@ namespace Slipstream.Backend.Plugins
                 Client = new TwitchClient(customClient);
                 Client.Initialize(credentials, TwitchUsername);
 
-                Client.OnLog += OnLog;
                 Client.OnConnected += OnConnected;
                 Client.OnChatCommandReceived += OnChatCommandReceived;
                 Client.OnDisconnected += OnDisconnect;
@@ -139,11 +137,6 @@ namespace Slipstream.Backend.Plugins
         {
             EventBus.PublishEvent(new TwitchConnected());
             EventBus.PublishEvent(new WriteToConsole { Message = $"Twitch connected as {TwitchUsername}" });
-        }
-
-        private void OnLog(object sender, OnLogArgs e)
-        {
-            Debug.WriteLine($"Twitch: {e.DateTime} {e.Data}");
         }
     }
 }

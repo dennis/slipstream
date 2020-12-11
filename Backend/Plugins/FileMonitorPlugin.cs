@@ -21,7 +21,7 @@ namespace Slipstream.Backend.Plugins
             EventHandler.OnSettingFileMonitorSettings += (s, e) => OnFileMonitorSettings(e.Event);
         }
 
-        protected override void OnDisable(IEngine engine)
+        public override void OnDisable()
         {
             UpdateWatchers();
         }
@@ -32,7 +32,7 @@ namespace Slipstream.Backend.Plugins
                 watcher.EnableRaisingEvents = Enabled;
         }
 
-        protected override void OnEnable(IEngine _)
+        public override void OnEnable()
         {
             UpdateWatchers();
         }

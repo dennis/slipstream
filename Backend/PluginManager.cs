@@ -77,7 +77,7 @@ namespace Slipstream.Backend
 
         public void EnablePlugin(IPlugin p)
         {
-            p.Enable(Engine);
+            p.Enable();
         }
 
         public void DisablePlugins()
@@ -110,7 +110,7 @@ namespace Slipstream.Backend
 
         public void DisablePlugin(IPlugin p)
         {
-            p.Disable(Engine);
+            p.Disable();
         }
 
         public void FindPluginAndExecute(string pluginId, Action<IPlugin> a)

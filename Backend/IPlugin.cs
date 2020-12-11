@@ -1,6 +1,4 @@
-﻿using Slipstream.Shared;
-using System;
-using static Slipstream.Shared.EventHandler;
+﻿using System;
 
 #nullable enable
 
@@ -25,11 +23,16 @@ namespace Slipstream.Backend
         public string DisplayName { get; }
         public bool Enabled { get; }
         public string WorkerName { get; }
+        public bool PendingOnEnable { get; set; }
+        public bool PendingOnDisable { get; set; }
         public Shared.EventHandler EventHandler { get; }
         void RegisterPlugin(IEngine engine);
         void UnregisterPlugin(IEngine engine);
-        void Enable(IEngine engine);
-        void Disable(IEngine engine);
+        void Enable();
+        void Disable();
+        void OnEnable();
+        void OnDisable();
+
         void Loop();
     }
 }

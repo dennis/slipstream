@@ -73,14 +73,9 @@ namespace Slipstream.Backend.Plugins
             };
         }
 
-        protected override void OnEnable(IEngine engine)
-        {
-            if (!SeenPluginsReady)
-            {
-                Disable(engine);
-                return;
-            }
 
+        public override void OnEnable()
+        {
             Reset();
         }
 

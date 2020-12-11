@@ -82,13 +82,13 @@ namespace Slipstream.Backend.Plugins
             }
         }
 
-        protected override void OnDisable(IEngine engine)
+        public override void OnDisable()
         {
             Api = null;
             Lua = null;
         }
 
-        protected override void OnEnable(IEngine engine)
+        public override void OnEnable()
         {
             StartLua();
         }

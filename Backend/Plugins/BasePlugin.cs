@@ -1,5 +1,4 @@
 ﻿using System;
-using static Slipstream.Shared.EventHandler;
 
 #nullable enable
 
@@ -31,6 +30,9 @@ namespace Slipstream.Backend.Plugins
 
         private string workerName = "INVALID-WORKER-NAME";
 
+        public bool PendingOnEnable{ get; set; }
+        public bool PendingOnDisable { get; set; }
+
         public event IPlugin.OnStateChangedHandler? OnStateChanged;
 
         public string WorkerName
@@ -49,27 +51,29 @@ namespace Slipstream.Backend.Plugins
             WorkerName = workerName;
         }
 
-        public void Disable(IEngine engine)
+        public void Disable()
         {
             Enabled = false;
             EventHandler.Enabled = false;
 
-            OnDisable(engine);
+            PendingOnEnable = false;
+            PendingOnDisable = true;
         }
 
-        protected virtual void OnDisable(IEngine engine)
+        public virtual void OnDisable()
         {
         }
 
-        public void Enable(IEngine engine)
+        public void Enable()
         {
             Enabled = true;
             EventHandler.Enabled = true;
 
-            OnEnable(engine);
+            PendingOnEnable = true;
+            PendingOnDisable = false;
         }
 
-        protected virtual void OnEnable(IEngine engine)
+        public virtual void OnEnable()
         {
         }
 

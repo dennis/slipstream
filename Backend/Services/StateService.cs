@@ -83,7 +83,7 @@ namespace Slipstream.Backend.Services
 
         public string GetState(string key)
         {
-            if(KeyValues.TryGetValue(key, out string value))
+            if (KeyValues.TryGetValue(key, out string value))
             {
                 return value;
             }
@@ -96,11 +96,6 @@ namespace Slipstream.Backend.Services
         private bool IsValidKey(string value)
         {
             return value.IndexOf('\t') == -1;
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
         }
     }
 }

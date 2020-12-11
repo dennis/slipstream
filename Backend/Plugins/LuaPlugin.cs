@@ -14,12 +14,12 @@ namespace Slipstream.Backend.Plugins
     class LuaPlugin : BasePlugin
     {
         private readonly IEventBus EventBus;
-        private readonly Lua Lua = new Lua();
         private readonly IStateService StateService;
 
         private string? FilePath;
         private LuaFunction? HandleFunc;
         private LuaApi? Api;
+        private Lua? Lua;
 
         public LuaPlugin(string id, IEventBus eventBus, IStateService stateService) : base(id, "LuaPLugin", "LuaPlugin", "Lua")
         {
@@ -47,6 +47,7 @@ namespace Slipstream.Backend.Plugins
             try
             {
                 Api = new LuaApi(EventBus, StateService, Path.GetFileName(FilePath), Path.GetDirectoryName(FilePath));
+                Lua = new Lua();
 
                 DisplayName = "Lua: " + Path.GetFileName(FilePath);
 
@@ -81,6 +82,7 @@ namespace Slipstream.Backend.Plugins
         protected override void OnDisable(IEngine engine)
         {
             Api = null;
+            Lua = null;
         }
 
         protected override void OnEnable(IEngine engine)

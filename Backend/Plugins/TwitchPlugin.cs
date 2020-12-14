@@ -67,7 +67,7 @@ namespace Slipstream.Backend.Plugins
             if (!Enabled)
                 return;
 
-            if (TwitchUsername == null || TwitchToken == null)
+            if (TwitchUsername == null || TwitchToken == null || TwitchUsername.Length == 0 || TwitchToken.Length == 0)
                 return;
 
             if (Client != null && Client.IsConnected)

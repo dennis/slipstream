@@ -39,6 +39,17 @@ namespace Slipstream.Backend.Plugins
             public int StintStartLap { get; set; }
             public float StintFuelLevel { get; set; }
             public double StintStartTime { get; set; }
+
+            public void ClearState() // This is invoked at start of session, so we set ObservedCrossFinishingLine higher than initially
+            {
+                LastOnPitRoad = false;
+                LastLap = -1;
+                FuelLevelLastLap = -1;
+                ObservedCrossFinishingLine = 2; // as we are starting on lap 0, we need a full lap before reporting
+                PitEnteredAt = null;
+                StintFuelLevel = -1;
+                StintStartTime = 0;
+            }
         }
 
         private readonly IDictionary<long, CarState> CarsTracked = new Dictionary<long, CarState>();
@@ -53,11 +64,12 @@ namespace Slipstream.Backend.Plugins
             { iRacingSDK.SessionState.Warmup, IRacingSessionState.StateEnum.Warmup },
         };
 
-        private IRacingCurrentSession? lastSessionInfo;
+        private double SessionJoinedAt = 0;
+        private IRacingCurrentSession? LastSessionInfo;
         private IRacingSessionState? LastSessionState;
-        private IRacingRaceFlags? lastRaceFlags;
-        private IRacingWeatherInfo? lastWeatherInfo;
-        private bool connected;
+        private IRacingRaceFlags? LastRaceFlags;
+        private IRacingWeatherInfo? LastWeatherInfo;
+        private bool Connected;
 
         public IRacingPlugin(string id, IEventBus eventBus) : base(id, "IRacingPlugin", "IRacingPlugin", "IRacingPlugin")
         {
@@ -100,9 +112,9 @@ namespace Slipstream.Backend.Plugins
             {
                 if (e.Message == "Attempt to read session data before connection to iRacing" || e.Message == "Attempt to read telemetry data before connection to iRacing")
                 {
-                    if (connected)
+                    if (Connected)
                     {
-                        connected = false;
+                        Connected = false;
                         EventBus.PublishEvent(new IRacingDisconnected());
                     }
                     Thread.Sleep(5000);
@@ -165,54 +177,58 @@ namespace Slipstream.Backend.Plugins
                         if (carState.PitEnteredAt != null)
                             duration = data.Telemetry.SessionTime - carState.PitEnteredAt;
 
-                        EventBus.PublishEvent(new IRacingPitExit { CarIdx = i, LocalUser = localUser, SessionTime = now, Duration = duration });
-                        carState.PitEnteredAt = null;
-
-                        if (localUser)
+                        // If duration is zero, then the pitstop started before we joined
+                        if (duration != null)
                         {
-                            var status = new IRacingPitstopReport
+                            EventBus.PublishEvent(new IRacingPitExit { CarIdx = i, LocalUser = localUser, SessionTime = now, Duration = duration });
+                            carState.PitEnteredAt = null;
+
+                            if (localUser && data.Telemetry.CarIdxLapCompleted[i] > 0)
                             {
-                                SessionTime = now,
-                                CarIdx = i,
+                                var status = new IRacingPitstopReport
+                                {
+                                    SessionTime = now,
+                                    CarIdx = i,
 
-                                TempLFL = (uint)Math.Round(data.Telemetry.LFtempCL),
-                                TempLFM = (uint)Math.Round(data.Telemetry.LFtempCM),
-                                TempLFR = (uint)Math.Round(data.Telemetry.LFtempCR),
+                                    TempLFL = (uint)Math.Round(data.Telemetry.LFtempCL),
+                                    TempLFM = (uint)Math.Round(data.Telemetry.LFtempCM),
+                                    TempLFR = (uint)Math.Round(data.Telemetry.LFtempCR),
 
-                                TempRFL = (uint)Math.Round(data.Telemetry.RFtempCL),
-                                TempRFM = (uint)Math.Round(data.Telemetry.RFtempCM),
-                                TempRFR = (uint)Math.Round(data.Telemetry.RFtempCR),
+                                    TempRFL = (uint)Math.Round(data.Telemetry.RFtempCL),
+                                    TempRFM = (uint)Math.Round(data.Telemetry.RFtempCM),
+                                    TempRFR = (uint)Math.Round(data.Telemetry.RFtempCR),
 
-                                TempLRL = (uint)Math.Round(data.Telemetry.LRtempCL),
-                                TempLRM = (uint)Math.Round(data.Telemetry.LRtempCM),
-                                TempLRR = (uint)Math.Round(data.Telemetry.LRtempCR),
+                                    TempLRL = (uint)Math.Round(data.Telemetry.LRtempCL),
+                                    TempLRM = (uint)Math.Round(data.Telemetry.LRtempCM),
+                                    TempLRR = (uint)Math.Round(data.Telemetry.LRtempCR),
 
-                                TempRRL = (uint)Math.Round(data.Telemetry.RRtempCL),
-                                TempRRM = (uint)Math.Round(data.Telemetry.RRtempCM),
-                                TempRRR = (uint)Math.Round(data.Telemetry.RRtempCR),
+                                    TempRRL = (uint)Math.Round(data.Telemetry.RRtempCL),
+                                    TempRRM = (uint)Math.Round(data.Telemetry.RRtempCM),
+                                    TempRRR = (uint)Math.Round(data.Telemetry.RRtempCR),
 
-                                WearLFL = (uint)Math.Round(data.Telemetry.LFwearL * 100),
-                                WearLFM = (uint)Math.Round(data.Telemetry.LFwearM * 100),
-                                WearLFR = (uint)Math.Round(data.Telemetry.LFwearR * 100),
+                                    WearLFL = (uint)Math.Round(data.Telemetry.LFwearL * 100),
+                                    WearLFM = (uint)Math.Round(data.Telemetry.LFwearM * 100),
+                                    WearLFR = (uint)Math.Round(data.Telemetry.LFwearR * 100),
 
-                                WearRFL = (uint)Math.Round(data.Telemetry.RFwearL * 100),
-                                WearRFM = (uint)Math.Round(data.Telemetry.RFwearM * 100),
-                                WearRFR = (uint)Math.Round(data.Telemetry.RFwearR * 100),
+                                    WearRFL = (uint)Math.Round(data.Telemetry.RFwearL * 100),
+                                    WearRFM = (uint)Math.Round(data.Telemetry.RFwearM * 100),
+                                    WearRFR = (uint)Math.Round(data.Telemetry.RFwearR * 100),
 
-                                WearLRL = (uint)Math.Round(data.Telemetry.LRwearL * 100),
-                                WearLRM = (uint)Math.Round(data.Telemetry.LRwearM * 100),
-                                WearLRR = (uint)Math.Round(data.Telemetry.LRwearR * 100),
+                                    WearLRL = (uint)Math.Round(data.Telemetry.LRwearL * 100),
+                                    WearLRM = (uint)Math.Round(data.Telemetry.LRwearM * 100),
+                                    WearLRR = (uint)Math.Round(data.Telemetry.LRwearR * 100),
 
-                                WearRRL = (uint)Math.Round(data.Telemetry.RRwearL * 100),
-                                WearRRM = (uint)Math.Round(data.Telemetry.RRwearM * 100),
-                                WearRRR = (uint)Math.Round(data.Telemetry.RRwearR * 100),
+                                    WearRRL = (uint)Math.Round(data.Telemetry.RRwearL * 100),
+                                    WearRRM = (uint)Math.Round(data.Telemetry.RRwearM * 100),
+                                    WearRRR = (uint)Math.Round(data.Telemetry.RRwearR * 100),
 
-                                Laps = data.Telemetry.CarIdxLapCompleted[i] - carState.StintStartLap,
-                                FuelDiff = carState.StintFuelLevel - data.Telemetry.FuelLevel,
-                                Duration = carState.StintStartTime - now,
-                            };
+                                    Laps = data.Telemetry.CarIdxLapCompleted[i] - carState.StintStartLap,
+                                    FuelDiff = carState.StintFuelLevel - data.Telemetry.FuelLevel,
+                                    Duration = carState.StintStartTime - now,
+                                };
 
-                            EventBus.PublishEvent(status);
+                                EventBus.PublishEvent(status);
+                            }
                         }
 
                         carState.StintStartLap = data.Telemetry.CarIdxLapCompleted[i];
@@ -242,6 +258,8 @@ namespace Slipstream.Backend.Plugins
                 if (lapsCompleted != -1 && carState.LastLap != lapsCompleted)
                 {
                     carState.ObservedCrossFinishingLine += 1;
+                    if(lapsCompleted == 0) // This is initial lap, so we can use times from next lap
+                        carState.ObservedCrossFinishingLine += 1;
 
                     // 1st time is when leaving the pits / or whatever lap it is on when we join
                     // 2nd time is start of first real lap (that we see in full)
@@ -287,6 +305,11 @@ namespace Slipstream.Backend.Plugins
             {
                 EventBus.PublishEvent(@event);
                 LastSessionState = @event;
+
+                foreach (var carState in CarsTracked)
+                {
+                    carState.Value.ClearState();
+                }
             }
         }
 
@@ -324,7 +347,7 @@ namespace Slipstream.Backend.Plugins
                 YellowWaving = sessionFlags.HasFlag(SessionFlags.yellowWaving),
             };
 
-            if(lastRaceFlags == null || !lastRaceFlags.DifferentTo(@event))
+            if(LastRaceFlags == null || !LastRaceFlags.DifferentTo(@event))
             {
                 if (@event.Green)
                 {
@@ -337,7 +360,7 @@ namespace Slipstream.Backend.Plugins
                 }
 
                 EventBus.PublishEvent(@event);
-                lastRaceFlags = @event;
+                LastRaceFlags = @event;
             }
         }
 
@@ -390,11 +413,11 @@ namespace Slipstream.Backend.Plugins
                 TotalSessionTime = sessionData._SessionTime / 10_000,
             };
 
-            if (lastSessionInfo == null || !sessionInfo.Equals(lastSessionInfo))
+            if (LastSessionInfo == null || !sessionInfo.Equals(LastSessionInfo))
             {
                 EventBus.PublishEvent(sessionInfo);
 
-                lastSessionInfo = sessionInfo;
+                LastSessionInfo = sessionInfo;
             }
         }
 
@@ -411,21 +434,22 @@ namespace Slipstream.Backend.Plugins
                 FogLevel = data.SessionData.WeekendInfo.TrackFogLevel,
             };
 
-            if (lastWeatherInfo == null || !weatherInfo.DifferentTo(lastWeatherInfo))
+            if (LastWeatherInfo == null || !weatherInfo.DifferentTo(LastWeatherInfo))
             {
                 EventBus.PublishEvent(weatherInfo);
 
-                lastWeatherInfo = weatherInfo;
+                LastWeatherInfo = weatherInfo;
             }
         }
 
         private void HandleConnect(DataSample data)
         {
-            if (!connected)
+            if (!Connected)
             {
-                lastWeatherInfo = null;
-                lastSessionInfo = null;
-                connected = true;
+                LastWeatherInfo = null;
+                LastSessionInfo = null;
+                Connected = true;
+                SessionJoinedAt = data.Telemetry.SessionTime;
 
                 EventBus.PublishEvent(new IRacingConnected());
                 EventBus.PublishEvent(new IRacingTrackInfo
@@ -445,11 +469,11 @@ namespace Slipstream.Backend.Plugins
         private void Reset()
         {
             CarsTracked.Clear();
-            lastSessionInfo = null;
+            LastSessionInfo = null;
             LastSessionState = null;
-            lastRaceFlags = null;
-            lastWeatherInfo = null;
-            connected = false;
+            LastRaceFlags = null;
+            LastWeatherInfo = null;
+            Connected = false;
         }
     }
 }

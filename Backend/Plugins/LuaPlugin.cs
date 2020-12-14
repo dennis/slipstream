@@ -59,6 +59,7 @@ namespace Slipstream.Backend.Plugins
                 Lua.RegisterFunction("write", Api, typeof(LuaApi).GetMethod("Write", new[] { typeof(string), typeof(string) }));
                 Lua.RegisterFunction("send_twitch_message", Api, typeof(LuaApi).GetMethod("SendTwitchMessage", new[] { typeof(string) }));
                 Lua.RegisterFunction("set_state", Api, typeof(LuaApi).GetMethod("SetState", new[] { typeof(string), typeof(string) }));
+                Lua.RegisterFunction("set_temp_state", Api, typeof(LuaApi).GetMethod("SetTempState", new[] { typeof(string), typeof(string), typeof(int) }));
                 Lua.RegisterFunction("get_state", Api, typeof(LuaApi).GetMethod("GetState", new[] { typeof(string) }));
 
                 var ScriptPath = Path.GetDirectoryName(FilePath).Replace("\\", "\\\\");
@@ -145,6 +146,11 @@ namespace Slipstream.Backend.Plugins
             public void SetState(string key, string value)
             {
                 StateService.SetState(key, value);
+            }
+
+            public void SetTempState(string key, string value, int lifetimSeconds)
+            {
+                StateService.SetState(key, value, lifetimSeconds);
             }
 
             public string GetState(string key)

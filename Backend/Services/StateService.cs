@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Slipstream.Shared;
 
 #nullable enable
@@ -9,9 +10,22 @@ namespace Slipstream.Backend.Services
 {
     public class StateService : IStateService
     {
-        private readonly IDictionary<string, string> KeyValues = new Dictionary<string, string>();
+        private readonly IDictionary<string, StateValue> KeyValues = new Dictionary<string, StateValue>();
         private readonly IEventBus EventBus;
         private readonly string FilePath;
+        private DateTime? NextKeyExpiresAt;
+
+        class StateValue
+        {
+            public string Value = "";
+            public DateTime? ExpiresAt;
+
+            public StateValue(string value, DateTime? expiresAt)
+            {
+                Value = value;
+                ExpiresAt = expiresAt;
+            }
+        }
 
         public StateService(IEventBus eventBus, string filePath)
         {
@@ -24,6 +38,8 @@ namespace Slipstream.Backend.Services
 
         private void ReadStateFromFile()
         {
+            var now = DateTime.Now;
+
             if (File.Exists(FilePath))
             {
                 using StreamReader r = new StreamReader(FilePath);
@@ -31,22 +47,41 @@ namespace Slipstream.Backend.Services
                 string line;
                 while ((line = r.ReadLine()) != null)
                 {
-                    var f = line.Split(new string[] { "\t" }, 2, StringSplitOptions.None);
-                    if (f.Length != 2)
+                    var f = line.Split(new string[] { "\t" }, 3, StringSplitOptions.None);
+                    if (f.Length != 3)
                         return;
 
-                    if (KeyValues.ContainsKey(f[0]))
+                    var key = f[0];
+                    var expire = f[1];
+                    var value = f[2];
+
+                    if (KeyValues.ContainsKey(key))
                     {
-                        KeyValues.Remove(f[0]);
+                        KeyValues.Remove(key);
 
                     }
 
-                    if (f[1].Length > 0)
+                    if (value.Length > 0)
                     {
-                        KeyValues.Add(f[0], f[1]);
+                        DateTime? expiresAt = null;
+                        if (expire.Length > 0)
+                            expiresAt = DateTime.Parse(expire);
+
+                        if(expiresAt == null || expiresAt > now)
+                        {
+                            AddKeyValue(key, value, expiresAt);
+                        }
                     }
                 }
             }
+        }
+
+        private void AddKeyValue(string key, string value, DateTime? expiresAt)
+        {
+            if (NextKeyExpiresAt == null || NextKeyExpiresAt > expiresAt)
+                NextKeyExpiresAt = expiresAt;
+
+            KeyValues.Add(key, new StateValue(value, expiresAt));
         }
 
         private void WriteStateToFile()
@@ -54,15 +89,17 @@ namespace Slipstream.Backend.Services
             using StreamWriter Writer = new StreamWriter(FilePath);
             foreach (var pair in KeyValues)
             {
-                Writer.WriteLine($"{pair.Key}\t{pair.Value}");
+                Writer.WriteLine($"{pair.Key}\t{pair.Value.ExpiresAt}\t{pair.Value.Value}");
             }
         }
 
-        public void SetState(string key, string value)
+        public void SetState(string key, string value, int lifetimSeconds = 0)
         {
             using StreamWriter Writer = File.AppendText(FilePath);
 
-            if(!IsValidKey(key))
+            DateTime? expiresAt = null;
+
+            if (!IsValidKey(key))
             {
                 EventBus.PublishEvent(new Shared.Events.Utility.WriteToConsole { Message = $"'{key}' is not a valid state key. Ignoring" });
                 return;
@@ -75,17 +112,43 @@ namespace Slipstream.Backend.Services
 
             if (value != null && value.Length > 0)
             {
-                KeyValues.Add(key, value);
-            }
+                if (lifetimSeconds > 0)
+                    expiresAt = DateTime.Now.AddSeconds(lifetimSeconds);
 
-            Writer.WriteLine($"{key}\t{value}");
+                AddKeyValue(key, value, expiresAt);
+                Writer.WriteLine($"{key}\t{expiresAt}\t{value}");
+            }
         }
 
         public string GetState(string key)
         {
-            if (KeyValues.TryGetValue(key, out string value))
+            var now = DateTime.Now;
+
+            if (NextKeyExpiresAt != null && now > NextKeyExpiresAt)
             {
-                return value;
+                NextKeyExpiresAt = null;
+
+                // Something expired
+                foreach (var k in KeyValues.Keys.ToList())
+                {
+                    var kval = KeyValues[k];
+
+                    if(kval.ExpiresAt < now)
+                    {
+                        EventBus.PublishEvent(new Shared.Events.Utility.WriteToConsole { Message = $"'{k}' expired" });
+                        SetState(k, "");
+                    }
+                    else
+                    {
+                        if (NextKeyExpiresAt == null || kval.ExpiresAt < NextKeyExpiresAt)
+                            NextKeyExpiresAt = kval.ExpiresAt;
+                    }
+                }
+            }
+
+            if (KeyValues.TryGetValue(key, out StateValue value))
+            {
+                return value.Value;
             }
             else
             {

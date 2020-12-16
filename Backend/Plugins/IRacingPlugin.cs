@@ -16,15 +16,6 @@ namespace Slipstream.Backend.Plugins
     {
         private readonly iRacingConnection Connection = new iRacingConnection();
         private readonly Shared.IEventBus EventBus;
-        private readonly Dictionary<string, IRacingCurrentSession.SessionTypes> SessionTypeMapping = new Dictionary<string, IRacingCurrentSession.SessionTypes>() {
-            { "Practice", IRacingCurrentSession.SessionTypes.Practice },
-            { "Open Qualify", IRacingCurrentSession.SessionTypes.OpenQualify },
-            { "Lone Qualify", IRacingCurrentSession.SessionTypes.LoneQualify },
-            { "Offline Testing", IRacingCurrentSession.SessionTypes.OfflineTesting },
-            { "Race", IRacingCurrentSession.SessionTypes.Race },
-            { "Warmup", IRacingCurrentSession.SessionTypes.Warmup }
-        };
-
         private bool SeenPluginsReady;
 
         private class CarState
@@ -54,14 +45,14 @@ namespace Slipstream.Backend.Plugins
 
         private readonly IDictionary<long, CarState> CarsTracked = new Dictionary<long, CarState>();
 
-        private readonly Dictionary<iRacingSDK.SessionState, IRacingSessionState.StateEnum> SessionStateMapping = new Dictionary<iRacingSDK.SessionState, IRacingSessionState.StateEnum>() {
-            { iRacingSDK.SessionState.Checkered, IRacingSessionState.StateEnum.Checkered },
-            { iRacingSDK.SessionState.CoolDown, IRacingSessionState.StateEnum.CoolDown },
-            { iRacingSDK.SessionState.GetInCar, IRacingSessionState.StateEnum.GetInCar },
-            { iRacingSDK.SessionState.Invalid, IRacingSessionState.StateEnum.Invalid },
-            { iRacingSDK.SessionState.ParadeLaps, IRacingSessionState.StateEnum.ParadeLaps },
-            { iRacingSDK.SessionState.Racing, IRacingSessionState.StateEnum.Racing },
-            { iRacingSDK.SessionState.Warmup, IRacingSessionState.StateEnum.Warmup },
+        private readonly Dictionary<iRacingSDK.SessionState, string> SessionStateMapping = new Dictionary<iRacingSDK.SessionState, string>() {
+            { iRacingSDK.SessionState.Checkered, "Checkered" },
+            { iRacingSDK.SessionState.CoolDown, "CoolDown" },
+            { iRacingSDK.SessionState.GetInCar, "GetInCar" },
+            { iRacingSDK.SessionState.Invalid, "Invalid" },
+            { iRacingSDK.SessionState.ParadeLaps, "ParadeLaps" },
+            { iRacingSDK.SessionState.Racing, "Racing" },
+            { iRacingSDK.SessionState.Warmup, "Warmup" },
         };
 
         private double SessionJoinedAt = 0;
@@ -406,7 +397,7 @@ namespace Slipstream.Backend.Plugins
             var sessionData = data.SessionData.SessionInfo.Sessions[data.Telemetry.SessionNum];
             var sessionInfo = new IRacingCurrentSession
             {
-                SessionType = SessionTypeMapping[sessionData.SessionType],
+                SessionType = sessionData.SessionType,
                 TimeLimited = sessionData.IsLimitedTime,
                 LapsLimited = sessionData.IsLimitedSessionLaps,
                 TotalSessionLaps = sessionData._SessionLaps,

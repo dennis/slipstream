@@ -55,7 +55,6 @@ namespace Slipstream.Backend.Plugins
             { iRacingSDK.SessionState.Warmup, "Warmup" },
         };
 
-        private double SessionJoinedAt = 0;
         private IRacingCurrentSession? LastSessionInfo;
         private IRacingSessionState? LastSessionState;
         private IRacingRaceFlags? LastRaceFlags;
@@ -252,14 +251,17 @@ namespace Slipstream.Backend.Plugins
                     if(lapsCompleted == 0) // This is initial lap, so we can use times from next lap
                         carState.ObservedCrossFinishingLine += 1;
 
+                    bool localUser = i == data.SessionData.DriverInfo.DriverCarIdx;
+
                     // 1st time is when leaving the pits / or whatever lap it is on when we join
                     // 2nd time is start of first real lap (that we see in full)
                     // 3rd+ is lap times (we can begin timing laps)
-                    if (carState.ObservedCrossFinishingLine >= 3)
+                    // if "we" are doing laps, then we know we joined with the car, 
+                    // so we can track laps from the 1st one.
+                    // for everybody else, we need to see them crossing the line 3 or more times as describe above
+                    if (carState.ObservedCrossFinishingLine >= 3 || (localUser && lapsCompleted > 0))
                     {
                         var lapTime = now - carState.LastLapTime;
-
-                        bool localUser = i == data.SessionData.DriverInfo.DriverCarIdx;
 
                         var fuelLeft = data.Telemetry.FuelLevel;
 
@@ -440,7 +442,6 @@ namespace Slipstream.Backend.Plugins
                 LastWeatherInfo = null;
                 LastSessionInfo = null;
                 Connected = true;
-                SessionJoinedAt = data.Telemetry.SessionTime;
 
                 EventBus.PublishEvent(new IRacingConnected());
                 EventBus.PublishEvent(new IRacingTrackInfo

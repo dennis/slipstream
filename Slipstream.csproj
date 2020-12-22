@@ -15,6 +15,8 @@
     <Nullable>enable</Nullable>
     <LangVersion>8.0</LangVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -29,8 +31,6 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -124,6 +124,7 @@
     <Compile Include="Frontend\SettingsForm.Designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Shared\ApplicationVersionService.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingPitstopReport.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingPitExit.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingPitEnter.cs" />
@@ -163,6 +164,7 @@
     <Compile Include="Shared\Events\Utility\PlayAudio.cs" />
     <Compile Include="Shared\Events\Utility\Say.cs" />
     <Compile Include="Shared\Events\Utility\WriteToConsole.cs" />
+    <Compile Include="Shared\IApplicationVersionService.cs" />
     <Compile Include="Shared\IEventBus.cs" />
     <Compile Include="Shared\IEventBusSubscription.cs" />
     <Compile Include="Shared\Events\Internal\PluginStateChanged.cs" />

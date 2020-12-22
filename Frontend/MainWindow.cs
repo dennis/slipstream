@@ -21,10 +21,12 @@ namespace Slipstream.Frontend
         private readonly string AudioPath;
         private readonly BlockingCollection<string> PendingMessages = new BlockingCollection<string>();
         private readonly IDictionary<string, ToolStripMenuItem> MenuPluginItems = new Dictionary<string, ToolStripMenuItem>();
+        private readonly IApplicationVersionService ApplicationVersionService;
 
-        public MainWindow(IEventBus eventBus)
+        public MainWindow(IEventBus eventBus, IApplicationVersionService applicationVersionService)
         {
             EventBus = eventBus;
+            ApplicationVersionService = applicationVersionService;
 
             InitializeComponent();
 
@@ -33,6 +35,8 @@ namespace Slipstream.Frontend
 
             AudioPath = @"Audio\";
             System.IO.Directory.CreateDirectory(AudioPath);
+
+            this.Text += " v" + applicationVersionService.Version;
 
             Load += MainWindow_Load;
             FormClosing += MainWindow_FormClosing;

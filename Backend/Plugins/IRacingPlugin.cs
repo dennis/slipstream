@@ -373,8 +373,8 @@ namespace Slipstream.Backend.Plugins
         {
             foreach (var driver in data.SessionData.DriverInfo.Drivers)
             {
-                if (driver.IsPaceCar)
-                    continue;
+                //if (driver.IsPaceCar) - this doesn't work when doing test sessions. Here we will be flagged as Pace car
+                //    continue;
 
                 var carState = GetCarState(driver.CarIdx, data);
 

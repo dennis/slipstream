@@ -213,8 +213,8 @@ namespace Slipstream.Backend.Plugins
                                     WearRRR = (uint)Math.Round(data.Telemetry.RRwearR * 100),
 
                                     Laps = data.Telemetry.CarIdxLapCompleted[i] - carState.StintStartLap,
-                                    FuelDiff = carState.StintFuelLevel - data.Telemetry.FuelLevel,
-                                    Duration = carState.StintStartTime - now,
+                                    FuelDiff = data.Telemetry.FuelLevel - carState.StintFuelLevel,
+                                    Duration = now - carState.StintStartTime,
                                 };
 
                                 EventBus.PublishEvent(status);

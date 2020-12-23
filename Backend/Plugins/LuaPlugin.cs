@@ -46,7 +46,7 @@ namespace Slipstream.Backend.Plugins
 
             try
             {
-                Api = new LuaApi(EventBus, StateService, Path.GetFileName(FilePath), Path.GetDirectoryName(FilePath));
+                Api = new LuaApi(EventBus, StateService, Path.GetFileName(FilePath));
                 Lua = new Lua();
 
                 DisplayName = "Lua: " + Path.GetFileName(FilePath);
@@ -56,7 +56,6 @@ namespace Slipstream.Backend.Plugins
                 Lua.RegisterFunction("play", Api, typeof(LuaApi).GetMethod("Play", new[] { typeof(string), typeof(float) }));
                 Lua.RegisterFunction("debounce", Api, typeof(LuaApi).GetMethod("Debounce", new[] { typeof(string), typeof(LuaFunction), typeof(float) }));
                 Lua.RegisterFunction("wait", Api, typeof(LuaApi).GetMethod("Wait", new[] { typeof(string), typeof(LuaFunction), typeof(float) }));
-                Lua.RegisterFunction("write", Api, typeof(LuaApi).GetMethod("Write", new[] { typeof(string), typeof(string) }));
                 Lua.RegisterFunction("send_twitch_message", Api, typeof(LuaApi).GetMethod("SendTwitchMessage", new[] { typeof(string) }));
                 Lua.RegisterFunction("set_state", Api, typeof(LuaApi).GetMethod("SetState", new[] { typeof(string), typeof(string) }));
                 Lua.RegisterFunction("set_temp_state", Api, typeof(LuaApi).GetMethod("SetTempState", new[] { typeof(string), typeof(string), typeof(int) }));
@@ -100,7 +99,6 @@ namespace Slipstream.Backend.Plugins
             private readonly string Prefix;
             private readonly IDictionary<string, DelayedExecution> DebouncedFunctions = new Dictionary<string, DelayedExecution>();
             private readonly IDictionary<string, DelayedExecution> WaitingFunctions = new Dictionary<string, DelayedExecution>();
-            private readonly string WorkDirectory;
             private readonly IStateService StateService;
 
             private class DelayedExecution
@@ -115,11 +113,10 @@ namespace Slipstream.Backend.Plugins
                 }
             }
 
-            public LuaApi(IEventBus eventBus, IStateService stateService, string prefix, string workDirectory)
+            public LuaApi(IEventBus eventBus, IStateService stateService, string prefix)
             {
                 EventBus = eventBus;
                 Prefix = prefix;
-                WorkDirectory = workDirectory;
                 StateService = stateService;
             }
 
@@ -181,19 +178,6 @@ namespace Slipstream.Backend.Plugins
                 {
                     Print("Can't wait without a function");
                 }
-            }
-
-            public void Write(string filePath, string content)
-            {
-                string fileDirectory = Path.GetDirectoryName(filePath);
-
-                if(fileDirectory.Length == 0)
-                {
-                    filePath = WorkDirectory + @"\" + filePath;
-                }
-
-                using StreamWriter sw = File.AppendText(filePath);
-                sw.Write(content);
             }
 
             private  void HandleDelayedExecution(IDictionary<string, DelayedExecution> functions)

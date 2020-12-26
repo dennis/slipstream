@@ -118,12 +118,14 @@
     <Compile Include="Backend\Plugins\TwitchPlugin.cs" />
     <Compile Include="Backend\Services\IStateService.cs" />
     <Compile Include="Backend\Services\StateService.cs" />
+    <Compile Include="Frontend\ApplicationConfiguration.cs" />
     <Compile Include="Frontend\SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Frontend\SettingsForm.Designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Shared\IApplicationConfiguration.cs" />
     <Compile Include="Shared\ApplicationVersionService.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingPitstopReport.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingPitExit.cs" />

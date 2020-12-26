@@ -1,8 +1,6 @@
 ﻿#nullable enable
 
 using Slipstream.Shared;
-using Slipstream.Shared.Events.Internal;
-using Slipstream.Shared.Events.Setting;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -17,24 +15,16 @@ namespace Slipstream.Frontend
         private Thread? EventHandlerThread;
         private readonly IEventBus EventBus;
         private IEventBusSubscription? EventBusSubscription;
-        private readonly string ScriptsPath;
-        private readonly string AudioPath;
         private readonly BlockingCollection<string> PendingMessages = new BlockingCollection<string>();
         private readonly IDictionary<string, ToolStripMenuItem> MenuPluginItems = new Dictionary<string, ToolStripMenuItem>();
-        private readonly IApplicationVersionService ApplicationVersionService;
+        private readonly ApplicationConfiguration ApplicationConfiguration;
 
-        public MainWindow(IEventBus eventBus, IApplicationVersionService applicationVersionService)
+        public MainWindow(IEventBus eventBus, IApplicationVersionService applicationVersionService, ApplicationConfiguration applicationConfiguration)
         {
             EventBus = eventBus;
-            ApplicationVersionService = applicationVersionService;
+            ApplicationConfiguration = applicationConfiguration;
 
             InitializeComponent();
-
-            ScriptsPath = @"Scripts\";
-            System.IO.Directory.CreateDirectory(ScriptsPath);
-
-            AudioPath = @"Audio\";
-            System.IO.Directory.CreateDirectory(AudioPath);
 
             this.Text += " v" + applicationVersionService.Version;
 
@@ -179,16 +169,16 @@ namespace Slipstream.Frontend
                         switch (e.Id)
                         {
                             case "FileMonitorPlugin":
-                                EventBus.PublishEvent(new Shared.Events.Setting.FileMonitorSettings { Paths = new string[] { ScriptsPath } });
+                                EventBus.PublishEvent(ApplicationConfiguration.GetFileMonitorSettingsEvent());
                                 break;
 
                             case "AudioPlugin":
-                                EventBus.PublishEvent(new Shared.Events.Setting.AudioSettings { Path = AudioPath });
+                                EventBus.PublishEvent(ApplicationConfiguration.GetAudioSettingsEvent());
                                 break;
 
                             case "TwitchPlugin":
                                 var settings = Properties.Settings.Default;
-                                EventBus.PublishEvent(new Shared.Events.Setting.TwitchSettings { TwitchUsername = settings.TwitchUsername, TwitchToken = settings.TwitchToken });
+                                EventBus.PublishEvent(ApplicationConfiguration.GetTwitchSettingsEvent());
                                 break;
                         }
 
@@ -239,12 +229,12 @@ namespace Slipstream.Frontend
 
         private void OpenScriptsDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Process.Start(ScriptsPath);
+            Process.Start(ApplicationConfiguration.GetScriptsPath());
         }
 
         private void OpenAudioDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Process.Start(AudioPath);
+            Process.Start(ApplicationConfiguration.GetAudioPath());
         }
 
         private void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -252,14 +242,7 @@ namespace Slipstream.Frontend
             _ = new SettingsForm().ShowDialog(this);
 
             // Just spam settings to everyone that wants it
-            EventBus.PublishEvent(GetTwitchSettings());
-        }
-
-        private Shared.Events.Setting.TwitchSettings GetTwitchSettings()
-        {
-            var settings = Properties.Settings.Default;
-
-            return new Shared.Events.Setting.TwitchSettings { TwitchUsername = settings.TwitchUsername, TwitchToken = settings.TwitchToken };
+            EventBus.PublishEvent(ApplicationConfiguration.GetTwitchSettingsEvent());
         }
     }
 }

@@ -16,7 +16,8 @@ namespace Slipstream.Shared
             }
         }
 
-        public bool Enabled { get; set; } = true;
+        private volatile bool enabled = true;
+        public bool Enabled { get { return enabled; } set { enabled = value; } }
 
         public delegate void OnDefaultHandler(EventHandler source, EventHandlerArgs<IEvent> e);
         public event OnDefaultHandler? OnDefault;

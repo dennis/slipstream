@@ -21,7 +21,7 @@ namespace Slipstream.Backend.Plugins
             set { displayName = value; OnStateChanged?.Invoke(this, new IPlugin.EventHandlerArgs<IPlugin>(this)); }
         }
 
-        private bool enabled;
+        private volatile bool enabled;
         public bool Enabled
         {
             get { return enabled; }
@@ -30,8 +30,10 @@ namespace Slipstream.Backend.Plugins
 
         private string workerName = "INVALID-WORKER-NAME";
 
-        public bool PendingOnEnable{ get; set; }
-        public bool PendingOnDisable { get; set; }
+        private volatile bool pendingOnEnable;
+        private volatile bool pendingOnDisable;
+        public bool PendingOnEnable { get { return pendingOnEnable; } set { pendingOnEnable = value; } }
+        public bool PendingOnDisable { get { return pendingOnDisable; } set { pendingOnDisable = value; } }
 
         public event IPlugin.OnStateChangedHandler? OnStateChanged;
 

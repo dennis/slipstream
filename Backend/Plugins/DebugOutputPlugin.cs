@@ -10,7 +10,7 @@ namespace Slipstream.Backend.Plugins
         public DebugOutputPlugin(string id) : base(id, "DebugOutputPlugin", "DebugOutputPlugin", "Core")
         {
             EventHandler.OnDefault += (s, e) => EventHandler_OnDefault(e.Event);
-            EventHandler.OnInternalPluginStateChanged += (s, e) => EventHandler_OnInternalPluginStateChanged(e.Event);
+            EventHandler.OnInternalPluginState += (s, e) => EventHandler_OnInternalPluginState(e.Event);
             EventHandler.OnInternalPluginRegister += (s, e) => EventHandler_OnInternalPluginRegister(e.Event);
             EventHandler.OnInternalPluginUnregister += (s, e) => EventHandler_OnInternalPluginUnregister(e.Event);
             EventHandler.OnInternalPluginEnable += (s, e) => EventHandler_OnInternalPluginEnable(e.Event);
@@ -218,7 +218,7 @@ namespace Slipstream.Backend.Plugins
             Debug.WriteLine($"$$ {ev} {ev.Message}");
         }
 
-        private void EventHandler_OnInternalPluginStateChanged(Shared.Events.Internal.PluginStateChanged ev)
+        private void EventHandler_OnInternalPluginState(Shared.Events.Internal.PluginState ev)
         {
             Debug.WriteLine($"$$ {ev} {ev.Id} {ev.PluginName} {ev.PluginStatus}");
         }

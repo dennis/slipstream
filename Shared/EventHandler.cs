@@ -35,8 +35,8 @@ namespace Slipstream.Shared
         public delegate void OnInternalPluginDisableHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginDisable> e);
         public event OnInternalPluginDisableHandler? OnInternalPluginDisable;
 
-        public delegate void OnInternalPluginStateChangedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginStateChanged> e);
-        public event OnInternalPluginStateChangedHandler? OnInternalPluginStateChanged;
+        public delegate void OnInternalPluginStateHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginState> e);
+        public event OnInternalPluginStateHandler? OnInternalPluginState;
 
         public delegate void OnInternalFileMonitorFileCreatedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FileMonitorFileCreated> e);
         public event OnInternalFileMonitorFileCreatedHandler? OnInternalFileMonitorFileCreated;
@@ -50,11 +50,11 @@ namespace Slipstream.Shared
         public delegate void OnInternalFileMonitorFileRenamedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FileMonitorFileRenamed> e);
         public event OnInternalFileMonitorFileRenamedHandler? OnInternalFileMonitorFileRenamed;
 
-        public delegate void OnInternalFrontendReadyHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FrontendReady> e);
-        public event OnInternalFrontendReadyHandler? OnInternalFrontendReady;
-
         public delegate void OnInternalPluginsReadyHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginsReady> e);
         public event OnInternalPluginsReadyHandler? OnInternalPluginsReady;
+
+        public delegate void OnInternalPluginStatesRequestHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginStatesRequest> e);
+        public event OnInternalPluginStatesRequestHandler? OnInternalPluginStatesRequest;
 
         #endregion
 
@@ -121,7 +121,7 @@ namespace Slipstream.Shared
         public event OnIRacingPitstopReportHandler? OnIRacingPitstopReport;
         #endregion
 
-        #region Twitch
+        #region Events: Twitch
         public delegate void OnTwitchConnectedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchConnected> e);
         public event OnTwitchConnectedHandler? OnTwitchConnected;
 
@@ -172,11 +172,11 @@ namespace Slipstream.Shared
                     else
                         OnInternalPluginDisable.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginDisable>(tev));
                     break;
-                case Shared.Events.Internal.PluginStateChanged tev:
-                    if (OnInternalPluginStateChanged == null)
+                case Shared.Events.Internal.PluginState tev:
+                    if (OnInternalPluginState == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnInternalPluginStateChanged.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginStateChanged>(tev));
+                        OnInternalPluginState.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginState>(tev));
                     break;
                 case Shared.Events.Internal.FileMonitorFileCreated tev:
                     if (OnInternalFileMonitorFileCreated == null)
@@ -202,17 +202,17 @@ namespace Slipstream.Shared
                     else
                         OnInternalFileMonitorFileRenamed.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FileMonitorFileRenamed>(tev));
                     break;
-                case Shared.Events.Internal.FrontendReady tev:
-                    if (OnInternalFrontendReady == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalFrontendReady.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FrontendReady>(tev));
-                    break;
                 case Shared.Events.Internal.PluginsReady tev:
                     if (OnInternalPluginsReady == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnInternalPluginsReady.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginsReady>(tev));
+                    break;
+                case Shared.Events.Internal.PluginStatesRequest tev:
+                    if (OnInternalPluginStatesRequest == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnInternalPluginStatesRequest.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginStatesRequest>(tev));
                     break;
 
                 // Utility

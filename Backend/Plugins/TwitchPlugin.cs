@@ -1,6 +1,7 @@
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Twitch;
 using Slipstream.Shared.Events.Utility;
+using Slipstream.Shared.Events.Setting;
 using System;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
@@ -22,26 +23,32 @@ namespace Slipstream.Backend.Plugins
         private string? TwitchUsername;
         private string? TwitchToken;
 
-        public TwitchPlugin(string id, IEventBus eventBus) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin")
+        public TwitchPlugin(string id, IEventBus eventBus, TwitchSettings settings) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin")
         {
             EventBus = eventBus;
-
-            EventHandler.OnSettingTwitchSettings += (s, e) =>
-            {
-                if (TwitchUsername != e.Event.TwitchUsername || TwitchToken != e.Event.TwitchToken)
-                {
-                    TwitchUsername = e.Event.TwitchUsername;
-                    TwitchToken = e.Event.TwitchToken;
-
-                    Disconnect();
-                    Connnect();
-                }
-            };
+            
+            EventHandler.OnSettingTwitchSettings += (s, e) => OnTwitchSettings(e.Event);
             EventHandler.OnTwitchSendMessage += (s, e) =>
             {
                 if (Client != null && Client.JoinedChannels.Count > 0)
                 {
                     Client.SendMessage(TwitchUsername, e.Event.Message);
+                }
+            };
+
+            OnTwitchSettings(settings);
+        }
+
+        private void OnTwitchSettings(TwitchSettings settings)
+        {
+            {
+                if (TwitchUsername != settings.TwitchUsername || TwitchToken != settings.TwitchToken)
+                {
+                    TwitchUsername = settings.TwitchUsername;
+                    TwitchToken = settings.TwitchToken;
+
+                    Disconnect();
+                    Connnect();
                 }
             };
         }

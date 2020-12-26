@@ -17,21 +17,23 @@ namespace Slipstream.Backend.Plugins
         private string? Path;
         private readonly SpeechSynthesizer Synthesizer;
 
-        public AudioPlugin(string id, IEventBus eventBus) : base(id, "AudioPlugin", "AudioPlugin", "Audio")
+        public AudioPlugin(string id, IEventBus eventBus, AudioSettings settings) : base(id, "AudioPlugin", "AudioPlugin", "Audio")
         {
             EventBus = eventBus;
+
+            EventHandler_OnSettingAudioSettings(settings);
 
             Synthesizer = new SpeechSynthesizer();
             Synthesizer.SetOutputToDefaultAudioDevice();
 
             EventHandler.OnUtilitySay += EventHandler_OnUtilitySay;
             EventHandler.OnUtilityPlayAudio += EventHandler_OnUtilityPlayAudio;
-            EventHandler.OnSettingAudioSettings += EventHandler_OnSettingAudioSettings;
+            EventHandler.OnSettingAudioSettings += (s, e) => EventHandler_OnSettingAudioSettings(e.Event);
         }
 
-        private void EventHandler_OnSettingAudioSettings(EventHandler source, EventHandler.EventHandlerArgs<AudioSettings> e)
+        private void EventHandler_OnSettingAudioSettings(AudioSettings e)
         {
-            Path = e.Event.Path;
+            Path = e.Path;
         }
 
         private void EventHandler_OnUtilityPlayAudio(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Utility.PlayAudio> e)

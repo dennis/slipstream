@@ -23,10 +23,10 @@ namespace Slipstream.Backend.Plugins
             EventHandler.OnInternalFileMonitorFileDeleted += EventHandler_OnInternalFileMonitorFileDeleted;
             EventHandler.OnInternalFileMonitorFileChanged += EventHandler_OnInternalFileMonitorFileChanged;
             EventHandler.OnInternalFileMonitorFileRenamed += EventHandler_OnInternalFileMonitorFileRenamed;
-            EventHandler.OnInternalPluginStateChanged += EventHandler_OnInternalPluginStateChanged;
+            EventHandler.OnInternalPluginState += EventHandler_OnInternalPluginState;
         }
 
-        private void EventHandler_OnInternalPluginStateChanged(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.PluginStateChanged> e)
+        private void EventHandler_OnInternalPluginState(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.PluginState> e)
         {
             if(e.Event.PluginStatus == PluginStatus.Registered && RegisteredPluginQueue.ContainsKey(e.Event.Id))
             {
@@ -42,6 +42,11 @@ namespace Slipstream.Backend.Plugins
 
         private void NewFile(string filePath)
         {
+            if (Scripts.ContainsKey(filePath))
+            {
+                return;
+            }
+
             string pluginName = "LuaPlugin";
             string pluginId = Path.GetFileName(filePath);
 

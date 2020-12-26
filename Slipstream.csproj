@@ -125,6 +125,7 @@
     <Compile Include="Frontend\SettingsForm.Designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Shared\Events\Internal\PluginStatesRequest.cs" />
     <Compile Include="Shared\IApplicationConfiguration.cs" />
     <Compile Include="Shared\ApplicationVersionService.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingPitstopReport.cs" />
@@ -156,7 +157,6 @@
     <Compile Include="Shared\Events\Internal\PluginRegister.cs" />
     <Compile Include="Shared\Events\Internal\PluginEnable.cs" />
     <Compile Include="Shared\Events\Internal\PluginDisable.cs" />
-    <Compile Include="Shared\Events\Internal\FrontendReady.cs" />
     <Compile Include="Shared\Events\Setting\AudioSettings.cs" />
     <Compile Include="Shared\Events\Setting\TwitchSettings.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchSendMessage.cs" />
@@ -169,7 +169,7 @@
     <Compile Include="Shared\IApplicationVersionService.cs" />
     <Compile Include="Shared\IEventBus.cs" />
     <Compile Include="Shared\IEventBusSubscription.cs" />
-    <Compile Include="Shared\Events\Internal\PluginStateChanged.cs" />
+    <Compile Include="Shared\Events\Internal\PluginState.cs" />
     <Compile Include="Backend\Plugins\DebugOutputPlugin.cs" />
     <Compile Include="Backend\Engine.cs" />
     <Compile Include="Backend\IPlugin.cs" />

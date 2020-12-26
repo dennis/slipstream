@@ -32,7 +32,7 @@ namespace Slipstream.Backend
         {
             PluginStatus status = plugin.Enabled ? PluginStatus.Enabled : PluginStatus.Disabled;
 
-            EventBus.PublishEvent(new PluginStateChanged() { Id = plugin.Id, PluginName = plugin.Name, PluginStatus = status, DisplayName = plugin.DisplayName });
+            EventBus.PublishEvent(new PluginState() { Id = plugin.Id, PluginName = plugin.Name, PluginStatus = status, DisplayName = plugin.DisplayName });
         }
 
         public void RemovePlugin(IPlugin plugin)

@@ -3,7 +3,6 @@
 using Slipstream.Shared;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Slipstream.Backend
 {
@@ -13,11 +12,6 @@ namespace Slipstream.Backend
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, IPlugin> Plugins = new Dictionary<string, IPlugin>();
         private readonly IDictionary<string, PluginWorker> PluginWorkers = new Dictionary<string, PluginWorker>();
-
-        // No events are sent while we are in Warmup. Once engine performs 
-        // WarmupDone(), these will be handled
-        private bool Warmup = true; 
-        private readonly IList<IEvent> PendingEvents = new List<IEvent>();
 
         public PluginManager(IEngine engine, IEventBus eventBus)
         {
@@ -45,7 +39,7 @@ namespace Slipstream.Backend
 
         private void EmitPluginStateChanged(IPlugin plugin, Shared.Events.Internal.PluginStatus status)
         {
-            EmitEvent(new Shared.Events.Internal.PluginStateChanged() { Id = plugin.Id, PluginName = plugin.Name, PluginStatus = status, DisplayName = plugin.DisplayName });
+            EmitEvent(new Shared.Events.Internal.PluginState() { Id = plugin.Id, PluginName = plugin.Name, PluginStatus = status, DisplayName = plugin.DisplayName });
         }
 
         public void RegisterPlugin(IPlugin plugin)
@@ -86,24 +80,9 @@ namespace Slipstream.Backend
             }
         }
 
-        public void WarmupDone()
-        {
-            Debug.Assert(Warmup);
-
-            Warmup = false;
-
-            foreach (var e in PendingEvents)
-                EmitEvent(e);
-
-            PendingEvents.Clear();
-        }
-
         private void EmitEvent(IEvent e)
         {
-            if (Warmup)
-                PendingEvents.Add(e);
-            else
-                EventBus.PublishEvent(e);
+            EventBus.PublishEvent(e);
         }
 
         public void DisablePlugin(IPlugin p)
@@ -120,6 +99,17 @@ namespace Slipstream.Backend
             else
             {
                 throw new Exception($"Can't find plugin '{pluginId}'");
+            }
+        }
+
+        internal void ForAllPluginsExecute(Action<IPlugin> a)
+        {
+            lock(Plugins)
+            {
+                foreach(var p in Plugins)
+                {
+                    a(p.Value);
+                }
             }
         }
 

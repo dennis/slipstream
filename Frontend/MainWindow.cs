@@ -46,17 +46,6 @@ namespace Slipstream.Frontend
             EventBusSubscription = EventBus.RegisterListener();
             EventHandlerThread = new Thread(new ThreadStart(this.EventListenerMain));
             EventHandlerThread.Start();
-
-            // Plugins..
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "DebugOutputPlugin", PluginName = "DebugOutputPlugin" });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "FileMonitorPlugin", PluginName = "FileMonitorPlugin" });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "FileTriggerPlugin", PluginName = "FileTriggerPlugin" });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "AudioPlugin", PluginName = "AudioPlugin" });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "IRacingPlugin", PluginName = "IRacingPlugin" });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "TwitchPlugin", PluginName = "TwitchPlugin" });
-
-            // Tell backend that we're ready
-            EventBus.PublishEvent(new Shared.Events.Internal.FrontendReady());
         }
 
         private void AppendMessages(string msg)
@@ -90,11 +79,14 @@ namespace Slipstream.Frontend
         {
             Debug.Assert(EventBusSubscription != null);
 
-            EventHandler.OnInternalPluginStateChanged += (s, e) => EventHandler_OnInternalPluginStateChanged(e.Event);
+            EventHandler.OnInternalPluginState += (s, e) => EventHandler_OnInternalPluginState(e.Event);
             EventHandler.OnUtilityWriteToConsole += (s, e) =>
             {
                 PendingMessages.Add($"{DateTime.Now:s} {e.Event.Message}");
             };
+
+            // Request full state of all known plugins, so we get any that might be started before "us"
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginStatesRequest());
 
             while (true)
             {
@@ -102,56 +94,27 @@ namespace Slipstream.Frontend
             }
         }
 
-        private void EventHandler_OnInternalPluginStateChanged(Shared.Events.Internal.PluginStateChanged e)
+        private void EventHandler_OnInternalPluginState(Shared.Events.Internal.PluginState e)
         {
-            Debug.WriteLine($"Got PluginStateChanged {e.Id} {e.PluginStatus} {e.DisplayName}");
+            if(e.PluginStatus != Shared.Events.Internal.PluginStatus.Unregistered && !MenuPluginItems.ContainsKey(e.Id))
+            {
+                var item = new ToolStripMenuItem
+                {
+                    Checked = true,
+                    CheckState = CheckState.Unchecked,
+                    Name = e.Id.ToString(),
+                    Size = new System.Drawing.Size(180, 22),
+                    Text = e.DisplayName
+                };
+                item.Click += PluginMenuItem_Click;
+                MenuPluginItems.Add(e.Id, item);
+
+                ExecuteSecure(() => PluginsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { item }));
+            }
+
             switch (e.PluginStatus)
             {
                 case Shared.Events.Internal.PluginStatus.Registered:
-                    {
-                        switch(e.Id)
-                        {
-                            case "DebugOutputPlugin":
-                                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = "DebugOutputPlugin" });
-                                break;
-                            case "FileMonitorPlugin":
-                                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = "FileMonitorPlugin" });
-                                break;
-
-                            case "FileTriggerPlugin":
-                                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = "FileTriggerPlugin" });
-                                break;
-
-                            case "AudioPlugin":
-                                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = "AudioPlugin" });
-                                break;
-
-                            case "IRacingPlugin":
-                                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = "IRacingPlugin" });
-                                break;
-
-                            case "TwitchPlugin":
-                                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = "TwitchPlugin" });
-                                break;
-
-                            case "StatePlugin":
-                                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = "StatePlugin" });
-                                break;
-                        }
-
-                        var item = new ToolStripMenuItem
-                        {
-                            Checked = true,
-                            CheckState = CheckState.Unchecked,
-                            Name = e.Id.ToString(),
-                            Size = new System.Drawing.Size(180, 22),
-                            Text = e.DisplayName
-                        };
-                        item.Click += PluginMenuItem_Click;
-                        MenuPluginItems.Add(e.Id, item);
-
-                        ExecuteSecure(() => PluginsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { item }));
-                    }
                     break;
                 case Shared.Events.Internal.PluginStatus.Unregistered:
                     {
@@ -190,17 +153,10 @@ namespace Slipstream.Frontend
                     break;
                 case Shared.Events.Internal.PluginStatus.Disabled:
                     {
-                        if(MenuPluginItems.ContainsKey(e.Id))
-                        {
-                            var item = MenuPluginItems[e.Id];
+                        var item = MenuPluginItems[e.Id];
 
-                            ExecuteSecure(() => item.CheckState = CheckState.Unchecked);
-                            ExecuteSecure(() => item.Text = e.DisplayName);
-                        }
-                        else
-                        {
-                            Debug.WriteLine($"Can't disable plugin i dont know: {e.Id}");
-                        }
+                        ExecuteSecure(() => item.CheckState = CheckState.Unchecked);
+                        ExecuteSecure(() => item.Text = e.DisplayName);
                     }
                     break;
             }

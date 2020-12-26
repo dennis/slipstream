@@ -39,7 +39,6 @@ namespace Slipstream.Backend
 
         private void UnregisterPlugin(IPlugin p)
         {
-            p.UnregisterPlugin(Engine);
             PluginWorkers[p.WorkerName].RemovePlugin(p);
             EmitPluginStateChanged(p, Shared.Events.Internal.PluginStatus.Unregistered);
         }
@@ -68,7 +67,6 @@ namespace Slipstream.Backend
 
                 worker.AddPlugin(plugin);
 
-                plugin.RegisterPlugin(Engine);
                 Plugins.Add(plugin.Id, plugin);
 
                 EmitPluginStateChanged(plugin, Shared.Events.Internal.PluginStatus.Registered);

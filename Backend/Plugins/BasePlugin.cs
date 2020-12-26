@@ -81,21 +81,7 @@ namespace Slipstream.Backend.Plugins
         {
         }
 
-        public void RegisterPlugin(IEngine engine)
-        {
-            OnRegisterPlugin(engine);
-        }
-
-        protected virtual void OnRegisterPlugin(IEngine engine)
-        {
-        }
-
-        public void UnregisterPlugin(IEngine engine)
-        {
-            OnUnregisterPlugin(engine);
-        }
-
-        protected virtual void OnUnregisterPlugin(IEngine engine)
+        public void Dispose()
         {
         }
     }

@@ -103,7 +103,16 @@ namespace Slipstream.Backend
                     PluginManager.RegisterPlugin(new FileTriggerPlugin(ev.Id, EventBus));
                     break;
                 case "LuaPlugin":
-                    PluginManager.RegisterPlugin(new LuaPlugin(ev.Id, EventBus, StateService));
+                    {
+                        if (!(ev.Settings is LuaSettings settings))
+                        {
+                            throw new Exception("Unexpected settings for LuaPlugin");
+                        }
+                        else
+                        {
+                            PluginManager.RegisterPlugin(new LuaPlugin(ev.Id, EventBus, StateService, settings));
+                        }
+                    }
                     break;
                 case "AudioPlugin":
                     {
@@ -124,7 +133,7 @@ namespace Slipstream.Backend
                     {
                         if (!(ev.Settings is TwitchSettings settings))
                         {
-                            throw new Exception("Unexpected settings for AudioPlugin");
+                            throw new Exception("Unexpected settings for TwitchPlugin");
                         }
                         else
                         {

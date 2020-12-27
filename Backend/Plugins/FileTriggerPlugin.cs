@@ -12,8 +12,6 @@ namespace Slipstream.Backend.Plugins
     {
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, string> Scripts = new Dictionary<string, string>();
-        private readonly IDictionary<string, IEvent> RegisteredPluginQueue = new Dictionary<string, IEvent>(); // Send out this event when we see it registered
-        private readonly IDictionary<string, IEvent> EnabledPluginQueue = new Dictionary<string, IEvent>(); // Send out this event when we see it enabled
 
         public FileTriggerPlugin(string id, IEventBus eventBus) : base(id, "FileTriggerPlugin", "FileTriggerPlugin", "Core")
         {
@@ -23,21 +21,6 @@ namespace Slipstream.Backend.Plugins
             EventHandler.OnInternalFileMonitorFileDeleted += EventHandler_OnInternalFileMonitorFileDeleted;
             EventHandler.OnInternalFileMonitorFileChanged += EventHandler_OnInternalFileMonitorFileChanged;
             EventHandler.OnInternalFileMonitorFileRenamed += EventHandler_OnInternalFileMonitorFileRenamed;
-            EventHandler.OnInternalPluginState += EventHandler_OnInternalPluginState;
-        }
-
-        private void EventHandler_OnInternalPluginState(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.PluginState> e)
-        {
-            if(e.Event.PluginStatus == PluginStatus.Registered && RegisteredPluginQueue.ContainsKey(e.Event.Id))
-            {
-                EventBus.PublishEvent(RegisteredPluginQueue[e.Event.Id]);
-                RegisteredPluginQueue.Remove(e.Event.Id);
-            }
-            else if(e.Event.PluginStatus == PluginStatus.Enabled && EnabledPluginQueue.ContainsKey(e.Event.Id))
-            {
-                EventBus.PublishEvent(EnabledPluginQueue[e.Event.Id]);
-                EnabledPluginQueue.Remove(e.Event.Id);
-            }
         }
 
         private void NewFile(string filePath)
@@ -50,14 +33,17 @@ namespace Slipstream.Backend.Plugins
             string pluginName = "LuaPlugin";
             string pluginId = Path.GetFileName(filePath);
 
-            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginRegister() { Id = pluginId, PluginName = pluginName });
-
-            RegisteredPluginQueue.Add(pluginId, new Shared.Events.Internal.CommandPluginEnable() { Id = pluginId });
-            EnabledPluginQueue.Add(pluginId, new Slipstream.Shared.Events.Setting.LuaSettings() { PluginId = pluginId, FilePath = filePath });
+            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginRegister() { Id = pluginId, PluginName = pluginName, Settings = GetLuaSettings(pluginId, filePath) });
+            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginEnable() { Id = pluginId });
 
             Scripts.Add(filePath, pluginId);
         }
 
+        private IEvent GetLuaSettings(string pluginId, string filePath)
+        {
+            return new Slipstream.Shared.Events.Setting.LuaSettings() { PluginId = pluginId, FilePath = filePath };
+        }
+    
         private void DeletedFile(string filePath)
         {
             var ev = new Shared.Events.Internal.CommandPluginUnregister() { Id = Scripts[filePath] };

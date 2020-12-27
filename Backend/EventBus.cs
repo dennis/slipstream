@@ -23,7 +23,7 @@ namespace Slipstream.Backend
         {
             lock (Listeners)
             {
-                if(enabled)
+                if (enabled)
                 {
                     foreach (var l in Listeners)
                     {

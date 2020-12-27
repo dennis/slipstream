@@ -96,7 +96,7 @@ namespace Slipstream.Frontend
 
         private void EventHandler_OnInternalPluginState(Shared.Events.Internal.PluginState e)
         {
-            if(e.PluginStatus != Shared.Events.Internal.PluginStatus.Unregistered && !MenuPluginItems.ContainsKey(e.Id))
+            if (e.PluginStatus != Shared.Events.Internal.PluginStatus.Unregistered && !MenuPluginItems.ContainsKey(e.Id))
             {
                 var item = new ToolStripMenuItem
                 {

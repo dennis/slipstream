@@ -152,7 +152,7 @@ namespace Slipstream.Backend.Plugins
             if (ev.StartSet)
                 Debug.Write("StartSet ");
             if (ev.TenToGo)
-                Debug.Write("TenToGo "); 
+                Debug.Write("TenToGo ");
             if (ev.White)
                 Debug.Write("White ");
             if (ev.Yellow)

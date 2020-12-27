@@ -58,7 +58,7 @@ namespace Slipstream.Backend
                     {
                         foreach (var plugin in Plugins)
                         {
-                            if(plugin.PendingOnEnable)
+                            if (plugin.PendingOnEnable)
                             {
                                 plugin.OnEnable();
                                 plugin.PendingOnEnable = false;

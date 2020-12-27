@@ -37,10 +37,10 @@ namespace Slipstream.Frontend
 
         public TwitchSettings GetTwitchSettingsEvent()
         {
-            return new Shared.Events.Setting.TwitchSettings 
-            { 
+            return new Shared.Events.Setting.TwitchSettings
+            {
                 TwitchUsername = Settings.TwitchUsername,
-                TwitchToken = Settings.TwitchToken 
+                TwitchToken = Settings.TwitchToken
             };
         }
     }

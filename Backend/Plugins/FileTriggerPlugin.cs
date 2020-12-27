@@ -1,5 +1,4 @@
 ﻿using Slipstream.Shared;
-using Slipstream.Shared.Events.Internal;
 using System.Collections.Generic;
 using System.IO;
 using EventHandler = Slipstream.Shared.EventHandler;
@@ -43,7 +42,7 @@ namespace Slipstream.Backend.Plugins
         {
             return new Slipstream.Shared.Events.Setting.LuaSettings() { PluginId = pluginId, FilePath = filePath };
         }
-    
+
         private void DeletedFile(string filePath)
         {
             var ev = new Shared.Events.Internal.CommandPluginUnregister() { Id = Scripts[filePath] };

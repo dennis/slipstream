@@ -1,7 +1,7 @@
 using Slipstream.Shared;
+using Slipstream.Shared.Events.Setting;
 using Slipstream.Shared.Events.Twitch;
 using Slipstream.Shared.Events.Utility;
-using Slipstream.Shared.Events.Setting;
 using System;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
@@ -26,7 +26,7 @@ namespace Slipstream.Backend.Plugins
         public TwitchPlugin(string id, IEventBus eventBus, TwitchSettings settings) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin")
         {
             EventBus = eventBus;
-            
+
             EventHandler.OnSettingTwitchSettings += (s, e) => OnTwitchSettings(e.Event);
             EventHandler.OnTwitchCommandSendMessage += (s, e) =>
             {
@@ -80,7 +80,7 @@ namespace Slipstream.Backend.Plugins
             if (Client != null && Client.IsConnected)
                 return;
 
-            if(Client == null)
+            if (Client == null)
             {
                 ConnectionCredentials credentials = new ConnectionCredentials(TwitchUsername, TwitchToken, "ws://irc-ws.chat.twitch.tv:80");
                 var clientOptions = new ClientOptions
@@ -125,7 +125,7 @@ namespace Slipstream.Backend.Plugins
         private void OnDisconnect(object sender, OnDisconnectedEventArgs e)
         {
             EventBus.PublishEvent(new TwitchDisconnected());
-            if(Enabled)
+            if (Enabled)
                 Client?.Reconnect();
         }
 

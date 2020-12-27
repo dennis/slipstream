@@ -51,7 +51,7 @@ namespace Slipstream.Backend
             PluginManager.ForAllPluginsExecute(
                 (a) => EventBus.PublishEvent(
                     new Shared.Events.Internal.PluginState
-                    {  
+                    {
                         Id = a.Id,
                         DisplayName = a.DisplayName,
                         PluginName = a.Name,

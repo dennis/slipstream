@@ -304,7 +304,7 @@ namespace Slipstream.Shared
                     else
                         OnIRacingCurrentSession.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCurrentSession>(tev));
                     break;
-                    
+
                 case Shared.Events.IRacing.IRacingCarInfo tev:
                     if (OnIRacingCarInfo == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));

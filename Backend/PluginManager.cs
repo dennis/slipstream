@@ -104,9 +104,9 @@ namespace Slipstream.Backend
 
         internal void ForAllPluginsExecute(Action<IPlugin> a)
         {
-            lock(Plugins)
+            lock (Plugins)
             {
-                foreach(var p in Plugins)
+                foreach (var p in Plugins)
                 {
                     a(p.Value);
                 }

@@ -6,7 +6,7 @@ namespace Slipstream.Backend.Plugins
 {
     public class BasePlugin : IPlugin
     {
-        public string Id { get;  } = "INVALID-PLUGIN-ID";
+        public string Id { get; } = "INVALID-PLUGIN-ID";
         private string name = "INVALID-PLUGIN-NAME";
         public string Name
         {

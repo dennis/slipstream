@@ -42,7 +42,7 @@ namespace Slipstream.Backend.Plugins
         }
 
         private void StartLua()
-         {
+        {
             if (!Enabled || FilePath == null)
                 return;
 
@@ -159,7 +159,7 @@ namespace Slipstream.Backend.Plugins
 
             public void Debounce(string name, LuaFunction func, float debounceLength)
             {
-                if(func != null)
+                if (func != null)
                 {
                     DebouncedFunctions[name] = new DelayedExecution(func, DateTime.Now.AddSeconds(debounceLength));
                 }
@@ -171,7 +171,7 @@ namespace Slipstream.Backend.Plugins
 
             public void Wait(string name, LuaFunction func, float duration)
             {
-                if(func != null)
+                if (func != null)
                 {
                     if (!WaitingFunctions.ContainsKey(name))
                         WaitingFunctions[name] = new DelayedExecution(func, DateTime.Now.AddSeconds(duration));
@@ -182,7 +182,7 @@ namespace Slipstream.Backend.Plugins
                 }
             }
 
-            private  void HandleDelayedExecution(IDictionary<string, DelayedExecution> functions)
+            private void HandleDelayedExecution(IDictionary<string, DelayedExecution> functions)
             {
                 string? deleteKey = null;
 

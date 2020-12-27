@@ -2,7 +2,6 @@ using Slipstream.Shared;
 using Slipstream.Shared.Events.Internal;
 using Slipstream.Shared.Events.Setting;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 
 #nullable enable
@@ -78,7 +77,7 @@ namespace Slipstream.Backend.Plugins
                 fileSystemWatchers.Add(watcher);
             }
 
-            if(InitialScan)
+            if (InitialScan)
                 RescanExistingFiles();
         }
 

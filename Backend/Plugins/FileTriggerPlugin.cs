@@ -50,9 +50,9 @@ namespace Slipstream.Backend.Plugins
             string pluginName = "LuaPlugin";
             string pluginId = Path.GetFileName(filePath);
 
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = pluginId, PluginName = pluginName });
+            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginRegister() { Id = pluginId, PluginName = pluginName });
 
-            RegisteredPluginQueue.Add(pluginId, new Shared.Events.Internal.PluginEnable() { Id = pluginId });
+            RegisteredPluginQueue.Add(pluginId, new Shared.Events.Internal.CommandPluginEnable() { Id = pluginId });
             EnabledPluginQueue.Add(pluginId, new Slipstream.Shared.Events.Setting.LuaSettings() { PluginId = pluginId, FilePath = filePath });
 
             Scripts.Add(filePath, pluginId);
@@ -60,7 +60,7 @@ namespace Slipstream.Backend.Plugins
 
         private void DeletedFile(string filePath)
         {
-            var ev = new Shared.Events.Internal.PluginUnregister() { Id = Scripts[filePath] };
+            var ev = new Shared.Events.Internal.CommandPluginUnregister() { Id = Scripts[filePath] };
 
             EventBus.PublishEvent(ev);
 

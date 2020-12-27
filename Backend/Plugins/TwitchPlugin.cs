@@ -28,7 +28,7 @@ namespace Slipstream.Backend.Plugins
             EventBus = eventBus;
             
             EventHandler.OnSettingTwitchSettings += (s, e) => OnTwitchSettings(e.Event);
-            EventHandler.OnTwitchSendMessage += (s, e) =>
+            EventHandler.OnTwitchCommandSendMessage += (s, e) =>
             {
                 if (Client != null && Client.JoinedChannels.Count > 0)
                 {
@@ -107,19 +107,19 @@ namespace Slipstream.Backend.Plugins
         private void Client_OnReconnected(object sender, OnReconnectedEventArgs e)
         {
             EventBus.PublishEvent(new TwitchConnected());
-            EventBus.PublishEvent(new WriteToConsole { Message = $"Twitch connected as {TwitchUsername}" });
+            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch connected as {TwitchUsername}" });
         }
 
         private void Client_OnIncorrectLogin(object sender, OnIncorrectLoginArgs e)
         {
-            EventBus.PublishEvent(new WriteToConsole { Message = $"Twitch Error: {e.Exception.Message}" });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginDisable() { Id = this.Id });
+            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch Error: {e.Exception.Message}" });
+            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginDisable() { Id = this.Id });
         }
 
         private void Client_OnError(object sender, OnErrorEventArgs e)
         {
-            EventBus.PublishEvent(new WriteToConsole { Message = $"Twitch Error: {e.Exception.Message}" });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginDisable() { Id = this.Id });
+            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch Error: {e.Exception.Message}" });
+            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginDisable() { Id = this.Id });
         }
 
         private void OnDisconnect(object sender, OnDisconnectedEventArgs e)
@@ -151,7 +151,7 @@ namespace Slipstream.Backend.Plugins
         private void OnConnected(object sender, OnConnectedArgs e)
         {
             EventBus.PublishEvent(new TwitchConnected());
-            EventBus.PublishEvent(new WriteToConsole { Message = $"Twitch connected as {TwitchUsername}" });
+            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch connected as {TwitchUsername}" });
         }
     }
 }

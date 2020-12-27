@@ -101,7 +101,7 @@ namespace Slipstream.Backend.Services
 
             if (!IsValidKey(key))
             {
-                EventBus.PublishEvent(new Shared.Events.Utility.WriteToConsole { Message = $"'{key}' is not a valid state key. Ignoring" });
+                EventBus.PublishEvent(new Shared.Events.Utility.CommandWriteToConsole { Message = $"'{key}' is not a valid state key. Ignoring" });
                 return;
             }
 
@@ -135,7 +135,7 @@ namespace Slipstream.Backend.Services
 
                     if(kval.ExpiresAt < now)
                     {
-                        EventBus.PublishEvent(new Shared.Events.Utility.WriteToConsole { Message = $"'{k}' expired" });
+                        EventBus.PublishEvent(new Shared.Events.Utility.CommandWriteToConsole { Message = $"'{k}' expired" });
                         SetState(k, "");
                     }
                     else

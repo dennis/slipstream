@@ -11,13 +11,13 @@ namespace Slipstream.Backend.Plugins
         {
             EventHandler.OnDefault += (s, e) => EventHandler_OnDefault(e.Event);
             EventHandler.OnInternalPluginState += (s, e) => EventHandler_OnInternalPluginState(e.Event);
-            EventHandler.OnInternalPluginRegister += (s, e) => EventHandler_OnInternalPluginRegister(e.Event);
-            EventHandler.OnInternalPluginUnregister += (s, e) => EventHandler_OnInternalPluginUnregister(e.Event);
-            EventHandler.OnInternalPluginEnable += (s, e) => EventHandler_OnInternalPluginEnable(e.Event);
-            EventHandler.OnInternalPluginDisable += (s, e) => EventHandler_OnInternalPluginDisable(e.Event);
-            EventHandler.OnUtilityWriteToConsole += (s, e) => EventHandler_OnUtilityWriteToConsole(e.Event);
-            EventHandler.OnUtilitySay += (s, e) => EventHandler_OnUtilitySay(e.Event);
-            EventHandler.OnUtilityPlayAudio += (s, e) => EventHandler_OnUtilityPlayAudio(e.Event);
+            EventHandler.OnInternalCommandPluginRegister += (s, e) => EventHandler_OnInternalPluginRegister(e.Event);
+            EventHandler.OnInternalCommandPluginUnregister += (s, e) => EventHandler_OnInternalPluginUnregister(e.Event);
+            EventHandler.OnInternalCommandPluginEnable += (s, e) => EventHandler_OnInternalPluginEnable(e.Event);
+            EventHandler.OnInternalCommandPluginDisable += (s, e) => EventHandler_OnInternalPluginDisable(e.Event);
+            EventHandler.OnUtilityCommandWriteToConsole += (s, e) => EventHandler_OnUtilityWriteToConsole(e.Event);
+            EventHandler.OnUtilityCommandSay += (s, e) => EventHandler_OnUtilitySay(e.Event);
+            EventHandler.OnUtilityCommandPlayAudio += (s, e) => EventHandler_OnUtilityPlayAudio(e.Event);
             EventHandler.OnIRacingTrackInfo += (s, e) => EventHandler_OnIRacingTrackInfo(e.Event);
             EventHandler.OnIRacingWeatherInfo += (s, e) => EventHandler_OnIRacingWeatherInfo(e.Event);
             EventHandler.OnIRacingCurrentSession += (s, e) => EventHandler_OnIRacingCurrentSession(e.Event);
@@ -34,10 +34,10 @@ namespace Slipstream.Backend.Plugins
             EventHandler.OnSettingAudioSettings += (s, e) => EventHandler_OnSettingAudioSettings(e.Event);
             EventHandler.OnSettingFileMonitorSettings += (s, e) => EventHandler_OnSettingFileMonitorSettings(e.Event);
             EventHandler.OnSettingTwitchSettings += (s, e) => EventHandler_OnSettingTwitchSettings(e.Event);
-            EventHandler.OnTwitchSendMessage += (s, e) => EventHandler_OnTwitchSendMessage(e.Event);
+            EventHandler.OnTwitchCommandSendMessage += (s, e) => EventHandler_OnTwitchSendMessage(e.Event);
         }
 
-        private void EventHandler_OnTwitchSendMessage(Shared.Events.Twitch.TwitchSendMessage ev)
+        private void EventHandler_OnTwitchSendMessage(Shared.Events.Twitch.CommandTwitchSendMessage ev)
         {
             Debug.WriteLine($"$$ {ev} {ev.Message}");
         }
@@ -183,37 +183,37 @@ namespace Slipstream.Backend.Plugins
             Debug.WriteLine($"$$ {ev} TrackDisplayShortName={ev.TrackDisplayShortName}, TrackCity={ev.TrackCity}, TrackConfigName={ev.TrackConfigName}, TrackDisplayName={ev.TrackDisplayName}, TrackId={ev.TrackId}, TrackLength={ev.TrackLength}, TrackType={ev.TrackType}");
         }
 
-        private void EventHandler_OnUtilityPlayAudio(Shared.Events.Utility.PlayAudio ev)
+        private void EventHandler_OnUtilityPlayAudio(Shared.Events.Utility.CommandPlayAudio ev)
         {
             Debug.WriteLine($"$$ {ev} message=\"{ev.Filename}\", volume={ev.Volume}");
         }
 
-        private void EventHandler_OnInternalPluginDisable(Shared.Events.Internal.PluginDisable ev)
+        private void EventHandler_OnInternalPluginDisable(Shared.Events.Internal.CommandPluginDisable ev)
         {
             Debug.WriteLine($"$$ {ev} {ev.Id}");
         }
 
-        private void EventHandler_OnInternalPluginEnable(Shared.Events.Internal.PluginEnable ev)
+        private void EventHandler_OnInternalPluginEnable(Shared.Events.Internal.CommandPluginEnable ev)
         {
             Debug.WriteLine($"$$ {ev} {ev.Id}");
         }
 
-        private void EventHandler_OnInternalPluginUnregister(Shared.Events.Internal.PluginUnregister ev)
+        private void EventHandler_OnInternalPluginUnregister(Shared.Events.Internal.CommandPluginUnregister ev)
         {
             Debug.WriteLine($"$$ {ev} {ev.Id}");
         }
 
-        private void EventHandler_OnInternalPluginRegister(Shared.Events.Internal.PluginRegister ev)
+        private void EventHandler_OnInternalPluginRegister(Shared.Events.Internal.CommandPluginRegister ev)
         {
             Debug.WriteLine($"$$ {ev} Id={ev.Id} PluginName={ev.PluginName}");
         }
 
-        private void EventHandler_OnUtilitySay(Shared.Events.Utility.Say ev)
+        private void EventHandler_OnUtilitySay(Shared.Events.Utility.CommandSay ev)
         {
             Debug.WriteLine($"$$ {ev} message=\"{ev.Message}\" @ volume={ev.Volume}");
         }
 
-        private void EventHandler_OnUtilityWriteToConsole(Shared.Events.Utility.WriteToConsole ev)
+        private void EventHandler_OnUtilityWriteToConsole(Shared.Events.Utility.CommandWriteToConsole ev)
         {
             Debug.WriteLine($"$$ {ev} {ev.Message}");
         }

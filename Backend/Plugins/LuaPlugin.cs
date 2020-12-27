@@ -72,13 +72,13 @@ namespace Slipstream.Backend.Plugins
 
                 // Avoid that WriteToConsole is evaluated by Lua, that in turn will 
                 // add more WriteToConsole events, making a endless loop
-                EventHandler.OnUtilityWriteToConsole += (s, e) => { };
+                EventHandler.OnUtilityCommandWriteToConsole += (s, e) => { };
                 EventHandler.OnDefault += (s, e) => HandleFunc?.Call(e.Event);
             }
             catch (NLua.Exceptions.LuaScriptException e)
             {
                 Api?.Print($"ERROR: {e.Message}");
-                EventBus.PublishEvent(new Shared.Events.Internal.PluginUnregister() { Id = this.Id });
+                EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginUnregister() { Id = this.Id });
             }
         }
 
@@ -122,22 +122,22 @@ namespace Slipstream.Backend.Plugins
 
             public void Print(string s)
             {
-                EventBus.PublishEvent(new Shared.Events.Utility.WriteToConsole() { Message = $"{Prefix}: {s}" });
+                EventBus.PublishEvent(new Shared.Events.Utility.CommandWriteToConsole() { Message = $"{Prefix}: {s}" });
             }
 
             public void Say(string message, float volume)
             {
-                EventBus.PublishEvent(new Shared.Events.Utility.Say() { Message = message, Volume = volume });
+                EventBus.PublishEvent(new Shared.Events.Utility.CommandSay() { Message = message, Volume = volume });
             }
 
             public void Play(string filename, float volume)
             {
-                EventBus.PublishEvent(new Shared.Events.Utility.PlayAudio() { Filename = filename, Volume = volume });
+                EventBus.PublishEvent(new Shared.Events.Utility.CommandPlayAudio() { Filename = filename, Volume = volume });
             }
 
             public void SendTwitchMessage(string message)
             {
-                EventBus.PublishEvent(new Shared.Events.Twitch.TwitchSendMessage() { Message = message });
+                EventBus.PublishEvent(new Shared.Events.Twitch.CommandTwitchSendMessage() { Message = message });
             }
 
             public void SetState(string key, string value)
@@ -219,7 +219,7 @@ namespace Slipstream.Backend.Plugins
             catch (NLua.Exceptions.LuaScriptException e)
             {
                 Api?.Print($"ERROR: {e.Message}");
-                EventBus.PublishEvent(new Shared.Events.Internal.PluginUnregister() { Id = this.Id });
+                EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginUnregister() { Id = this.Id });
             }
         }
     }

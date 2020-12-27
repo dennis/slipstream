@@ -80,13 +80,13 @@ namespace Slipstream.Frontend
             Debug.Assert(EventBusSubscription != null);
 
             EventHandler.OnInternalPluginState += (s, e) => EventHandler_OnInternalPluginState(e.Event);
-            EventHandler.OnUtilityWriteToConsole += (s, e) =>
+            EventHandler.OnUtilityCommandWriteToConsole += (s, e) =>
             {
                 PendingMessages.Add($"{DateTime.Now:s} {e.Event.Message}");
             };
 
             // Request full state of all known plugins, so we get any that might be started before "us"
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginStatesRequest());
+            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginStates());
 
             while (true)
             {
@@ -169,11 +169,11 @@ namespace Slipstream.Frontend
 
             if (item.CheckState == CheckState.Checked)
             {
-                EventBus.PublishEvent(new Shared.Events.Internal.PluginDisable() { Id = item.Name });
+                EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginDisable() { Id = item.Name });
             }
             else
             {
-                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = item.Name });
+                EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginEnable() { Id = item.Name });
             }
         }
         #endregion

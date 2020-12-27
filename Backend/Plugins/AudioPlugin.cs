@@ -26,8 +26,8 @@ namespace Slipstream.Backend.Plugins
             Synthesizer = new SpeechSynthesizer();
             Synthesizer.SetOutputToDefaultAudioDevice();
 
-            EventHandler.OnUtilitySay += EventHandler_OnUtilitySay;
-            EventHandler.OnUtilityPlayAudio += EventHandler_OnUtilityPlayAudio;
+            EventHandler.OnUtilityCommandSay += EventHandler_OnUtilitySay;
+            EventHandler.OnUtilityCommandPlayAudio += EventHandler_OnUtilityPlayAudio;
             EventHandler.OnSettingAudioSettings += (s, e) => EventHandler_OnSettingAudioSettings(e.Event);
         }
 
@@ -36,7 +36,7 @@ namespace Slipstream.Backend.Plugins
             Path = e.Path;
         }
 
-        private void EventHandler_OnUtilityPlayAudio(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Utility.PlayAudio> e)
+        private void EventHandler_OnUtilityPlayAudio(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Utility.CommandPlayAudio> e)
         {
             var filename = e.Event.Filename;
             var volume = e.Event.Volume;
@@ -60,11 +60,11 @@ namespace Slipstream.Backend.Plugins
             }
             catch (Exception ex)
             {
-                EventBus.PublishEvent(new WriteToConsole() { Message = "Playing audio file failed: " + ex.Message });
+                EventBus.PublishEvent(new CommandWriteToConsole() { Message = "Playing audio file failed: " + ex.Message });
             }
         }
 
-        private void EventHandler_OnUtilitySay(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Utility.Say> e)
+        private void EventHandler_OnUtilitySay(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Utility.CommandSay> e)
         {
             if (e.Event == null || e.Event.Message == null || e.Event.Volume == null)
                 return;

@@ -23,17 +23,17 @@ namespace Slipstream.Shared
         public event OnDefaultHandler? OnDefault;
 
         #region Events: Internal
-        public delegate void OnInternalPluginRegisterHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginRegister> e);
-        public event OnInternalPluginRegisterHandler? OnInternalPluginRegister;
+        public delegate void OnInternalCommandPluginRegisterHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.CommandPluginRegister> e);
+        public event OnInternalCommandPluginRegisterHandler? OnInternalCommandPluginRegister;
 
-        public delegate void OnInternalPluginUnregisterHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginUnregister> e);
-        public event OnInternalPluginUnregisterHandler? OnInternalPluginUnregister;
+        public delegate void OnInternalCommandPluginUnregisterHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.CommandPluginUnregister> e);
+        public event OnInternalCommandPluginUnregisterHandler? OnInternalCommandPluginUnregister;
 
-        public delegate void OnInternalPluginEnableHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginEnable> e);
-        public event OnInternalPluginEnableHandler? OnInternalPluginEnable;
+        public delegate void OnInternalCommandPluginEnableHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.CommandPluginEnable> e);
+        public event OnInternalCommandPluginEnableHandler? OnInternalCommandPluginEnable;
 
-        public delegate void OnInternalPluginDisableHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginDisable> e);
-        public event OnInternalPluginDisableHandler? OnInternalPluginDisable;
+        public delegate void OnInternalCommandPluginDisableHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.CommandPluginDisable> e);
+        public event OnInternalCommandPluginDisableHandler? OnInternalCommandPluginDisable;
 
         public delegate void OnInternalPluginStateHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginState> e);
         public event OnInternalPluginStateHandler? OnInternalPluginState;
@@ -53,20 +53,20 @@ namespace Slipstream.Shared
         public delegate void OnInternalPluginsReadyHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginsReady> e);
         public event OnInternalPluginsReadyHandler? OnInternalPluginsReady;
 
-        public delegate void OnInternalPluginStatesRequestHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginStatesRequest> e);
-        public event OnInternalPluginStatesRequestHandler? OnInternalPluginStatesRequest;
+        public delegate void OnInternalCommandPluginStatesHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.CommandPluginStates> e);
+        public event OnInternalCommandPluginStatesHandler? OnInternalCommandPluginStates;
 
         #endregion
 
         #region Events: Utility
-        public delegate void OnUtilityWriteToConsoleHandler(EventHandler source, EventHandlerArgs<Shared.Events.Utility.WriteToConsole> e);
-        public event OnUtilityWriteToConsoleHandler? OnUtilityWriteToConsole;
+        public delegate void OnUtilityCommandWriteToConsoleHandler(EventHandler source, EventHandlerArgs<Shared.Events.Utility.CommandWriteToConsole> e);
+        public event OnUtilityCommandWriteToConsoleHandler? OnUtilityCommandWriteToConsole;
 
-        public delegate void OnUtilitySayHandler(EventHandler source, EventHandlerArgs<Shared.Events.Utility.Say> e);
-        public event OnUtilitySayHandler? OnUtilitySay;
+        public delegate void OnUtilityCommandSayHandler(EventHandler source, EventHandlerArgs<Shared.Events.Utility.CommandSay> e);
+        public event OnUtilityCommandSayHandler? OnUtilityCommandSay;
 
-        public delegate void OnUtilityPlayAudioHandler(EventHandler source, EventHandlerArgs<Shared.Events.Utility.PlayAudio> e);
-        public event OnUtilityPlayAudioHandler? OnUtilityPlayAudio;
+        public delegate void OnUtilityCommandPlayAudioHandler(EventHandler source, EventHandlerArgs<Shared.Events.Utility.CommandPlayAudio> e);
+        public event OnUtilityCommandPlayAudioHandler? OnUtilityCommandPlayAudio;
         #endregion
 
         #region Events: Setting
@@ -131,8 +131,8 @@ namespace Slipstream.Shared
         public delegate void OnTwitchReceivedCommandHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedCommand> e);
         public event OnTwitchReceivedCommandHandler? OnTwitchReceivedCommand;
 
-        public delegate void OnTwitchSendMessageHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchSendMessage> e);
-        public event OnTwitchSendMessageHandler? OnTwitchSendMessage;
+        public delegate void OnTwitchCommandSendMessageHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.CommandTwitchSendMessage> e);
+        public event OnTwitchCommandSendMessageHandler? OnTwitchCommandSendMessage;
         #endregion
 
         public void HandleEvent(IEvent? ev)
@@ -148,29 +148,29 @@ namespace Slipstream.Shared
 
                 // Internal
 
-                case Shared.Events.Internal.PluginRegister tev:
-                    if (OnInternalPluginRegister == null)
+                case Shared.Events.Internal.CommandPluginRegister tev:
+                    if (OnInternalCommandPluginRegister == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnInternalPluginRegister.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginRegister>(tev));
+                        OnInternalCommandPluginRegister.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.CommandPluginRegister>(tev));
                     break;
-                case Shared.Events.Internal.PluginUnregister tev:
-                    if (OnInternalPluginUnregister == null)
+                case Shared.Events.Internal.CommandPluginUnregister tev:
+                    if (OnInternalCommandPluginUnregister == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnInternalPluginUnregister.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginUnregister>(tev));
+                        OnInternalCommandPluginUnregister.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.CommandPluginUnregister>(tev));
                     break;
-                case Shared.Events.Internal.PluginEnable tev:
-                    if (OnInternalPluginEnable == null)
+                case Shared.Events.Internal.CommandPluginEnable tev:
+                    if (OnInternalCommandPluginEnable == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnInternalPluginEnable.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginEnable>(tev));
+                        OnInternalCommandPluginEnable.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.CommandPluginEnable>(tev));
                     break;
-                case Shared.Events.Internal.PluginDisable tev:
-                    if (OnInternalPluginDisable == null)
+                case Shared.Events.Internal.CommandPluginDisable tev:
+                    if (OnInternalCommandPluginDisable == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnInternalPluginDisable.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginDisable>(tev));
+                        OnInternalCommandPluginDisable.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.CommandPluginDisable>(tev));
                     break;
                 case Shared.Events.Internal.PluginState tev:
                     if (OnInternalPluginState == null)
@@ -208,34 +208,34 @@ namespace Slipstream.Shared
                     else
                         OnInternalPluginsReady.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginsReady>(tev));
                     break;
-                case Shared.Events.Internal.PluginStatesRequest tev:
-                    if (OnInternalPluginStatesRequest == null)
+                case Shared.Events.Internal.CommandPluginStates tev:
+                    if (OnInternalCommandPluginStates == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnInternalPluginStatesRequest.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginStatesRequest>(tev));
+                        OnInternalCommandPluginStates.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.CommandPluginStates>(tev));
                     break;
 
                 // Utility
 
-                case Shared.Events.Utility.WriteToConsole tev:
-                    if (OnUtilityWriteToConsole == null)
+                case Shared.Events.Utility.CommandWriteToConsole tev:
+                    if (OnUtilityCommandWriteToConsole == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnUtilityWriteToConsole.Invoke(this, new EventHandlerArgs<Shared.Events.Utility.WriteToConsole>(tev));
+                        OnUtilityCommandWriteToConsole.Invoke(this, new EventHandlerArgs<Shared.Events.Utility.CommandWriteToConsole>(tev));
                     break;
 
-                case Shared.Events.Utility.Say tev:
-                    if (OnUtilitySay == null)
+                case Shared.Events.Utility.CommandSay tev:
+                    if (OnUtilityCommandSay == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnUtilitySay.Invoke(this, new EventHandlerArgs<Shared.Events.Utility.Say>(tev));
+                        OnUtilityCommandSay.Invoke(this, new EventHandlerArgs<Shared.Events.Utility.CommandSay>(tev));
                     break;
 
-                case Shared.Events.Utility.PlayAudio tev:
-                    if (OnUtilityPlayAudio == null)
+                case Shared.Events.Utility.CommandPlayAudio tev:
+                    if (OnUtilityCommandPlayAudio == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnUtilityPlayAudio.Invoke(this, new EventHandlerArgs<Shared.Events.Utility.PlayAudio>(tev));
+                        OnUtilityCommandPlayAudio.Invoke(this, new EventHandlerArgs<Shared.Events.Utility.CommandPlayAudio>(tev));
                     break;
 
                 // Setting
@@ -377,11 +377,11 @@ namespace Slipstream.Shared
                         OnTwitchReceivedCommand.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedCommand>(tev));
                     break;
 
-                case Shared.Events.Twitch.TwitchSendMessage tev:
-                    if (OnTwitchSendMessage == null)
+                case Shared.Events.Twitch.CommandTwitchSendMessage tev:
+                    if (OnTwitchCommandSendMessage == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnTwitchSendMessage.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchSendMessage>(tev));
+                        OnTwitchCommandSendMessage.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.CommandTwitchSendMessage>(tev));
                     break;
 
                 default:

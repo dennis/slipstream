@@ -12,7 +12,7 @@ namespace Slipstream.Frontend
             Settings = Properties.Settings.Default;
 
             System.IO.Directory.CreateDirectory(GetAudioPath());
-            System.IO.Directory.CreateDirectory(GetAudioPath());
+            System.IO.Directory.CreateDirectory(GetScriptsPath());
         }
 
         public string GetAudioPath()

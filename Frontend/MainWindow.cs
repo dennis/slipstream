@@ -1,8 +1,6 @@
 ﻿#nullable enable
 
 using Slipstream.Shared;
-using Slipstream.Shared.Events.Internal;
-using Slipstream.Shared.Events.Setting;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -17,24 +15,16 @@ namespace Slipstream.Frontend
         private Thread? EventHandlerThread;
         private readonly IEventBus EventBus;
         private IEventBusSubscription? EventBusSubscription;
-        private readonly string ScriptsPath;
-        private readonly string AudioPath;
         private readonly BlockingCollection<string> PendingMessages = new BlockingCollection<string>();
         private readonly IDictionary<string, ToolStripMenuItem> MenuPluginItems = new Dictionary<string, ToolStripMenuItem>();
-        private readonly IApplicationVersionService ApplicationVersionService;
+        private readonly ApplicationConfiguration ApplicationConfiguration;
 
-        public MainWindow(IEventBus eventBus, IApplicationVersionService applicationVersionService)
+        public MainWindow(IEventBus eventBus, IApplicationVersionService applicationVersionService, ApplicationConfiguration applicationConfiguration)
         {
             EventBus = eventBus;
-            ApplicationVersionService = applicationVersionService;
+            ApplicationConfiguration = applicationConfiguration;
 
             InitializeComponent();
-
-            ScriptsPath = @"Scripts\";
-            System.IO.Directory.CreateDirectory(ScriptsPath);
-
-            AudioPath = @"Audio\";
-            System.IO.Directory.CreateDirectory(AudioPath);
 
             this.Text += " v" + applicationVersionService.Version;
 
@@ -56,17 +46,6 @@ namespace Slipstream.Frontend
             EventBusSubscription = EventBus.RegisterListener();
             EventHandlerThread = new Thread(new ThreadStart(this.EventListenerMain));
             EventHandlerThread.Start();
-
-            // Plugins..
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "DebugOutputPlugin", PluginName = "DebugOutputPlugin" });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "FileMonitorPlugin", PluginName = "FileMonitorPlugin" });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "FileTriggerPlugin", PluginName = "FileTriggerPlugin" });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "AudioPlugin", PluginName = "AudioPlugin" });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "IRacingPlugin", PluginName = "IRacingPlugin" });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginRegister() { Id = "TwitchPlugin", PluginName = "TwitchPlugin" });
-
-            // Tell backend that we're ready
-            EventBus.PublishEvent(new Shared.Events.Internal.FrontendReady());
         }
 
         private void AppendMessages(string msg)
@@ -100,11 +79,14 @@ namespace Slipstream.Frontend
         {
             Debug.Assert(EventBusSubscription != null);
 
-            EventHandler.OnInternalPluginStateChanged += (s, e) => EventHandler_OnInternalPluginStateChanged(e.Event);
-            EventHandler.OnUtilityWriteToConsole += (s, e) =>
+            EventHandler.OnInternalPluginState += (s, e) => EventHandler_OnInternalPluginState(e.Event);
+            EventHandler.OnUtilityCommandWriteToConsole += (s, e) =>
             {
                 PendingMessages.Add($"{DateTime.Now:s} {e.Event.Message}");
             };
+
+            // Request full state of all known plugins, so we get any that might be started before "us"
+            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginStates());
 
             while (true)
             {
@@ -112,56 +94,27 @@ namespace Slipstream.Frontend
             }
         }
 
-        private void EventHandler_OnInternalPluginStateChanged(Shared.Events.Internal.PluginStateChanged e)
+        private void EventHandler_OnInternalPluginState(Shared.Events.Internal.PluginState e)
         {
-            Debug.WriteLine($"Got PluginStateChanged {e.Id} {e.PluginStatus} {e.DisplayName}");
+            if (e.PluginStatus != Shared.Events.Internal.PluginStatus.Unregistered && !MenuPluginItems.ContainsKey(e.Id))
+            {
+                var item = new ToolStripMenuItem
+                {
+                    Checked = true,
+                    CheckState = CheckState.Unchecked,
+                    Name = e.Id.ToString(),
+                    Size = new System.Drawing.Size(180, 22),
+                    Text = e.DisplayName
+                };
+                item.Click += PluginMenuItem_Click;
+                MenuPluginItems.Add(e.Id, item);
+
+                ExecuteSecure(() => PluginsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { item }));
+            }
+
             switch (e.PluginStatus)
             {
                 case Shared.Events.Internal.PluginStatus.Registered:
-                    {
-                        switch(e.Id)
-                        {
-                            case "DebugOutputPlugin":
-                                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = "DebugOutputPlugin" });
-                                break;
-                            case "FileMonitorPlugin":
-                                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = "FileMonitorPlugin" });
-                                break;
-
-                            case "FileTriggerPlugin":
-                                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = "FileTriggerPlugin" });
-                                break;
-
-                            case "AudioPlugin":
-                                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = "AudioPlugin" });
-                                break;
-
-                            case "IRacingPlugin":
-                                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = "IRacingPlugin" });
-                                break;
-
-                            case "TwitchPlugin":
-                                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = "TwitchPlugin" });
-                                break;
-
-                            case "StatePlugin":
-                                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = "StatePlugin" });
-                                break;
-                        }
-
-                        var item = new ToolStripMenuItem
-                        {
-                            Checked = true,
-                            CheckState = CheckState.Unchecked,
-                            Name = e.Id.ToString(),
-                            Size = new System.Drawing.Size(180, 22),
-                            Text = e.DisplayName
-                        };
-                        item.Click += PluginMenuItem_Click;
-                        MenuPluginItems.Add(e.Id, item);
-
-                        ExecuteSecure(() => PluginsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { item }));
-                    }
                     break;
                 case Shared.Events.Internal.PluginStatus.Unregistered:
                     {
@@ -179,16 +132,16 @@ namespace Slipstream.Frontend
                         switch (e.Id)
                         {
                             case "FileMonitorPlugin":
-                                EventBus.PublishEvent(new Shared.Events.Setting.FileMonitorSettings { Paths = new string[] { ScriptsPath } });
+                                EventBus.PublishEvent(ApplicationConfiguration.GetFileMonitorSettingsEvent());
                                 break;
 
                             case "AudioPlugin":
-                                EventBus.PublishEvent(new Shared.Events.Setting.AudioSettings { Path = AudioPath });
+                                EventBus.PublishEvent(ApplicationConfiguration.GetAudioSettingsEvent());
                                 break;
 
                             case "TwitchPlugin":
                                 var settings = Properties.Settings.Default;
-                                EventBus.PublishEvent(new Shared.Events.Setting.TwitchSettings { TwitchUsername = settings.TwitchUsername, TwitchToken = settings.TwitchToken });
+                                EventBus.PublishEvent(ApplicationConfiguration.GetTwitchSettingsEvent());
                                 break;
                         }
 
@@ -200,17 +153,10 @@ namespace Slipstream.Frontend
                     break;
                 case Shared.Events.Internal.PluginStatus.Disabled:
                     {
-                        if(MenuPluginItems.ContainsKey(e.Id))
-                        {
-                            var item = MenuPluginItems[e.Id];
+                        var item = MenuPluginItems[e.Id];
 
-                            ExecuteSecure(() => item.CheckState = CheckState.Unchecked);
-                            ExecuteSecure(() => item.Text = e.DisplayName);
-                        }
-                        else
-                        {
-                            Debug.WriteLine($"Can't disable plugin i dont know: {e.Id}");
-                        }
+                        ExecuteSecure(() => item.CheckState = CheckState.Unchecked);
+                        ExecuteSecure(() => item.Text = e.DisplayName);
                     }
                     break;
             }
@@ -223,11 +169,11 @@ namespace Slipstream.Frontend
 
             if (item.CheckState == CheckState.Checked)
             {
-                EventBus.PublishEvent(new Shared.Events.Internal.PluginDisable() { Id = item.Name });
+                EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginDisable() { Id = item.Name });
             }
             else
             {
-                EventBus.PublishEvent(new Shared.Events.Internal.PluginEnable() { Id = item.Name });
+                EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginEnable() { Id = item.Name });
             }
         }
         #endregion
@@ -239,12 +185,12 @@ namespace Slipstream.Frontend
 
         private void OpenScriptsDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Process.Start(ScriptsPath);
+            Process.Start(ApplicationConfiguration.GetScriptsPath());
         }
 
         private void OpenAudioDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Process.Start(AudioPath);
+            Process.Start(ApplicationConfiguration.GetAudioPath());
         }
 
         private void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -252,14 +198,7 @@ namespace Slipstream.Frontend
             _ = new SettingsForm().ShowDialog(this);
 
             // Just spam settings to everyone that wants it
-            EventBus.PublishEvent(GetTwitchSettings());
-        }
-
-        private Shared.Events.Setting.TwitchSettings GetTwitchSettings()
-        {
-            var settings = Properties.Settings.Default;
-
-            return new Shared.Events.Setting.TwitchSettings { TwitchUsername = settings.TwitchUsername, TwitchToken = settings.TwitchToken };
+            EventBus.PublishEvent(ApplicationConfiguration.GetTwitchSettingsEvent());
         }
     }
 }

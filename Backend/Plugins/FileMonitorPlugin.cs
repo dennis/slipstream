@@ -12,12 +12,14 @@ namespace Slipstream.Backend.Plugins
     {
         private readonly IEventBus EventBus;
         private readonly IList<FileSystemWatcher> fileSystemWatchers = new List<FileSystemWatcher>();
+        private readonly bool InitialScan = false;
 
-        public FileMonitorPlugin(string id, IEventBus eventBus) : base(id, "FileMonitorPlugin", "FileMonitorPlugin", "Core")
+        public FileMonitorPlugin(string id, IEventBus eventBus, FileMonitorSettings settings) : base(id, "FileMonitorPlugin", "FileMonitorPlugin", "Core")
         {
             EventBus = eventBus;
 
-            EventHandler.OnInternalPluginsReady += EventHandler_OnInternalPluginsReady;
+            OnFileMonitorSettings(settings);
+
             EventHandler.OnSettingFileMonitorSettings += (s, e) => OnFileMonitorSettings(e.Event);
         }
 
@@ -35,10 +37,7 @@ namespace Slipstream.Backend.Plugins
         public override void OnEnable()
         {
             UpdateWatchers();
-        }
 
-        private void EventHandler_OnInternalPluginsReady(EventHandler source, EventHandler.EventHandlerArgs<PluginsReady> e)
-        {
             RescanExistingFiles();
         }
 
@@ -78,7 +77,8 @@ namespace Slipstream.Backend.Plugins
                 fileSystemWatchers.Add(watcher);
             }
 
-            RescanExistingFiles();
+            if (InitialScan)
+                RescanExistingFiles();
         }
 
         private void WatcherOnRenamed(object sender, RenamedEventArgs e)

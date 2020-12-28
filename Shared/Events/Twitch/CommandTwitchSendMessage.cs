@@ -2,9 +2,9 @@
 
 namespace Slipstream.Shared.Events.Twitch
 {
-    public class TwitchSendMessage : IEvent
+    public class CommandTwitchSendMessage : IEvent
     {
-        public string EventType => "TwitchSendMessage";
+        public string EventType => "CommandTwitchSendMessage";
         public string Message { get; set; } = string.Empty;
     }
 }

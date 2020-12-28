@@ -1,19 +1,38 @@
 ﻿using Slipstream.Shared;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Slipstream.Backend
 {
     public class EventBus : IEventBus
     {
         private readonly IList<EventBusSubscription> Listeners = new List<EventBusSubscription>();
+        private readonly List<IEvent> PendingEvents = new List<IEvent>();
+        private volatile bool enabled = false;
+        public bool Enabled
+        {
+            get { return enabled; }
+            set
+            {
+                Debug.Assert(value && !enabled);
 
+                EnableAndFlushPendingEvents();
+            }
+        }
         public void PublishEvent(IEvent e)
         {
             lock (Listeners)
             {
-                foreach (var l in Listeners)
+                if (enabled)
                 {
-                    l.Add(e);
+                    foreach (var l in Listeners)
+                    {
+                        l.Add(e);
+                    }
+                }
+                else
+                {
+                    PendingEvents.Add(e);
                 }
             }
         }
@@ -36,6 +55,24 @@ namespace Slipstream.Backend
             {
                 if (subscription is EventBusSubscription a)
                     _ = Listeners.Remove(a);
+            }
+        }
+
+
+        private void EnableAndFlushPendingEvents()
+        {
+            lock (Listeners)
+            {
+                enabled = true;
+                foreach (var e in PendingEvents)
+                {
+                    foreach (var l in Listeners)
+                    {
+                        l.Add(e);
+                    }
+                }
+
+                PendingEvents.Clear();
             }
         }
     }

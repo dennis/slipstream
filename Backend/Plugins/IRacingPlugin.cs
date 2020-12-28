@@ -248,7 +248,7 @@ namespace Slipstream.Backend.Plugins
                 if (lapsCompleted != -1 && carState.LastLap != lapsCompleted)
                 {
                     carState.ObservedCrossFinishingLine += 1;
-                    if(lapsCompleted == 0) // This is initial lap, so we can use times from next lap
+                    if (lapsCompleted == 0) // This is initial lap, so we can use times from next lap
                         carState.ObservedCrossFinishingLine += 1;
 
                     bool localUser = i == data.SessionData.DriverInfo.DriverCarIdx;
@@ -294,7 +294,7 @@ namespace Slipstream.Backend.Plugins
                 State = SessionStateMapping[data.Telemetry.SessionState]
             };
 
-            if(LastSessionState == null || !LastSessionState.DifferentTo(@event))
+            if (LastSessionState == null || !LastSessionState.DifferentTo(@event))
             {
                 EventBus.PublishEvent(@event);
                 LastSessionState = @event;
@@ -310,7 +310,7 @@ namespace Slipstream.Backend.Plugins
         {
             var sessionFlags = data.Telemetry.SessionFlags;
 
-            var @event = new IRacingRaceFlags 
+            var @event = new IRacingRaceFlags
             {
                 SessionTime = data.Telemetry.SessionTime,
                 Black = sessionFlags.HasFlag(SessionFlags.black),
@@ -340,7 +340,7 @@ namespace Slipstream.Backend.Plugins
                 YellowWaving = sessionFlags.HasFlag(SessionFlags.yellowWaving),
             };
 
-            if(LastRaceFlags == null || !LastRaceFlags.DifferentTo(@event))
+            if (LastRaceFlags == null || !LastRaceFlags.DifferentTo(@event))
             {
                 if (@event.Green)
                 {

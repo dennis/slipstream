@@ -1,10 +1,11 @@
-﻿#nullable enable
-
-using Slipstream.Backend.Plugins;
+﻿using Slipstream.Backend.Plugins;
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Internal;
+using Slipstream.Shared.Events.Setting;
 using System;
+
+#nullable enable
 
 namespace Slipstream.Backend
 {
@@ -14,39 +15,54 @@ namespace Slipstream.Backend
         private readonly PluginManager PluginManager;
         private readonly IEventBusSubscription Subscription;
         private readonly IStateService StateService;
-        private bool FrontendReady = false;
+        private readonly IApplicationConfiguration ApplicationConfiguration;
+        private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
 
-        // Before UI is ready:
-        private readonly Shared.EventHandler PreEventHandler = new Shared.EventHandler();
-
-        // After UI is ready
-        private readonly Shared.EventHandler PostEventHandler = new Shared.EventHandler();
-
-        public Engine(IEventBus eventBus, IStateService stateService) : base("engine")
+        public Engine(IEventBus eventBus, IStateService stateService, IApplicationConfiguration applicationConfiguration) : base("engine")
         {
             EventBus = eventBus;
             StateService = stateService;
+            ApplicationConfiguration = applicationConfiguration;
             PluginManager = new PluginManager(this, eventBus);
 
             Subscription = EventBus.RegisterListener();
 
-            PreEventHandler.OnInternalFrontendReady += (s, e) => OnFrontendReady(e.Event);
-            PreEventHandler.OnInternalPluginRegister += (s, e) => OnPluginRegister(e.Event);
-            PreEventHandler.OnDefault += (s, e) => throw new Exception($"Unexpect message doring pre-boot: {e.Event.GetType()}");
+            EventHandler.OnInternalCommandPluginRegister += (s, e) => OnCommandPluginRegister(e.Event);
+            EventHandler.OnInternalCommandPluginUnregister += (s, e) => OnCommandPluginUnregister(e.Event);
+            EventHandler.OnInternalCommandPluginEnable += (s, e) => PluginManager.FindPluginAndExecute(e.Event.Id, (plugin) => PluginManager.EnablePlugin(plugin));
+            EventHandler.OnInternalCommandPluginDisable += (s, e) => PluginManager.FindPluginAndExecute(e.Event.Id, (plugin) => PluginManager.DisablePlugin(plugin));
+            EventHandler.OnInternalCommandPluginStates += (s, e) => OnCommandPluginStates(e.Event);
 
-            PostEventHandler.OnInternalPluginRegister += (s, e) => OnPluginRegister(e.Event);
-            PostEventHandler.OnInternalPluginUnregister += (s, e) => OnPluginUnregister(e.Event);
-            PostEventHandler.OnInternalPluginEnable += (s, e) => PluginManager.FindPluginAndExecute(e.Event.Id, (plugin) => PluginManager.EnablePlugin(plugin));
-            PostEventHandler.OnInternalPluginDisable += (s, e) => PluginManager.FindPluginAndExecute(e.Event.Id, (plugin) => PluginManager.DisablePlugin(plugin));
+            // Plugins..
+            RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "DebugOutputPlugin", PluginName = "DebugOutputPlugin" });
+            RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "FileMonitorPlugin", PluginName = "FileMonitorPlugin", Settings = ApplicationConfiguration.GetFileMonitorSettingsEvent() });
+            RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "FileTriggerPlugin", PluginName = "FileTriggerPlugin" });
+            RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "AudioPlugin", PluginName = "AudioPlugin", Settings = ApplicationConfiguration.GetAudioSettingsEvent() });
+            RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "IRacingPlugin", PluginName = "IRacingPlugin" });
+            RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "TwitchPlugin", PluginName = "TwitchPlugin", Settings = ApplicationConfiguration.GetTwitchSettingsEvent() });
+
+            // Tell Plugins that we're live - this will make eventbus distribute events
+            EventBus.Enabled = true;
+            EventBus.PublishEvent(new Shared.Events.Internal.PluginsReady());
         }
 
-        private void OnFrontendReady(FrontendReady _)
+        private void OnCommandPluginStates(CommandPluginStates _)
         {
-            FrontendReady = true;
+            PluginManager.ForAllPluginsExecute(
+                (a) => EventBus.PublishEvent(
+                    new Shared.Events.Internal.PluginState
+                    {
+                        Id = a.Id,
+                        DisplayName = a.DisplayName,
+                        PluginName = a.Name,
+                        PluginStatus = a.Enabled ? PluginStatus.Enabled : PluginStatus.Disabled
+                    }));
+        }
 
-            PluginManager.WarmupDone();
-
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginsReady());
+        private void RegisterPlugin(CommandPluginRegister e)
+        {
+            OnCommandPluginRegister(e);
+            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginEnable() { Id = e.Id });
         }
 
         public IEventBusSubscription RegisterListener()
@@ -54,7 +70,7 @@ namespace Slipstream.Backend
             return EventBus.RegisterListener();
         }
 
-        private void OnPluginUnregister(PluginUnregister ev)
+        private void OnCommandPluginUnregister(CommandPluginUnregister ev)
         {
             PluginManager.UnregisterPlugin(ev.Id);
         }
@@ -64,7 +80,7 @@ namespace Slipstream.Backend
             EventBus.UnregisterSubscription(subscription);
         }
 
-        private void OnPluginRegister(Shared.Events.Internal.PluginRegister ev)
+        private void OnCommandPluginRegister(Shared.Events.Internal.CommandPluginRegister ev)
         {
             switch (ev.PluginName)
             {
@@ -72,22 +88,58 @@ namespace Slipstream.Backend
                     PluginManager.RegisterPlugin(new DebugOutputPlugin(ev.Id));
                     break;
                 case "FileMonitorPlugin":
-                    PluginManager.RegisterPlugin(new FileMonitorPlugin(ev.Id, EventBus));
+                    {
+                        if (!(ev.Settings is FileMonitorSettings settings))
+                        {
+                            throw new Exception("Unexpected settings for FileMonitorPlugin");
+                        }
+                        else
+                        {
+                            PluginManager.RegisterPlugin(new FileMonitorPlugin(ev.Id, EventBus, settings));
+                        }
+                    }
                     break;
                 case "FileTriggerPlugin":
                     PluginManager.RegisterPlugin(new FileTriggerPlugin(ev.Id, EventBus));
                     break;
                 case "LuaPlugin":
-                    PluginManager.RegisterPlugin(new LuaPlugin(ev.Id, EventBus, StateService));
+                    {
+                        if (!(ev.Settings is LuaSettings settings))
+                        {
+                            throw new Exception("Unexpected settings for LuaPlugin");
+                        }
+                        else
+                        {
+                            PluginManager.RegisterPlugin(new LuaPlugin(ev.Id, EventBus, StateService, settings));
+                        }
+                    }
                     break;
                 case "AudioPlugin":
-                    PluginManager.RegisterPlugin(new AudioPlugin(ev.Id, EventBus));
+                    {
+                        if (!(ev.Settings is AudioSettings settings))
+                        {
+                            throw new Exception("Unexpected settings for AudioPlugin");
+                        }
+                        else
+                        {
+                            PluginManager.RegisterPlugin(new AudioPlugin(ev.Id, EventBus, settings));
+                        }
+                    }
                     break;
                 case "IRacingPlugin":
                     PluginManager.RegisterPlugin(new IRacingPlugin(ev.Id, EventBus));
                     break;
                 case "TwitchPlugin":
-                    PluginManager.RegisterPlugin(new TwitchPlugin(ev.Id, EventBus));
+                    {
+                        if (!(ev.Settings is TwitchSettings settings))
+                        {
+                            throw new Exception("Unexpected settings for TwitchPlugin");
+                        }
+                        else
+                        {
+                            PluginManager.RegisterPlugin(new TwitchPlugin(ev.Id, EventBus, settings));
+                        }
+                    }
                     break;
                 default:
                     throw new Exception($"Unknown plugin '{ev.PluginName}'");
@@ -98,19 +150,7 @@ namespace Slipstream.Backend
         {
             while (!Stopped)
             {
-                if (!FrontendReady)
-                {
-                    // We need to wait for frontend to be ready, before starting our plugins.
-                    // This is to avoid that we have plugins that are not shown in the log window
-
-                    PreEventHandler.HandleEvent(Subscription.NextEvent(10));
-                }
-                else
-                {
-                    // Frontend is ready, do our part
-
-                    PostEventHandler.HandleEvent(Subscription.NextEvent(10));
-                }
+                EventHandler.HandleEvent(Subscription.NextEvent(10));
             }
         }
 

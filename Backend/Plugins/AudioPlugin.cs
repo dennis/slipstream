@@ -17,24 +17,26 @@ namespace Slipstream.Backend.Plugins
         private string? Path;
         private readonly SpeechSynthesizer Synthesizer;
 
-        public AudioPlugin(string id, IEventBus eventBus) : base(id, "AudioPlugin", "AudioPlugin", "Audio")
+        public AudioPlugin(string id, IEventBus eventBus, AudioSettings settings) : base(id, "AudioPlugin", "AudioPlugin", "Audio")
         {
             EventBus = eventBus;
+
+            EventHandler_OnSettingAudioSettings(settings);
 
             Synthesizer = new SpeechSynthesizer();
             Synthesizer.SetOutputToDefaultAudioDevice();
 
-            EventHandler.OnUtilitySay += EventHandler_OnUtilitySay;
-            EventHandler.OnUtilityPlayAudio += EventHandler_OnUtilityPlayAudio;
-            EventHandler.OnSettingAudioSettings += EventHandler_OnSettingAudioSettings;
+            EventHandler.OnUtilityCommandSay += EventHandler_OnUtilitySay;
+            EventHandler.OnUtilityCommandPlayAudio += EventHandler_OnUtilityPlayAudio;
+            EventHandler.OnSettingAudioSettings += (s, e) => EventHandler_OnSettingAudioSettings(e.Event);
         }
 
-        private void EventHandler_OnSettingAudioSettings(EventHandler source, EventHandler.EventHandlerArgs<AudioSettings> e)
+        private void EventHandler_OnSettingAudioSettings(AudioSettings e)
         {
-            Path = e.Event.Path;
+            Path = e.Path;
         }
 
-        private void EventHandler_OnUtilityPlayAudio(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Utility.PlayAudio> e)
+        private void EventHandler_OnUtilityPlayAudio(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Utility.CommandPlayAudio> e)
         {
             var filename = e.Event.Filename;
             var volume = e.Event.Volume;
@@ -58,11 +60,11 @@ namespace Slipstream.Backend.Plugins
             }
             catch (Exception ex)
             {
-                EventBus.PublishEvent(new WriteToConsole() { Message = "Playing audio file failed: " + ex.Message });
+                EventBus.PublishEvent(new CommandWriteToConsole() { Message = "Playing audio file failed: " + ex.Message });
             }
         }
 
-        private void EventHandler_OnUtilitySay(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Utility.Say> e)
+        private void EventHandler_OnUtilitySay(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Utility.CommandSay> e)
         {
             if (e.Event == null || e.Event.Message == null || e.Event.Volume == null)
                 return;

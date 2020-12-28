@@ -1,4 +1,5 @@
 using Slipstream.Shared;
+using Slipstream.Shared.Events.Setting;
 using Slipstream.Shared.Events.Twitch;
 using Slipstream.Shared.Events.Utility;
 using System;
@@ -22,26 +23,32 @@ namespace Slipstream.Backend.Plugins
         private string? TwitchUsername;
         private string? TwitchToken;
 
-        public TwitchPlugin(string id, IEventBus eventBus) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin")
+        public TwitchPlugin(string id, IEventBus eventBus, TwitchSettings settings) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin")
         {
             EventBus = eventBus;
 
-            EventHandler.OnSettingTwitchSettings += (s, e) =>
-            {
-                if (TwitchUsername != e.Event.TwitchUsername || TwitchToken != e.Event.TwitchToken)
-                {
-                    TwitchUsername = e.Event.TwitchUsername;
-                    TwitchToken = e.Event.TwitchToken;
-
-                    Disconnect();
-                    Connnect();
-                }
-            };
-            EventHandler.OnTwitchSendMessage += (s, e) =>
+            EventHandler.OnSettingTwitchSettings += (s, e) => OnTwitchSettings(e.Event);
+            EventHandler.OnTwitchCommandSendMessage += (s, e) =>
             {
                 if (Client != null && Client.JoinedChannels.Count > 0)
                 {
                     Client.SendMessage(TwitchUsername, e.Event.Message);
+                }
+            };
+
+            OnTwitchSettings(settings);
+        }
+
+        private void OnTwitchSettings(TwitchSettings settings)
+        {
+            {
+                if (TwitchUsername != settings.TwitchUsername || TwitchToken != settings.TwitchToken)
+                {
+                    TwitchUsername = settings.TwitchUsername;
+                    TwitchToken = settings.TwitchToken;
+
+                    Disconnect();
+                    Connnect();
                 }
             };
         }
@@ -73,7 +80,7 @@ namespace Slipstream.Backend.Plugins
             if (Client != null && Client.IsConnected)
                 return;
 
-            if(Client == null)
+            if (Client == null)
             {
                 ConnectionCredentials credentials = new ConnectionCredentials(TwitchUsername, TwitchToken, "ws://irc-ws.chat.twitch.tv:80");
                 var clientOptions = new ClientOptions
@@ -100,25 +107,25 @@ namespace Slipstream.Backend.Plugins
         private void Client_OnReconnected(object sender, OnReconnectedEventArgs e)
         {
             EventBus.PublishEvent(new TwitchConnected());
-            EventBus.PublishEvent(new WriteToConsole { Message = $"Twitch connected as {TwitchUsername}" });
+            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch connected as {TwitchUsername}" });
         }
 
         private void Client_OnIncorrectLogin(object sender, OnIncorrectLoginArgs e)
         {
-            EventBus.PublishEvent(new WriteToConsole { Message = $"Twitch Error: {e.Exception.Message}" });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginDisable() { Id = this.Id });
+            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch Error: {e.Exception.Message}" });
+            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginDisable() { Id = this.Id });
         }
 
         private void Client_OnError(object sender, OnErrorEventArgs e)
         {
-            EventBus.PublishEvent(new WriteToConsole { Message = $"Twitch Error: {e.Exception.Message}" });
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginDisable() { Id = this.Id });
+            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch Error: {e.Exception.Message}" });
+            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginDisable() { Id = this.Id });
         }
 
         private void OnDisconnect(object sender, OnDisconnectedEventArgs e)
         {
             EventBus.PublishEvent(new TwitchDisconnected());
-            if(Enabled)
+            if (Enabled)
                 Client?.Reconnect();
         }
 
@@ -144,7 +151,7 @@ namespace Slipstream.Backend.Plugins
         private void OnConnected(object sender, OnConnectedArgs e)
         {
             EventBus.PublishEvent(new TwitchConnected());
-            EventBus.PublishEvent(new WriteToConsole { Message = $"Twitch connected as {TwitchUsername}" });
+            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch connected as {TwitchUsername}" });
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Slipstream.Shared;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Slipstream.Shared;
 
 #nullable enable
 
@@ -67,7 +67,7 @@ namespace Slipstream.Backend.Services
                         if (expire.Length > 0)
                             expiresAt = DateTime.Parse(expire);
 
-                        if(expiresAt == null || expiresAt > now)
+                        if (expiresAt == null || expiresAt > now)
                         {
                             AddKeyValue(key, value, expiresAt);
                         }
@@ -101,7 +101,7 @@ namespace Slipstream.Backend.Services
 
             if (!IsValidKey(key))
             {
-                EventBus.PublishEvent(new Shared.Events.Utility.WriteToConsole { Message = $"'{key}' is not a valid state key. Ignoring" });
+                EventBus.PublishEvent(new Shared.Events.Utility.CommandWriteToConsole { Message = $"'{key}' is not a valid state key. Ignoring" });
                 return;
             }
 
@@ -133,9 +133,9 @@ namespace Slipstream.Backend.Services
                 {
                     var kval = KeyValues[k];
 
-                    if(kval.ExpiresAt < now)
+                    if (kval.ExpiresAt < now)
                     {
-                        EventBus.PublishEvent(new Shared.Events.Utility.WriteToConsole { Message = $"'{k}' expired" });
+                        EventBus.PublishEvent(new Shared.Events.Utility.CommandWriteToConsole { Message = $"'{k}' expired" });
                         SetState(k, "");
                     }
                     else

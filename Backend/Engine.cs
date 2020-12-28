@@ -55,7 +55,7 @@ namespace Slipstream.Backend
                         Id = a.Id,
                         DisplayName = a.DisplayName,
                         PluginName = a.Name,
-                        PluginStatus = a.Enabled ? PluginStatus.Enabled : PluginStatus.Disabled
+                        PluginStatus = a.Enabled ? "Enabled" : "Disabled"
                     }));
         }
 

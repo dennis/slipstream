@@ -96,7 +96,7 @@ namespace Slipstream.Frontend
 
         private void EventHandler_OnInternalPluginState(Shared.Events.Internal.PluginState e)
         {
-            if (e.PluginStatus != Shared.Events.Internal.PluginStatus.Unregistered && !MenuPluginItems.ContainsKey(e.Id))
+            if (e.PluginStatus != "Unregistered" && !MenuPluginItems.ContainsKey(e.Id))
             {
                 var item = new ToolStripMenuItem
                 {
@@ -114,9 +114,9 @@ namespace Slipstream.Frontend
 
             switch (e.PluginStatus)
             {
-                case Shared.Events.Internal.PluginStatus.Registered:
+                case "Registered":
                     break;
-                case Shared.Events.Internal.PluginStatus.Unregistered:
+                case "Unregistered":
                     {
                         if (MenuPluginItems.ContainsKey(e.Id))
                         {
@@ -127,7 +127,7 @@ namespace Slipstream.Frontend
                         }
                     }
                     break;
-                case Shared.Events.Internal.PluginStatus.Enabled:
+                case "Enabled":
                     {
                         switch (e.Id)
                         {
@@ -151,7 +151,7 @@ namespace Slipstream.Frontend
                         ExecuteSecure(() => item.Text = e.DisplayName);
                     }
                     break;
-                case Shared.Events.Internal.PluginStatus.Disabled:
+                case "Disabled":
                     {
                         var item = MenuPluginItems[e.Id];
 

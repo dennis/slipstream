@@ -34,12 +34,12 @@ namespace Slipstream.Backend
         private void UnregisterPlugin(IPlugin p)
         {
             PluginWorkers[p.WorkerName].RemovePlugin(p);
-            EmitPluginStateChanged(p, Shared.Events.Internal.PluginStatus.Unregistered);
+            EmitPluginStateChanged(p, "Unregistered");
         }
 
-        private void EmitPluginStateChanged(IPlugin plugin, Shared.Events.Internal.PluginStatus status)
+        private void EmitPluginStateChanged(IPlugin plugin, string pluginStatus)
         {
-            EmitEvent(new Shared.Events.Internal.PluginState() { Id = plugin.Id, PluginName = plugin.Name, PluginStatus = status, DisplayName = plugin.DisplayName });
+            EmitEvent(new Shared.Events.Internal.PluginState() { Id = plugin.Id, PluginName = plugin.Name, PluginStatus = pluginStatus, DisplayName = plugin.DisplayName });
         }
 
         public void RegisterPlugin(IPlugin plugin)
@@ -63,7 +63,7 @@ namespace Slipstream.Backend
 
                 Plugins.Add(plugin.Id, plugin);
 
-                EmitPluginStateChanged(plugin, Shared.Events.Internal.PluginStatus.Registered);
+                EmitPluginStateChanged(plugin, "Registered");
             }
         }
 

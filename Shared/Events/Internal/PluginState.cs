@@ -9,13 +9,13 @@ namespace Slipstream.Shared.Events.Internal
         public string PluginName { get; set; } = "INVALID-PLUGIN-NAME";
         public string DisplayName { get; set; } = "INVALID-DISPLAY-NAME";
         private string pluginStatus = "Unregistered";
-        public string PluginStatus 
+        public string PluginStatus
         {
             get { return pluginStatus; }
             set
             {
 
-                if(value == "Registered" || value == "Unregistered" || value == "Enabled" || value == "Disabled")
+                if (value == "Registered" || value == "Unregistered" || value == "Enabled" || value == "Disabled")
                 {
                     pluginStatus = value;
                 }

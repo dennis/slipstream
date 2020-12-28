@@ -34,7 +34,6 @@ namespace Slipstream.Backend
             EventHandler.OnInternalCommandPluginStates += (s, e) => OnCommandPluginStates(e.Event);
 
             // Plugins..
-            RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "DebugOutputPlugin", PluginName = "DebugOutputPlugin" });
             RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "FileMonitorPlugin", PluginName = "FileMonitorPlugin", Settings = ApplicationConfiguration.GetFileMonitorSettingsEvent() });
             RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "FileTriggerPlugin", PluginName = "FileTriggerPlugin" });
             RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "AudioPlugin", PluginName = "AudioPlugin", Settings = ApplicationConfiguration.GetAudioSettingsEvent() });
@@ -84,9 +83,6 @@ namespace Slipstream.Backend
         {
             switch (ev.PluginName)
             {
-                case "DebugOutputPlugin":
-                    PluginManager.RegisterPlugin(new DebugOutputPlugin(ev.Id));
-                    break;
                 case "FileMonitorPlugin":
                     {
                         if (!(ev.Settings is FileMonitorSettings settings))

@@ -170,7 +170,6 @@
     <Compile Include="Shared\IEventBus.cs" />
     <Compile Include="Shared\IEventBusSubscription.cs" />
     <Compile Include="Shared\Events\Internal\PluginState.cs" />
-    <Compile Include="Backend\Plugins\DebugOutputPlugin.cs" />
     <Compile Include="Backend\Engine.cs" />
     <Compile Include="Backend\IPlugin.cs" />
     <Compile Include="Shared\IEvent.cs" />
@@ -200,6 +199,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <None Include="Frontend\App.config" />
+    <None Include="LuaScripts\debug.lua" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

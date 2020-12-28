@@ -39,6 +39,8 @@ namespace Slipstream.Backend
             RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "AudioPlugin", PluginName = "AudioPlugin", Settings = ApplicationConfiguration.GetAudioSettingsEvent() });
             RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "IRacingPlugin", PluginName = "IRacingPlugin" });
             RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "TwitchPlugin", PluginName = "TwitchPlugin", Settings = ApplicationConfiguration.GetTwitchSettingsEvent() });
+            RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "TransmitterPlugin", PluginName = "TransmitterPlugin", Settings = ApplicationConfiguration.GetTxrxSettingsEvent() }, false);
+            RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "ReceiverPlugin", PluginName = "ReceiverPlugin", Settings = ApplicationConfiguration.GetTxrxSettingsEvent() }, false);
 
             // Tell Plugins that we're live - this will make eventbus distribute events
             EventBus.Enabled = true;
@@ -57,10 +59,13 @@ namespace Slipstream.Backend
                     }));
         }
 
-        private void RegisterPlugin(CommandPluginRegister e)
+        private void RegisterPlugin(CommandPluginRegister e, bool enable = true)
         {
             OnCommandPluginRegister(e);
-            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginEnable() { Id = e.Id });
+            if (enable)
+            {
+                EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginEnable() { Id = e.Id });
+            }
         }
 
         public IEventBusSubscription RegisterListener()
@@ -133,6 +138,30 @@ namespace Slipstream.Backend
                         else
                         {
                             PluginManager.RegisterPlugin(new TwitchPlugin(ev.Id, EventBus, settings));
+                        }
+                    }
+                    break;
+                case "TransmitterPlugin":
+                    {
+                        if (!(ev.Settings is TxrxSettings settings))
+                        {
+                            throw new Exception("Unexpected settings for TransmitterPlugin");
+                        }
+                        else
+                        {
+                            PluginManager.RegisterPlugin(new TransmitterPlugin(ev.Id, EventBus, settings));
+                        }
+                    }
+                    break;
+                case "ReceiverPlugin":
+                    {
+                        if (!(ev.Settings is TxrxSettings settings))
+                        {
+                            throw new Exception("Unexpected settings for ReceiverPlugin");
+                        }
+                        else
+                        {
+                            PluginManager.RegisterPlugin(new ReceiverPlugin(ev.Id, EventBus, settings));
                         }
                     }
                     break;

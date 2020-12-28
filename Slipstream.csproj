@@ -78,13 +78,33 @@
       <HintPath>packages\NLua.1.5.6\lib\net45\NLua.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Speech" />
+    <Reference Include="System.Text.Encodings.Web, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Text.Encodings.Web.5.0.0\lib\net461\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Json, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Text.Json.5.0.0\lib\net461\System.Text.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -113,11 +133,14 @@
     <Compile Include="Backend\EventBusSubscription.cs" />
     <Compile Include="Backend\IEngine.cs" />
     <Compile Include="Backend\PluginManager.cs" />
+    <Compile Include="Backend\Plugins\ReceiverPlugin.cs" />
+    <Compile Include="Backend\Plugins\TransmitterPlugin.cs" />
     <Compile Include="Backend\Plugins\AudioPlugin.cs" />
     <Compile Include="Backend\Plugins\BasePlugin.cs" />
     <Compile Include="Backend\Plugins\TwitchPlugin.cs" />
     <Compile Include="Backend\Services\IStateService.cs" />
     <Compile Include="Backend\Services\StateService.cs" />
+    <Compile Include="Backend\Services\TxrxService.cs" />
     <Compile Include="Frontend\ApplicationConfiguration.cs" />
     <Compile Include="Frontend\SettingsForm.cs">
       <SubType>Form</SubType>
@@ -126,6 +149,7 @@
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Shared\Events\Internal\CommandPluginStates.cs" />
+    <Compile Include="Shared\Events\Setting\TxrxSettings.cs" />
     <Compile Include="Shared\IApplicationConfiguration.cs" />
     <Compile Include="Shared\ApplicationVersionService.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingPitstopReport.cs" />
@@ -153,7 +177,6 @@
     <Compile Include="Shared\Events\IRacing\IRacingConnected.cs" />
     <Compile Include="Shared\Events\Setting\FileMonitorSettings.cs" />
     <Compile Include="Shared\Events\Internal\CommandPluginUnregister.cs" />
-    <Compile Include="Shared\Events\Internal\PluginsReady.cs" />
     <Compile Include="Shared\Events\Internal\CommandPluginRegister.cs" />
     <Compile Include="Shared\Events\Internal\CommandPluginEnable.cs" />
     <Compile Include="Shared\Events\Internal\CommandPluginDisable.cs" />

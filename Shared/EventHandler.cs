@@ -78,6 +78,9 @@ namespace Slipstream.Shared
 
         public delegate void OnSettingLuaSettingsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Setting.LuaSettings> e);
         public event OnSettingLuaSettingsHandler? OnSettingLuaSettings;
+
+        public delegate void OnSettingTxrxSettingsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Setting.TxrxSettings> e);
+        public event OnSettingTxrxSettingsHandler? OnSettingTxrxSettings;
         #endregion
 
         #region Events: IRacing
@@ -257,6 +260,13 @@ namespace Slipstream.Shared
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnSettingLuaSettings.Invoke(this, new EventHandlerArgs<Shared.Events.Setting.LuaSettings>(tev));
+                    break;
+
+                case Shared.Events.Setting.TxrxSettings tev:
+                    if (OnSettingTxrxSettings == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnSettingTxrxSettings.Invoke(this, new EventHandlerArgs<Shared.Events.Setting.TxrxSettings>(tev));
                     break;
 
                 // IRacing

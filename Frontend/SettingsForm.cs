@@ -12,6 +12,7 @@ namespace Slipstream.Frontend
             TwitchUsernameTextBox.Text = Properties.Settings.Default.TwitchUsername;
             TwitchChannelTextBox.Text = Properties.Settings.Default.TwitchChannel;
             TwitchTokenTextBox.Text = Properties.Settings.Default.TwitchToken;
+            TXRXHostPortTextBox.Text = Properties.Settings.Default.TxrxIpPort;
         }
 
         private void DiscardButton_Click(object sender, EventArgs e)
@@ -25,6 +26,7 @@ namespace Slipstream.Frontend
 
             settings.TwitchChannel = TwitchChannelTextBox.Text;
             settings.TwitchUsername = TwitchUsernameTextBox.Text;
+            settings.TxrxIpPort = TXRXHostPortTextBox.Text;
             settings.TwitchToken = TwitchTokenTextBox.Text;
             settings.Save();
 

@@ -18,6 +18,7 @@ namespace Slipstream.Frontend
         private readonly BlockingCollection<string> PendingMessages = new BlockingCollection<string>();
         private readonly IDictionary<string, ToolStripMenuItem> MenuPluginItems = new Dictionary<string, ToolStripMenuItem>();
         private readonly ApplicationConfiguration ApplicationConfiguration;
+        private readonly string CleanTitle;
 
         public MainWindow(IEventBus eventBus, IApplicationVersionService applicationVersionService, ApplicationConfiguration applicationConfiguration)
         {
@@ -26,7 +27,8 @@ namespace Slipstream.Frontend
 
             InitializeComponent();
 
-            this.Text += " v" + applicationVersionService.Version;
+            Text += " v" + applicationVersionService.Version;
+            CleanTitle = Text;
 
             Load += MainWindow_Load;
             FormClosing += MainWindow_FormClosing;
@@ -143,6 +145,14 @@ namespace Slipstream.Frontend
                                 var settings = Properties.Settings.Default;
                                 EventBus.PublishEvent(ApplicationConfiguration.GetTwitchSettingsEvent());
                                 break;
+
+                            case "TransmitterPlugin":
+                                ExecuteSecure(() => Text += $" <<< transmitting to {ApplicationConfiguration.GetTxrxSettingsEvent().TxrxIpPort} >>>");
+                                break;
+
+                            case "ReceiverPlugin":
+                                ExecuteSecure(() => Text += $" <<< receiving from {ApplicationConfiguration.GetTxrxSettingsEvent().TxrxIpPort} >>>");
+                                break;
                         }
 
                         var item = MenuPluginItems[e.Id];
@@ -157,6 +167,16 @@ namespace Slipstream.Frontend
 
                         ExecuteSecure(() => item.CheckState = CheckState.Unchecked);
                         ExecuteSecure(() => item.Text = e.DisplayName);
+                    }
+                    switch (e.Id)
+                    {
+                        case "TransmitterPlugin":
+                            ExecuteSecure(() => Text = CleanTitle);
+                            break;
+
+                        case "ReceiverPlugin":
+                            ExecuteSecure(() => Text = CleanTitle);
+                            break;
                     }
                     break;
             }
@@ -199,6 +219,7 @@ namespace Slipstream.Frontend
 
             // Just spam settings to everyone that wants it
             EventBus.PublishEvent(ApplicationConfiguration.GetTwitchSettingsEvent());
+            EventBus.PublishEvent(ApplicationConfiguration.GetTxrxSettingsEvent());
         }
     }
 }

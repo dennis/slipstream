@@ -3,6 +3,7 @@
     public class IRacingCarCompletedLap : IEvent
     {
         public string EventType => "IRacingCarCompletedLap";
+        public bool ExcludeFromTxrx => false;
         public double SessionTime { get; set; }
         public long CarIdx { get; set; }
         public double Time { get; set; }

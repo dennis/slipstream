@@ -28,29 +28,11 @@ namespace Slipstream.Backend.Plugins
 
             EventHandler.OnSettingTxrxSettings += (s, e) => OnSetting(e.Event);
             EventHandler.OnDefault += (s, e) => OnEvent(e.Event);
-
-            // Dont send the following events as these will change the plugin state of
-            // the receiver
-            EventHandler.OnInternalCommandPluginDisable += (s, e) => { };
-            EventHandler.OnInternalCommandPluginEnable += (s, e) => { };
-            EventHandler.OnInternalCommandPluginRegister += (s, e) => { };
-            EventHandler.OnInternalCommandPluginUnregister += (s, e) => { };
-            EventHandler.OnInternalCommandPluginStates += (s, e) => { };
-            EventHandler.OnInternalFileMonitorFileChanged += (s, e) => { };
-            EventHandler.OnInternalFileMonitorFileCreated += (s, e) => { };
-            EventHandler.OnInternalFileMonitorFileRenamed += (s, e) => { };
-            EventHandler.OnInternalFileMonitorFileDeleted += (s, e) => { };
-            EventHandler.OnInternalPluginState += (s, e) => { };
-
-            // Also ignore these as it doesnt make much sense
-            EventHandler.OnUtilityCommandWriteToConsole += (s, e) => { };
-            EventHandler.OnUtilityCommandSay += (s, e) => { };
-            EventHandler.OnUtilityCommandPlayAudio += (s, e) => { };
         }
 
         private void OnEvent(IEvent @event)
         {
-            if (!Enabled || Client == null || !Client.Connected)
+            if (!Enabled || Client == null || !Client.Connected || @event.ExcludeFromTxrx)
                 return;
 
             try

@@ -203,6 +203,22 @@
             this.TwitchTokenTextBox.Size = new System.Drawing.Size(211, 20);
             this.TwitchTokenTextBox.TabIndex = 8;
             // 
+            // TwitchTokenTextBox
+            // 
+            this.TwitchTokenTextBox.Location = new System.Drawing.Point(105, 74);
+            this.TwitchTokenTextBox.Name = "TwitchTokenTextBox";
+            this.TwitchTokenTextBox.Size = new System.Drawing.Size(211, 20);
+            this.TwitchTokenTextBox.TabIndex = 3;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 77);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(73, 13);
+            this.label3.TabIndex = 7;
+            this.label3.Text = "Twitch Token";
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);

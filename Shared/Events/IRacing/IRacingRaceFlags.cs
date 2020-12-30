@@ -1,8 +1,9 @@
-﻿namespace Slipstream.Shared.Events.IRacing
+namespace Slipstream.Shared.Events.IRacing
 {
     public class IRacingRaceFlags : IEvent
     {
         public string EventType => "IRacingRaceFlags";
+        public bool ExcludeFromTxrx => false;
         public double SessionTime { get; set; }
         public bool Black { get; set; }
         public bool Blue { get; set; }

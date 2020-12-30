@@ -50,6 +50,18 @@ namespace Slipstream.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TxrxIpPort {
+            get {
+                return ((string)(this["TxrxIpPort"]));
+            }
+            set {
+                this["TxrxIpPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string TwitchChannel {
             get {
                 return ((string)(this["TwitchChannel"]));

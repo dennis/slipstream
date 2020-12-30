@@ -1,10 +1,11 @@
-﻿#nullable enable
+#nullable enable
 
 namespace Slipstream.Shared.Events.IRacing
 {
     public class IRacingWeatherInfo : IEvent
     {
         public string EventType => "IRacingWeatherInfo";
+        public bool ExcludeFromTxrx => false;
         public double SessionTime { get; set; }
         public string Skies { get; set; } = string.Empty;
         public string SurfaceTemp { get; set; } = string.Empty;

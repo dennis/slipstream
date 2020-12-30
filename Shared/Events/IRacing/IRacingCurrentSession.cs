@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 
 namespace Slipstream.Shared.Events.IRacing
 {
     public class IRacingCurrentSession : IEvent, IEquatable<IRacingCurrentSession>
     {
         public string EventType => "IRacingCurrentSession";
+        public bool ExcludeFromTxrx => false;
         public string SessionType { get; set; } = ""; // Practice, Open Qualify, Lone Qualify, Offline Testing, Race, Warmup
         public bool TimeLimited { get; set; }
         public bool LapsLimited { get; set; }

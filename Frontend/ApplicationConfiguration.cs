@@ -44,5 +44,13 @@ namespace Slipstream.Frontend
                 TwitchToken = Settings.TwitchToken
             };
         }
+
+        public TxrxSettings GetTxrxSettingsEvent()
+        {
+            return new TxrxSettings
+            {
+                TxrxIpPort = Settings.TxrxIpPort
+            };
+        }
     }
 }

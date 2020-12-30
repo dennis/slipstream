@@ -5,6 +5,7 @@ namespace Slipstream.Shared.Events.IRacing
     public class IRacingCarInfo : IEvent
     {
         public string EventType => "IRacingCarInfo";
+        public bool ExcludeFromTxrx => false;
         public double SessionTime { get; set; }
         public long CarIdx { get; set; }
         public string CarNumber { get; set; } = string.Empty;

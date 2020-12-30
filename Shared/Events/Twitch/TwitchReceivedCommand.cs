@@ -5,6 +5,7 @@ namespace Slipstream.Shared.Events.Twitch
     public class TwitchReceivedCommand : IEvent
     {
         public string EventType => "TwitchReceivedCommand";
+        public bool ExcludeFromTxrx => false;
         public string From { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
         public bool Moderator { get; set; }

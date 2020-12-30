@@ -11,6 +11,9 @@
     <Setting Name="TwitchChannel" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="TwitchLog" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
     <Setting Name="TxrxIpPort" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>

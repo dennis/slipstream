@@ -70,5 +70,17 @@ namespace Slipstream.Properties {
                 this["TwitchChannel"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool TwitchLog {
+            get {
+                return ((bool)(this["TwitchLog"]));
+            }
+            set {
+                this["TwitchLog"] = value;
+            }
+        }
     }
 }

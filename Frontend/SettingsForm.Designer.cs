@@ -30,11 +30,11 @@
         {
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.DiscardButton = new System.Windows.Forms.Button();
-            this.ApplyButton = new System.Windows.Forms.Button();
+            this.TwitchLogCheckBox = new System.Windows.Forms.CheckBox();
+            this.TwitchTokenTextBox = new System.Windows.Forms.TextBox();
             this.TwitchTokenGeneratorLabel = new System.Windows.Forms.LinkLabel();
             this.TwitchChannelTextBox = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.TwitchUsernameTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -43,7 +43,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.TXRXHostPortTextBox = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.TwitchTokenTextBox = new System.Windows.Forms.TextBox();
+            this.DiscardButton = new System.Windows.Forms.Button();
+            this.ApplyButton = new System.Windows.Forms.Button();
             this.flowLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -58,11 +59,12 @@
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(677, 251);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(677, 266);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.TwitchLogCheckBox);
             this.groupBox1.Controls.Add(this.TwitchTokenTextBox);
             this.groupBox1.Controls.Add(this.TwitchTokenGeneratorLabel);
             this.groupBox1.Controls.Add(this.TwitchChannelTextBox);
@@ -72,39 +74,27 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(667, 106);
+            this.groupBox1.Size = new System.Drawing.Size(667, 123);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Twitch";
             // 
-            // label3
+            // TwitchLogCheckBox
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 80);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(38, 13);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "Token";
+            this.TwitchLogCheckBox.AutoSize = true;
+            this.TwitchLogCheckBox.Location = new System.Drawing.Point(105, 101);
+            this.TwitchLogCheckBox.Name = "TwitchLogCheckBox";
+            this.TwitchLogCheckBox.Size = new System.Drawing.Size(105, 17);
+            this.TwitchLogCheckBox.TabIndex = 10;
+            this.TwitchLogCheckBox.Text = "Show Twitch log";
+            this.TwitchLogCheckBox.UseVisualStyleBackColor = true;
             // 
-            // DiscardButton
+            // TwitchTokenTextBox
             // 
-            this.DiscardButton.Location = new System.Drawing.Point(0, 18);
-            this.DiscardButton.Name = "DiscardButton";
-            this.DiscardButton.Size = new System.Drawing.Size(336, 23);
-            this.DiscardButton.TabIndex = 6;
-            this.DiscardButton.Text = "Cancel";
-            this.DiscardButton.UseVisualStyleBackColor = true;
-            this.DiscardButton.Click += new System.EventHandler(this.DiscardButton_Click);
-            // 
-            // ApplyButton
-            // 
-            this.ApplyButton.Location = new System.Drawing.Point(348, 19);
-            this.ApplyButton.Name = "ApplyButton";
-            this.ApplyButton.Size = new System.Drawing.Size(313, 23);
-            this.ApplyButton.TabIndex = 5;
-            this.ApplyButton.Text = "Apply";
-            this.ApplyButton.UseVisualStyleBackColor = true;
-            this.ApplyButton.Click += new System.EventHandler(this.ApplyButton_Click);
+            this.TwitchTokenTextBox.Location = new System.Drawing.Point(105, 77);
+            this.TwitchTokenTextBox.Name = "TwitchTokenTextBox";
+            this.TwitchTokenTextBox.Size = new System.Drawing.Size(211, 20);
+            this.TwitchTokenTextBox.TabIndex = 8;
             // 
             // TwitchTokenGeneratorLabel
             // 
@@ -123,6 +113,15 @@
             this.TwitchChannelTextBox.Name = "TwitchChannelTextBox";
             this.TwitchChannelTextBox.Size = new System.Drawing.Size(211, 20);
             this.TwitchChannelTextBox.TabIndex = 2;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 77);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(73, 13);
+            this.label3.TabIndex = 7;
+            this.label3.Text = "Twitch Token";
             // 
             // label2
             // 
@@ -154,7 +153,7 @@
             this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.TXRXHostPortTextBox);
-            this.groupBox2.Location = new System.Drawing.Point(3, 115);
+            this.groupBox2.Location = new System.Drawing.Point(3, 132);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(667, 82);
             this.groupBox2.TabIndex = 1;
@@ -190,24 +189,37 @@
             // 
             this.groupBox3.Controls.Add(this.DiscardButton);
             this.groupBox3.Controls.Add(this.ApplyButton);
-            this.groupBox3.Location = new System.Drawing.Point(3, 203);
+            this.groupBox3.Location = new System.Drawing.Point(3, 220);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(667, 41);
             this.groupBox3.TabIndex = 7;
             this.groupBox3.TabStop = false;
             // 
-            // TwitchTokenTextBox
+            // DiscardButton
             // 
-            this.TwitchTokenTextBox.Location = new System.Drawing.Point(105, 77);
-            this.TwitchTokenTextBox.Name = "TwitchTokenTextBox";
-            this.TwitchTokenTextBox.Size = new System.Drawing.Size(211, 20);
-            this.TwitchTokenTextBox.TabIndex = 8;
+            this.DiscardButton.Location = new System.Drawing.Point(4, 11);
+            this.DiscardButton.Name = "DiscardButton";
+            this.DiscardButton.Size = new System.Drawing.Size(338, 23);
+            this.DiscardButton.TabIndex = 5;
+            this.DiscardButton.Text = "Cancel";
+            this.DiscardButton.UseVisualStyleBackColor = true;
+            this.DiscardButton.Click += new System.EventHandler(this.DiscardButton_Click);
+            // 
+            // ApplyButton
+            // 
+            this.ApplyButton.Location = new System.Drawing.Point(348, 11);
+            this.ApplyButton.Name = "ApplyButton";
+            this.ApplyButton.Size = new System.Drawing.Size(313, 23);
+            this.ApplyButton.TabIndex = 5;
+            this.ApplyButton.Text = "Apply";
+            this.ApplyButton.UseVisualStyleBackColor = true;
+            this.ApplyButton.Click += new System.EventHandler(this.ApplyButton_Click);
             // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(677, 251);
+            this.ClientSize = new System.Drawing.Size(677, 266);
             this.Controls.Add(this.flowLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "SettingsForm";
@@ -240,5 +252,6 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox TwitchTokenTextBox;
+        private System.Windows.Forms.CheckBox TwitchLogCheckBox;
     }
 }

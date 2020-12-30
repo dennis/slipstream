@@ -41,7 +41,8 @@ namespace Slipstream.Frontend
             {
                 TwitchUsername = Settings.TwitchUsername,
                 TwitchChannel = Settings.TwitchChannel,
-                TwitchToken = Settings.TwitchToken
+                TwitchToken = Settings.TwitchToken,
+                TwitchLog = Settings.TwitchLog,
             };
         }
 

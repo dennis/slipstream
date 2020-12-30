@@ -9,10 +9,14 @@ namespace Slipstream.Frontend
         {
             InitializeComponent();
 
-            TwitchUsernameTextBox.Text = Properties.Settings.Default.TwitchUsername;
-            TwitchChannelTextBox.Text = Properties.Settings.Default.TwitchChannel;
-            TwitchTokenTextBox.Text = Properties.Settings.Default.TwitchToken;
-            TXRXHostPortTextBox.Text = Properties.Settings.Default.TxrxIpPort;
+            var settings = Properties.Settings.Default;
+
+            TwitchUsernameTextBox.Text = settings.TwitchUsername;
+            TwitchChannelTextBox.Text = settings.TwitchChannel;
+            TwitchTokenTextBox.Text = settings.TwitchToken;
+            TwitchLogCheckBox.Checked = settings.TwitchLog;
+
+            TXRXHostPortTextBox.Text = settings.TxrxIpPort;
         }
 
         private void DiscardButton_Click(object sender, EventArgs e)
@@ -26,8 +30,10 @@ namespace Slipstream.Frontend
 
             settings.TwitchChannel = TwitchChannelTextBox.Text;
             settings.TwitchUsername = TwitchUsernameTextBox.Text;
-            settings.TxrxIpPort = TXRXHostPortTextBox.Text;
             settings.TwitchToken = TwitchTokenTextBox.Text;
+            settings.TwitchLog = TwitchLogCheckBox.Checked;
+            settings.TxrxIpPort = TXRXHostPortTextBox.Text;
+
             settings.Save();
 
             Close();

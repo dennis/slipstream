@@ -21,6 +21,7 @@ namespace Slipstream.Backend.Plugins
         private readonly IEventBus EventBus;
 
         private string? TwitchUsername;
+        private string? TwitchChannel;
         private string? TwitchToken;
 
         public TwitchPlugin(string id, IEventBus eventBus, TwitchSettings settings) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin")
@@ -30,9 +31,9 @@ namespace Slipstream.Backend.Plugins
             EventHandler.OnSettingTwitchSettings += (s, e) => OnTwitchSettings(e.Event);
             EventHandler.OnTwitchCommandSendMessage += (s, e) =>
             {
-                if (Client != null && Client.JoinedChannels.Count > 0)
+                if (Client != null && Client.JoinedChannels.Count > 0 && Enabled)
                 {
-                    Client.SendMessage(TwitchUsername, e.Event.Message);
+                    Client.SendMessage(TwitchChannel, e.Event.Message);
                 }
             };
 
@@ -42,9 +43,10 @@ namespace Slipstream.Backend.Plugins
         private void OnTwitchSettings(TwitchSettings settings)
         {
             {
-                if (TwitchUsername != settings.TwitchUsername || TwitchToken != settings.TwitchToken)
+                if (TwitchUsername != settings.TwitchUsername || TwitchToken != settings.TwitchToken || TwitchChannel != settings.TwitchChannel)
                 {
                     TwitchUsername = settings.TwitchUsername;
+                    TwitchChannel = settings.TwitchChannel;
                     TwitchToken = settings.TwitchToken;
 
                     Disconnect();
@@ -91,7 +93,7 @@ namespace Slipstream.Backend.Plugins
 
                 WebSocketClient customClient = new WebSocketClient(clientOptions);
                 Client = new TwitchClient(customClient);
-                Client.Initialize(credentials, TwitchUsername);
+                Client.Initialize(credentials, TwitchChannel);
 
                 Client.OnConnected += OnConnected;
                 Client.OnChatCommandReceived += OnChatCommandReceived;

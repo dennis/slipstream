@@ -24,6 +24,7 @@ namespace Slipstream.Frontend
 
             settings.TwitchToken = TwitchTokenTextBox.Text;
             settings.TwitchUsername = TwitchUsernameTextBox.Text;
+            settings.TwitchChannel = TwitchUsernameTextBox.Text; // TODO: Change me
             settings.Save();
 
             Close();

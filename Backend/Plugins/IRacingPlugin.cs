@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using EventHandler = Slipstream.Shared.EventHandler;
 
 #nullable enable
 
@@ -16,7 +15,6 @@ namespace Slipstream.Backend.Plugins
     {
         private readonly iRacingConnection Connection = new iRacingConnection();
         private readonly Shared.IEventBus EventBus;
-        private bool SeenPluginsReady;
 
         private class CarState
         {
@@ -64,15 +62,6 @@ namespace Slipstream.Backend.Plugins
         public IRacingPlugin(string id, IEventBus eventBus) : base(id, "IRacingPlugin", "IRacingPlugin", "IRacingPlugin")
         {
             EventBus = eventBus;
-
-            EventHandler.OnInternalPluginsReady += (s, e) =>
-            {
-                SeenPluginsReady = true;
-
-                Thread.Sleep(1000); // Let other plugins be ready
-
-                EventHandler.Enabled = false;
-            };
         }
 
 
@@ -83,10 +72,8 @@ namespace Slipstream.Backend.Plugins
 
         public override void Loop()
         {
-            // Dont send any events until all plugins are ready
-            if (!SeenPluginsReady || !Enabled)
+            if (!Enabled)
             {
-                // EventHandler will change SeenPluginsReady to true and disable itself
                 return;
             }
 

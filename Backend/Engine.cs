@@ -42,7 +42,6 @@ namespace Slipstream.Backend
 
             // Tell Plugins that we're live - this will make eventbus distribute events
             EventBus.Enabled = true;
-            EventBus.PublishEvent(new Shared.Events.Internal.PluginsReady());
         }
 
         private void OnCommandPluginStates(CommandPluginStates _)

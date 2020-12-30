@@ -50,9 +50,6 @@ namespace Slipstream.Shared
         public delegate void OnInternalFileMonitorFileRenamedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FileMonitorFileRenamed> e);
         public event OnInternalFileMonitorFileRenamedHandler? OnInternalFileMonitorFileRenamed;
 
-        public delegate void OnInternalPluginsReadyHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginsReady> e);
-        public event OnInternalPluginsReadyHandler? OnInternalPluginsReady;
-
         public delegate void OnInternalCommandPluginStatesHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.CommandPluginStates> e);
         public event OnInternalCommandPluginStatesHandler? OnInternalCommandPluginStates;
 
@@ -201,12 +198,6 @@ namespace Slipstream.Shared
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnInternalFileMonitorFileRenamed.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FileMonitorFileRenamed>(tev));
-                    break;
-                case Shared.Events.Internal.PluginsReady tev:
-                    if (OnInternalPluginsReady == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalPluginsReady.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginsReady>(tev));
                     break;
                 case Shared.Events.Internal.CommandPluginStates tev:
                     if (OnInternalCommandPluginStates == null)

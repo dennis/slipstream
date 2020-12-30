@@ -221,6 +221,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="CHANGELOG.md" />
     <None Include="Frontend\App.config" />
     <None Include="LuaScripts\debug.lua" />
     <None Include="packages.config" />

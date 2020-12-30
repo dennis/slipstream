@@ -23,6 +23,9 @@ namespace Slipstream.Backend.Plugins
         private string? TwitchUsername;
         private string? TwitchChannel;
         private string? TwitchToken;
+        private bool TwitchLog;
+        private bool RequestReconnect;
+        private bool AnnouncedConnected = false;
 
         public TwitchPlugin(string id, IEventBus eventBus, TwitchSettings settings) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin")
         {
@@ -43,14 +46,18 @@ namespace Slipstream.Backend.Plugins
         private void OnTwitchSettings(TwitchSettings settings)
         {
             {
-                if (TwitchUsername != settings.TwitchUsername || TwitchToken != settings.TwitchToken || TwitchChannel != settings.TwitchChannel)
+                if (TwitchUsername != settings.TwitchUsername || TwitchToken != settings.TwitchToken || TwitchChannel != settings.TwitchChannel || TwitchLog != settings.TwitchLog)
                 {
                     TwitchUsername = settings.TwitchUsername;
                     TwitchChannel = settings.TwitchChannel;
                     TwitchToken = settings.TwitchToken;
+                    TwitchLog = settings.TwitchLog;
+
+                    if (String.IsNullOrEmpty(TwitchChannel))
+                        TwitchChannel = TwitchUsername;
 
                     Disconnect();
-                    Connnect();
+                    Connect();
                 }
             };
         }
@@ -62,69 +69,98 @@ namespace Slipstream.Backend.Plugins
 
         private void Disconnect()
         {
+            AnnounceDisconnected();
             Client?.Disconnect();
             Client = null;
         }
 
         public override void OnEnable()
         {
-            Connnect();
+            Connect();
         }
 
-        private void Connnect()
+        public override void Loop()
+        {
+            if(RequestReconnect)
+            {
+                Disconnect();
+                Connect();
+
+                RequestReconnect = false;
+            }
+
+            System.Threading.Thread.Sleep(500);
+        }
+
+        private void AnnounceConnected()
+        {
+            if (!AnnouncedConnected)
+            {
+                EventBus.PublishEvent(new TwitchConnected());
+                AnnouncedConnected = true;
+            }
+        }
+
+        private void AnnounceDisconnected()
+        {
+            if (AnnouncedConnected)
+            {
+                EventBus.PublishEvent(new TwitchDisconnected());
+                AnnouncedConnected = false;
+            }
+        }
+
+        private void Connect()
         {
             if (!Enabled)
                 return;
-
-            if (TwitchUsername == null || TwitchToken == null || TwitchUsername.Length == 0 || TwitchToken.Length == 0)
+            
+            if (string.IsNullOrEmpty(TwitchUsername) || string.IsNullOrEmpty(TwitchToken))
                 return;
 
             if (Client != null && Client.IsConnected)
                 return;
 
-            if (Client == null)
+            ConnectionCredentials credentials = new ConnectionCredentials(TwitchUsername, TwitchToken, "ws://irc-ws.chat.twitch.tv:80");
+            var clientOptions = new ClientOptions
             {
-                ConnectionCredentials credentials = new ConnectionCredentials(TwitchUsername, TwitchToken, "ws://irc-ws.chat.twitch.tv:80");
-                var clientOptions = new ClientOptions
-                {
-                    MessagesAllowedInPeriod = 750,
-                    ThrottlingPeriod = TimeSpan.FromSeconds(30)
-                };
+                MessagesAllowedInPeriod = 750,
+                ThrottlingPeriod = TimeSpan.FromSeconds(30)
+            };
 
-                WebSocketClient customClient = new WebSocketClient(clientOptions);
-                Client = new TwitchClient(customClient);
-                Client.Initialize(credentials, TwitchChannel);
+            WebSocketClient customClient = new WebSocketClient(clientOptions);
+            Client = new TwitchClient(customClient);
+            Client.Initialize(credentials, TwitchChannel);
 
-                Client.OnConnected += OnConnected;
-                Client.OnChatCommandReceived += OnChatCommandReceived;
-                Client.OnDisconnected += OnDisconnect;
-                Client.OnError += Client_OnError;
-                Client.OnIncorrectLogin += Client_OnIncorrectLogin;
-                Client.OnReconnected += Client_OnReconnected;
-                Client.OnLog += Client_OnLog;
+            Client.OnConnected += OnConnected;
+            Client.OnChatCommandReceived += OnChatCommandReceived;
+            Client.OnDisconnected += OnDisconnect;
+            Client.OnError += OnError;
+            Client.OnIncorrectLogin += OnIncorrectLogin;
+            Client.OnJoinedChannel += OnJoinedChannel;
+            if(TwitchLog)
+                Client.OnLog += OnLog;
 
-                Client.Connect();
-            }
+            Client.Connect();
         }
 
-        private void Client_OnLog(object sender, OnLogArgs e)
+        private void OnJoinedChannel(object sender, OnJoinedChannelArgs e)
         {
-            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch: {e.Data}" });
+            AnnounceConnected();
         }
 
-        private void Client_OnReconnected(object sender, OnReconnectedEventArgs e)
+        private void OnLog(object sender, OnLogArgs e)
         {
-            EventBus.PublishEvent(new TwitchConnected());
-            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch connected as {TwitchUsername} to channel {TwitchChannel}" });
+            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch log: {e.Data}" });
         }
 
-        private void Client_OnIncorrectLogin(object sender, OnIncorrectLoginArgs e)
+        private void OnIncorrectLogin(object sender, OnIncorrectLoginArgs e)
         {
             EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch Error: {e.Exception.Message}" });
             EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginDisable() { Id = this.Id });
         }
 
-        private void Client_OnError(object sender, OnErrorEventArgs e)
+        private void OnError(object sender, OnErrorEventArgs e)
         {
             EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch Error: {e.Exception.Message}" });
             EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginDisable() { Id = this.Id });
@@ -132,9 +168,8 @@ namespace Slipstream.Backend.Plugins
 
         private void OnDisconnect(object sender, OnDisconnectedEventArgs e)
         {
-            EventBus.PublishEvent(new TwitchDisconnected());
-            if (Enabled)
-                Client?.Reconnect();
+            AnnounceDisconnected();
+            RequestReconnect = true;
         }
 
         private void OnChatCommandReceived(object sender, OnChatCommandReceivedArgs e)
@@ -158,8 +193,7 @@ namespace Slipstream.Backend.Plugins
 
         private void OnConnected(object sender, OnConnectedArgs e)
         {
-            EventBus.PublishEvent(new TwitchConnected());
-            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch connected as {TwitchUsername}" });
+            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch connected as {TwitchUsername} to channel {TwitchChannel}" });
         }
     }
 }

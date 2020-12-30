@@ -10,6 +10,7 @@ namespace Slipstream.Frontend
             InitializeComponent();
 
             TwitchUsernameTextBox.Text = Properties.Settings.Default.TwitchUsername;
+            TwitchChannelTextBox.Text = Properties.Settings.Default.TwitchChannel;
             TwitchTokenTextBox.Text = Properties.Settings.Default.TwitchToken;
         }
 
@@ -22,12 +23,17 @@ namespace Slipstream.Frontend
         {
             var settings = Properties.Settings.Default;
 
-            settings.TwitchToken = TwitchTokenTextBox.Text;
+            settings.TwitchChannel = TwitchChannelTextBox.Text;
             settings.TwitchUsername = TwitchUsernameTextBox.Text;
-            settings.TwitchChannel = TwitchUsernameTextBox.Text; // TODO: Change me
+            settings.TwitchToken = TwitchTokenTextBox.Text;
             settings.Save();
 
             Close();
+        }
+
+        private void TwitchTokenGeneratorLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://twitchapps.com/tmi/");
         }
     }
 }

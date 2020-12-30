@@ -101,15 +101,21 @@ namespace Slipstream.Backend.Plugins
                 Client.OnError += Client_OnError;
                 Client.OnIncorrectLogin += Client_OnIncorrectLogin;
                 Client.OnReconnected += Client_OnReconnected;
+                Client.OnLog += Client_OnLog;
 
                 Client.Connect();
             }
         }
 
+        private void Client_OnLog(object sender, OnLogArgs e)
+        {
+            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch: {e.Data}" });
+        }
+
         private void Client_OnReconnected(object sender, OnReconnectedEventArgs e)
         {
             EventBus.PublishEvent(new TwitchConnected());
-            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch connected as {TwitchUsername}" });
+            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch connected as {TwitchUsername} to channel {TwitchChannel}" });
         }
 
         private void Client_OnIncorrectLogin(object sender, OnIncorrectLoginArgs e)

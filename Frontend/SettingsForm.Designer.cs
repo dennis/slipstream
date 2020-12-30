@@ -33,10 +33,12 @@
             this.DiscardButton = new System.Windows.Forms.Button();
             this.ApplyButton = new System.Windows.Forms.Button();
             this.TwitchTokenGeneratorLabel = new System.Windows.Forms.LinkLabel();
-            this.TwitchTokenTextBox = new System.Windows.Forms.TextBox();
+            this.TwitchChannelTextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.TwitchUsernameTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.TwitchTokenTextBox = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.flowLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -52,10 +54,12 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.TwitchTokenTextBox);
+            this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.DiscardButton);
             this.groupBox1.Controls.Add(this.ApplyButton);
             this.groupBox1.Controls.Add(this.TwitchTokenGeneratorLabel);
-            this.groupBox1.Controls.Add(this.TwitchTokenTextBox);
+            this.groupBox1.Controls.Add(this.TwitchChannelTextBox);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.TwitchUsernameTextBox);
             this.groupBox1.Controls.Add(this.label1);
@@ -71,7 +75,7 @@
             this.DiscardButton.Location = new System.Drawing.Point(505, 71);
             this.DiscardButton.Name = "DiscardButton";
             this.DiscardButton.Size = new System.Drawing.Size(75, 23);
-            this.DiscardButton.TabIndex = 6;
+            this.DiscardButton.TabIndex = 5;
             this.DiscardButton.Text = "Cancel";
             this.DiscardButton.UseVisualStyleBackColor = true;
             this.DiscardButton.Click += new System.EventHandler(this.DiscardButton_Click);
@@ -81,7 +85,7 @@
             this.ApplyButton.Location = new System.Drawing.Point(586, 70);
             this.ApplyButton.Name = "ApplyButton";
             this.ApplyButton.Size = new System.Drawing.Size(75, 23);
-            this.ApplyButton.TabIndex = 5;
+            this.ApplyButton.TabIndex = 6;
             this.ApplyButton.Text = "Apply";
             this.ApplyButton.UseVisualStyleBackColor = true;
             this.ApplyButton.Click += new System.EventHandler(this.ApplyButton_Click);
@@ -89,28 +93,29 @@
             // TwitchTokenGeneratorLabel
             // 
             this.TwitchTokenGeneratorLabel.AutoSize = true;
-            this.TwitchTokenGeneratorLabel.Location = new System.Drawing.Point(323, 51);
+            this.TwitchTokenGeneratorLabel.Location = new System.Drawing.Point(322, 77);
             this.TwitchTokenGeneratorLabel.Name = "TwitchTokenGeneratorLabel";
             this.TwitchTokenGeneratorLabel.Size = new System.Drawing.Size(123, 13);
             this.TwitchTokenGeneratorLabel.TabIndex = 4;
             this.TwitchTokenGeneratorLabel.TabStop = true;
             this.TwitchTokenGeneratorLabel.Text = "Twitch Token Generator";
+            this.TwitchTokenGeneratorLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.TwitchTokenGeneratorLabel_LinkClicked);
             // 
-            // TwitchTokenTextBox
+            // TwitchChannelTextBox
             // 
-            this.TwitchTokenTextBox.Location = new System.Drawing.Point(105, 48);
-            this.TwitchTokenTextBox.Name = "TwitchTokenTextBox";
-            this.TwitchTokenTextBox.Size = new System.Drawing.Size(211, 20);
-            this.TwitchTokenTextBox.TabIndex = 3;
+            this.TwitchChannelTextBox.Location = new System.Drawing.Point(105, 48);
+            this.TwitchChannelTextBox.Name = "TwitchChannelTextBox";
+            this.TwitchChannelTextBox.Size = new System.Drawing.Size(211, 20);
+            this.TwitchChannelTextBox.TabIndex = 2;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(6, 51);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(73, 13);
+            this.label2.Size = new System.Drawing.Size(81, 13);
             this.label2.TabIndex = 2;
-            this.label2.Text = "Twitch Token";
+            this.label2.Text = "Twitch Channel";
             // 
             // TwitchUsernameTextBox
             // 
@@ -127,6 +132,22 @@
             this.label1.Size = new System.Drawing.Size(90, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Twitch Username";
+            // 
+            // TwitchTokenTextBox
+            // 
+            this.TwitchTokenTextBox.Location = new System.Drawing.Point(105, 74);
+            this.TwitchTokenTextBox.Name = "TwitchTokenTextBox";
+            this.TwitchTokenTextBox.Size = new System.Drawing.Size(211, 20);
+            this.TwitchTokenTextBox.TabIndex = 3;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 77);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(73, 13);
+            this.label3.TabIndex = 7;
+            this.label3.Text = "Twitch Token";
             // 
             // SettingsForm
             // 
@@ -152,8 +173,10 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox TwitchUsernameTextBox;
         private System.Windows.Forms.LinkLabel TwitchTokenGeneratorLabel;
-        private System.Windows.Forms.TextBox TwitchTokenTextBox;
+        private System.Windows.Forms.TextBox TwitchChannelTextBox;
         private System.Windows.Forms.Button ApplyButton;
         private System.Windows.Forms.Button DiscardButton;
+        private System.Windows.Forms.TextBox TwitchTokenTextBox;
+        private System.Windows.Forms.Label label3;
     }
 }

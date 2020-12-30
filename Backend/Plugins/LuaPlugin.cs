@@ -62,6 +62,7 @@ namespace Slipstream.Backend.Plugins
                 Lua.RegisterFunction("set_state", Api, typeof(LuaApi).GetMethod("SetState", new[] { typeof(string), typeof(string) }));
                 Lua.RegisterFunction("set_temp_state", Api, typeof(LuaApi).GetMethod("SetTempState", new[] { typeof(string), typeof(string), typeof(int) }));
                 Lua.RegisterFunction("get_state", Api, typeof(LuaApi).GetMethod("GetState", new[] { typeof(string) }));
+                Lua.RegisterFunction("event_to_json", Api, typeof(LuaApi).GetMethod("EventToJson", new[] { typeof(IEvent) }));
 
                 var ScriptPath = Path.GetDirectoryName(FilePath).Replace("\\", "\\\\");
                 Lua.DoString($"package.path = \"{ScriptPath}\\\\?.lua;\" .. package.path;");
@@ -102,6 +103,7 @@ namespace Slipstream.Backend.Plugins
             private readonly IDictionary<string, DelayedExecution> DebouncedFunctions = new Dictionary<string, DelayedExecution>();
             private readonly IDictionary<string, DelayedExecution> WaitingFunctions = new Dictionary<string, DelayedExecution>();
             private readonly IStateService StateService;
+            private readonly EventSerdeService EventSerdeService;
 
             private class DelayedExecution
             {
@@ -120,6 +122,7 @@ namespace Slipstream.Backend.Plugins
                 EventBus = eventBus;
                 Prefix = prefix;
                 StateService = stateService;
+                EventSerdeService = new EventSerdeService();
             }
 
             public void Print(string s)
@@ -180,6 +183,11 @@ namespace Slipstream.Backend.Plugins
                 {
                     Print("Can't wait without a function");
                 }
+            }
+
+            public string EventToJson(IEvent @event)
+            {
+                return EventSerdeService.Serialize(@event);
             }
 
             private void HandleDelayedExecution(IDictionary<string, DelayedExecution> functions)

@@ -40,6 +40,7 @@ namespace Slipstream.Frontend
             return new Shared.Events.Setting.TwitchSettings
             {
                 TwitchUsername = Settings.TwitchUsername,
+                TwitchChannel = Settings.TwitchChannel,
                 TwitchToken = Settings.TwitchToken
             };
         }

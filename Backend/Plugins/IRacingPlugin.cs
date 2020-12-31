@@ -15,6 +15,7 @@ namespace Slipstream.Backend.Plugins
     {
         private readonly iRacingConnection Connection = new iRacingConnection();
         private readonly Shared.IEventBus EventBus;
+        private bool InitializedSeen;
 
         private class CarState
         {
@@ -57,13 +58,12 @@ namespace Slipstream.Backend.Plugins
         private IRacingSessionState? LastSessionState;
         private IRacingRaceFlags? LastRaceFlags;
         private IRacingWeatherInfo? LastWeatherInfo;
-        private bool DelayedStartPeriodExpired = false; // to allow Lua scripts to be up and running, we will wait a bit before sending out events
-        private readonly DateTime StartedAt = DateTime.Now;
         private bool Connected;
 
         public IRacingPlugin(string id, IEventBus eventBus) : base(id, "IRacingPlugin", "IRacingPlugin", "IRacingPlugin")
         {
             EventBus = eventBus;
+            EventHandler.OnInternalInitialized += (s, e) => InitializedSeen = true;
         }
 
 
@@ -74,21 +74,9 @@ namespace Slipstream.Backend.Plugins
 
         public override void Loop()
         {
-            if (!Enabled)
+            if (!Enabled || !InitializedSeen)
             {
                 return;
-            }
-
-            if(!DelayedStartPeriodExpired)
-            {
-                if(StartedAt.AddSeconds(15) > DateTime.Now)
-                {
-                    DelayedStartPeriodExpired = true;
-                }
-                else
-                {
-                    return;
-                }
             }
 
             try

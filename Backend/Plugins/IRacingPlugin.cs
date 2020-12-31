@@ -57,6 +57,8 @@ namespace Slipstream.Backend.Plugins
         private IRacingSessionState? LastSessionState;
         private IRacingRaceFlags? LastRaceFlags;
         private IRacingWeatherInfo? LastWeatherInfo;
+        private bool DelayedStartPeriodExpired = false; // to allow Lua scripts to be up and running, we will wait a bit before sending out events
+        private readonly DateTime StartedAt = DateTime.Now;
         private bool Connected;
 
         public IRacingPlugin(string id, IEventBus eventBus) : base(id, "IRacingPlugin", "IRacingPlugin", "IRacingPlugin")
@@ -75,6 +77,18 @@ namespace Slipstream.Backend.Plugins
             if (!Enabled)
             {
                 return;
+            }
+
+            if(!DelayedStartPeriodExpired)
+            {
+                if(StartedAt.AddSeconds(15) > DateTime.Now)
+                {
+                    DelayedStartPeriodExpired = true;
+                }
+                else
+                {
+                    return;
+                }
             }
 
             try

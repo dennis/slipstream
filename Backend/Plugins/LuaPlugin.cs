@@ -21,7 +21,7 @@ namespace Slipstream.Backend.Plugins
         private LuaApi? Api;
         private Lua? Lua;
 
-        public LuaPlugin(string id, IEventBus eventBus, IStateService stateService, LuaSettings settings) : base(id, "LuaPLugin", "LuaPlugin", "Lua")
+        public LuaPlugin(string id, IEventBus eventBus, IStateService stateService, LuaSettings settings) : base(id, "LuaPlugin", "LuaPlugin", "Lua")
         {
             EventBus = eventBus;
             StateService = stateService;

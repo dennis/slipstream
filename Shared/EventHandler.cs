@@ -38,26 +38,28 @@ namespace Slipstream.Shared
         public delegate void OnInternalPluginStateHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginState> e);
         public event OnInternalPluginStateHandler? OnInternalPluginState;
 
-        public delegate void OnInternalFileMonitorFileCreatedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FileMonitorFileCreated> e);
-        public event OnInternalFileMonitorFileCreatedHandler? OnInternalFileMonitorFileCreated;
-
-        public delegate void OnInternalFileMonitorFileChangedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FileMonitorFileChanged> e);
-        public event OnInternalFileMonitorFileChangedHandler? OnInternalFileMonitorFileChanged;
-
-        public delegate void OnInternalFileMonitorFileDeletedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FileMonitorFileDeleted> e);
-        public event OnInternalFileMonitorFileDeletedHandler? OnInternalFileMonitorFileDeleted;
-
-        public delegate void OnInternalFileMonitorFileRenamedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FileMonitorFileRenamed> e);
-        public event OnInternalFileMonitorFileRenamedHandler? OnInternalFileMonitorFileRenamed;
-
-        public delegate void OnInternalFileMonitorScanCompletedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FileMonitorScanCompleted> e);
-        public event OnInternalFileMonitorScanCompletedHandler? OnInternalFileMonitorScanCompleted;
-
         public delegate void OnInternalCommandPluginStatesHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.CommandPluginStates> e);
         public event OnInternalCommandPluginStatesHandler? OnInternalCommandPluginStates;
 
         public delegate void OnInternalInitializedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.Initialized> e);
         public event OnInternalInitializedHandler? OnInternalInitialized;
+        #endregion
+
+        #region FileMonitor
+        public delegate void OnFileMonitorFileCreatedHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileCreated> e);
+        public event OnFileMonitorFileCreatedHandler? OnFileMonitorFileCreated;
+
+        public delegate void OnFileMonitorFileChangedHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileChanged> e);
+        public event OnFileMonitorFileChangedHandler? OnFileMonitorFileChanged;
+
+        public delegate void OnFileMonitorFileDeletedHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileDeleted> e);
+        public event OnFileMonitorFileDeletedHandler? OnFileMonitorFileDeleted;
+
+        public delegate void OnFileMonitorFileRenamedHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileRenamed> e);
+        public event OnFileMonitorFileRenamedHandler? OnFileMonitorFileRenamed;
+
+        public delegate void OnFileMonitorScanCompletedHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorScanCompleted> e);
+        public event OnFileMonitorScanCompletedHandler? OnFileMonitorScanCompleted;
         #endregion
 
         #region Events: Utility
@@ -183,49 +185,51 @@ namespace Slipstream.Shared
                     else
                         OnInternalPluginState.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginState>(tev));
                     break;
-                case Shared.Events.Internal.FileMonitorFileCreated tev:
-                    if (OnInternalFileMonitorFileCreated == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalFileMonitorFileCreated.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FileMonitorFileCreated>(tev));
-                    break;
-                case Shared.Events.Internal.FileMonitorFileChanged tev:
-                    if (OnInternalFileMonitorFileChanged == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalFileMonitorFileChanged.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FileMonitorFileChanged>(tev));
-                    break;
-                case Shared.Events.Internal.FileMonitorFileDeleted tev:
-                    if (OnInternalFileMonitorFileDeleted == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalFileMonitorFileDeleted.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FileMonitorFileDeleted>(tev));
-                    break;
-                case Shared.Events.Internal.FileMonitorFileRenamed tev:
-                    if (OnInternalFileMonitorFileRenamed == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalFileMonitorFileRenamed.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FileMonitorFileRenamed>(tev));
-                    break;
-                case Shared.Events.Internal.FileMonitorScanCompleted tev:
-                    if (OnInternalFileMonitorScanCompleted == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalFileMonitorScanCompleted.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FileMonitorScanCompleted>(tev));
-                    break;
                 case Shared.Events.Internal.CommandPluginStates tev:
                     if (OnInternalCommandPluginStates == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnInternalCommandPluginStates.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.CommandPluginStates>(tev));
                     break;
-
                 case Shared.Events.Internal.Initialized tev:
                     if (OnInternalInitialized == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnInternalInitialized.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.Initialized>(tev));
                     break;
+
+                // File Monitor
+                case Shared.Events.FileMonitor.FileMonitorFileCreated tev:
+                    if (OnFileMonitorFileCreated == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnFileMonitorFileCreated.Invoke(this, new EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileCreated>(tev));
+                    break;
+                case Shared.Events.FileMonitor.FileMonitorFileChanged tev:
+                    if (OnFileMonitorFileChanged == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnFileMonitorFileChanged.Invoke(this, new EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileChanged>(tev));
+                    break;
+                case Shared.Events.FileMonitor.FileMonitorFileDeleted tev:
+                    if (OnFileMonitorFileDeleted == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnFileMonitorFileDeleted.Invoke(this, new EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileDeleted>(tev));
+                    break;
+                case Shared.Events.FileMonitor.FileMonitorFileRenamed tev:
+                    if (OnFileMonitorFileRenamed == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnFileMonitorFileRenamed.Invoke(this, new EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileRenamed>(tev));
+                    break;
+                case Shared.Events.FileMonitor.FileMonitorScanCompleted tev:
+                    if (OnFileMonitorScanCompleted == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnFileMonitorScanCompleted.Invoke(this, new EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorScanCompleted>(tev));
+                    break;
+
 
                 // Utility
 

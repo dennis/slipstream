@@ -13,12 +13,14 @@ namespace Slipstream.Backend.Plugins
 {
     class AudioPlugin : BasePlugin
     {
+        private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private string? Path;
         private readonly SpeechSynthesizer Synthesizer;
 
-        public AudioPlugin(string id, IEventBus eventBus, AudioSettings settings) : base(id, "AudioPlugin", "AudioPlugin", "Audio")
+        public AudioPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, AudioSettings settings) : base(id, "AudioPlugin", "AudioPlugin", "Audio")
         {
+            EventFactory = eventFactory;
             EventBus = eventBus;
 
             EventHandler_OnSettingAudioSettings(settings);
@@ -60,7 +62,7 @@ namespace Slipstream.Backend.Plugins
             }
             catch (Exception ex)
             {
-                EventBus.PublishEvent(new UICommandWriteToConsole() { Message = "Playing audio file failed: " + ex.Message });
+                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole("Playing audio file failed: " + ex.Message));
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using Slipstream.Backend.Plugins;
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
+using Slipstream.Shared.Events;
 using Slipstream.Shared.Events.Internal;
 using Slipstream.Shared.Events.Setting;
 using System;
@@ -11,6 +12,7 @@ namespace Slipstream.Backend
 {
     class Engine : Worker, IEngine, IDisposable
     {
+        private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly PluginManager PluginManager;
         private readonly IEventBusSubscription Subscription;
@@ -18,12 +20,13 @@ namespace Slipstream.Backend
         private readonly IApplicationConfiguration ApplicationConfiguration;
         private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
 
-        public Engine(IEventBus eventBus, IStateService stateService, IApplicationConfiguration applicationConfiguration) : base("engine")
+        public Engine(IEventFactory eventFactory, IEventBus eventBus, IStateService stateService, IApplicationConfiguration applicationConfiguration) : base("engine")
         {
+            EventFactory = eventFactory;
             EventBus = eventBus;
             StateService = stateService;
             ApplicationConfiguration = applicationConfiguration;
-            PluginManager = new PluginManager(this, eventBus);
+            PluginManager = new PluginManager(this, eventFactory, eventBus);
 
             Subscription = EventBus.RegisterListener();
 
@@ -34,13 +37,13 @@ namespace Slipstream.Backend
             EventHandler.OnInternalCommandPluginStates += (s, e) => OnCommandPluginStates(e.Event);
 
             // Plugins..
-            RegisterPlugin(new Shared.Events.Internal.InternalCommandPluginRegister() { Id = "FileMonitorPlugin", PluginName = "FileMonitorPlugin", Settings = ApplicationConfiguration.GetFileMonitorSettingsEvent() });
-            RegisterPlugin(new Shared.Events.Internal.InternalCommandPluginRegister() { Id = "FileTriggerPlugin", PluginName = "FileTriggerPlugin" });
-            RegisterPlugin(new Shared.Events.Internal.InternalCommandPluginRegister() { Id = "AudioPlugin", PluginName = "AudioPlugin", Settings = ApplicationConfiguration.GetAudioSettingsEvent() });
-            RegisterPlugin(new Shared.Events.Internal.InternalCommandPluginRegister() { Id = "IRacingPlugin", PluginName = "IRacingPlugin" });
-            RegisterPlugin(new Shared.Events.Internal.InternalCommandPluginRegister() { Id = "TwitchPlugin", PluginName = "TwitchPlugin", Settings = ApplicationConfiguration.GetTwitchSettingsEvent() });
-            RegisterPlugin(new Shared.Events.Internal.InternalCommandPluginRegister() { Id = "TransmitterPlugin", PluginName = "TransmitterPlugin", Settings = ApplicationConfiguration.GetTxrxSettingsEvent() }, false);
-            RegisterPlugin(new Shared.Events.Internal.InternalCommandPluginRegister() { Id = "ReceiverPlugin", PluginName = "ReceiverPlugin", Settings = ApplicationConfiguration.GetTxrxSettingsEvent() }, false);
+            RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("FileMonitorPlugin", "FileMonitorPlugin", ApplicationConfiguration.GetFileMonitorSettingsEvent()));
+            RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("FileTriggerPlugin", "FileTriggerPlugin"));
+            RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("AudioPlugin", "AudioPlugin", ApplicationConfiguration.GetAudioSettingsEvent()));
+            RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("IRacingPlugin", "IRacingPlugin"));
+            RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("TwitchPlugin", "TwitchPlugin", ApplicationConfiguration.GetTwitchSettingsEvent()));
+            RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("TransmitterPlugin", "TransmitterPlugin", ApplicationConfiguration.GetTxrxSettingsEvent()), false);
+            RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("ReceiverPlugin", "ReceiverPlugin", ApplicationConfiguration.GetTxrxSettingsEvent()), false);
 
             // Tell Plugins that we're live - this will make eventbus distribute events
             EventBus.Enabled = true;
@@ -50,13 +53,8 @@ namespace Slipstream.Backend
         {
             PluginManager.ForAllPluginsExecute(
                 (a) => EventBus.PublishEvent(
-                    new Shared.Events.Internal.InternalPluginState
-                    {
-                        Id = a.Id,
-                        DisplayName = a.DisplayName,
-                        PluginName = a.Name,
-                        PluginStatus = a.Enabled ? "Enabled" : "Disabled"
-                    }));
+                    EventFactory.CreateInternalPluginState(a.Id, a.Name, a.DisplayName, a.Enabled ? "Enabled" : "Disabled")
+            ));    
         }
 
         private void RegisterPlugin(InternalCommandPluginRegister e, bool enable = true)
@@ -64,7 +62,7 @@ namespace Slipstream.Backend
             OnCommandPluginRegister(e);
             if (enable)
             {
-                EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginEnable() { Id = e.Id });
+                EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginEnable(e.Id));
             }
         }
 
@@ -95,12 +93,12 @@ namespace Slipstream.Backend
                         }
                         else
                         {
-                            PluginManager.RegisterPlugin(new FileMonitorPlugin(ev.Id, EventBus, settings));
+                            PluginManager.RegisterPlugin(new FileMonitorPlugin(ev.Id, EventFactory, EventBus, settings));
                         }
                     }
                     break;
                 case "FileTriggerPlugin":
-                    PluginManager.RegisterPlugin(new FileTriggerPlugin(ev.Id, EventBus));
+                    PluginManager.RegisterPlugin(new FileTriggerPlugin(ev.Id, EventFactory, EventBus));
                     break;
                 case "LuaPlugin":
                     {
@@ -110,7 +108,7 @@ namespace Slipstream.Backend
                         }
                         else
                         {
-                            PluginManager.RegisterPlugin(new LuaPlugin(ev.Id, EventBus, StateService, settings));
+                            PluginManager.RegisterPlugin(new LuaPlugin(ev.Id, EventFactory, EventBus, StateService, settings));
                         }
                     }
                     break;
@@ -122,12 +120,12 @@ namespace Slipstream.Backend
                         }
                         else
                         {
-                            PluginManager.RegisterPlugin(new AudioPlugin(ev.Id, EventBus, settings));
+                            PluginManager.RegisterPlugin(new AudioPlugin(ev.Id, EventFactory, EventBus, settings));
                         }
                     }
                     break;
                 case "IRacingPlugin":
-                    PluginManager.RegisterPlugin(new IRacingPlugin(ev.Id, EventBus));
+                    PluginManager.RegisterPlugin(new IRacingPlugin(ev.Id, EventFactory, EventBus));
                     break;
                 case "TwitchPlugin":
                     {
@@ -137,7 +135,7 @@ namespace Slipstream.Backend
                         }
                         else
                         {
-                            PluginManager.RegisterPlugin(new TwitchPlugin(ev.Id, EventBus, settings));
+                            PluginManager.RegisterPlugin(new TwitchPlugin(ev.Id, EventFactory, EventBus, settings));
                         }
                     }
                     break;
@@ -149,7 +147,7 @@ namespace Slipstream.Backend
                         }
                         else
                         {
-                            PluginManager.RegisterPlugin(new TransmitterPlugin(ev.Id, EventBus, settings));
+                            PluginManager.RegisterPlugin(new TransmitterPlugin(ev.Id, EventFactory, EventBus, settings));
                         }
                     }
                     break;
@@ -161,7 +159,7 @@ namespace Slipstream.Backend
                         }
                         else
                         {
-                            PluginManager.RegisterPlugin(new ReceiverPlugin(ev.Id, EventBus, settings));
+                            PluginManager.RegisterPlugin(new ReceiverPlugin(ev.Id, EventFactory, EventBus, settings));
                         }
                     }
                     break;

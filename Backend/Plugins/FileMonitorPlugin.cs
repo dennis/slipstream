@@ -10,12 +10,14 @@ namespace Slipstream.Backend.Plugins
 {
     class FileMonitorPlugin : BasePlugin
     {
+        private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly IList<FileSystemWatcher> fileSystemWatchers = new List<FileSystemWatcher>();
         private readonly bool InitialScan = false;
 
-        public FileMonitorPlugin(string id, IEventBus eventBus, FileMonitorSettings settings) : base(id, "FileMonitorPlugin", "FileMonitorPlugin", "Core")
+        public FileMonitorPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, FileMonitorSettings settings) : base(id, "FileMonitorPlugin", "FileMonitorPlugin", "Core")
         {
+            EventFactory = eventFactory;
             EventBus = eventBus;
 
             OnFileMonitorSettings(settings);
@@ -47,10 +49,7 @@ namespace Slipstream.Backend.Plugins
             {
                 foreach (var path in Directory.GetFiles(watcher.Path, "*.*"))
                 {
-                    EventBus.PublishEvent(new FileMonitorFileCreated
-                    {
-                        FilePath = path
-                    });
+                    EventBus.PublishEvent(EventFactory.CreateFileMonitorFileCreated(path));
                 }
             }
 
@@ -85,22 +84,22 @@ namespace Slipstream.Backend.Plugins
 
         private void WatcherOnRenamed(object sender, RenamedEventArgs e)
         {
-            EventBus.PublishEvent(new FileMonitorFileRenamed { FilePath = e.FullPath, OldFilePath = e.OldFullPath });
+            EventBus.PublishEvent(EventFactory.CreateFileMonitorFileRenamed(e.FullPath, e.OldFullPath));
         }
 
         private void WatcherOnDeleted(object sender, FileSystemEventArgs e)
         {
-            EventBus.PublishEvent(new FileMonitorFileDeleted { FilePath = e.FullPath });
+            EventBus.PublishEvent(EventFactory.CreateFileMonitorFileDeleted(e.FullPath));
         }
 
         private void WatcherOnChanged(object sender, FileSystemEventArgs e)
         {
-            EventBus.PublishEvent(new FileMonitorFileChanged { FilePath = e.FullPath });
+            EventBus.PublishEvent(EventFactory.CreateFileMonitorFileChanged(e.FullPath));
         }
 
         private void WatcherOnCreated(object sender, FileSystemEventArgs e)
         {
-            EventBus.PublishEvent(new FileMonitorFileCreated { FilePath = e.FullPath });
+            EventBus.PublishEvent(EventFactory.CreateFileMonitorFileCreated(e.FullPath));
         }
     }
 }

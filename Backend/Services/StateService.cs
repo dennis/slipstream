@@ -11,6 +11,7 @@ namespace Slipstream.Backend.Services
     public class StateService : IStateService
     {
         private readonly IDictionary<string, StateValue> KeyValues = new Dictionary<string, StateValue>();
+        private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly string FilePath;
         private DateTime? NextKeyExpiresAt;
@@ -27,8 +28,9 @@ namespace Slipstream.Backend.Services
             }
         }
 
-        public StateService(IEventBus eventBus, string filePath)
+        public StateService(IEventFactory eventFactory, IEventBus eventBus, string filePath)
         {
+            EventFactory = eventFactory;
             EventBus = eventBus;
             FilePath = filePath;
 
@@ -101,7 +103,7 @@ namespace Slipstream.Backend.Services
 
             if (!IsValidKey(key))
             {
-                EventBus.PublishEvent(new Shared.Events.UI.UICommandWriteToConsole { Message = $"'{key}' is not a valid state key. Ignoring" });
+                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"'{key}' is not a valid state key. Ignoring"));
                 return;
             }
 
@@ -135,7 +137,7 @@ namespace Slipstream.Backend.Services
 
                     if (kval.ExpiresAt < now)
                     {
-                        EventBus.PublishEvent(new Shared.Events.UI.UICommandWriteToConsole { Message = $"'{k}' expired" });
+                        EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"'{k}' expired"));
                         SetState(k, "");
                     }
                     else

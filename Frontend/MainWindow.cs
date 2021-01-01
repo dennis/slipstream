@@ -14,14 +14,16 @@ namespace Slipstream.Frontend
     {
         private Thread? EventHandlerThread;
         private readonly IEventBus EventBus;
+        private readonly IEventFactory EventFactory;
         private IEventBusSubscription? EventBusSubscription;
         private readonly BlockingCollection<string> PendingMessages = new BlockingCollection<string>();
         private readonly IDictionary<string, ToolStripMenuItem> MenuPluginItems = new Dictionary<string, ToolStripMenuItem>();
         private readonly ApplicationConfiguration ApplicationConfiguration;
         private readonly string CleanTitle;
 
-        public MainWindow(IEventBus eventBus, IApplicationVersionService applicationVersionService, ApplicationConfiguration applicationConfiguration)
+        public MainWindow(IEventFactory eventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, ApplicationConfiguration applicationConfiguration)
         {
+            EventFactory = eventFactory;
             EventBus = eventBus;
             ApplicationConfiguration = applicationConfiguration;
 
@@ -88,7 +90,7 @@ namespace Slipstream.Frontend
             };
 
             // Request full state of all known plugins, so we get any that might be started before "us"
-            EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginStates());
+            EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginStates());
 
             while (true)
             {
@@ -189,11 +191,11 @@ namespace Slipstream.Frontend
 
             if (item.CheckState == CheckState.Checked)
             {
-                EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginDisable() { Id = item.Name });
+                EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginDisable(item.Name));
             }
             else
             {
-                EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginEnable() { Id = item.Name });
+                EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginEnable(item.Name));
             }
         }
         #endregion

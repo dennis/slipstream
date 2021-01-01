@@ -1,6 +1,7 @@
 ﻿using NLua;
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
+using Slipstream.Shared.Events;
 using Slipstream.Shared.Events.Setting;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace Slipstream.Backend.Plugins
 {
     class LuaPlugin : BasePlugin
     {
+        private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly IStateService StateService;
 
@@ -21,8 +23,9 @@ namespace Slipstream.Backend.Plugins
         private LuaApi? Api;
         private Lua? Lua;
 
-        public LuaPlugin(string id, IEventBus eventBus, IStateService stateService, LuaSettings settings) : base(id, "LuaPlugin", "LuaPlugin", "Lua")
+        public LuaPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IStateService stateService, LuaSettings settings) : base(id, "LuaPlugin", "LuaPlugin", "Lua")
         {
+            EventFactory = eventFactory;
             EventBus = eventBus;
             StateService = stateService;
 
@@ -48,7 +51,7 @@ namespace Slipstream.Backend.Plugins
 
             try
             {
-                Api = new LuaApi(EventBus, StateService, Path.GetFileName(FilePath));
+                Api = new LuaApi(EventFactory, EventBus, StateService, Path.GetFileName(FilePath));
                 Lua = new Lua();
 
                 DisplayName = "Lua: " + Path.GetFileName(FilePath);
@@ -81,7 +84,7 @@ namespace Slipstream.Backend.Plugins
             catch (NLua.Exceptions.LuaScriptException e)
             {
                 Api?.Print($"ERROR: {e.Message}");
-                EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginUnregister() { Id = this.Id });
+                EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginUnregister(Id));
             }
         }
 
@@ -98,6 +101,7 @@ namespace Slipstream.Backend.Plugins
 
         class LuaApi
         {
+            private readonly IEventFactory EventFactory;
             private readonly IEventBus EventBus;
             private readonly string Prefix;
             private readonly IDictionary<string, DelayedExecution> DebouncedFunctions = new Dictionary<string, DelayedExecution>();
@@ -117,8 +121,9 @@ namespace Slipstream.Backend.Plugins
                 }
             }
 
-            public LuaApi(IEventBus eventBus, IStateService stateService, string prefix)
+            public LuaApi(IEventFactory eventFactory, IEventBus eventBus, IStateService stateService, string prefix)
             {
+                EventFactory = eventFactory;
                 EventBus = eventBus;
                 Prefix = prefix;
                 StateService = stateService;
@@ -127,22 +132,22 @@ namespace Slipstream.Backend.Plugins
 
             public void Print(string s)
             {
-                EventBus.PublishEvent(new Shared.Events.UI.UICommandWriteToConsole() { Message = $"{Prefix}: {s}" });
+                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"{Prefix}: {s}"));
             }
 
             public void Say(string message, float volume)
-            {
-                EventBus.PublishEvent(new Shared.Events.Audio.AudioCommandSay() { Message = message, Volume = volume });
+            {  
+                EventBus.PublishEvent(EventFactory.CreateAudioCommandSay(message, volume));
             }
 
             public void Play(string filename, float volume)
             {
-                EventBus.PublishEvent(new Shared.Events.Audio.AudioCommandPlay() { Filename = filename, Volume = volume });
+                EventBus.PublishEvent(EventFactory.CreateAudioCommandPlay(filename, volume));
             }
 
             public void SendTwitchMessage(string message)
             {
-                EventBus.PublishEvent(new Shared.Events.Twitch.TwitchCommandSendMessage() { Message = message });
+                EventBus.PublishEvent(EventFactory.CreateTwitchCommandSendMessage(message));
             }
 
             public void SetState(string key, string value)
@@ -229,7 +234,7 @@ namespace Slipstream.Backend.Plugins
             catch (NLua.Exceptions.LuaScriptException e)
             {
                 Api?.Print($"ERROR: {e.Message}");
-                EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginUnregister() { Id = this.Id });
+                EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginUnregister(Id));
             }
         }
     }

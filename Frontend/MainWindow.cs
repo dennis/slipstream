@@ -45,7 +45,7 @@ namespace Slipstream.Frontend
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
-            EventBusSubscription = EventBus.RegisterListener();
+            EventBusSubscription = EventBus.RegisterListener(fromBeginning: true);
             EventHandlerThread = new Thread(new ThreadStart(this.EventListenerMain));
             EventHandlerThread.Start();
         }

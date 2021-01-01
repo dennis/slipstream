@@ -23,52 +23,56 @@ namespace Slipstream.Shared
         public event OnDefaultHandler? OnDefault;
 
         #region Events: Internal
-        public delegate void OnInternalCommandPluginRegisterHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.CommandPluginRegister> e);
+        public delegate void OnInternalCommandPluginRegisterHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginRegister> e);
         public event OnInternalCommandPluginRegisterHandler? OnInternalCommandPluginRegister;
 
-        public delegate void OnInternalCommandPluginUnregisterHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.CommandPluginUnregister> e);
+        public delegate void OnInternalCommandPluginUnregisterHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginUnregister> e);
         public event OnInternalCommandPluginUnregisterHandler? OnInternalCommandPluginUnregister;
 
-        public delegate void OnInternalCommandPluginEnableHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.CommandPluginEnable> e);
+        public delegate void OnInternalCommandPluginEnableHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginEnable> e);
         public event OnInternalCommandPluginEnableHandler? OnInternalCommandPluginEnable;
 
-        public delegate void OnInternalCommandPluginDisableHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.CommandPluginDisable> e);
+        public delegate void OnInternalCommandPluginDisableHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginDisable> e);
         public event OnInternalCommandPluginDisableHandler? OnInternalCommandPluginDisable;
 
-        public delegate void OnInternalPluginStateHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.PluginState> e);
+        public delegate void OnInternalPluginStateHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalPluginState> e);
         public event OnInternalPluginStateHandler? OnInternalPluginState;
 
-        public delegate void OnInternalFileMonitorFileCreatedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FileMonitorFileCreated> e);
-        public event OnInternalFileMonitorFileCreatedHandler? OnInternalFileMonitorFileCreated;
-
-        public delegate void OnInternalFileMonitorFileChangedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FileMonitorFileChanged> e);
-        public event OnInternalFileMonitorFileChangedHandler? OnInternalFileMonitorFileChanged;
-
-        public delegate void OnInternalFileMonitorFileDeletedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FileMonitorFileDeleted> e);
-        public event OnInternalFileMonitorFileDeletedHandler? OnInternalFileMonitorFileDeleted;
-
-        public delegate void OnInternalFileMonitorFileRenamedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FileMonitorFileRenamed> e);
-        public event OnInternalFileMonitorFileRenamedHandler? OnInternalFileMonitorFileRenamed;
-
-        public delegate void OnInternalFileMonitorScanCompletedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FileMonitorScanCompleted> e);
-        public event OnInternalFileMonitorScanCompletedHandler? OnInternalFileMonitorScanCompleted;
-
-        public delegate void OnInternalCommandPluginStatesHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.CommandPluginStates> e);
+        public delegate void OnInternalCommandPluginStatesHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginStates> e);
         public event OnInternalCommandPluginStatesHandler? OnInternalCommandPluginStates;
 
-        public delegate void OnInternalInitializedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.Initialized> e);
+        public delegate void OnInternalInitializedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalInitialized> e);
         public event OnInternalInitializedHandler? OnInternalInitialized;
         #endregion
 
-        #region Events: Utility
-        public delegate void OnUtilityCommandWriteToConsoleHandler(EventHandler source, EventHandlerArgs<Shared.Events.Utility.CommandWriteToConsole> e);
-        public event OnUtilityCommandWriteToConsoleHandler? OnUtilityCommandWriteToConsole;
+        #region FileMonitor
+        public delegate void OnFileMonitorFileCreatedHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileCreated> e);
+        public event OnFileMonitorFileCreatedHandler? OnFileMonitorFileCreated;
 
-        public delegate void OnUtilityCommandSayHandler(EventHandler source, EventHandlerArgs<Shared.Events.Utility.CommandSay> e);
-        public event OnUtilityCommandSayHandler? OnUtilityCommandSay;
+        public delegate void OnFileMonitorFileChangedHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileChanged> e);
+        public event OnFileMonitorFileChangedHandler? OnFileMonitorFileChanged;
 
-        public delegate void OnUtilityCommandPlayAudioHandler(EventHandler source, EventHandlerArgs<Shared.Events.Utility.CommandPlayAudio> e);
-        public event OnUtilityCommandPlayAudioHandler? OnUtilityCommandPlayAudio;
+        public delegate void OnFileMonitorFileDeletedHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileDeleted> e);
+        public event OnFileMonitorFileDeletedHandler? OnFileMonitorFileDeleted;
+
+        public delegate void OnFileMonitorFileRenamedHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileRenamed> e);
+        public event OnFileMonitorFileRenamedHandler? OnFileMonitorFileRenamed;
+
+        public delegate void OnFileMonitorScanCompletedHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorScanCompleted> e);
+        public event OnFileMonitorScanCompletedHandler? OnFileMonitorScanCompleted;
+        #endregion
+
+        #region Events: UI
+        public delegate void OnUICommandWriteToConsoleHandler(EventHandler source, EventHandlerArgs<Shared.Events.UI.UICommandWriteToConsole> e);
+        public event OnUICommandWriteToConsoleHandler? OnUICommandWriteToConsole;
+        #endregion
+
+        #region Events: Audio
+        public delegate void OnAudioCommandSayHandler(EventHandler source, EventHandlerArgs<Shared.Events.Audio.AudioCommandSay> e);
+        public event OnAudioCommandSayHandler? OnAudioCommandSay;
+
+        public delegate void OnAudioCommandPlayHandler(EventHandler source, EventHandlerArgs<Shared.Events.Audio.AudioCommandPlay> e);
+        public event OnAudioCommandPlayHandler? OnAudioCommandPlay;
         #endregion
 
         #region Events: Setting
@@ -136,7 +140,7 @@ namespace Slipstream.Shared
         public delegate void OnTwitchReceivedCommandHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedCommand> e);
         public event OnTwitchReceivedCommandHandler? OnTwitchReceivedCommand;
 
-        public delegate void OnTwitchCommandSendMessageHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.CommandTwitchSendMessage> e);
+        public delegate void OnTwitchCommandSendMessageHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchCommandSendMessage> e);
         public event OnTwitchCommandSendMessageHandler? OnTwitchCommandSendMessage;
         #endregion
 
@@ -153,101 +157,104 @@ namespace Slipstream.Shared
 
                 // Internal
 
-                case Shared.Events.Internal.CommandPluginRegister tev:
+                case Shared.Events.Internal.InternalCommandPluginRegister tev:
                     if (OnInternalCommandPluginRegister == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnInternalCommandPluginRegister.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.CommandPluginRegister>(tev));
+                        OnInternalCommandPluginRegister.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginRegister>(tev));
                     break;
-                case Shared.Events.Internal.CommandPluginUnregister tev:
+                case Shared.Events.Internal.InternalCommandPluginUnregister tev:
                     if (OnInternalCommandPluginUnregister == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnInternalCommandPluginUnregister.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.CommandPluginUnregister>(tev));
+                        OnInternalCommandPluginUnregister.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginUnregister>(tev));
                     break;
-                case Shared.Events.Internal.CommandPluginEnable tev:
+                case Shared.Events.Internal.InternalCommandPluginEnable tev:
                     if (OnInternalCommandPluginEnable == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnInternalCommandPluginEnable.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.CommandPluginEnable>(tev));
+                        OnInternalCommandPluginEnable.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginEnable>(tev));
                     break;
-                case Shared.Events.Internal.CommandPluginDisable tev:
+                case Shared.Events.Internal.InternalCommandPluginDisable tev:
                     if (OnInternalCommandPluginDisable == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnInternalCommandPluginDisable.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.CommandPluginDisable>(tev));
+                        OnInternalCommandPluginDisable.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginDisable>(tev));
                     break;
-                case Shared.Events.Internal.PluginState tev:
+                case Shared.Events.Internal.InternalPluginState tev:
                     if (OnInternalPluginState == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnInternalPluginState.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.PluginState>(tev));
+                        OnInternalPluginState.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalPluginState>(tev));
                     break;
-                case Shared.Events.Internal.FileMonitorFileCreated tev:
-                    if (OnInternalFileMonitorFileCreated == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalFileMonitorFileCreated.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FileMonitorFileCreated>(tev));
-                    break;
-                case Shared.Events.Internal.FileMonitorFileChanged tev:
-                    if (OnInternalFileMonitorFileChanged == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalFileMonitorFileChanged.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FileMonitorFileChanged>(tev));
-                    break;
-                case Shared.Events.Internal.FileMonitorFileDeleted tev:
-                    if (OnInternalFileMonitorFileDeleted == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalFileMonitorFileDeleted.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FileMonitorFileDeleted>(tev));
-                    break;
-                case Shared.Events.Internal.FileMonitorFileRenamed tev:
-                    if (OnInternalFileMonitorFileRenamed == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalFileMonitorFileRenamed.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FileMonitorFileRenamed>(tev));
-                    break;
-                case Shared.Events.Internal.FileMonitorScanCompleted tev:
-                    if (OnInternalFileMonitorScanCompleted == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalFileMonitorScanCompleted.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FileMonitorScanCompleted>(tev));
-                    break;
-                case Shared.Events.Internal.CommandPluginStates tev:
+                case Shared.Events.Internal.InternalCommandPluginStates tev:
                     if (OnInternalCommandPluginStates == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnInternalCommandPluginStates.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.CommandPluginStates>(tev));
+                        OnInternalCommandPluginStates.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginStates>(tev));
                     break;
-
-                case Shared.Events.Internal.Initialized tev:
+                case Shared.Events.Internal.InternalInitialized tev:
                     if (OnInternalInitialized == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnInternalInitialized.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.Initialized>(tev));
+                        OnInternalInitialized.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalInitialized>(tev));
                     break;
 
-                // Utility
-
-                case Shared.Events.Utility.CommandWriteToConsole tev:
-                    if (OnUtilityCommandWriteToConsole == null)
+                // File Monitor
+                case Shared.Events.FileMonitor.FileMonitorFileCreated tev:
+                    if (OnFileMonitorFileCreated == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnUtilityCommandWriteToConsole.Invoke(this, new EventHandlerArgs<Shared.Events.Utility.CommandWriteToConsole>(tev));
+                        OnFileMonitorFileCreated.Invoke(this, new EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileCreated>(tev));
+                    break;
+                case Shared.Events.FileMonitor.FileMonitorFileChanged tev:
+                    if (OnFileMonitorFileChanged == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnFileMonitorFileChanged.Invoke(this, new EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileChanged>(tev));
+                    break;
+                case Shared.Events.FileMonitor.FileMonitorFileDeleted tev:
+                    if (OnFileMonitorFileDeleted == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnFileMonitorFileDeleted.Invoke(this, new EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileDeleted>(tev));
+                    break;
+                case Shared.Events.FileMonitor.FileMonitorFileRenamed tev:
+                    if (OnFileMonitorFileRenamed == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnFileMonitorFileRenamed.Invoke(this, new EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileRenamed>(tev));
+                    break;
+                case Shared.Events.FileMonitor.FileMonitorScanCompleted tev:
+                    if (OnFileMonitorScanCompleted == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnFileMonitorScanCompleted.Invoke(this, new EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorScanCompleted>(tev));
                     break;
 
-                case Shared.Events.Utility.CommandSay tev:
-                    if (OnUtilityCommandSay == null)
+                // Audio
+
+                case Shared.Events.Audio.AudioCommandSay tev:
+                    if (OnAudioCommandSay == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnUtilityCommandSay.Invoke(this, new EventHandlerArgs<Shared.Events.Utility.CommandSay>(tev));
+                        OnAudioCommandSay.Invoke(this, new EventHandlerArgs<Shared.Events.Audio.AudioCommandSay>(tev));
                     break;
 
-                case Shared.Events.Utility.CommandPlayAudio tev:
-                    if (OnUtilityCommandPlayAudio == null)
+                case Shared.Events.Audio.AudioCommandPlay tev:
+                    if (OnAudioCommandPlay == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnUtilityCommandPlayAudio.Invoke(this, new EventHandlerArgs<Shared.Events.Utility.CommandPlayAudio>(tev));
+                        OnAudioCommandPlay.Invoke(this, new EventHandlerArgs<Shared.Events.Audio.AudioCommandPlay>(tev));
+                    break;
+
+                // UI
+
+                case Shared.Events.UI.UICommandWriteToConsole tev:
+                    if (OnUICommandWriteToConsole == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnUICommandWriteToConsole.Invoke(this, new EventHandlerArgs<Shared.Events.UI.UICommandWriteToConsole>(tev));
                     break;
 
                 // Setting
@@ -396,11 +403,11 @@ namespace Slipstream.Shared
                         OnTwitchReceivedCommand.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedCommand>(tev));
                     break;
 
-                case Shared.Events.Twitch.CommandTwitchSendMessage tev:
+                case Shared.Events.Twitch.TwitchCommandSendMessage tev:
                     if (OnTwitchCommandSendMessage == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnTwitchCommandSendMessage.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.CommandTwitchSendMessage>(tev));
+                        OnTwitchCommandSendMessage.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchCommandSendMessage>(tev));
                     break;
 
                 default:

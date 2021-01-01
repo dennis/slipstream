@@ -1,7 +1,7 @@
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Setting;
 using Slipstream.Shared.Events.Twitch;
-using Slipstream.Shared.Events.Utility;
+using Slipstream.Shared.Events.UI;
 using System;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
@@ -151,19 +151,19 @@ namespace Slipstream.Backend.Plugins
 
         private void OnLog(object sender, OnLogArgs e)
         {
-            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch log: {e.Data}" });
+            EventBus.PublishEvent(new UICommandWriteToConsole { Message = $"Twitch log: {e.Data}" });
         }
 
         private void OnIncorrectLogin(object sender, OnIncorrectLoginArgs e)
         {
-            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch Error: {e.Exception.Message}" });
-            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginDisable() { Id = this.Id });
+            EventBus.PublishEvent(new UICommandWriteToConsole { Message = $"Twitch Error: {e.Exception.Message}" });
+            EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginDisable() { Id = this.Id });
         }
 
         private void OnError(object sender, OnErrorEventArgs e)
         {
-            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch Error: {e.Exception.Message}" });
-            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginDisable() { Id = this.Id });
+            EventBus.PublishEvent(new UICommandWriteToConsole { Message = $"Twitch Error: {e.Exception.Message}" });
+            EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginDisable() { Id = this.Id });
         }
 
         private void OnDisconnect(object sender, OnDisconnectedEventArgs e)
@@ -193,7 +193,7 @@ namespace Slipstream.Backend.Plugins
 
         private void OnConnected(object sender, OnConnectedArgs e)
         {
-            EventBus.PublishEvent(new CommandWriteToConsole { Message = $"Twitch connected as {TwitchUsername} to channel {TwitchChannel}" });
+            EventBus.PublishEvent(new UICommandWriteToConsole { Message = $"Twitch connected as {TwitchUsername} to channel {TwitchChannel}" });
         }
     }
 }

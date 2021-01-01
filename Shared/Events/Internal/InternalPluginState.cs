@@ -2,9 +2,9 @@
 
 namespace Slipstream.Shared.Events.Internal
 {
-    public class PluginState : IEvent
+    public class InternalPluginState : IEvent
     {
-        public string EventType => "PluginState";
+        public string EventType => "InternalPluginState";
         public bool ExcludeFromTxrx => true;
         public string Id { get; set; } = "INVALID-PLUGIN-ID";
         public string PluginName { get; set; } = "INVALID-PLUGIN-NAME";

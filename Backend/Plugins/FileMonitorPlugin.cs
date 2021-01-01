@@ -1,5 +1,5 @@
 using Slipstream.Shared;
-using Slipstream.Shared.Events.Internal;
+using Slipstream.Shared.Events.FileMonitor;
 using Slipstream.Shared.Events.Setting;
 using System.Collections.Generic;
 using System.IO;

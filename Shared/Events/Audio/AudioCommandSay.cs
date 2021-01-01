@@ -1,10 +1,10 @@
 ﻿#nullable enable
 
-namespace Slipstream.Shared.Events.Utility
+namespace Slipstream.Shared.Events.Audio
 {
-    public class CommandSay : IEvent
+    public class AudioCommandSay : IEvent
     {
-        public string EventType => "CommandSay";
+        public string EventType => "AudioCommandSay";
         public bool ExcludeFromTxrx => true;
         public string? Message { get; set; }
         public float? Volume { get; set; }

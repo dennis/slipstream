@@ -23,15 +23,15 @@ namespace Slipstream.Backend.Plugins
         {
             this.EventBus = eventBus;
 
-            EventHandler.OnInternalFileMonitorFileCreated += EventHandler_OnInternalFileMonitorFileCreated;
-            EventHandler.OnInternalFileMonitorFileDeleted += EventHandler_OnInternalFileMonitorFileDeleted;
-            EventHandler.OnInternalFileMonitorFileChanged += EventHandler_OnInternalFileMonitorFileChanged;
-            EventHandler.OnInternalFileMonitorFileRenamed += EventHandler_OnInternalFileMonitorFileRenamed;
-            EventHandler.OnInternalFileMonitorScanCompleted += EventHandler_OnInternalFileMonitorScanCompleted;
+            EventHandler.OnFileMonitorFileCreated += EventHandler_OnFileMonitorFileCreated;
+            EventHandler.OnFileMonitorFileDeleted += EventHandler_OnFileMonitorFileDeleted;
+            EventHandler.OnFileMonitorFileChanged += EventHandler_OnFileMonitorFileChanged;
+            EventHandler.OnFileMonitorFileRenamed += EventHandler_OnFileMonitorFileRenamed;
+            EventHandler.OnFileMonitorScanCompleted += EventHandler_OnFileMonitorScanCompleted;
             EventHandler.OnInternalPluginState += EventHandler_OnInternalPluginState;
         }
 
-        private void EventHandler_OnInternalPluginState(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.PluginState> e)
+        private void EventHandler_OnInternalPluginState(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.InternalPluginState> e)
         {
             if(e.Event.PluginStatus == "Registered" && e.Event.PluginName == "LuaPlugin")
             {
@@ -42,12 +42,12 @@ namespace Slipstream.Backend.Plugins
                     // We're done
                     EventHandler.OnInternalPluginState -= EventHandler_OnInternalPluginState;
 
-                    EventBus.PublishEvent(new Shared.Events.Internal.Initialized());
+                    EventBus.PublishEvent(new Shared.Events.Internal.InternalInitialized());
                 }
             }
         }
 
-        private void EventHandler_OnInternalFileMonitorScanCompleted(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.FileMonitorScanCompleted> e)
+        private void EventHandler_OnFileMonitorScanCompleted(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorScanCompleted> e)
         {
             Debug.Assert(BootUp);
 
@@ -70,8 +70,8 @@ namespace Slipstream.Backend.Plugins
             }
 
 
-            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginRegister() { Id = pluginId, PluginName = pluginName, Settings = GetLuaSettings(pluginId, filePath) });
-            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginEnable() { Id = pluginId });
+            EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginRegister() { Id = pluginId, PluginName = pluginName, Settings = GetLuaSettings(pluginId, filePath) });
+            EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginEnable() { Id = pluginId });
 
             Scripts.Add(filePath, pluginId);
         }
@@ -83,14 +83,14 @@ namespace Slipstream.Backend.Plugins
 
         private void DeletedFile(string filePath)
         {
-            var ev = new Shared.Events.Internal.CommandPluginUnregister() { Id = Scripts[filePath] };
+            var ev = new Shared.Events.Internal.InternalCommandPluginUnregister() { Id = Scripts[filePath] };
 
             EventBus.PublishEvent(ev);
 
             Scripts.Remove(filePath);
         }
 
-        private void EventHandler_OnInternalFileMonitorFileRenamed(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.FileMonitorFileRenamed> e)
+        private void EventHandler_OnFileMonitorFileRenamed(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileRenamed> e)
         {
             if (e.Event.FilePath == null || e.Event.OldFilePath == null)
                 return;
@@ -103,7 +103,7 @@ namespace Slipstream.Backend.Plugins
                 NewFile(e.Event.FilePath);
         }
 
-        private void EventHandler_OnInternalFileMonitorFileChanged(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.FileMonitorFileChanged> e)
+        private void EventHandler_OnFileMonitorFileChanged(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileChanged> e)
         {
             if (e.Event.FilePath == null || !IsApplicable(e.Event.FilePath))
                 return;
@@ -114,7 +114,7 @@ namespace Slipstream.Backend.Plugins
             NewFile(e.Event.FilePath);
         }
 
-        private void EventHandler_OnInternalFileMonitorFileDeleted(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.FileMonitorFileDeleted> e)
+        private void EventHandler_OnFileMonitorFileDeleted(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileDeleted> e)
         {
             if (e.Event.FilePath == null || !IsApplicable(e.Event.FilePath))
                 return;
@@ -124,7 +124,7 @@ namespace Slipstream.Backend.Plugins
             DeletedFile(e.Event.FilePath);
         }
 
-        private void EventHandler_OnInternalFileMonitorFileCreated(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.FileMonitorFileCreated> e)
+        private void EventHandler_OnFileMonitorFileCreated(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileCreated> e)
         {
             if (e.Event.FilePath == null || !IsApplicable(e.Event.FilePath))
                 return;

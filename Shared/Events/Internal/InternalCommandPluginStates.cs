@@ -2,9 +2,9 @@
 
 namespace Slipstream.Shared.Events.Internal
 {
-    public class Initialized : IEvent
+    public class InternalCommandPluginStates : IEvent
     {
-        public string EventType => "Initialized";
+        public string EventType => "InternalCommandPluginStates";
         public bool ExcludeFromTxrx => true;
     }
 }

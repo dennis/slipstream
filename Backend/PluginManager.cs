@@ -39,7 +39,7 @@ namespace Slipstream.Backend
 
         private void EmitPluginStateChanged(IPlugin plugin, string pluginStatus)
         {
-            EmitEvent(new Shared.Events.Internal.PluginState() { Id = plugin.Id, PluginName = plugin.Name, PluginStatus = pluginStatus, DisplayName = plugin.DisplayName });
+            EmitEvent(new Shared.Events.Internal.InternalPluginState() { Id = plugin.Id, PluginName = plugin.Name, PluginStatus = pluginStatus, DisplayName = plugin.DisplayName });
         }
 
         public void RegisterPlugin(IPlugin plugin)

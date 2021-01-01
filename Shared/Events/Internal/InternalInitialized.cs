@@ -2,9 +2,9 @@
 
 namespace Slipstream.Shared.Events.Internal
 {
-    public class FileMonitorScanCompleted : IEvent
+    public class InternalInitialized : IEvent
     {
-        public string EventType => "FileMonitorScanCompleted";
+        public string EventType => "InternalInitialized";
         public bool ExcludeFromTxrx => true;
     }
 }

@@ -1,7 +1,7 @@
 using NAudio.Wave;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Setting;
-using Slipstream.Shared.Events.Utility;
+using Slipstream.Shared.Events.UI;
 using System;
 using System.Speech.Synthesis;
 using System.Threading;
@@ -26,8 +26,8 @@ namespace Slipstream.Backend.Plugins
             Synthesizer = new SpeechSynthesizer();
             Synthesizer.SetOutputToDefaultAudioDevice();
 
-            EventHandler.OnUtilityCommandSay += EventHandler_OnUtilitySay;
-            EventHandler.OnUtilityCommandPlayAudio += EventHandler_OnUtilityPlayAudio;
+            EventHandler.OnAudioCommandSay += EventHandler_OnUtilitySay;
+            EventHandler.OnAudioCommandPlay += EventHandler_OnAudioCommandPlay;
             EventHandler.OnSettingAudioSettings += (s, e) => EventHandler_OnSettingAudioSettings(e.Event);
         }
 
@@ -36,7 +36,7 @@ namespace Slipstream.Backend.Plugins
             Path = e.Path;
         }
 
-        private void EventHandler_OnUtilityPlayAudio(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Utility.CommandPlayAudio> e)
+        private void EventHandler_OnAudioCommandPlay(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Audio.AudioCommandPlay> e)
         {
             var filename = e.Event.Filename;
             var volume = e.Event.Volume;
@@ -60,11 +60,11 @@ namespace Slipstream.Backend.Plugins
             }
             catch (Exception ex)
             {
-                EventBus.PublishEvent(new CommandWriteToConsole() { Message = "Playing audio file failed: " + ex.Message });
+                EventBus.PublishEvent(new UICommandWriteToConsole() { Message = "Playing audio file failed: " + ex.Message });
             }
         }
 
-        private void EventHandler_OnUtilitySay(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Utility.CommandSay> e)
+        private void EventHandler_OnUtilitySay(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Audio.AudioCommandSay> e)
         {
             if (e.Event == null || e.Event.Message == null || e.Event.Volume == null)
                 return;

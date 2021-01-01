@@ -82,13 +82,13 @@ namespace Slipstream.Frontend
             Debug.Assert(EventBusSubscription != null);
 
             EventHandler.OnInternalPluginState += (s, e) => EventHandler_OnInternalPluginState(e.Event);
-            EventHandler.OnUtilityCommandWriteToConsole += (s, e) =>
+            EventHandler.OnUICommandWriteToConsole += (s, e) =>
             {
                 PendingMessages.Add($"{DateTime.Now:s} {e.Event.Message}");
             };
 
             // Request full state of all known plugins, so we get any that might be started before "us"
-            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginStates());
+            EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginStates());
 
             while (true)
             {
@@ -96,7 +96,7 @@ namespace Slipstream.Frontend
             }
         }
 
-        private void EventHandler_OnInternalPluginState(Shared.Events.Internal.PluginState e)
+        private void EventHandler_OnInternalPluginState(Shared.Events.Internal.InternalPluginState e)
         {
             if (e.PluginStatus != "Unregistered" && !MenuPluginItems.ContainsKey(e.Id))
             {
@@ -189,11 +189,11 @@ namespace Slipstream.Frontend
 
             if (item.CheckState == CheckState.Checked)
             {
-                EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginDisable() { Id = item.Name });
+                EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginDisable() { Id = item.Name });
             }
             else
             {
-                EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginEnable() { Id = item.Name });
+                EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginEnable() { Id = item.Name });
             }
         }
         #endregion

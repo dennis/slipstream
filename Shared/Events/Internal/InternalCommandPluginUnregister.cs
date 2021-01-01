@@ -2,9 +2,9 @@
 
 namespace Slipstream.Shared.Events.Internal
 {
-    public class CommandPluginUnregister : IEvent
+    public class InternalCommandPluginUnregister : IEvent
     {
-        public string EventType => "CommandPluginUnregister";
+        public string EventType => "InternalCommandPluginUnregister";
         public bool ExcludeFromTxrx => true;
         public string Id { get; set; } = "INVALID-PLUGIN-ID";
     }

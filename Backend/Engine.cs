@@ -34,23 +34,23 @@ namespace Slipstream.Backend
             EventHandler.OnInternalCommandPluginStates += (s, e) => OnCommandPluginStates(e.Event);
 
             // Plugins..
-            RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "FileMonitorPlugin", PluginName = "FileMonitorPlugin", Settings = ApplicationConfiguration.GetFileMonitorSettingsEvent() });
-            RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "FileTriggerPlugin", PluginName = "FileTriggerPlugin" });
-            RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "AudioPlugin", PluginName = "AudioPlugin", Settings = ApplicationConfiguration.GetAudioSettingsEvent() });
-            RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "IRacingPlugin", PluginName = "IRacingPlugin" });
-            RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "TwitchPlugin", PluginName = "TwitchPlugin", Settings = ApplicationConfiguration.GetTwitchSettingsEvent() });
-            RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "TransmitterPlugin", PluginName = "TransmitterPlugin", Settings = ApplicationConfiguration.GetTxrxSettingsEvent() }, false);
-            RegisterPlugin(new Shared.Events.Internal.CommandPluginRegister() { Id = "ReceiverPlugin", PluginName = "ReceiverPlugin", Settings = ApplicationConfiguration.GetTxrxSettingsEvent() }, false);
+            RegisterPlugin(new Shared.Events.Internal.InternalCommandPluginRegister() { Id = "FileMonitorPlugin", PluginName = "FileMonitorPlugin", Settings = ApplicationConfiguration.GetFileMonitorSettingsEvent() });
+            RegisterPlugin(new Shared.Events.Internal.InternalCommandPluginRegister() { Id = "FileTriggerPlugin", PluginName = "FileTriggerPlugin" });
+            RegisterPlugin(new Shared.Events.Internal.InternalCommandPluginRegister() { Id = "AudioPlugin", PluginName = "AudioPlugin", Settings = ApplicationConfiguration.GetAudioSettingsEvent() });
+            RegisterPlugin(new Shared.Events.Internal.InternalCommandPluginRegister() { Id = "IRacingPlugin", PluginName = "IRacingPlugin" });
+            RegisterPlugin(new Shared.Events.Internal.InternalCommandPluginRegister() { Id = "TwitchPlugin", PluginName = "TwitchPlugin", Settings = ApplicationConfiguration.GetTwitchSettingsEvent() });
+            RegisterPlugin(new Shared.Events.Internal.InternalCommandPluginRegister() { Id = "TransmitterPlugin", PluginName = "TransmitterPlugin", Settings = ApplicationConfiguration.GetTxrxSettingsEvent() }, false);
+            RegisterPlugin(new Shared.Events.Internal.InternalCommandPluginRegister() { Id = "ReceiverPlugin", PluginName = "ReceiverPlugin", Settings = ApplicationConfiguration.GetTxrxSettingsEvent() }, false);
 
             // Tell Plugins that we're live - this will make eventbus distribute events
             EventBus.Enabled = true;
         }
 
-        private void OnCommandPluginStates(CommandPluginStates _)
+        private void OnCommandPluginStates(InternalCommandPluginStates _)
         {
             PluginManager.ForAllPluginsExecute(
                 (a) => EventBus.PublishEvent(
-                    new Shared.Events.Internal.PluginState
+                    new Shared.Events.Internal.InternalPluginState
                     {
                         Id = a.Id,
                         DisplayName = a.DisplayName,
@@ -59,12 +59,12 @@ namespace Slipstream.Backend
                     }));
         }
 
-        private void RegisterPlugin(CommandPluginRegister e, bool enable = true)
+        private void RegisterPlugin(InternalCommandPluginRegister e, bool enable = true)
         {
             OnCommandPluginRegister(e);
             if (enable)
             {
-                EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginEnable() { Id = e.Id });
+                EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginEnable() { Id = e.Id });
             }
         }
 
@@ -73,7 +73,7 @@ namespace Slipstream.Backend
             return EventBus.RegisterListener();
         }
 
-        private void OnCommandPluginUnregister(CommandPluginUnregister ev)
+        private void OnCommandPluginUnregister(InternalCommandPluginUnregister ev)
         {
             PluginManager.UnregisterPlugin(ev.Id);
         }
@@ -83,7 +83,7 @@ namespace Slipstream.Backend
             EventBus.UnregisterSubscription(subscription);
         }
 
-        private void OnCommandPluginRegister(Shared.Events.Internal.CommandPluginRegister ev)
+        private void OnCommandPluginRegister(Shared.Events.Internal.InternalCommandPluginRegister ev)
         {
             switch (ev.PluginName)
             {

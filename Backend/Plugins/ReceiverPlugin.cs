@@ -1,7 +1,7 @@
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Setting;
-using Slipstream.Shared.Events.Utility;
+using Slipstream.Shared.Events.UI;
 using System;
 using System.Diagnostics;
 using System.Net;
@@ -35,7 +35,7 @@ namespace Slipstream.Backend.Plugins
         public override void OnEnable()
         {
             // To avoid that we get an endless loop, we will Unregister the "other" end in this instance
-            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginUnregister { Id = "TransmitterPlugin" });
+            EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginUnregister { Id = "TransmitterPlugin" });
         }
 
         public override void OnDisable()
@@ -53,12 +53,12 @@ namespace Slipstream.Backend.Plugins
                 Ip = input[0];
                 if (!Int32.TryParse(input[1], out Port))
                 {
-                    EventBus.PublishEvent(new CommandWriteToConsole() { Message = $"ReceiverPlugin: Invalid port in TxrxHost provided: '{e.TxrxIpPort}'" });
+                    EventBus.PublishEvent(new UICommandWriteToConsole() { Message = $"ReceiverPlugin: Invalid port in TxrxHost provided: '{e.TxrxIpPort}'" });
                 }
             }
             else
             {
-                EventBus.PublishEvent(new CommandWriteToConsole() { Message = $"ReceiverPlugin: Invalid TxrxHost provided: '{e.TxrxIpPort}'" });
+                EventBus.PublishEvent(new UICommandWriteToConsole() { Message = $"ReceiverPlugin: Invalid TxrxHost provided: '{e.TxrxIpPort}'" });
             }
         }
 
@@ -68,7 +68,7 @@ namespace Slipstream.Backend.Plugins
             Listener = new TcpListener(localAddr, Port);
             Listener.Start();
 
-            EventBus.PublishEvent(new CommandWriteToConsole() { Message = $"ReceiverPlugin listening on {Listener.LocalEndpoint}" });
+            EventBus.PublishEvent(new UICommandWriteToConsole() { Message = $"ReceiverPlugin listening on {Listener.LocalEndpoint}" });
         }
 
         private void AcceptClient()
@@ -78,7 +78,7 @@ namespace Slipstream.Backend.Plugins
 
             Client = Listener!.AcceptSocket();
 
-            EventBus.PublishEvent(new CommandWriteToConsole() { Message = $"ReceiverPlugin got a connection from {Client.RemoteEndPoint}" });
+            EventBus.PublishEvent(new UICommandWriteToConsole() { Message = $"ReceiverPlugin got a connection from {Client.RemoteEndPoint}" });
         }
 
         private void ReadData()
@@ -99,7 +99,7 @@ namespace Slipstream.Backend.Plugins
                 // Check if disconnceted
                 if (Client!.Poll(200, SelectMode.SelectRead) && Client!.Available == 0)
                 {
-                    EventBus.PublishEvent(new CommandWriteToConsole() { Message = $"ReceiverPlugin disconnected {Client.RemoteEndPoint}" });
+                    EventBus.PublishEvent(new UICommandWriteToConsole() { Message = $"ReceiverPlugin disconnected {Client.RemoteEndPoint}" });
 
                     Client.Dispose();
                     Client = null;
@@ -107,7 +107,7 @@ namespace Slipstream.Backend.Plugins
             }
             catch (SocketException e)
             {
-                EventBus.PublishEvent(new CommandWriteToConsole() { Message = $"ReceiverPlugin: Cant receieve data: {e.Message}" });
+                EventBus.PublishEvent(new UICommandWriteToConsole() { Message = $"ReceiverPlugin: Cant receieve data: {e.Message}" });
             }
         }
 

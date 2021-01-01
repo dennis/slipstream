@@ -31,7 +31,7 @@ namespace Slipstream.Backend.Plugins
             EventHandler.OnInternalPluginState += EventHandler_OnInternalPluginState;
         }
 
-        private void EventHandler_OnInternalPluginState(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.PluginState> e)
+        private void EventHandler_OnInternalPluginState(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.InternalPluginState> e)
         {
             if(e.Event.PluginStatus == "Registered" && e.Event.PluginName == "LuaPlugin")
             {
@@ -42,7 +42,7 @@ namespace Slipstream.Backend.Plugins
                     // We're done
                     EventHandler.OnInternalPluginState -= EventHandler_OnInternalPluginState;
 
-                    EventBus.PublishEvent(new Shared.Events.Internal.Initialized());
+                    EventBus.PublishEvent(new Shared.Events.Internal.InternalInitialized());
                 }
             }
         }
@@ -70,8 +70,8 @@ namespace Slipstream.Backend.Plugins
             }
 
 
-            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginRegister() { Id = pluginId, PluginName = pluginName, Settings = GetLuaSettings(pluginId, filePath) });
-            EventBus.PublishEvent(new Shared.Events.Internal.CommandPluginEnable() { Id = pluginId });
+            EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginRegister() { Id = pluginId, PluginName = pluginName, Settings = GetLuaSettings(pluginId, filePath) });
+            EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginEnable() { Id = pluginId });
 
             Scripts.Add(filePath, pluginId);
         }
@@ -83,7 +83,7 @@ namespace Slipstream.Backend.Plugins
 
         private void DeletedFile(string filePath)
         {
-            var ev = new Shared.Events.Internal.CommandPluginUnregister() { Id = Scripts[filePath] };
+            var ev = new Shared.Events.Internal.InternalCommandPluginUnregister() { Id = Scripts[filePath] };
 
             EventBus.PublishEvent(ev);
 

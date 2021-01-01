@@ -150,8 +150,8 @@
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Shared\Events\FileMonitor\FileMonitorScanCompleted.cs" />
-    <Compile Include="Shared\Events\Internal\Initialized.cs" />
-    <Compile Include="Shared\Events\Internal\CommandPluginStates.cs" />
+    <Compile Include="Shared\Events\Internal\InternalInitialized.cs" />
+    <Compile Include="Shared\Events\Internal\InternalCommandPluginStates.cs" />
     <Compile Include="Shared\Events\Setting\TxrxSettings.cs" />
     <Compile Include="Shared\IApplicationConfiguration.cs" />
     <Compile Include="Shared\ApplicationVersionService.cs" />
@@ -179,23 +179,23 @@
     <Compile Include="Shared\Events\IRacing\IRacingDisconnected.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingConnected.cs" />
     <Compile Include="Shared\Events\Setting\FileMonitorSettings.cs" />
-    <Compile Include="Shared\Events\Internal\CommandPluginUnregister.cs" />
-    <Compile Include="Shared\Events\Internal\CommandPluginRegister.cs" />
-    <Compile Include="Shared\Events\Internal\CommandPluginEnable.cs" />
-    <Compile Include="Shared\Events\Internal\CommandPluginDisable.cs" />
+    <Compile Include="Shared\Events\Internal\InternalCommandPluginUnregister.cs" />
+    <Compile Include="Shared\Events\Internal\InternalCommandPluginRegister.cs" />
+    <Compile Include="Shared\Events\Internal\InternalCommandPluginEnable.cs" />
+    <Compile Include="Shared\Events\Internal\InternalCommandPluginDisable.cs" />
     <Compile Include="Shared\Events\Setting\AudioSettings.cs" />
     <Compile Include="Shared\Events\Setting\TwitchSettings.cs" />
-    <Compile Include="Shared\Events\Twitch\CommandTwitchSendMessage.cs" />
+    <Compile Include="Shared\Events\Twitch\TwitchCommandSendMessage.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchReceivedCommand.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchDisconnected.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchConnected.cs" />
-    <Compile Include="Shared\Events\Utility\CommandPlayAudio.cs" />
-    <Compile Include="Shared\Events\Utility\CommandSay.cs" />
-    <Compile Include="Shared\Events\Utility\CommandWriteToConsole.cs" />
+    <Compile Include="Shared\Events\Audio\AudioCommandPlay.cs" />
+    <Compile Include="Shared\Events\Audio\AudioCommandSay.cs" />
+    <Compile Include="Shared\Events\UI\UICommandWriteToConsole.cs" />
     <Compile Include="Shared\IApplicationVersionService.cs" />
     <Compile Include="Shared\IEventBus.cs" />
     <Compile Include="Shared\IEventBusSubscription.cs" />
-    <Compile Include="Shared\Events\Internal\PluginState.cs" />
+    <Compile Include="Shared\Events\Internal\InternalPluginState.cs" />
     <Compile Include="Backend\Engine.cs" />
     <Compile Include="Backend\IPlugin.cs" />
     <Compile Include="Shared\IEvent.cs" />

@@ -3,7 +3,7 @@
     public interface IEventBus : IEventProducer
     {
         public bool Enabled { get; set; }
-        IEventBusSubscription RegisterListener();
+        IEventBusSubscription RegisterListener(bool fromBeginning = false);
         void UnregisterSubscription(IEventBusSubscription eventBusSubscription);
     }
 }

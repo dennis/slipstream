@@ -53,6 +53,8 @@ namespace Slipstream.Backend.Plugins
                     });
                 }
             }
+
+            EventBus.PublishEvent(new FileMonitorScanCompleted());
         }
 
         private void OnFileMonitorSettings(FileMonitorSettings ev)

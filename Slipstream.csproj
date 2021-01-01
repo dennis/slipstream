@@ -149,6 +149,8 @@
     <Compile Include="Frontend\SettingsForm.Designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Shared\Events\Internal\FileMonitorScanCompleted.cs" />
+    <Compile Include="Shared\Events\Internal\Initialized.cs" />
     <Compile Include="Shared\Events\Internal\CommandPluginStates.cs" />
     <Compile Include="Shared\Events\Setting\TxrxSettings.cs" />
     <Compile Include="Shared\IApplicationConfiguration.cs" />

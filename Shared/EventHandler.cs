@@ -50,9 +50,14 @@ namespace Slipstream.Shared
         public delegate void OnInternalFileMonitorFileRenamedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FileMonitorFileRenamed> e);
         public event OnInternalFileMonitorFileRenamedHandler? OnInternalFileMonitorFileRenamed;
 
+        public delegate void OnInternalFileMonitorScanCompletedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.FileMonitorScanCompleted> e);
+        public event OnInternalFileMonitorScanCompletedHandler? OnInternalFileMonitorScanCompleted;
+
         public delegate void OnInternalCommandPluginStatesHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.CommandPluginStates> e);
         public event OnInternalCommandPluginStatesHandler? OnInternalCommandPluginStates;
 
+        public delegate void OnInternalInitializedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.Initialized> e);
+        public event OnInternalInitializedHandler? OnInternalInitialized;
         #endregion
 
         #region Events: Utility
@@ -202,11 +207,24 @@ namespace Slipstream.Shared
                     else
                         OnInternalFileMonitorFileRenamed.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FileMonitorFileRenamed>(tev));
                     break;
+                case Shared.Events.Internal.FileMonitorScanCompleted tev:
+                    if (OnInternalFileMonitorScanCompleted == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnInternalFileMonitorScanCompleted.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.FileMonitorScanCompleted>(tev));
+                    break;
                 case Shared.Events.Internal.CommandPluginStates tev:
                     if (OnInternalCommandPluginStates == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnInternalCommandPluginStates.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.CommandPluginStates>(tev));
+                    break;
+
+                case Shared.Events.Internal.Initialized tev:
+                    if (OnInternalInitialized == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnInternalInitialized.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.Initialized>(tev));
                     break;
 
                 // Utility

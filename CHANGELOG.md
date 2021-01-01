@@ -5,6 +5,7 @@
 
 **Improvements**
  - Lua: Add event_to_json() function, that will convert a Slipstream event to a json string. Change debug.lua to use that, making it trivial.
+ - Lua: At start: Make sure all Lua script before IRacingPlugin publishes events
  - UI: Will show all events, even if they are published before UI was ready
 
 ## [0.2.0](https://github.com/dennis/slipstream/releases/tag/v0.2.0) (2020-12-30)

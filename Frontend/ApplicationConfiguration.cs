@@ -5,10 +5,12 @@ namespace Slipstream.Frontend
 {
     public class ApplicationConfiguration : IApplicationConfiguration
     {
+        private readonly IEventFactory EventFactory;
         private readonly Properties.Settings Settings;
 
-        public ApplicationConfiguration()
+        public ApplicationConfiguration(IEventFactory eventFactory)
         {
+            EventFactory = eventFactory;
             Settings = Properties.Settings.Default;
 
             System.IO.Directory.CreateDirectory(GetAudioPath());
@@ -22,12 +24,12 @@ namespace Slipstream.Frontend
 
         public AudioSettings GetAudioSettingsEvent()
         {
-            return new Shared.Events.Setting.AudioSettings { Path = GetAudioPath() };
+            return EventFactory.CreateAudioSettings(GetAudioPath());
         }
 
         public FileMonitorSettings GetFileMonitorSettingsEvent()
         {
-            return new Shared.Events.Setting.FileMonitorSettings { Paths = new string[] { GetScriptsPath() } };
+            return EventFactory.CreateFileMonitorSettings(new string[] { GetScriptsPath() });
         }
 
         public string GetScriptsPath()
@@ -37,21 +39,18 @@ namespace Slipstream.Frontend
 
         public TwitchSettings GetTwitchSettingsEvent()
         {
-            return new Shared.Events.Setting.TwitchSettings
-            {
-                TwitchUsername = Settings.TwitchUsername,
-                TwitchChannel = Settings.TwitchChannel,
-                TwitchToken = Settings.TwitchToken,
-                TwitchLog = Settings.TwitchLog,
-            };
+            return EventFactory.CreateTwitchSettings
+            (
+                twitchUsername: Settings.TwitchUsername,
+                twitchChannel: Settings.TwitchChannel,
+                twitchToken: Settings.TwitchToken,
+                twitchLog: Settings.TwitchLog
+            );
         }
 
         public TxrxSettings GetTxrxSettingsEvent()
         {
-            return new TxrxSettings
-            {
-                TxrxIpPort = Settings.TxrxIpPort
-            };
+            return EventFactory.CreateTxrxSettings(Settings.TxrxIpPort);
         }
     }
 }

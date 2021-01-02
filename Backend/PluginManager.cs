@@ -3,19 +3,22 @@
 using Slipstream.Shared;
 using System;
 using System.Collections.Generic;
+using static Slipstream.Shared.IEventFactory;
 
 namespace Slipstream.Backend
 {
     class PluginManager
     {
         private readonly IEngine Engine;
+        private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, IPlugin> Plugins = new Dictionary<string, IPlugin>();
         private readonly IDictionary<string, PluginWorker> PluginWorkers = new Dictionary<string, PluginWorker>();
 
-        public PluginManager(IEngine engine, IEventBus eventBus)
+        public PluginManager(IEngine engine, IEventFactory eventFactory, IEventBus eventBus)
         {
             Engine = engine;
+            EventFactory = eventFactory;
             EventBus = eventBus;
         }
 
@@ -34,12 +37,12 @@ namespace Slipstream.Backend
         private void UnregisterPlugin(IPlugin p)
         {
             PluginWorkers[p.WorkerName].RemovePlugin(p);
-            EmitPluginStateChanged(p, "Unregistered");
+            EmitPluginStateChanged(p, PluginStatusEnum.Unregistered);
         }
 
-        private void EmitPluginStateChanged(IPlugin plugin, string pluginStatus)
+        private void EmitPluginStateChanged(IPlugin plugin, PluginStatusEnum pluginStatus)
         {
-            EmitEvent(new Shared.Events.Internal.InternalPluginState() { Id = plugin.Id, PluginName = plugin.Name, PluginStatus = pluginStatus, DisplayName = plugin.DisplayName });
+            EmitEvent(EventFactory.CreateInternalPluginState(plugin.Id, plugin.Name, plugin.DisplayName, pluginStatus));
         }
 
         public void RegisterPlugin(IPlugin plugin)
@@ -54,7 +57,7 @@ namespace Slipstream.Backend
                 }
                 else
                 {
-                    worker = new PluginWorker(plugin.WorkerName, Engine.RegisterListener(), EventBus);
+                    worker = new PluginWorker(plugin.WorkerName, Engine.RegisterListener(), EventFactory, EventBus);
                     worker.Start();
                     PluginWorkers.Add(worker.Name, worker);
                 }
@@ -63,7 +66,7 @@ namespace Slipstream.Backend
 
                 Plugins.Add(plugin.Id, plugin);
 
-                EmitPluginStateChanged(plugin, "Registered");
+                EmitPluginStateChanged(plugin, PluginStatusEnum.Registered);
             }
         }
 

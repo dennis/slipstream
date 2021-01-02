@@ -15,14 +15,16 @@ namespace Slipstream.Backend.Plugins
     class TransmitterPlugin : BasePlugin
     {
         private readonly IEventBus EventBus;
+        private readonly IEventFactory EventFactory;
         private string Ip = "";
         private Int32 Port = 42424;
         private TcpClient? Client = null;
         private readonly TxrxService TxrxService = new TxrxService();
 
-        public TransmitterPlugin(string id, IEventBus eventBus, TxrxSettings settings) : base(id, "TransmitterPlugin", "TransmitterPlugin", "TransmitterPlugin")
+        public TransmitterPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, TxrxSettings settings) : base(id, "TransmitterPlugin", "TransmitterPlugin", "TransmitterPlugin")
         {
             EventBus = eventBus;
+            EventFactory = eventFactory;
 
             OnSetting(settings);
 
@@ -47,12 +49,12 @@ namespace Slipstream.Backend.Plugins
             }
             catch (SocketException e)
             {
-                EventBus.PublishEvent(new UICommandWriteToConsole() { Message = $"TransmitterPlugin: Cant send {@event.EventType}: {e.Message}" });
+                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Cant send {@event.EventType}: {e.Message}"));
                 Reset();
             }
             catch (System.IO.IOException e)
             {
-                EventBus.PublishEvent(new UICommandWriteToConsole() { Message = $"TransmitterPlugin: Cant send {@event.EventType}: {e.Message}" });
+                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Cant send {@event.EventType}: {e.Message}"));
                 Reset();
             }
         }
@@ -66,7 +68,7 @@ namespace Slipstream.Backend.Plugins
                 Ip = input[0];
                 if (!Int32.TryParse(input[1], out Port))
                 {
-                    EventBus.PublishEvent(new UICommandWriteToConsole() { Message = $"TransmitterPlugin: Invalid port in TxrxIpPort provided: '{e.TxrxIpPort}'" });
+                    EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Invalid port in TxrxIpPort provided: '{e.TxrxIpPort}'"));
                 }
                 else
                 {
@@ -75,7 +77,7 @@ namespace Slipstream.Backend.Plugins
             }
             else
             {
-                EventBus.PublishEvent(new UICommandWriteToConsole() { Message = $"TransmitterPlugin: Invalid TxrxIpPort provided: '{e.TxrxIpPort}'" });
+                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Invalid TxrxIpPort provided: '{e.TxrxIpPort}'"));
             }
         }
 
@@ -104,19 +106,19 @@ namespace Slipstream.Backend.Plugins
 
                 if (success)
                 {
-                    EventBus.PublishEvent(new UICommandWriteToConsole() { Message = $"TransmitterPlugin: Connected to '{Ip}:{Port}'" });
+                    EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Connected to '{Ip}:{Port}'"));
                     return;
                 }
                 else
                 {
-                    EventBus.PublishEvent(new UICommandWriteToConsole() { Message = $"TransmitterPlugin: Can't connect to '{Ip}:{Port}'" });
+                    EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Can't connect to '{Ip}:{Port}'"));
                     Client?.Dispose();
                     Client = null;
                 }
             }
             catch (Exception e)
             {
-                EventBus.PublishEvent(new UICommandWriteToConsole() { Message = $"TransmitterPlugin: Error connecting to '{Ip}:{Port}': {e.Message}" });
+                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Error connecting to '{Ip}:{Port}': {e.Message}"));
             }
 
             Client = null;
@@ -127,7 +129,7 @@ namespace Slipstream.Backend.Plugins
         public override void OnEnable()
         {
             // To avoid that we get an endless loop, we will Unregister the "other" end in this instance
-            EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginUnregister { Id = "ReceiverPlugin" });
+            EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginUnregister("ReceiverPlugin"));
         }
 
         public override void OnDisable()

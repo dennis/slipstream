@@ -10,6 +10,7 @@ namespace Slipstream.Backend.Plugins
 {
     class FileTriggerPlugin : BasePlugin
     {
+        private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, string> Scripts = new Dictionary<string, string>();
 
@@ -19,9 +20,10 @@ namespace Slipstream.Backend.Plugins
         private bool BootUp = true;
         private readonly List<string> WaitingForLuaScripts = new List<string>();
 
-        public FileTriggerPlugin(string id, IEventBus eventBus) : base(id, "FileTriggerPlugin", "FileTriggerPlugin", "Core")
+        public FileTriggerPlugin(string id, IEventFactory eventFactory, IEventBus eventBus) : base(id, "FileTriggerPlugin", "FileTriggerPlugin", "Core")
         {
-            this.EventBus = eventBus;
+            EventFactory = eventFactory;
+            EventBus = eventBus;
 
             EventHandler.OnFileMonitorFileCreated += EventHandler_OnFileMonitorFileCreated;
             EventHandler.OnFileMonitorFileDeleted += EventHandler_OnFileMonitorFileDeleted;
@@ -43,6 +45,7 @@ namespace Slipstream.Backend.Plugins
                     EventHandler.OnInternalPluginState -= EventHandler_OnInternalPluginState;
 
                     EventBus.PublishEvent(new Shared.Events.Internal.InternalInitialized());
+                    EventBus.PublishEvent(EventFactory.CreateInternalInitialized());
                 }
             }
         }
@@ -69,21 +72,15 @@ namespace Slipstream.Backend.Plugins
                 WaitingForLuaScripts.Add(pluginId);
             }
 
-
-            EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginRegister() { Id = pluginId, PluginName = pluginName, Settings = GetLuaSettings(pluginId, filePath) });
-            EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginEnable() { Id = pluginId });
+            EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginRegister(pluginId, pluginName, EventFactory.CreateLuaSettings(pluginId, filePath)));
+            EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginEnable(pluginId));
 
             Scripts.Add(filePath, pluginId);
         }
 
-        private IEvent GetLuaSettings(string pluginId, string filePath)
-        {
-            return new Slipstream.Shared.Events.Setting.LuaSettings() { PluginId = pluginId, FilePath = filePath };
-        }
-
         private void DeletedFile(string filePath)
         {
-            var ev = new Shared.Events.Internal.InternalCommandPluginUnregister() { Id = Scripts[filePath] };
+            var ev = EventFactory.CreateInternalCommandPluginUnregister(Scripts[filePath]);
 
             EventBus.PublishEvent(ev);
 

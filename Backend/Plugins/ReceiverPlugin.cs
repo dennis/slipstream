@@ -15,6 +15,7 @@ namespace Slipstream.Backend.Plugins
     class ReceiverPlugin : BasePlugin
     {
         private readonly IEventBus EventBus;
+        private readonly IEventFactory EventFactory;
         private string Ip = "";
         private Int32 Port = 42424;
         private TcpListener? Listener;
@@ -23,8 +24,9 @@ namespace Slipstream.Backend.Plugins
         private const int READ_BUFFER_SIZE = 1024 * 16;
         readonly byte[] ReadBuffer = new byte[READ_BUFFER_SIZE];
 
-        public ReceiverPlugin(string id, IEventBus eventBus, TxrxSettings settings) : base(id, "ReceiverPlugin", "ReceiverPlugin", "ReceiverPlugin")
+        public ReceiverPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, TxrxSettings settings) : base(id, "ReceiverPlugin", "ReceiverPlugin", "ReceiverPlugin")
         {
+            EventFactory = eventFactory;
             EventBus = eventBus;
 
             OnSetting(settings);
@@ -35,7 +37,7 @@ namespace Slipstream.Backend.Plugins
         public override void OnEnable()
         {
             // To avoid that we get an endless loop, we will Unregister the "other" end in this instance
-            EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginUnregister { Id = "TransmitterPlugin" });
+            EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginUnregister("TransmitterPlugin"));
         }
 
         public override void OnDisable()
@@ -53,12 +55,12 @@ namespace Slipstream.Backend.Plugins
                 Ip = input[0];
                 if (!Int32.TryParse(input[1], out Port))
                 {
-                    EventBus.PublishEvent(new UICommandWriteToConsole() { Message = $"ReceiverPlugin: Invalid port in TxrxHost provided: '{e.TxrxIpPort}'" });
+                    EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin: Invalid port in TxrxHost provided: '{e.TxrxIpPort}'"));
                 }
             }
             else
             {
-                EventBus.PublishEvent(new UICommandWriteToConsole() { Message = $"ReceiverPlugin: Invalid TxrxHost provided: '{e.TxrxIpPort}'" });
+                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin: Invalid TxrxHost provided: '{e.TxrxIpPort}'"));
             }
         }
 
@@ -68,7 +70,7 @@ namespace Slipstream.Backend.Plugins
             Listener = new TcpListener(localAddr, Port);
             Listener.Start();
 
-            EventBus.PublishEvent(new UICommandWriteToConsole() { Message = $"ReceiverPlugin listening on {Listener.LocalEndpoint}" });
+            EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin listening on {Listener.LocalEndpoint}"));
         }
 
         private void AcceptClient()
@@ -78,7 +80,7 @@ namespace Slipstream.Backend.Plugins
 
             Client = Listener!.AcceptSocket();
 
-            EventBus.PublishEvent(new UICommandWriteToConsole() { Message = $"ReceiverPlugin got a connection from {Client.RemoteEndPoint}" });
+            EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin got a connection from {Client.RemoteEndPoint}"));
         }
 
         private void ReadData()
@@ -99,7 +101,7 @@ namespace Slipstream.Backend.Plugins
                 // Check if disconnceted
                 if (Client!.Poll(200, SelectMode.SelectRead) && Client!.Available == 0)
                 {
-                    EventBus.PublishEvent(new UICommandWriteToConsole() { Message = $"ReceiverPlugin disconnected {Client.RemoteEndPoint}" });
+                    EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin disconnected {Client.RemoteEndPoint}"));
 
                     Client.Dispose();
                     Client = null;
@@ -107,7 +109,7 @@ namespace Slipstream.Backend.Plugins
             }
             catch (SocketException e)
             {
-                EventBus.PublishEvent(new UICommandWriteToConsole() { Message = $"ReceiverPlugin: Cant receieve data: {e.Message}" });
+                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin: Cant receieve data: {e.Message}"));
             }
         }
 

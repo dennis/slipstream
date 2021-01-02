@@ -18,6 +18,7 @@ namespace Slipstream.Backend.Plugins
     class TwitchPlugin : BasePlugin
     {
         private TwitchClient? Client;
+        private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
 
         private string? TwitchUsername;
@@ -27,8 +28,9 @@ namespace Slipstream.Backend.Plugins
         private bool RequestReconnect;
         private bool AnnouncedConnected = false;
 
-        public TwitchPlugin(string id, IEventBus eventBus, TwitchSettings settings) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin")
+        public TwitchPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, TwitchSettings settings) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin")
         {
+            EventFactory = eventFactory;
             EventBus = eventBus;
 
             EventHandler.OnSettingTwitchSettings += (s, e) => OnTwitchSettings(e.Event);
@@ -96,7 +98,7 @@ namespace Slipstream.Backend.Plugins
         {
             if (!AnnouncedConnected)
             {
-                EventBus.PublishEvent(new TwitchConnected());
+                EventBus.PublishEvent(EventFactory.CreateTwitchConnected());
                 AnnouncedConnected = true;
             }
         }
@@ -105,7 +107,7 @@ namespace Slipstream.Backend.Plugins
         {
             if (AnnouncedConnected)
             {
-                EventBus.PublishEvent(new TwitchDisconnected());
+                EventBus.PublishEvent(EventFactory.CreateTwitchDisconnected());
                 AnnouncedConnected = false;
             }
         }
@@ -151,19 +153,19 @@ namespace Slipstream.Backend.Plugins
 
         private void OnLog(object sender, OnLogArgs e)
         {
-            EventBus.PublishEvent(new UICommandWriteToConsole { Message = $"Twitch log: {e.Data}" });
+            EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"Twitch log: {e.Data}"));
         }
 
         private void OnIncorrectLogin(object sender, OnIncorrectLoginArgs e)
         {
-            EventBus.PublishEvent(new UICommandWriteToConsole { Message = $"Twitch Error: {e.Exception.Message}" });
-            EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginDisable() { Id = this.Id });
+            EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"Twitch Error: {e.Exception.Message}"));
+            EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginDisable(this.Id));
         }
 
         private void OnError(object sender, OnErrorEventArgs e)
         {
-            EventBus.PublishEvent(new UICommandWriteToConsole { Message = $"Twitch Error: {e.Exception.Message}" });
-            EventBus.PublishEvent(new Shared.Events.Internal.InternalCommandPluginDisable() { Id = this.Id });
+            EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"Twitch Error: {e.Exception.Message}"));
+            EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginDisable(this.Id));
         }
 
         private void OnDisconnect(object sender, OnDisconnectedEventArgs e)
@@ -180,20 +182,20 @@ namespace Slipstream.Backend.Plugins
                 return;
 
             EventBus.PublishEvent(
-                new TwitchReceivedCommand
-                {
-                    From = chatMessage.DisplayName,
-                    Message = chatMessage.Message,
-                    Broadcaster = chatMessage.IsBroadcaster,
-                    Moderator = chatMessage.IsModerator,
-                    Subscriber = chatMessage.IsSubscriber,
-                    Vip = chatMessage.IsVip
-                });
+                EventFactory.CreateTwitchReceivedCommand
+                (
+                    from: chatMessage.DisplayName,
+                    message: chatMessage.Message,
+                    broadcaster: chatMessage.IsBroadcaster,
+                    moderator: chatMessage.IsModerator,
+                    subscriber: chatMessage.IsSubscriber,
+                    vip: chatMessage.IsVip
+                ));
         }
 
         private void OnConnected(object sender, OnConnectedArgs e)
         {
-            EventBus.PublishEvent(new UICommandWriteToConsole { Message = $"Twitch connected as {TwitchUsername} to channel {TwitchChannel}" });
+            EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"Twitch connected as {TwitchUsername} to channel {TwitchChannel}"));
         }
     }
 }

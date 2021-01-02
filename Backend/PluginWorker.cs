@@ -12,11 +12,13 @@ namespace Slipstream.Backend
         private readonly IList<IPlugin> Plugins = new List<IPlugin>();
         private readonly IEventBusSubscription Subscription;
         private readonly IEventBus EventBus;
+        private readonly IEventFactory EventFactory;
 
-        public PluginWorker(string name, IEventBusSubscription subscription, IEventBus eventBus) : base(name)
+        public PluginWorker(string name, IEventBusSubscription subscription, IEventFactory eventFactory, IEventBus eventBus) : base(name)
         {
             Subscription = subscription;
             EventBus = eventBus;
+            EventFactory = eventFactory;
         }
 
         public void AddPlugin(IPlugin plugin)
@@ -30,9 +32,7 @@ namespace Slipstream.Backend
 
         private void Plugin_OnStateChanged(IPlugin plugin, IPlugin.EventHandlerArgs<IPlugin> e)
         {
-            string pluginStatus = plugin.Enabled ? "Enabled" : "Disabled";
-
-            EventBus.PublishEvent(new InternalPluginState() { Id = plugin.Id, PluginName = plugin.Name, PluginStatus = pluginStatus, DisplayName = plugin.DisplayName });
+            EventBus.PublishEvent(EventFactory.CreateInternalPluginState(plugin.Id, plugin.Name, plugin.DisplayName, plugin.Enabled ? IEventFactory.PluginStatusEnum.Enabled : IEventFactory.PluginStatusEnum.Disabled));
         }
 
         public void RemovePlugin(IPlugin plugin)

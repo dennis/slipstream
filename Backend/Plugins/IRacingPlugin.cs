@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using static Slipstream.Shared.IEventFactory;
 
 #nullable enable
 
@@ -14,7 +15,8 @@ namespace Slipstream.Backend.Plugins
     class IRacingPlugin : BasePlugin
     {
         private readonly iRacingConnection Connection = new iRacingConnection();
-        private readonly Shared.IEventBus EventBus;
+        private readonly IEventFactory EventFactory;
+        private readonly IEventBus EventBus;
         private bool InitializedSeen;
 
         private class CarState
@@ -44,14 +46,23 @@ namespace Slipstream.Backend.Plugins
 
         private readonly IDictionary<long, CarState> CarsTracked = new Dictionary<long, CarState>();
 
-        private readonly Dictionary<iRacingSDK.SessionState, string> SessionStateMapping = new Dictionary<iRacingSDK.SessionState, string>() {
-            { iRacingSDK.SessionState.Checkered, "Checkered" },
-            { iRacingSDK.SessionState.CoolDown, "CoolDown" },
-            { iRacingSDK.SessionState.GetInCar, "GetInCar" },
-            { iRacingSDK.SessionState.Invalid, "Invalid" },
-            { iRacingSDK.SessionState.ParadeLaps, "ParadeLaps" },
-            { iRacingSDK.SessionState.Racing, "Racing" },
-            { iRacingSDK.SessionState.Warmup, "Warmup" },
+        private static readonly Dictionary<iRacingSDK.SessionState, IRacingSessionStateEnum> SessionStateMapping = new Dictionary<iRacingSDK.SessionState, IRacingSessionStateEnum>() {
+            { iRacingSDK.SessionState.Checkered, IRacingSessionStateEnum.Checkered },
+            { iRacingSDK.SessionState.CoolDown, IRacingSessionStateEnum.CoolDown },
+            { iRacingSDK.SessionState.GetInCar, IRacingSessionStateEnum.GetInCar },
+            { iRacingSDK.SessionState.Invalid, IRacingSessionStateEnum.Invalid },
+            { iRacingSDK.SessionState.ParadeLaps, IRacingSessionStateEnum.ParadeLaps },
+            { iRacingSDK.SessionState.Racing, IRacingSessionStateEnum.Racing },
+            { iRacingSDK.SessionState.Warmup, IRacingSessionStateEnum.Warmup },
+        };
+        private static readonly Dictionary<string, IRacingSessionTypeEnum> IRacingSessionTypes = new Dictionary<string, IRacingSessionTypeEnum>()
+        {
+            { "Practice", IRacingSessionTypeEnum.Practice },
+            { "Open Qualify", IRacingSessionTypeEnum.OpenQualify },
+            { "Lone Qualify", IRacingSessionTypeEnum.LoneQualify },
+            { "Offline Testing", IRacingSessionTypeEnum.OfflineTesting },
+            { "Race", IRacingSessionTypeEnum.Race },
+            { "Warmup", IRacingSessionTypeEnum.Warmup },
         };
 
         private IRacingCurrentSession? LastSessionInfo;
@@ -60,8 +71,9 @@ namespace Slipstream.Backend.Plugins
         private IRacingWeatherInfo? LastWeatherInfo;
         private bool Connected;
 
-        public IRacingPlugin(string id, IEventBus eventBus) : base(id, "IRacingPlugin", "IRacingPlugin", "IRacingPlugin")
+        public IRacingPlugin(string id, IEventFactory eventFactory, IEventBus eventBus) : base(id, "IRacingPlugin", "IRacingPlugin", "IRacingPlugin")
         {
+            EventFactory = eventFactory;
             EventBus = eventBus;
             EventHandler.OnInternalInitialized += (s, e) => InitializedSeen = true;
         }
@@ -94,7 +106,7 @@ namespace Slipstream.Backend.Plugins
                     if (Connected)
                     {
                         Connected = false;
-                        EventBus.PublishEvent(new IRacingDisconnected());
+                        EventBus.PublishEvent(EventFactory.CreateIRacingDisconnected());
                     }
                     Thread.Sleep(5000);
                 }
@@ -146,7 +158,7 @@ namespace Slipstream.Backend.Plugins
                     var now = data.Telemetry.SessionTime;
                     if (onPitRoad)
                     {
-                        EventBus.PublishEvent(new IRacingPitEnter { CarIdx = i, LocalUser = localUser, SessionTime = now });
+                        EventBus.PublishEvent(EventFactory.CreateIRacingPitEnter(carIdx: i, localUser: localUser, sessionTime: now));
                         carState.PitEnteredAt = data.Telemetry.SessionTime;
                     }
                     else
@@ -159,52 +171,51 @@ namespace Slipstream.Backend.Plugins
                         // If duration is zero, then the pitstop started before we joined
                         if (duration != null)
                         {
-                            EventBus.PublishEvent(new IRacingPitExit { CarIdx = i, LocalUser = localUser, SessionTime = now, Duration = duration });
+                            EventBus.PublishEvent(EventFactory.CreateIRacingPitExit(carIdx: i, localUser: localUser, sessionTime: now, duration: duration));
                             carState.PitEnteredAt = null;
 
                             if (localUser && data.Telemetry.CarIdxLapCompleted[i] > 0)
                             {
-                                var status = new IRacingPitstopReport
-                                {
-                                    SessionTime = now,
-                                    CarIdx = i,
+                                var status = EventFactory.CreateIRacingPitstopReport(
+                                    sessionTime: now,
+                                    carIdx: i,
 
-                                    TempLFL = (uint)Math.Round(data.Telemetry.LFtempCL),
-                                    TempLFM = (uint)Math.Round(data.Telemetry.LFtempCM),
-                                    TempLFR = (uint)Math.Round(data.Telemetry.LFtempCR),
+                                    tempLFL: (uint)Math.Round(data.Telemetry.LFtempCL),
+                                    tempLFM: (uint)Math.Round(data.Telemetry.LFtempCM),
+                                    tempLFR: (uint)Math.Round(data.Telemetry.LFtempCR),
 
-                                    TempRFL = (uint)Math.Round(data.Telemetry.RFtempCL),
-                                    TempRFM = (uint)Math.Round(data.Telemetry.RFtempCM),
-                                    TempRFR = (uint)Math.Round(data.Telemetry.RFtempCR),
+                                    tempRFL: (uint)Math.Round(data.Telemetry.RFtempCL),
+                                    tempRFM: (uint)Math.Round(data.Telemetry.RFtempCM),
+                                    tempRFR: (uint)Math.Round(data.Telemetry.RFtempCR),
 
-                                    TempLRL = (uint)Math.Round(data.Telemetry.LRtempCL),
-                                    TempLRM = (uint)Math.Round(data.Telemetry.LRtempCM),
-                                    TempLRR = (uint)Math.Round(data.Telemetry.LRtempCR),
+                                    tempLRL: (uint)Math.Round(data.Telemetry.LRtempCL),
+                                    tempLRM: (uint)Math.Round(data.Telemetry.LRtempCM),
+                                    tempLRR: (uint)Math.Round(data.Telemetry.LRtempCR),
 
-                                    TempRRL = (uint)Math.Round(data.Telemetry.RRtempCL),
-                                    TempRRM = (uint)Math.Round(data.Telemetry.RRtempCM),
-                                    TempRRR = (uint)Math.Round(data.Telemetry.RRtempCR),
+                                    tempRRL: (uint)Math.Round(data.Telemetry.RRtempCL),
+                                    tempRRM: (uint)Math.Round(data.Telemetry.RRtempCM),
+                                    tempRRR: (uint)Math.Round(data.Telemetry.RRtempCR),
 
-                                    WearLFL = (uint)Math.Round(data.Telemetry.LFwearL * 100),
-                                    WearLFM = (uint)Math.Round(data.Telemetry.LFwearM * 100),
-                                    WearLFR = (uint)Math.Round(data.Telemetry.LFwearR * 100),
+                                    wearLFL: (uint)Math.Round(data.Telemetry.LFwearL * 100),
+                                    wearLFM: (uint)Math.Round(data.Telemetry.LFwearM * 100),
+                                    wearLFR: (uint)Math.Round(data.Telemetry.LFwearR * 100),
 
-                                    WearRFL = (uint)Math.Round(data.Telemetry.RFwearL * 100),
-                                    WearRFM = (uint)Math.Round(data.Telemetry.RFwearM * 100),
-                                    WearRFR = (uint)Math.Round(data.Telemetry.RFwearR * 100),
+                                    wearRFL: (uint)Math.Round(data.Telemetry.RFwearL * 100),
+                                    wearRFM: (uint)Math.Round(data.Telemetry.RFwearM * 100),
+                                    wearRFR: (uint)Math.Round(data.Telemetry.RFwearR * 100),
 
-                                    WearLRL = (uint)Math.Round(data.Telemetry.LRwearL * 100),
-                                    WearLRM = (uint)Math.Round(data.Telemetry.LRwearM * 100),
-                                    WearLRR = (uint)Math.Round(data.Telemetry.LRwearR * 100),
+                                    wearLRL: (uint)Math.Round(data.Telemetry.LRwearL * 100),
+                                    wearLRM: (uint)Math.Round(data.Telemetry.LRwearM * 100),
+                                    wearLRR: (uint)Math.Round(data.Telemetry.LRwearR * 100),
 
-                                    WearRRL = (uint)Math.Round(data.Telemetry.RRwearL * 100),
-                                    WearRRM = (uint)Math.Round(data.Telemetry.RRwearM * 100),
-                                    WearRRR = (uint)Math.Round(data.Telemetry.RRwearR * 100),
+                                    wearRRL: (uint)Math.Round(data.Telemetry.RRwearL * 100),
+                                    wearRRM: (uint)Math.Round(data.Telemetry.RRwearM * 100),
+                                    wearRRR: (uint)Math.Round(data.Telemetry.RRwearR * 100),
 
-                                    Laps = data.Telemetry.CarIdxLapCompleted[i] - carState.StintStartLap,
-                                    FuelDiff = data.Telemetry.FuelLevel - carState.StintFuelLevel,
-                                    Duration = now - carState.StintStartTime,
-                                };
+                                    laps: data.Telemetry.CarIdxLapCompleted[i] - carState.StintStartLap,
+                                    fuelDiff: data.Telemetry.FuelLevel - carState.StintFuelLevel,
+                                    duration: now - carState.StintStartTime
+                                );
 
                                 EventBus.PublishEvent(status);
                             }
@@ -257,15 +268,14 @@ namespace Slipstream.Backend.Plugins
                         float? usedFuel = fuelLeft - carState.FuelLevelLastLap;
                         carState.FuelLevelLastLap = fuelLeft;
 
-                        var @event = new IRacingCarCompletedLap
-                        {
-                            SessionTime = now,
-                            CarIdx = i,
-                            Time = lapTime,
-                            LapsComplete = lapsCompleted,
-                            LocalUser = localUser,
-                            FuelDiff = localUser ? usedFuel : null,
-                        };
+                        var @event = EventFactory.CreateIRacingCarCompletedLap(
+                            sessionTime: now,
+                            carIdx: i,
+                            time: lapTime,
+                            lapsCompleted: lapsCompleted,
+                            localUser: localUser,
+                            fuelDiff: localUser ? usedFuel : null
+                        );
 
                         EventBus.PublishEvent(@event);
                     }
@@ -277,11 +287,11 @@ namespace Slipstream.Backend.Plugins
 
         private void HandleState(DataSample data)
         {
-            var @event = new IRacingSessionState
-            {
-                SessionTime = data.Telemetry.SessionTime,
-                State = SessionStateMapping[data.Telemetry.SessionState]
-            };
+            var @event = EventFactory.CreateIRacingSessionState
+            (
+                sessionTime: data.Telemetry.SessionTime,
+                state: SessionStateMapping[data.Telemetry.SessionState]
+            );
 
             if (LastSessionState == null || !LastSessionState.DifferentTo(@event))
             {
@@ -299,35 +309,35 @@ namespace Slipstream.Backend.Plugins
         {
             var sessionFlags = data.Telemetry.SessionFlags;
 
-            var @event = new IRacingRaceFlags
-            {
-                SessionTime = data.Telemetry.SessionTime,
-                Black = sessionFlags.HasFlag(SessionFlags.black),
-                Blue = sessionFlags.HasFlag(SessionFlags.blue),
-                Caution = sessionFlags.HasFlag(SessionFlags.caution),
-                CautionWaving = sessionFlags.HasFlag(SessionFlags.cautionWaving),
-                Checkered = sessionFlags.HasFlag(SessionFlags.checkered),
-                Crossed = sessionFlags.HasFlag(SessionFlags.crossed),
-                Debris = sessionFlags.HasFlag(SessionFlags.debris),
-                Disqualify = sessionFlags.HasFlag(SessionFlags.disqualify),
-                FiveToGo = sessionFlags.HasFlag(SessionFlags.fiveToGo),
-                Furled = sessionFlags.HasFlag(SessionFlags.furled),
-                Green = sessionFlags.HasFlag(SessionFlags.green),
-                GreenHeld = sessionFlags.HasFlag(SessionFlags.greenHeld),
-                OneLapToGreen = sessionFlags.HasFlag(SessionFlags.oneLapToGreen),
-                RandomWaving = sessionFlags.HasFlag(SessionFlags.randomWaving),
-                Red = sessionFlags.HasFlag(SessionFlags.red),
-                Repair = sessionFlags.HasFlag(SessionFlags.repair),
-                Servicible = sessionFlags.HasFlag(SessionFlags.servicible),
-                StartGo = sessionFlags.HasFlag(SessionFlags.startGo),
-                StartHidden = sessionFlags.HasFlag(SessionFlags.startHidden),
-                StartReady = sessionFlags.HasFlag(SessionFlags.startReady),
-                StartSet = sessionFlags.HasFlag(SessionFlags.startSet),
-                TenToGo = sessionFlags.HasFlag(SessionFlags.tenToGo),
-                White = sessionFlags.HasFlag(SessionFlags.white),
-                Yellow = sessionFlags.HasFlag(SessionFlags.yellow),
-                YellowWaving = sessionFlags.HasFlag(SessionFlags.yellowWaving),
-            };
+            var @event = EventFactory.CreateIRacingRaceFlags
+            (
+                sessionTime: data.Telemetry.SessionTime,
+                black: sessionFlags.HasFlag(SessionFlags.black),
+                blue: sessionFlags.HasFlag(SessionFlags.blue),
+                caution: sessionFlags.HasFlag(SessionFlags.caution),
+                cautionWaving: sessionFlags.HasFlag(SessionFlags.cautionWaving),
+                checkered: sessionFlags.HasFlag(SessionFlags.checkered),
+                crossed: sessionFlags.HasFlag(SessionFlags.crossed),
+                debris: sessionFlags.HasFlag(SessionFlags.debris),
+                disqualify: sessionFlags.HasFlag(SessionFlags.disqualify),
+                fiveToGo: sessionFlags.HasFlag(SessionFlags.fiveToGo),
+                furled: sessionFlags.HasFlag(SessionFlags.furled),
+                green: sessionFlags.HasFlag(SessionFlags.green),
+                greenHeld: sessionFlags.HasFlag(SessionFlags.greenHeld),
+                oneLapToGreen: sessionFlags.HasFlag(SessionFlags.oneLapToGreen),
+                randomWaving: sessionFlags.HasFlag(SessionFlags.randomWaving),
+                red: sessionFlags.HasFlag(SessionFlags.red),
+                repair: sessionFlags.HasFlag(SessionFlags.repair),
+                servicible: sessionFlags.HasFlag(SessionFlags.servicible),
+                startGo: sessionFlags.HasFlag(SessionFlags.startGo),
+                startHidden: sessionFlags.HasFlag(SessionFlags.startHidden),
+                startReady: sessionFlags.HasFlag(SessionFlags.startReady),
+                startSet: sessionFlags.HasFlag(SessionFlags.startSet),
+                tenToGo: sessionFlags.HasFlag(SessionFlags.tenToGo),
+                white: sessionFlags.HasFlag(SessionFlags.white),
+                yellow: sessionFlags.HasFlag(SessionFlags.yellow),
+                yellowWaving: sessionFlags.HasFlag(SessionFlags.yellowWaving)
+            );
 
             if (LastRaceFlags == null || !LastRaceFlags.DifferentTo(@event))
             {
@@ -355,24 +365,24 @@ namespace Slipstream.Backend.Plugins
 
                 var carState = GetCarState(driver.CarIdx, data);
 
-                var @event = new IRacingCarInfo
-                {
-                    SessionTime = data.Telemetry.SessionTime,
-                    CarIdx = driver.CarIdx,
-                    CarNumber = driver.CarNumber,
-                    CurrentDriverUserID = driver.UserID,
-                    CurrentDriverName = driver.UserName,
-                    TeamID = driver.TeamID,
-                    TeamName = driver.TeamName,
-                    CarName = driver.CarScreenName,
-                    CarNameShort = driver.CarScreenNameShort,
-                    CurrentDriverIRating = driver.IRating,
-                    LocalUser = data.SessionData.DriverInfo.DriverCarIdx == driver.CarID,
-                    Spectator = driver.IsSpectator,
+                var @event = EventFactory.CreateIRacingCarInfo(
+                    sessionTime: data.Telemetry.SessionTime,
+                    carIdx: driver.CarIdx,
+                    carNumber: driver.CarNumber,
+                    currentDriverUserID: driver.UserID,
+                    currentDriverName: driver.UserName,
+                    teamID: driver.TeamID,
+                    teamName: driver.TeamName,
+                    carName: driver.CarScreenName,
+                    carNameShort: driver.CarScreenNameShort,
+                    currentDriverIRating: driver.IRating,
+                    localUser: data.SessionData.DriverInfo.DriverCarIdx == driver.CarID,
+                    spectator: driver.IsSpectator
                     // Seems not to be exposed by SDK:
                     // DriverIncidentCount
                     // TeamIncidentCount
-                };
+                );
+
 
                 if (!carState.CarInfo.SameAs(@event))
                 {
@@ -386,14 +396,14 @@ namespace Slipstream.Backend.Plugins
         private void HandleCurrentSession(DataSample data)
         {
             var sessionData = data.SessionData.SessionInfo.Sessions[data.Telemetry.SessionNum];
-            var sessionInfo = new IRacingCurrentSession
-            {
-                SessionType = sessionData.SessionType,
-                TimeLimited = sessionData.IsLimitedTime,
-                LapsLimited = sessionData.IsLimitedSessionLaps,
-                TotalSessionLaps = sessionData._SessionLaps,
-                TotalSessionTime = sessionData._SessionTime / 10_000,
-            };
+            var sessionInfo = EventFactory.CreateIRacingCurrentSession
+            (
+                sessionType: IRacingSessionTypes[sessionData.SessionType],
+                timeLimited: sessionData.IsLimitedTime,
+                lapsLimited: sessionData.IsLimitedSessionLaps,
+                totalSessionLaps: sessionData._SessionLaps,
+                totalSessionTime: sessionData._SessionTime / 10_000
+            );
 
             if (LastSessionInfo == null || !sessionInfo.Equals(LastSessionInfo))
             {
@@ -405,16 +415,16 @@ namespace Slipstream.Backend.Plugins
 
         private void HandleWeatherInfo(DataSample data)
         {
-            var weatherInfo = new IRacingWeatherInfo
-            {
-                SessionTime = data.Telemetry.SessionTime,
-                Skies = data.SessionData.WeekendInfo.TrackSkies,
-                SurfaceTemp = data.SessionData.WeekendInfo.TrackSurfaceTemp,
-                AirTemp = data.SessionData.WeekendInfo.TrackAirTemp,
-                AirPressure = data.SessionData.WeekendInfo.TrackAirPressure,
-                RelativeHumidity = data.SessionData.WeekendInfo.TrackRelativeHumidity,
-                FogLevel = data.SessionData.WeekendInfo.TrackFogLevel,
-            };
+            var weatherInfo = EventFactory.CreateIRacingWeatherInfo
+            (
+                sessionTime: data.Telemetry.SessionTime,
+                skies: data.SessionData.WeekendInfo.TrackSkies,
+                surfaceTemp: data.SessionData.WeekendInfo.TrackSurfaceTemp,
+                airTemp: data.SessionData.WeekendInfo.TrackAirTemp,
+                airPressure: data.SessionData.WeekendInfo.TrackAirPressure,
+                relativeHumidity: data.SessionData.WeekendInfo.TrackRelativeHumidity,
+                fogLevel: data.SessionData.WeekendInfo.TrackFogLevel
+            );
 
             if (LastWeatherInfo == null || !weatherInfo.DifferentTo(LastWeatherInfo))
             {
@@ -432,18 +442,18 @@ namespace Slipstream.Backend.Plugins
                 LastSessionInfo = null;
                 Connected = true;
 
-                EventBus.PublishEvent(new IRacingConnected());
-                EventBus.PublishEvent(new IRacingTrackInfo
-                {
-                    TrackId = data.SessionData.WeekendInfo.TrackID,
-                    TrackLength = data.SessionData.WeekendInfo.TrackLength,
-                    TrackDisplayName = data.SessionData.WeekendInfo.TrackDisplayName,
-                    TrackCity = data.SessionData.WeekendInfo.TrackCity,
-                    TrackCountry = data.SessionData.WeekendInfo.TrackCountry,
-                    TrackDisplayShortName = data.SessionData.WeekendInfo.TrackDisplayShortName,
-                    TrackConfigName = data.SessionData.WeekendInfo.TrackConfigName,
-                    TrackType = data.SessionData.WeekendInfo.TrackType,
-                });
+                EventBus.PublishEvent(EventFactory.CreateIRacingConnected());
+                EventBus.PublishEvent(EventFactory.CreateIRacingTrackInfo
+                (
+                    trackId: data.SessionData.WeekendInfo.TrackID,
+                    trackLength: data.SessionData.WeekendInfo.TrackLength,
+                    trackDisplayName: data.SessionData.WeekendInfo.TrackDisplayName,
+                    trackCity: data.SessionData.WeekendInfo.TrackCity,
+                    trackCountry: data.SessionData.WeekendInfo.TrackCountry,
+                    trackDisplayShortName: data.SessionData.WeekendInfo.TrackDisplayShortName,
+                    trackConfigName: data.SessionData.WeekendInfo.TrackConfigName,
+                    trackType: data.SessionData.WeekendInfo.TrackType
+                ));
             }
         }
 

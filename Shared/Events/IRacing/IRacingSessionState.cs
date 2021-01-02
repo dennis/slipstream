@@ -7,7 +7,7 @@ namespace Slipstream.Shared.Events.IRacing
         public string EventType => "IRacingSessionState";
         public bool ExcludeFromTxrx => false;
         public double SessionTime { get; set; }
-        public string State { get; set; } = ""; // Checkered, CoolDown, GetInCar, Invalid, ParadeLaps, Racing, Warmup
+        public string State { get; set; } = "";
 
         public bool DifferentTo(IRacingSessionState other)
         {

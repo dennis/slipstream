@@ -5,6 +5,7 @@ using Slipstream.Shared.Events;
 using Slipstream.Shared.Events.Internal;
 using Slipstream.Shared.Events.Setting;
 using System;
+using static Slipstream.Shared.IEventFactory;
 
 #nullable enable
 
@@ -53,7 +54,7 @@ namespace Slipstream.Backend
         {
             PluginManager.ForAllPluginsExecute(
                 (a) => EventBus.PublishEvent(
-                    EventFactory.CreateInternalPluginState(a.Id, a.Name, a.DisplayName, a.Enabled ? "Enabled" : "Disabled")
+                    EventFactory.CreateInternalPluginState(a.Id, a.Name, a.DisplayName, a.Enabled ? PluginStatusEnum.Enabled : PluginStatusEnum.Disabled)
             ));    
         }
 

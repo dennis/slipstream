@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using static Slipstream.Shared.IEventFactory;
 
 #nullable enable
 
@@ -45,14 +46,23 @@ namespace Slipstream.Backend.Plugins
 
         private readonly IDictionary<long, CarState> CarsTracked = new Dictionary<long, CarState>();
 
-        private readonly Dictionary<iRacingSDK.SessionState, string> SessionStateMapping = new Dictionary<iRacingSDK.SessionState, string>() {
-            { iRacingSDK.SessionState.Checkered, "Checkered" },
-            { iRacingSDK.SessionState.CoolDown, "CoolDown" },
-            { iRacingSDK.SessionState.GetInCar, "GetInCar" },
-            { iRacingSDK.SessionState.Invalid, "Invalid" },
-            { iRacingSDK.SessionState.ParadeLaps, "ParadeLaps" },
-            { iRacingSDK.SessionState.Racing, "Racing" },
-            { iRacingSDK.SessionState.Warmup, "Warmup" },
+        private static readonly Dictionary<iRacingSDK.SessionState, IRacingSessionStateEnum> SessionStateMapping = new Dictionary<iRacingSDK.SessionState, IRacingSessionStateEnum>() {
+            { iRacingSDK.SessionState.Checkered, IRacingSessionStateEnum.Checkered },
+            { iRacingSDK.SessionState.CoolDown, IRacingSessionStateEnum.CoolDown },
+            { iRacingSDK.SessionState.GetInCar, IRacingSessionStateEnum.GetInCar },
+            { iRacingSDK.SessionState.Invalid, IRacingSessionStateEnum.Invalid },
+            { iRacingSDK.SessionState.ParadeLaps, IRacingSessionStateEnum.ParadeLaps },
+            { iRacingSDK.SessionState.Racing, IRacingSessionStateEnum.Racing },
+            { iRacingSDK.SessionState.Warmup, IRacingSessionStateEnum.Warmup },
+        };
+        private static readonly Dictionary<string, IRacingSessionTypeEnum> IRacingSessionTypes = new Dictionary<string, IRacingSessionTypeEnum>()
+        {
+            { "Practice", IRacingSessionTypeEnum.Practice },
+            { "Open Qualify", IRacingSessionTypeEnum.OpenQualify },
+            { "Lone Qualify", IRacingSessionTypeEnum.LoneQualify },
+            { "Offline Testing", IRacingSessionTypeEnum.OfflineTesting },
+            { "Race", IRacingSessionTypeEnum.Race },
+            { "Warmup", IRacingSessionTypeEnum.Warmup },
         };
 
         private IRacingCurrentSession? LastSessionInfo;
@@ -388,7 +398,7 @@ namespace Slipstream.Backend.Plugins
             var sessionData = data.SessionData.SessionInfo.Sessions[data.Telemetry.SessionNum];
             var sessionInfo = EventFactory.CreateIRacingCurrentSession
             (
-                sessionType: sessionData.SessionType,
+                sessionType: IRacingSessionTypes[sessionData.SessionType],
                 timeLimited: sessionData.IsLimitedTime,
                 lapsLimited: sessionData.IsLimitedSessionLaps,
                 totalSessionLaps: sessionData._SessionLaps,

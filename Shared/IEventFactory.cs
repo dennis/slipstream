@@ -12,6 +12,21 @@ namespace Slipstream.Shared
 {
     public interface IEventFactory
     {
+        public enum PluginStatusEnum
+        {
+            Registered, Unregistered, Enabled, Disabled
+        }
+
+        public enum IRacingSessionTypeEnum
+        {
+            Practice, OpenQualify, LoneQualify, OfflineTesting, Race, Warmup
+        }
+
+        public enum IRacingSessionStateEnum
+        {
+            Checkered, CoolDown, GetInCar, Invalid, ParadeLaps, Racing, Warmup
+        }
+
         AudioCommandPlay CreateAudioCommandPlay(string filename, float? volume);
         AudioCommandSay CreateAudioCommandSay(string message, float? volume);
 
@@ -28,7 +43,7 @@ namespace Slipstream.Shared
         InternalCommandPluginStates CreateInternalCommandPluginStates();
         InternalCommandPluginUnregister CreateInternalCommandPluginUnregister(string pluginId);
         InternalInitialized CreateInternalInitialized();
-        InternalPluginState CreateInternalPluginState(string pluginId, string pluginName, string displayName, string pluginStatus);
+        InternalPluginState CreateInternalPluginState(string pluginId, string pluginName, string displayName, PluginStatusEnum pluginStatus);
 
         IRacingCarCompletedLap CreateIRacingCarCompletedLap(double sessionTime, long carIdx, double time, int lapsCompleted, float? fuelDiff, bool localUser);
         IRacingCarInfo CreateIRacingCarInfo(
@@ -46,7 +61,7 @@ namespace Slipstream.Shared
             long spectator
         );
         IRacingConnected CreateIRacingConnected();
-        IRacingCurrentSession CreateIRacingCurrentSession(string sessionType, bool timeLimited, bool lapsLimited, int totalSessionLaps, double totalSessionTime);
+        IRacingCurrentSession CreateIRacingCurrentSession(IRacingSessionTypeEnum sessionType, bool timeLimited, bool lapsLimited, int totalSessionLaps, double totalSessionTime);
         IRacingDisconnected CreateIRacingDisconnected();
         IRacingPitEnter CreateIRacingPitEnter(double sessionTime, long carIdx, bool localUser);
         IRacingPitExit CreateIRacingPitExit(double sessionTime, long carIdx, bool localUser, double? duration);
@@ -111,7 +126,7 @@ namespace Slipstream.Shared
             bool yellowWaving
         );
 
-        IRacingSessionState CreateIRacingSessionState(double sessionTime, string state);
+        IRacingSessionState CreateIRacingSessionState(double sessionTime, IRacingSessionStateEnum state);
         IRacingTrackInfo CreateIRacingTrackInfo(
             long trackId,
             string trackLength,

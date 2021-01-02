@@ -3,6 +3,7 @@
 using Slipstream.Shared;
 using System;
 using System.Collections.Generic;
+using static Slipstream.Shared.IEventFactory;
 
 namespace Slipstream.Backend
 {
@@ -36,10 +37,10 @@ namespace Slipstream.Backend
         private void UnregisterPlugin(IPlugin p)
         {
             PluginWorkers[p.WorkerName].RemovePlugin(p);
-            EmitPluginStateChanged(p, "Unregistered");
+            EmitPluginStateChanged(p, PluginStatusEnum.Unregistered);
         }
 
-        private void EmitPluginStateChanged(IPlugin plugin, string pluginStatus)
+        private void EmitPluginStateChanged(IPlugin plugin, PluginStatusEnum pluginStatus)
         {
             EmitEvent(EventFactory.CreateInternalPluginState(plugin.Id, plugin.Name, plugin.DisplayName, pluginStatus));
         }
@@ -65,7 +66,7 @@ namespace Slipstream.Backend
 
                 Plugins.Add(plugin.Id, plugin);
 
-                EmitPluginStateChanged(plugin, "Registered");
+                EmitPluginStateChanged(plugin, PluginStatusEnum.Registered);
             }
         }
 

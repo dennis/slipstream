@@ -5,6 +5,8 @@ using Slipstream.Shared.Events.IRacing;
 using Slipstream.Shared.Events.Setting;
 using Slipstream.Shared.Events.Twitch;
 using Slipstream.Shared.Events.UI;
+using System;
+using static Slipstream.Shared.IEventFactory;
 
 #nullable enable
 
@@ -77,9 +79,9 @@ namespace Slipstream.Shared
             return new InternalInitialized();
         }
 
-        public InternalPluginState CreateInternalPluginState(string pluginId, string pluginName, string displayName, string pluginStatus)
+        public InternalPluginState CreateInternalPluginState(string pluginId, string pluginName, string displayName, PluginStatusEnum pluginStatus)
         {
-            return new InternalPluginState { Id = pluginId, PluginName = pluginName, DisplayName = displayName, PluginStatus = pluginStatus };
+            return new InternalPluginState { Id = pluginId, PluginName = pluginName, DisplayName = displayName, PluginStatus = pluginStatus.ToString() };
         }
 
         public IRacingCarCompletedLap CreateIRacingCarCompletedLap(double sessionTime, long carIdx, double time, int lapsCompleted, float? fuelDiff, bool localUser)
@@ -132,11 +134,22 @@ namespace Slipstream.Shared
             return new IRacingConnected();
         }
 
-        public IRacingCurrentSession CreateIRacingCurrentSession(string sessionType, bool timeLimited, bool lapsLimited, int totalSessionLaps, double totalSessionTime)
+        public IRacingCurrentSession CreateIRacingCurrentSession(IRacingSessionTypeEnum sessionType, bool timeLimited, bool lapsLimited, int totalSessionLaps, double totalSessionTime)
         {
+            string sessionTypeStr = sessionType switch
+            {
+                IRacingSessionTypeEnum.Practice => "Practice",
+                IRacingSessionTypeEnum.OpenQualify => "Open Qualify",
+                IRacingSessionTypeEnum.LoneQualify => "Lone Qualify",
+                IRacingSessionTypeEnum.OfflineTesting => "Offline Testing",
+                IRacingSessionTypeEnum.Race => "Race",
+                IRacingSessionTypeEnum.Warmup => "Warmup",
+                _ => throw new Exception($"Unexpected IRacingSessionTypeEnum '{sessionType}"),
+            };
+
             return new IRacingCurrentSession
             {
-                SessionType = sessionType,
+                SessionType = sessionTypeStr,
                 TimeLimited = timeLimited,
                 LapsLimited = lapsLimited,
                 TotalSessionLaps = totalSessionLaps,
@@ -304,12 +317,12 @@ namespace Slipstream.Shared
             };
         }
 
-        public IRacingSessionState CreateIRacingSessionState(double sessionTime, string state)
+        public IRacingSessionState CreateIRacingSessionState(double sessionTime, IRacingSessionStateEnum state)
         {
             return new IRacingSessionState
             {
                 SessionTime = sessionTime,
-                State = state,
+                State = state.ToString(),
             };
         }
 

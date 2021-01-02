@@ -159,5 +159,8 @@ namespace Slipstream.Shared
         TwitchReceivedCommand CreateTwitchReceivedCommand(string from, string message, bool moderator, bool subscriber, bool vip, bool broadcaster);
 
         UICommandWriteToConsole CreateUICommandWriteToConsole(string message);
+        UICommandCreateButton CreateUICommandCreateButton(string text);
+        UICommandDeleteButton CreateUICommandDeleteButton(string text);
+        UIButtonTriggered CreateUIButtonTriggered(string text);
     }
 }

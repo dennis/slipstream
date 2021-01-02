@@ -453,5 +453,29 @@ namespace Slipstream.Shared
                 Message = message
             };
         }
+
+        public UICommandCreateButton CreateUICommandCreateButton(string text)
+        {
+            return new UICommandCreateButton
+            {
+                Text = text,
+            };
+        }
+
+        public UICommandDeleteButton CreateUICommandDeleteButton(string text)
+        {
+            return new UICommandDeleteButton
+            {
+                Text = text,
+            };
+        }
+
+        public UIButtonTriggered CreateUIButtonTriggered(string text)
+        {
+            return new UIButtonTriggered
+            {
+                Text = text
+            };
+        }
     }
 }

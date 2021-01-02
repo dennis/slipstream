@@ -19,6 +19,7 @@
    - PluginState to InternalPluginState
    - CommandTwitchSendMessage to TwitchCommandSendMessage
    - CommandWriteToConsole to UICommandWriteToConsole
+ - Buttons: Make simple buttons in UI using Lua (create_button("text")) and remove them again (delete_button("text"))
 
 ## [0.2.0](https://github.com/dennis/slipstream/releases/tag/v0.2.0) (2020-12-30)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.1.0...v0.2.0)

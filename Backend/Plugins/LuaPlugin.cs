@@ -66,6 +66,8 @@ namespace Slipstream.Backend.Plugins
                 Lua.RegisterFunction("set_temp_state", Api, typeof(LuaApi).GetMethod("SetTempState", new[] { typeof(string), typeof(string), typeof(int) }));
                 Lua.RegisterFunction("get_state", Api, typeof(LuaApi).GetMethod("GetState", new[] { typeof(string) }));
                 Lua.RegisterFunction("event_to_json", Api, typeof(LuaApi).GetMethod("EventToJson", new[] { typeof(IEvent) }));
+                Lua.RegisterFunction("create_button", Api, typeof(LuaApi).GetMethod("CreateButton", new[] { typeof(string) }));
+                Lua.RegisterFunction("delete_button", Api, typeof(LuaApi).GetMethod("DeleteButton", new[] { typeof(string) }));
 
                 var ScriptPath = Path.GetDirectoryName(FilePath).Replace("\\", "\\\\");
                 Lua.DoString($"package.path = \"{ScriptPath}\\\\?.lua;\" .. package.path;");
@@ -193,6 +195,16 @@ namespace Slipstream.Backend.Plugins
             public string EventToJson(IEvent @event)
             {
                 return EventSerdeService.Serialize(@event);
+            }
+
+            public void CreateButton(string text)
+            {
+                EventBus.PublishEvent(EventFactory.CreateUICommandCreateButton(text));
+            }
+
+            public void DeleteButton(string text)
+            {
+                EventBus.PublishEvent(EventFactory.CreateUICommandDeleteButton(text));
             }
 
             private void HandleDelayedExecution(IDictionary<string, DelayedExecution> functions)

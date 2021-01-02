@@ -30,42 +30,31 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.LogAreaTextBox = new System.Windows.Forms.TextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.FileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenAudioDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenScriptsDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ButtonFlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.LogAreaTextBox = new System.Windows.Forms.TextBox();
             this.LogMessageUpdateTimer = new System.Windows.Forms.Timer(this.components);
-            this.SettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.LogAreaTextBox);
             this.panel1.Controls.Add(this.menuStrip1);
+            this.panel1.Controls.Add(this.ButtonFlowLayoutPanel);
+            this.panel1.Controls.Add(this.LogAreaTextBox);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(800, 450);
             this.panel1.TabIndex = 0;
-            // 
-            // LogAreaTextBox
-            // 
-            this.LogAreaTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.LogAreaTextBox.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LogAreaTextBox.Location = new System.Drawing.Point(0, 24);
-            this.LogAreaTextBox.Multiline = true;
-            this.LogAreaTextBox.Name = "LogAreaTextBox";
-            this.LogAreaTextBox.ReadOnly = true;
-            this.LogAreaTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.LogAreaTextBox.Size = new System.Drawing.Size(800, 426);
-            this.LogAreaTextBox.TabIndex = 0;
-            this.LogAreaTextBox.WordWrap = false;
             // 
             // menuStrip1
             // 
@@ -88,11 +77,18 @@
             this.FileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.FileToolStripMenuItem.Text = "&File";
             // 
+            // SettingsToolStripMenuItem
+            // 
+            this.SettingsToolStripMenuItem.Name = "SettingsToolStripMenuItem";
+            this.SettingsToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.SettingsToolStripMenuItem.Text = "Settings";
+            this.SettingsToolStripMenuItem.Click += new System.EventHandler(this.SettingsToolStripMenuItem_Click);
+            // 
             // ExitToolStripMenuItem
             // 
             this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
             this.ExitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
             this.ExitToolStripMenuItem.Text = "Exit";
             this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
@@ -125,18 +121,37 @@
             this.OpenScriptsDirectoryToolStripMenuItem.Text = "Open Scripts Directory";
             this.OpenScriptsDirectoryToolStripMenuItem.Click += new System.EventHandler(this.OpenScriptsDirectoryToolStripMenuItem_Click);
             // 
+            // ButtonFlowLayoutPanel
+            // 
+            this.ButtonFlowLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ButtonFlowLayoutPanel.AutoScroll = true;
+            this.ButtonFlowLayoutPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.ButtonFlowLayoutPanel.Location = new System.Drawing.Point(3, 418);
+            this.ButtonFlowLayoutPanel.Name = "ButtonFlowLayoutPanel";
+            this.ButtonFlowLayoutPanel.Size = new System.Drawing.Size(794, 29);
+            this.ButtonFlowLayoutPanel.TabIndex = 3;
+            // 
+            // LogAreaTextBox
+            // 
+            this.LogAreaTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.LogAreaTextBox.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LogAreaTextBox.Location = new System.Drawing.Point(0, 27);
+            this.LogAreaTextBox.Multiline = true;
+            this.LogAreaTextBox.Name = "LogAreaTextBox";
+            this.LogAreaTextBox.ReadOnly = true;
+            this.LogAreaTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.LogAreaTextBox.Size = new System.Drawing.Size(797, 385);
+            this.LogAreaTextBox.TabIndex = 2;
+            this.LogAreaTextBox.WordWrap = false;
+            // 
             // LogMessageUpdateTimer
             // 
             this.LogMessageUpdateTimer.Enabled = true;
             this.LogMessageUpdateTimer.Interval = 250;
             this.LogMessageUpdateTimer.Tick += new System.EventHandler(this.LogMessageUpdate_Tick);
-            // 
-            // SettingsToolStripMenuItem
-            // 
-            this.SettingsToolStripMenuItem.Name = "SettingsToolStripMenuItem";
-            this.SettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.SettingsToolStripMenuItem.Text = "Settings";
-            this.SettingsToolStripMenuItem.Click += new System.EventHandler(this.SettingsToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -158,7 +173,6 @@
         #endregion
 
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.TextBox LogAreaTextBox;
         private System.Windows.Forms.Timer LogMessageUpdateTimer;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem FileToolStripMenuItem;
@@ -168,6 +182,8 @@
         private System.Windows.Forms.ToolStripMenuItem OpenScriptsDirectoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem OpenAudioDirectoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem SettingsToolStripMenuItem;
+        private System.Windows.Forms.FlowLayoutPanel ButtonFlowLayoutPanel;
+        private System.Windows.Forms.TextBox LogAreaTextBox;
     }
 }
 

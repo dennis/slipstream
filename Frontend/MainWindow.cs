@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using Slipstream.Shared;
+using Slipstream.Shared.Events.UI;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace Slipstream.Frontend
         private IEventBusSubscription? EventBusSubscription;
         private readonly BlockingCollection<string> PendingMessages = new BlockingCollection<string>();
         private readonly IDictionary<string, ToolStripMenuItem> MenuPluginItems = new Dictionary<string, ToolStripMenuItem>();
+        private readonly IDictionary<string, Button> LuaButtons = new Dictionary<string, Button>();
         private readonly ApplicationConfiguration ApplicationConfiguration;
         private readonly string CleanTitle;
 
@@ -84,10 +86,9 @@ namespace Slipstream.Frontend
             Debug.Assert(EventBusSubscription != null);
 
             EventHandler.OnInternalPluginState += (s, e) => EventHandler_OnInternalPluginState(e.Event);
-            EventHandler.OnUICommandWriteToConsole += (s, e) =>
-            {
-                PendingMessages.Add($"{DateTime.Now:s} {e.Event.Message}");
-            };
+            EventHandler.OnUICommandWriteToConsole += (s, e) => PendingMessages.Add($"{DateTime.Now:s} {e.Event.Message}");
+            EventHandler.OnUICommandCreateButton += (s, e) => EventHandler_OnUICommandCreateButton(e.Event);
+            EventHandler.OnUICommandDeleteButton += (s, e) => EventHandler_OnUICommandDeleteButton(e.Event);
 
             // Request full state of all known plugins, so we get any that might be started before "us"
             EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginStates());
@@ -96,6 +97,43 @@ namespace Slipstream.Frontend
             {
                 EventHandler.HandleEvent(EventBusSubscription?.NextEvent());
             }
+        }
+
+        private void EventHandler_OnUICommandCreateButton(UICommandCreateButton @event)
+        {
+            ExecuteSecure(() =>
+            {
+                if (LuaButtons.ContainsKey(@event.Text))
+                    return;
+
+                var b = new Button
+                {
+                    Text = @event.Text
+                };
+
+                b.Click += (s, e) =>
+                {
+                    var b = s as Button;
+                    if(b != null)
+                        EventBus.PublishEvent(EventFactory.CreateUIButtonTriggered(b.Text));
+                };
+
+                LuaButtons.Add(@event.Text, b);
+
+                ButtonFlowLayoutPanel.Controls.Add(b);
+            });
+        }
+
+        private void EventHandler_OnUICommandDeleteButton(UICommandDeleteButton @event)
+        {
+            ExecuteSecure(() =>
+            {
+                if (!LuaButtons.ContainsKey(@event.Text))
+                    return;
+
+                ButtonFlowLayoutPanel.Controls.Remove(LuaButtons[@event.Text]);
+                LuaButtons.Remove(@event.Text);
+            });
         }
 
         private void EventHandler_OnInternalPluginState(Shared.Events.Internal.InternalPluginState e)

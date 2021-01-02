@@ -65,6 +65,15 @@ namespace Slipstream.Shared
         #region Events: UI
         public delegate void OnUICommandWriteToConsoleHandler(EventHandler source, EventHandlerArgs<Shared.Events.UI.UICommandWriteToConsole> e);
         public event OnUICommandWriteToConsoleHandler? OnUICommandWriteToConsole;
+
+        public delegate void OnUICommandCreateButtonHandler(EventHandler source, EventHandlerArgs<Shared.Events.UI.UICommandCreateButton> e);
+        public event OnUICommandCreateButtonHandler? OnUICommandCreateButton;
+
+        public delegate void OnUICommandDeleteButtonHandler(EventHandler source, EventHandlerArgs<Shared.Events.UI.UICommandDeleteButton> e);
+        public event OnUICommandDeleteButtonHandler? OnUICommandDeleteButton;
+
+        public delegate void OnUIButtonTriggeredHandler(EventHandler source, EventHandlerArgs<Shared.Events.UI.UIButtonTriggered> e);
+        public event OnUIButtonTriggeredHandler? OnUIButtonTriggered;
         #endregion
 
         #region Events: Audio
@@ -255,6 +264,27 @@ namespace Slipstream.Shared
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnUICommandWriteToConsole.Invoke(this, new EventHandlerArgs<Shared.Events.UI.UICommandWriteToConsole>(tev));
+                    break;
+
+                case Shared.Events.UI.UICommandCreateButton tev:
+                    if (OnUICommandCreateButton == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnUICommandCreateButton.Invoke(this, new EventHandlerArgs<Shared.Events.UI.UICommandCreateButton>(tev));
+                    break;
+
+                case Shared.Events.UI.UICommandDeleteButton tev:
+                    if (OnUICommandDeleteButton == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnUICommandDeleteButton.Invoke(this, new EventHandlerArgs<Shared.Events.UI.UICommandDeleteButton>(tev));
+                    break;
+
+                case Shared.Events.UI.UIButtonTriggered tev:
+                    if (OnUIButtonTriggered == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnUIButtonTriggered.Invoke(this, new EventHandlerArgs<Shared.Events.UI.UIButtonTriggered>(tev));
                     break;
 
                 // Setting

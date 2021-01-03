@@ -1,10 +1,34 @@
 ﻿namespace Slipstream.Shared
 {
-    interface IApplicationConfiguration
+    public interface IApplicationConfiguration : ITxrxConfiguration, IAudioConfiguration, IFileMonitorConfiguration, ITwitchConfiguration
     {
-        public Events.Setting.TwitchSettings GetTwitchSettingsEvent();
-        public Events.Setting.FileMonitorSettings GetFileMonitorSettingsEvent();
-        public Events.Setting.AudioSettings GetAudioSettingsEvent();
-        public Events.Setting.TxrxSettings GetTxrxSettingsEvent();
+    }
+
+    public interface ITxrxConfiguration
+    {
+        string TxrxIpPort { get; }
+    }
+
+    public interface IAudioConfiguration
+    {
+        string AudioPath { get; }
+    }
+
+    public interface IFileMonitorConfiguration
+    {
+        string[] FileMonitorPaths { get; }
+    }
+
+    public interface ITwitchConfiguration
+    {
+        string TwitchUsername { get; }
+        string TwitchChannel { get; }
+        string TwitchToken { get; }
+        bool TwitchLog { get; }
+    }
+
+    public interface ILuaConfiguration
+    {
+        string FilePath { get; }
     }
 }

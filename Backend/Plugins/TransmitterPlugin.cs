@@ -1,7 +1,5 @@
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
-using Slipstream.Shared.Events.Setting;
-using Slipstream.Shared.Events.UI;
 using System;
 using System.Diagnostics;
 using System.Net.Sockets;
@@ -16,20 +14,36 @@ namespace Slipstream.Backend.Plugins
     {
         private readonly IEventBus EventBus;
         private readonly IEventFactory EventFactory;
-        private string Ip = "";
-        private Int32 Port = 42424;
+        private readonly string Ip = "";
+        private readonly Int32 Port = 42424;
         private TcpClient? Client = null;
         private readonly ITxrxService TxrxService;
 
-        public TransmitterPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, TxrxSettings settings) : base(id, "TransmitterPlugin", "TransmitterPlugin", "TransmitterPlugin")
+        public TransmitterPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, ITxrxConfiguration txrxConfiguration) : base(id, "TransmitterPlugin", "TransmitterPlugin", "TransmitterPlugin")
         {
             EventBus = eventBus;
             EventFactory = eventFactory;
             TxrxService = txrxService;
 
-            OnSetting(settings);
+            var input = txrxConfiguration.TxrxIpPort.Split(':');
 
-            EventHandler.OnSettingTxrxSettings += (s, e) => OnSetting(e.Event);
+            if (input.Length == 2)
+            {
+                Ip = input[0];
+                if (!Int32.TryParse(input[1], out Port))
+                {
+                    EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Invalid port in TxrxIpPort provided: '{txrxConfiguration.TxrxIpPort}'"));
+                }
+                else
+                {
+                    Reset();
+                }
+            }
+            else
+            {
+                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Invalid TxrxIpPort provided: '{txrxConfiguration.TxrxIpPort}'"));
+            }
+
             EventHandler.OnDefault += (s, e) => OnEvent(e.Event);
         }
 
@@ -57,28 +71,6 @@ namespace Slipstream.Backend.Plugins
             {
                 EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Cant send {@event.EventType}: {e.Message}"));
                 Reset();
-            }
-        }
-
-        private void OnSetting(TxrxSettings e)
-        {
-            var input = e.TxrxIpPort.Split(':');
-
-            if (input.Length == 2)
-            {
-                Ip = input[0];
-                if (!Int32.TryParse(input[1], out Port))
-                {
-                    EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Invalid port in TxrxIpPort provided: '{e.TxrxIpPort}'"));
-                }
-                else
-                {
-                    Reset();
-                }
-            }
-            else
-            {
-                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Invalid TxrxIpPort provided: '{e.TxrxIpPort}'"));
             }
         }
 

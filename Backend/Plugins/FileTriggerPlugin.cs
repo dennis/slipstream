@@ -1,4 +1,5 @@
-﻿using Slipstream.Shared;
+﻿using Slipstream.Backend.Services;
+using Slipstream.Shared;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -12,7 +13,9 @@ namespace Slipstream.Backend.Plugins
     {
         private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
-        private readonly IDictionary<string, string> Scripts = new Dictionary<string, string>();
+        private readonly IStateService StateService;
+        private readonly IPluginManager PluginManager;
+        private readonly IDictionary<string, IPlugin> Scripts = new Dictionary<string, IPlugin>();
 
         // At bootup we will receive zero or more FileCreated events ending with a ScanCompleted. 
         // If we count the (relevant) files found that launches LuaPlugin, we can keep an eye on PluginState
@@ -20,10 +23,12 @@ namespace Slipstream.Backend.Plugins
         private bool BootUp = true;
         private readonly List<string> WaitingForLuaScripts = new List<string>();
 
-        public FileTriggerPlugin(string id, IEventFactory eventFactory, IEventBus eventBus) : base(id, "FileTriggerPlugin", "FileTriggerPlugin", "Core")
+        public FileTriggerPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IStateService stateService, IPluginManager pluginManager) : base(id, "FileTriggerPlugin", "FileTriggerPlugin", "Core")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
+            StateService = stateService;
+            PluginManager = pluginManager;
 
             EventHandler.OnFileMonitorFileCreated += EventHandler_OnFileMonitorFileCreated;
             EventHandler.OnFileMonitorFileDeleted += EventHandler_OnFileMonitorFileDeleted;
@@ -44,7 +49,6 @@ namespace Slipstream.Backend.Plugins
                     // We're done
                     EventHandler.OnInternalPluginState -= EventHandler_OnInternalPluginState;
 
-                    EventBus.PublishEvent(new Shared.Events.Internal.InternalInitialized());
                     EventBus.PublishEvent(EventFactory.CreateInternalInitialized());
                 }
             }
@@ -57,6 +61,11 @@ namespace Slipstream.Backend.Plugins
             BootUp = false;
         }
 
+        class LuaConfiguration : ILuaConfiguration
+        {
+            public string FilePath { get; set; } = "";
+        }
+
         private void NewFile(string filePath)
         {
             if (Scripts.ContainsKey(filePath))
@@ -64,7 +73,6 @@ namespace Slipstream.Backend.Plugins
                 return;
             }
 
-            string pluginName = "LuaPlugin";
             string pluginId = Path.GetFileName(filePath);
 
             if (BootUp)
@@ -72,17 +80,17 @@ namespace Slipstream.Backend.Plugins
                 WaitingForLuaScripts.Add(pluginId);
             }
 
-            EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginRegister(pluginId, pluginName, EventFactory.CreateLuaSettings(pluginId, filePath)));
-            EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginEnable(pluginId));
+            // Use PluginManager director
+            var plugin = new LuaPlugin(pluginId, EventFactory, EventBus, StateService, new LuaConfiguration { FilePath = filePath });
+            PluginManager.RegisterPlugin(plugin);
+            PluginManager.EnablePlugin(plugin);
 
-            Scripts.Add(filePath, pluginId);
+            Scripts.Add(filePath, plugin);
         }
 
         private void DeletedFile(string filePath)
         {
-            var ev = EventFactory.CreateInternalCommandPluginUnregister(Scripts[filePath]);
-
-            EventBus.PublishEvent(ev);
+            PluginManager.UnregisterPlugin(Scripts[filePath]);
 
             Scripts.Remove(filePath);
         }

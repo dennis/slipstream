@@ -1,12 +1,9 @@
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
-using Slipstream.Shared.Events.Setting;
-using Slipstream.Shared.Events.UI;
 using System;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
-using EventHandler = Slipstream.Shared.EventHandler;
 
 #nullable enable
 
@@ -16,23 +13,34 @@ namespace Slipstream.Backend.Plugins
     {
         private readonly IEventBus EventBus;
         private readonly IEventFactory EventFactory;
-        private string Ip = "";
-        private Int32 Port = 42424;
+        private readonly string Ip = "";
+        private readonly Int32 Port = 42424;
         private TcpListener? Listener;
         private readonly ITxrxService TxrxService;
         private Socket? Client;
         private const int READ_BUFFER_SIZE = 1024 * 16;
         readonly byte[] ReadBuffer = new byte[READ_BUFFER_SIZE];
 
-        public ReceiverPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, TxrxSettings settings) : base(id, "ReceiverPlugin", "ReceiverPlugin", "ReceiverPlugin")
+        public ReceiverPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, ITxrxConfiguration txrxConfiguration) : base(id, "ReceiverPlugin", "ReceiverPlugin", "ReceiverPlugin")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
             TxrxService = txrxService;
 
-            OnSetting(settings);
+            var input = txrxConfiguration.TxrxIpPort.Split(':');
 
-            EventHandler.OnSettingTxrxSettings += (s, e) => OnSetting(e.Event);
+            if (input.Length == 2)
+            {
+                Ip = input[0];
+                if (!Int32.TryParse(input[1], out Port))
+                {
+                    EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin: Invalid port in TxrxHost provided: '{txrxConfiguration.TxrxIpPort}'"));
+                }
+            }
+            else
+            {
+                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin: Invalid TxrxHost provided: '{txrxConfiguration.TxrxIpPort}'"));
+            }
         }
 
         public override void OnEnable()
@@ -45,24 +53,6 @@ namespace Slipstream.Backend.Plugins
         {
             Client?.Dispose();
             Client = null;
-        }
-
-        private void OnSetting(TxrxSettings e)
-        {
-            var input = e.TxrxIpPort.Split(':');
-
-            if (input.Length == 2)
-            {
-                Ip = input[0];
-                if (!Int32.TryParse(input[1], out Port))
-                {
-                    EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin: Invalid port in TxrxHost provided: '{e.TxrxIpPort}'"));
-                }
-            }
-            else
-            {
-                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin: Invalid TxrxHost provided: '{e.TxrxIpPort}'"));
-            }
         }
 
         private void SetupListener()

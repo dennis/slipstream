@@ -1,7 +1,6 @@
 ﻿using Slipstream.Backend.Plugins;
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
-using Slipstream.Shared.Events.Setting;
 using System;
 
 #nullable enable
@@ -14,92 +13,32 @@ namespace Slipstream.Backend
         private readonly IEventBus EventBus;
         private readonly IStateService StateService;
         private readonly ITxrxService TxrxService;
+        private readonly IApplicationConfiguration ApplicationConfiguration;
+        private readonly IPluginManager PluginManager;
 
-        public PluginFactory(IEventFactory eventFactory, IEventBus eventBus, IStateService stateService, ITxrxService txrxService)
+        public PluginFactory(IEventFactory eventFactory, IEventBus eventBus, IStateService stateService, ITxrxService txrxService, IApplicationConfiguration applicationConfiguration, IPluginManager pluginManager)
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
             StateService = stateService;
             TxrxService = txrxService;
+            ApplicationConfiguration = applicationConfiguration;
+            PluginManager = pluginManager;
         }
 
-        public IPlugin CreatePlugin(string id, string name, IEvent? settings)
+        public IPlugin CreatePlugin(string id, string name)
         {
-            switch (name)
+            return name switch
             {
-                case "FileMonitorPlugin":
-                    {
-                        if (!(settings is FileMonitorSettings typedSettings))
-                        {
-                            throw new Exception("Unexpected settings for FileMonitorPlugin");
-                        }
-                        else
-                        {
-                            return new FileMonitorPlugin(id, EventFactory, EventBus, typedSettings);
-                        }
-                    }
-                case "FileTriggerPlugin":
-                    return new FileTriggerPlugin(id, EventFactory, EventBus);
-                case "LuaPlugin":
-                    {
-                        if (!(settings is LuaSettings typedSettings))
-                        {
-                            throw new Exception("Unexpected settings for LuaPlugin");
-                        }
-                        else
-                        {
-                            return new LuaPlugin(id, EventFactory, EventBus, StateService, typedSettings);
-                        }
-                    }
-                case "AudioPlugin":
-                    {
-                        if (!(settings is AudioSettings typedSettings))
-                        {
-                            throw new Exception("Unexpected settings for AudioPlugin");
-                        }
-                        else
-                        {
-                            return new AudioPlugin(id, EventFactory, EventBus, typedSettings);
-                        }
-                    }
-                case "IRacingPlugin":
-                    return new IRacingPlugin(id, EventFactory, EventBus);
-                case "TwitchPlugin":
-                    {
-                        if (!(settings is TwitchSettings typedSettings))
-                        {
-                            throw new Exception("Unexpected settings for TwitchPlugin");
-                        }
-                        else
-                        {
-                            return new TwitchPlugin(id, EventFactory, EventBus, typedSettings);
-                        }
-                    }
-                case "TransmitterPlugin":
-                    {
-                        if (!(settings is TxrxSettings typedSettings))
-                        {
-                            throw new Exception("Unexpected settings for TransmitterPlugin");
-                        }
-                        else
-                        {
-                            return new TransmitterPlugin(id, EventFactory, EventBus, TxrxService, typedSettings);
-                        }
-                    }
-                case "ReceiverPlugin":
-                    {
-                        if (!(settings is TxrxSettings typedSettings))
-                        {
-                            throw new Exception("Unexpected settings for ReceiverPlugin");
-                        }
-                        else
-                        {
-                            return new ReceiverPlugin(id, EventFactory, EventBus, TxrxService, typedSettings);
-                        }
-                    }
-                default:
-                    throw new Exception($"Unknown plugin '{name}'");
-            }
+                "FileMonitorPlugin" => new FileMonitorPlugin(id, EventFactory, EventBus, ApplicationConfiguration),
+                "FileTriggerPlugin" => new FileTriggerPlugin(id, EventFactory, EventBus, StateService, PluginManager),
+                "AudioPlugin" => new AudioPlugin(id, EventFactory, EventBus, ApplicationConfiguration),
+                "IRacingPlugin" => new IRacingPlugin(id, EventFactory, EventBus),
+                "TwitchPlugin" => new TwitchPlugin(id, EventFactory, EventBus, ApplicationConfiguration),
+                "TransmitterPlugin" => new TransmitterPlugin(id, EventFactory, EventBus, TxrxService, ApplicationConfiguration),
+                "ReceiverPlugin" => new ReceiverPlugin(id, EventFactory, EventBus, TxrxService, ApplicationConfiguration),
+                _ => throw new Exception($"Unknown plugin '{name}'"),
+            };
         }
     }
 }

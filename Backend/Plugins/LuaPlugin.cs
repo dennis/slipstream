@@ -1,7 +1,6 @@
 ﻿using Slipstream.Backend.Services;
 using Slipstream.Backend.Services.LuaServiceLib;
 using Slipstream.Shared;
-using Slipstream.Shared.Events.Setting;
 using System.IO;
 using EventHandler = Slipstream.Shared.EventHandler;
 
@@ -16,35 +15,27 @@ namespace Slipstream.Backend.Plugins
         private readonly IEventBus EventBus;
         private readonly LuaService LuaService;
         private ILuaContext? LuaContext;
-        private string Prefix = "<UNKNOWN>";
-        private string? FilePath;
+        private readonly string Prefix = "<UNKNOWN>";
+        private readonly string FilePath;
 
-        public LuaPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IStateService stateService, LuaSettings settings) : base(id, "LuaPlugin", "LuaPlugin", "Lua")
+        public LuaPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IStateService stateService, ILuaConfiguration configuration) : base(id, "LuaPlugin", "LuaPlugin", "Lua")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
 
             LuaService = new LuaService(eventFactory, eventBus, stateService);
 
-            EventHandler.OnSettingLuaSettings += (s, e) => OnLuaSettings(e.Event);
-
             // Avoid that WriteToConsole is evaluated by Lua, that in turn will 
             // add more WriteToConsole events, making a endless loop
             EventHandler.OnUICommandWriteToConsole += (s, e) => { };
             EventHandler.OnDefault += (s, e) => LuaContext?.HandleEvent(e.Event);
 
-            OnLuaSettings(settings);
-        }
 
-        private void OnLuaSettings(LuaSettings @event)
-        {
-            if (Id != @event.PluginId)
-                return;
-
-            FilePath = @event.FilePath;
+            FilePath = configuration.FilePath;
             Prefix = Path.GetFileName(FilePath);
 
             StartLua();
+
         }
 
         private void StartLua()

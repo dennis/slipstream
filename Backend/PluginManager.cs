@@ -7,17 +7,28 @@ using static Slipstream.Shared.IEventFactory;
 
 namespace Slipstream.Backend
 {
-    class PluginManager
+    public interface IPluginManager : IDisposable
     {
-        private readonly IEngine Engine;
+        public void UnregisterPlugins();
+        public void UnregisterPlugin(IPlugin p);
+        public void UnregisterPlugin(string id);
+        public void RegisterPlugin(IPlugin plugin);
+        public void EnablePlugin(IPlugin p);
+        public void DisablePlugins();
+        public void DisablePlugin(IPlugin p);
+        public void FindPluginAndExecute(string pluginId, Action<IPlugin> a);
+        public void ForAllPluginsExecute(Action<IPlugin> a);
+    }
+
+    public class PluginManager : IPluginManager
+    {
         private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, IPlugin> Plugins = new Dictionary<string, IPlugin>();
         private readonly IDictionary<string, PluginWorker> PluginWorkers = new Dictionary<string, PluginWorker>();
 
-        public PluginManager(IEngine engine, IEventFactory eventFactory, IEventBus eventBus)
+        public PluginManager(IEventFactory eventFactory, IEventBus eventBus)
         {
-            Engine = engine;
             EventFactory = eventFactory;
             EventBus = eventBus;
         }
@@ -34,7 +45,7 @@ namespace Slipstream.Backend
             }
         }
 
-        private void UnregisterPlugin(IPlugin p)
+        public void UnregisterPlugin(IPlugin p)
         {
             PluginWorkers[p.WorkerName].RemovePlugin(p);
             EmitPluginStateChanged(p, PluginStatusEnum.Unregistered);
@@ -57,7 +68,7 @@ namespace Slipstream.Backend
                 }
                 else
                 {
-                    worker = new PluginWorker(plugin.WorkerName, Engine.RegisterListener(), EventFactory, EventBus);
+                    worker = new PluginWorker(plugin.WorkerName, EventBus.RegisterListener(), EventFactory, EventBus);
                     worker.Start();
                     PluginWorkers.Add(worker.Name, worker);
                 }
@@ -105,7 +116,7 @@ namespace Slipstream.Backend
             }
         }
 
-        internal void ForAllPluginsExecute(Action<IPlugin> a)
+        public void ForAllPluginsExecute(Action<IPlugin> a)
         {
             lock (Plugins)
             {
@@ -128,7 +139,7 @@ namespace Slipstream.Backend
             }
         }
 
-        internal void Dispose()
+        public void Dispose()
         {
             DisablePlugins();
             UnregisterPlugins();

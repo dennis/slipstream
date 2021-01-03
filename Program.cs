@@ -39,7 +39,7 @@ namespace Slipstream
         {
             services.AddScoped<Frontend.MainWindow>();
             services.AddScoped<Frontend.ApplicationConfiguration>();
-            services.AddScoped<Shared.IApplicationConfiguration>(x => x.GetService<Frontend.ApplicationConfiguration>());
+            services.AddScoped<Shared.IApplicationConfiguration, Frontend.ApplicationConfiguration>();
             services.AddScoped<Shared.IEventBus, Backend.EventBus>();
             services.AddScoped<Shared.IEventFactory, Shared.EventFactory>();
             services.AddScoped<Shared.IEventProducer>(x => x.GetService<Backend.EventBus>());
@@ -48,7 +48,8 @@ namespace Slipstream
             services.AddScoped<Backend.Services.IStateService>(x => new Backend.Services.StateService(x.GetService<Shared.IEventFactory>(), x.GetService<Shared.IEventBus>(), Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $@"\Slipstream\state.txt"));
             services.AddScoped<Backend.Services.ITxrxService, Backend.Services.TxrxService>();
             services.AddScoped<Backend.Services.IEventSerdeService, Backend.Services.EventSerdeService>();
-            services.AddTransient<Shared.IApplicationVersionService, Shared.ApplicationVersionService>();
+            services.AddScoped<Backend.IPluginManager, Backend.PluginManager>();
+            services.AddSingleton<Shared.IApplicationVersionService, Shared.ApplicationVersionService>();
         }
     }
 }

@@ -84,23 +84,6 @@ namespace Slipstream.Shared
         public event OnAudioCommandPlayHandler? OnAudioCommandPlay;
         #endregion
 
-        #region Events: Setting
-        public delegate void OnSettingFileMonitorSettingsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Setting.FileMonitorSettings> e);
-        public event OnSettingFileMonitorSettingsHandler? OnSettingFileMonitorSettings;
-
-        public delegate void OnSettingAudioSettingsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Setting.AudioSettings> e);
-        public event OnSettingAudioSettingsHandler? OnSettingAudioSettings;
-
-        public delegate void OnSettingTwitchSettingsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Setting.TwitchSettings> e);
-        public event OnSettingTwitchSettingsHandler? OnSettingTwitchSettings;
-
-        public delegate void OnSettingLuaSettingsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Setting.LuaSettings> e);
-        public event OnSettingLuaSettingsHandler? OnSettingLuaSettings;
-
-        public delegate void OnSettingTxrxSettingsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Setting.TxrxSettings> e);
-        public event OnSettingTxrxSettingsHandler? OnSettingTxrxSettings;
-        #endregion
-
         #region Events: IRacing
         public delegate void OnIRacingConnectedHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingConnected> e);
         public event OnIRacingConnectedHandler? OnIRacingConnected;
@@ -285,43 +268,6 @@ namespace Slipstream.Shared
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnUIButtonTriggered.Invoke(this, new EventHandlerArgs<Shared.Events.UI.UIButtonTriggered>(tev));
-                    break;
-
-                // Setting
-
-                case Shared.Events.Setting.FileMonitorSettings tev:
-                    if (OnSettingFileMonitorSettings == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnSettingFileMonitorSettings.Invoke(this, new EventHandlerArgs<Shared.Events.Setting.FileMonitorSettings>(tev));
-                    break;
-
-                case Shared.Events.Setting.AudioSettings tev:
-                    if (OnSettingAudioSettings == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnSettingAudioSettings.Invoke(this, new EventHandlerArgs<Shared.Events.Setting.AudioSettings>(tev));
-                    break;
-
-                case Shared.Events.Setting.TwitchSettings tev:
-                    if (OnSettingTwitchSettings == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnSettingTwitchSettings.Invoke(this, new EventHandlerArgs<Shared.Events.Setting.TwitchSettings>(tev));
-                    break;
-
-                case Shared.Events.Setting.LuaSettings tev:
-                    if (OnSettingLuaSettings == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnSettingLuaSettings.Invoke(this, new EventHandlerArgs<Shared.Events.Setting.LuaSettings>(tev));
-                    break;
-
-                case Shared.Events.Setting.TxrxSettings tev:
-                    if (OnSettingTxrxSettings == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnSettingTxrxSettings.Invoke(this, new EventHandlerArgs<Shared.Events.Setting.TxrxSettings>(tev));
                     break;
 
                 // IRacing

@@ -113,8 +113,7 @@ namespace Slipstream.Frontend
 
                 b.Click += (s, e) =>
                 {
-                    var b = s as Button;
-                    if(b != null)
+                    if (s is Button b)
                         EventBus.PublishEvent(EventFactory.CreateUIButtonTriggered(b.Text));
                 };
 
@@ -173,25 +172,12 @@ namespace Slipstream.Frontend
                     {
                         switch (e.Id)
                         {
-                            case "FileMonitorPlugin":
-                                EventBus.PublishEvent(ApplicationConfiguration.GetFileMonitorSettingsEvent());
-                                break;
-
-                            case "AudioPlugin":
-                                EventBus.PublishEvent(ApplicationConfiguration.GetAudioSettingsEvent());
-                                break;
-
-                            case "TwitchPlugin":
-                                var settings = Properties.Settings.Default;
-                                EventBus.PublishEvent(ApplicationConfiguration.GetTwitchSettingsEvent());
-                                break;
-
                             case "TransmitterPlugin":
-                                ExecuteSecure(() => Text += $" <<< transmitting to {ApplicationConfiguration.GetTxrxSettingsEvent().TxrxIpPort} >>>");
+                                ExecuteSecure(() => Text += $" <<< transmitting to {ApplicationConfiguration.TxrxIpPort} >>>");
                                 break;
 
                             case "ReceiverPlugin":
-                                ExecuteSecure(() => Text += $" <<< receiving from {ApplicationConfiguration.GetTxrxSettingsEvent().TxrxIpPort} >>>");
+                                ExecuteSecure(() => Text += $" <<< receiving from {ApplicationConfiguration.TxrxIpPort} >>>");
                                 break;
                         }
 
@@ -245,21 +231,17 @@ namespace Slipstream.Frontend
 
         private void OpenScriptsDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Process.Start(ApplicationConfiguration.GetScriptsPath());
+            Process.Start(ApplicationConfiguration.ScriptPath);
         }
 
         private void OpenAudioDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Process.Start(ApplicationConfiguration.GetAudioPath());
+            Process.Start(ApplicationConfiguration.AudioPath);
         }
 
         private void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _ = new SettingsForm().ShowDialog(this);
-
-            // Just spam settings to everyone that wants it
-            EventBus.PublishEvent(ApplicationConfiguration.GetTwitchSettingsEvent());
-            EventBus.PublishEvent(ApplicationConfiguration.GetTxrxSettingsEvent());
         }
     }
 }

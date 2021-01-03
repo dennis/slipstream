@@ -2,7 +2,6 @@
 using Slipstream.Shared.Events.FileMonitor;
 using Slipstream.Shared.Events.Internal;
 using Slipstream.Shared.Events.IRacing;
-using Slipstream.Shared.Events.Setting;
 using Slipstream.Shared.Events.Twitch;
 using Slipstream.Shared.Events.UI;
 
@@ -39,7 +38,6 @@ namespace Slipstream.Shared
         InternalCommandPluginEnable CreateInternalCommandPluginEnable(string pluginId);
 
         InternalCommandPluginRegister CreateInternalCommandPluginRegister(string pluginId, string pluginName);
-        InternalCommandPluginRegister CreateInternalCommandPluginRegister(string pluginId, string pluginName, IEvent? settings);
         InternalCommandPluginStates CreateInternalCommandPluginStates();
         InternalCommandPluginUnregister CreateInternalCommandPluginUnregister(string pluginId);
         InternalInitialized CreateInternalInitialized();
@@ -146,12 +144,6 @@ namespace Slipstream.Shared
             string relativeHumidity,
             string fogLevel
         );
-
-        AudioSettings CreateAudioSettings(string path);
-        FileMonitorSettings CreateFileMonitorSettings(string[] paths);
-        LuaSettings CreateLuaSettings(string pluginId, string filePath);
-        TwitchSettings CreateTwitchSettings(string twitchUsername, string twitchChannel, string twitchToken, bool twitchLog);
-        TxrxSettings CreateTxrxSettings(string txrxIpPort);
 
         TwitchCommandSendMessage CreateTwitchCommandSendMessage(string message);
         TwitchConnected CreateTwitchConnected();

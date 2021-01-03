@@ -1,6 +1,4 @@
-﻿using Slipstream.Backend.Services;
-using Slipstream.Shared;
-using Slipstream.Shared.Events;
+﻿using Slipstream.Shared;
 using Slipstream.Shared.Events.Internal;
 using System;
 using static Slipstream.Shared.IEventFactory;
@@ -13,20 +11,17 @@ namespace Slipstream.Backend
     {
         private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
-        private readonly PluginManager PluginManager;
+        private readonly IPluginManager PluginManager;
         private readonly IEventBusSubscription Subscription;
-        private readonly IApplicationConfiguration ApplicationConfiguration;
         private readonly PluginFactory PluginFactory;
         private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
 
-        public Engine(IEventFactory eventFactory, IEventBus eventBus, IApplicationConfiguration applicationConfiguration, PluginFactory pluginFactory) : base("engine")
+        public Engine(IEventFactory eventFactory, IEventBus eventBus, PluginFactory pluginFactory, IPluginManager pluginManager) : base("engine")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
-            ApplicationConfiguration = applicationConfiguration;
             PluginFactory = pluginFactory;
-
-            PluginManager = new PluginManager(this, eventFactory, eventBus);
+            PluginManager = pluginManager;
 
             Subscription = EventBus.RegisterListener();
 
@@ -37,13 +32,13 @@ namespace Slipstream.Backend
             EventHandler.OnInternalCommandPluginStates += (s, e) => OnCommandPluginStates(e.Event);
 
             // Plugins..
-            RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("FileMonitorPlugin", "FileMonitorPlugin", ApplicationConfiguration.GetFileMonitorSettingsEvent()));
+            RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("FileMonitorPlugin", "FileMonitorPlugin"));
             RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("FileTriggerPlugin", "FileTriggerPlugin"));
-            RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("AudioPlugin", "AudioPlugin", ApplicationConfiguration.GetAudioSettingsEvent()));
+            RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("AudioPlugin", "AudioPlugin"));
             RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("IRacingPlugin", "IRacingPlugin"));
-            RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("TwitchPlugin", "TwitchPlugin", ApplicationConfiguration.GetTwitchSettingsEvent()));
-            RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("TransmitterPlugin", "TransmitterPlugin", ApplicationConfiguration.GetTxrxSettingsEvent()), false);
-            RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("ReceiverPlugin", "ReceiverPlugin", ApplicationConfiguration.GetTxrxSettingsEvent()), false);
+            RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("TwitchPlugin", "TwitchPlugin"));
+            RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("TransmitterPlugin", "TransmitterPlugin"), false);
+            RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("ReceiverPlugin", "ReceiverPlugin"), false);
 
             // Tell Plugins that we're live - this will make eventbus distribute events
             EventBus.Enabled = true;
@@ -66,11 +61,6 @@ namespace Slipstream.Backend
             }
         }
 
-        public IEventBusSubscription RegisterListener()
-        {
-            return EventBus.RegisterListener();
-        }
-
         private void OnCommandPluginUnregister(InternalCommandPluginUnregister ev)
         {
             PluginManager.UnregisterPlugin(ev.Id);
@@ -84,7 +74,7 @@ namespace Slipstream.Backend
         private void OnCommandPluginRegister(Shared.Events.Internal.InternalCommandPluginRegister ev)
         {
 
-            PluginManager.RegisterPlugin(PluginFactory.CreatePlugin(ev.Id, ev.PluginName, ev.Settings));
+            PluginManager.RegisterPlugin(PluginFactory.CreatePlugin(ev.Id, ev.PluginName));
         }
 
         protected override void Main()

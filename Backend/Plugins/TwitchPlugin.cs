@@ -1,7 +1,4 @@
 using Slipstream.Shared;
-using Slipstream.Shared.Events.Setting;
-using Slipstream.Shared.Events.Twitch;
-using Slipstream.Shared.Events.UI;
 using System;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
@@ -21,19 +18,18 @@ namespace Slipstream.Backend.Plugins
         private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
 
-        private string? TwitchUsername;
-        private string? TwitchChannel;
-        private string? TwitchToken;
-        private bool TwitchLog;
+        private readonly string TwitchUsername;
+        private readonly string TwitchChannel;
+        private readonly string TwitchToken;
+        private readonly bool TwitchLog;
         private bool RequestReconnect;
         private bool AnnouncedConnected = false;
 
-        public TwitchPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, TwitchSettings settings) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin")
+        public TwitchPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, ITwitchConfiguration twitchConfiguration) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
 
-            EventHandler.OnSettingTwitchSettings += (s, e) => OnTwitchSettings(e.Event);
             EventHandler.OnTwitchCommandSendMessage += (s, e) =>
             {
                 if (Client != null && Client.JoinedChannels.Count > 0 && Enabled)
@@ -42,26 +38,12 @@ namespace Slipstream.Backend.Plugins
                 }
             };
 
-            OnTwitchSettings(settings);
-        }
-
-        private void OnTwitchSettings(TwitchSettings settings)
-        {
-            {
-                if (TwitchUsername != settings.TwitchUsername || TwitchToken != settings.TwitchToken || TwitchChannel != settings.TwitchChannel || TwitchLog != settings.TwitchLog)
-                {
-                    TwitchUsername = settings.TwitchUsername;
-                    TwitchChannel = settings.TwitchChannel;
-                    TwitchToken = settings.TwitchToken;
-                    TwitchLog = settings.TwitchLog;
-
-                    if (String.IsNullOrEmpty(TwitchChannel))
-                        TwitchChannel = TwitchUsername;
-
-                    Disconnect();
-                    Connect();
-                }
-            };
+            TwitchUsername = twitchConfiguration.TwitchUsername;
+            TwitchChannel = twitchConfiguration.TwitchChannel;
+            TwitchToken = twitchConfiguration.TwitchToken;
+            TwitchLog = twitchConfiguration.TwitchLog;
+            if (String.IsNullOrEmpty(TwitchChannel))
+                TwitchChannel = TwitchUsername;
         }
 
         public override void OnDisable()

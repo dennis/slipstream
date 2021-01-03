@@ -2,7 +2,6 @@
 using Slipstream.Shared.Events.FileMonitor;
 using Slipstream.Shared.Events.Internal;
 using Slipstream.Shared.Events.IRacing;
-using Slipstream.Shared.Events.Setting;
 using Slipstream.Shared.Events.Twitch;
 using Slipstream.Shared.Events.UI;
 using System;
@@ -56,12 +55,7 @@ namespace Slipstream.Shared
 
         public InternalCommandPluginRegister CreateInternalCommandPluginRegister(string pluginId, string pluginName)
         {
-            return CreateInternalCommandPluginRegister(pluginId, pluginName, null);
-        }
-
-        public InternalCommandPluginRegister CreateInternalCommandPluginRegister(string pluginId, string pluginName, IEvent? settings)
-        {
-            return new InternalCommandPluginRegister { Id = pluginId, PluginName = pluginName, Settings = settings };
+            return new InternalCommandPluginRegister { Id = pluginId, PluginName = pluginName };
         }
 
         public InternalCommandPluginStates CreateInternalCommandPluginStates()
@@ -368,50 +362,6 @@ namespace Slipstream.Shared
                 AirPressure = airPressure,
                 RelativeHumidity = relativeHumidity,
                 FogLevel = fogLevel,
-            };
-        }
-
-        public AudioSettings CreateAudioSettings(string path)
-        {
-            return new AudioSettings
-            {
-                Path = path
-            };
-        }
-
-        public FileMonitorSettings CreateFileMonitorSettings(string[] paths)
-        {
-            return new FileMonitorSettings
-            {
-                Paths = paths
-            };
-        }
-
-        public LuaSettings CreateLuaSettings(string pluginId, string filePath)
-        {
-            return new LuaSettings
-            {
-                PluginId = pluginId,
-                FilePath = filePath,
-            };
-        }
-
-        public TwitchSettings CreateTwitchSettings(string twitchUsername, string twitchChannel, string twitchToken, bool twitchLog)
-        {
-            return new TwitchSettings
-            {
-                TwitchUsername = twitchUsername,
-                TwitchChannel = twitchChannel,
-                TwitchToken = twitchToken,
-                TwitchLog = twitchLog
-            };
-        }
-
-        public TxrxSettings CreateTxrxSettings(string txrxIpPort)
-        {
-            return new TxrxSettings
-            {
-                TxrxIpPort = txrxIpPort
             };
         }
 

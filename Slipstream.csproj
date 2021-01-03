@@ -132,6 +132,7 @@
     <Compile Include="Backend\EventBus.cs" />
     <Compile Include="Backend\EventBusSubscription.cs" />
     <Compile Include="Backend\IEngine.cs" />
+    <Compile Include="Backend\PluginFactory.cs" />
     <Compile Include="Backend\PluginManager.cs" />
     <Compile Include="Backend\Plugins\ReceiverPlugin.cs" />
     <Compile Include="Backend\Plugins\TransmitterPlugin.cs" />

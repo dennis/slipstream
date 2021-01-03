@@ -1,9 +1,7 @@
-﻿using Slipstream.Backend.Plugins;
-using Slipstream.Backend.Services;
+﻿using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using Slipstream.Shared.Events;
 using Slipstream.Shared.Events.Internal;
-using Slipstream.Shared.Events.Setting;
 using System;
 using static Slipstream.Shared.IEventFactory;
 
@@ -11,24 +9,22 @@ using static Slipstream.Shared.IEventFactory;
 
 namespace Slipstream.Backend
 {
-    class Engine : Worker, IEngine, IDisposable
+    partial class Engine : Worker, IEngine, IDisposable
     {
         private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly PluginManager PluginManager;
         private readonly IEventBusSubscription Subscription;
-        private readonly IStateService StateService;
         private readonly IApplicationConfiguration ApplicationConfiguration;
-        private readonly ITxrxService TxrxService;
+        private readonly PluginFactory PluginFactory;
         private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
 
-        public Engine(IEventFactory eventFactory, IEventBus eventBus, IStateService stateService, ITxrxService txrxService, IApplicationConfiguration applicationConfiguration) : base("engine")
+        public Engine(IEventFactory eventFactory, IEventBus eventBus, IApplicationConfiguration applicationConfiguration, PluginFactory pluginFactory) : base("engine")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
-            StateService = stateService;
             ApplicationConfiguration = applicationConfiguration;
-            TxrxService = txrxService;
+            PluginFactory = pluginFactory;
 
             PluginManager = new PluginManager(this, eventFactory, eventBus);
 
@@ -87,89 +83,8 @@ namespace Slipstream.Backend
 
         private void OnCommandPluginRegister(Shared.Events.Internal.InternalCommandPluginRegister ev)
         {
-            switch (ev.PluginName)
-            {
-                case "FileMonitorPlugin":
-                    {
-                        if (!(ev.Settings is FileMonitorSettings settings))
-                        {
-                            throw new Exception("Unexpected settings for FileMonitorPlugin");
-                        }
-                        else
-                        {
-                            PluginManager.RegisterPlugin(new FileMonitorPlugin(ev.Id, EventFactory, EventBus, settings));
-                        }
-                    }
-                    break;
-                case "FileTriggerPlugin":
-                    PluginManager.RegisterPlugin(new FileTriggerPlugin(ev.Id, EventFactory, EventBus));
-                    break;
-                case "LuaPlugin":
-                    {
-                        if (!(ev.Settings is LuaSettings settings))
-                        {
-                            throw new Exception("Unexpected settings for LuaPlugin");
-                        }
-                        else
-                        {
-                            PluginManager.RegisterPlugin(new LuaPlugin(ev.Id, EventFactory, EventBus, StateService, settings));
-                        }
-                    }
-                    break;
-                case "AudioPlugin":
-                    {
-                        if (!(ev.Settings is AudioSettings settings))
-                        {
-                            throw new Exception("Unexpected settings for AudioPlugin");
-                        }
-                        else
-                        {
-                            PluginManager.RegisterPlugin(new AudioPlugin(ev.Id, EventFactory, EventBus, settings));
-                        }
-                    }
-                    break;
-                case "IRacingPlugin":
-                    PluginManager.RegisterPlugin(new IRacingPlugin(ev.Id, EventFactory, EventBus));
-                    break;
-                case "TwitchPlugin":
-                    {
-                        if (!(ev.Settings is TwitchSettings settings))
-                        {
-                            throw new Exception("Unexpected settings for TwitchPlugin");
-                        }
-                        else
-                        {
-                            PluginManager.RegisterPlugin(new TwitchPlugin(ev.Id, EventFactory, EventBus, settings));
-                        }
-                    }
-                    break;
-                case "TransmitterPlugin":
-                    {
-                        if (!(ev.Settings is TxrxSettings settings))
-                        {
-                            throw new Exception("Unexpected settings for TransmitterPlugin");
-                        }
-                        else
-                        {
-                            PluginManager.RegisterPlugin(new TransmitterPlugin(ev.Id, EventFactory, EventBus, TxrxService, settings));
-                        }
-                    }
-                    break;
-                case "ReceiverPlugin":
-                    {
-                        if (!(ev.Settings is TxrxSettings settings))
-                        {
-                            throw new Exception("Unexpected settings for ReceiverPlugin");
-                        }
-                        else
-                        {
-                            PluginManager.RegisterPlugin(new ReceiverPlugin(ev.Id, EventFactory, EventBus, TxrxService, settings));
-                        }
-                    }
-                    break;
-                default:
-                    throw new Exception($"Unknown plugin '{ev.PluginName}'");
-            }
+
+            PluginManager.RegisterPlugin(PluginFactory.CreatePlugin(ev.Id, ev.PluginName, ev.Settings));
         }
 
         protected override void Main()

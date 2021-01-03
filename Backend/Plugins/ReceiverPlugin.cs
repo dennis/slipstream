@@ -19,15 +19,16 @@ namespace Slipstream.Backend.Plugins
         private string Ip = "";
         private Int32 Port = 42424;
         private TcpListener? Listener;
-        private readonly TxrxService TxrxService = new TxrxService();
+        private readonly ITxrxService TxrxService;
         private Socket? Client;
         private const int READ_BUFFER_SIZE = 1024 * 16;
         readonly byte[] ReadBuffer = new byte[READ_BUFFER_SIZE];
 
-        public ReceiverPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, TxrxSettings settings) : base(id, "ReceiverPlugin", "ReceiverPlugin", "ReceiverPlugin")
+        public ReceiverPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, TxrxSettings settings) : base(id, "ReceiverPlugin", "ReceiverPlugin", "ReceiverPlugin")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
+            TxrxService = txrxService;
 
             OnSetting(settings);
 

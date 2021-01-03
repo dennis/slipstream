@@ -6,10 +6,15 @@ using System.Diagnostics;
 
 namespace Slipstream.Backend.Services
 {
-    public class TxrxService
+    public class TxrxService : ITxrxService
     {
-        private readonly EventSerdeService Serde = new EventSerdeService();
+        private readonly IEventSerdeService Serde;
         private string UnterminatedJson = "";
+
+        public TxrxService(IEventSerdeService eventSerdeService)
+        {
+            Serde = eventSerdeService;
+        }
 
         public string Serialize(IEvent e)
         {

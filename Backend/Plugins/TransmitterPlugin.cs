@@ -19,12 +19,13 @@ namespace Slipstream.Backend.Plugins
         private string Ip = "";
         private Int32 Port = 42424;
         private TcpClient? Client = null;
-        private readonly TxrxService TxrxService = new TxrxService();
+        private readonly ITxrxService TxrxService;
 
-        public TransmitterPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, TxrxSettings settings) : base(id, "TransmitterPlugin", "TransmitterPlugin", "TransmitterPlugin")
+        public TransmitterPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, TxrxSettings settings) : base(id, "TransmitterPlugin", "TransmitterPlugin", "TransmitterPlugin")
         {
             EventBus = eventBus;
             EventFactory = eventFactory;
+            TxrxService = txrxService;
 
             OnSetting(settings);
 

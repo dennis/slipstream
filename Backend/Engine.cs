@@ -19,14 +19,17 @@ namespace Slipstream.Backend
         private readonly IEventBusSubscription Subscription;
         private readonly IStateService StateService;
         private readonly IApplicationConfiguration ApplicationConfiguration;
+        private readonly ITxrxService TxrxService;
         private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
 
-        public Engine(IEventFactory eventFactory, IEventBus eventBus, IStateService stateService, IApplicationConfiguration applicationConfiguration) : base("engine")
+        public Engine(IEventFactory eventFactory, IEventBus eventBus, IStateService stateService, ITxrxService txrxService, IApplicationConfiguration applicationConfiguration) : base("engine")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
             StateService = stateService;
             ApplicationConfiguration = applicationConfiguration;
+            TxrxService = txrxService;
+
             PluginManager = new PluginManager(this, eventFactory, eventBus);
 
             Subscription = EventBus.RegisterListener();
@@ -148,7 +151,7 @@ namespace Slipstream.Backend
                         }
                         else
                         {
-                            PluginManager.RegisterPlugin(new TransmitterPlugin(ev.Id, EventFactory, EventBus, settings));
+                            PluginManager.RegisterPlugin(new TransmitterPlugin(ev.Id, EventFactory, EventBus, TxrxService, settings));
                         }
                     }
                     break;
@@ -160,7 +163,7 @@ namespace Slipstream.Backend
                         }
                         else
                         {
-                            PluginManager.RegisterPlugin(new ReceiverPlugin(ev.Id, EventFactory, EventBus, settings));
+                            PluginManager.RegisterPlugin(new ReceiverPlugin(ev.Id, EventFactory, EventBus, TxrxService, settings));
                         }
                     }
                     break;

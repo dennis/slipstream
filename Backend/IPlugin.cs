@@ -26,11 +26,11 @@ namespace Slipstream.Backend
         public bool PendingOnEnable { get; set; }
         public bool PendingOnDisable { get; set; }
         public Shared.EventHandler EventHandler { get; }
+        public bool Reconfigurable { get; }
         void Enable();
         void Disable();
         void OnEnable();
         void OnDisable();
-
         void Loop();
     }
 }

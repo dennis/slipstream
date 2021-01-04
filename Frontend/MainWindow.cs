@@ -173,11 +173,11 @@ namespace Slipstream.Frontend
                         switch (e.Id)
                         {
                             case "TransmitterPlugin":
-                                ExecuteSecure(() => Text += $" <<< transmitting to {ApplicationConfiguration.TxrxIpPort} >>>");
+                                ExecuteSecure(() => Text = $"{CleanTitle} <<< transmitting to {ApplicationConfiguration.TxrxIpPort} >>>");
                                 break;
 
                             case "ReceiverPlugin":
-                                ExecuteSecure(() => Text += $" <<< receiving from {ApplicationConfiguration.TxrxIpPort} >>>");
+                                ExecuteSecure(() => Text = $"{CleanTitle} <<< receiving from {ApplicationConfiguration.TxrxIpPort} >>>");
                                 break;
                         }
 
@@ -241,7 +241,10 @@ namespace Slipstream.Frontend
 
         private void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _ = new SettingsForm().ShowDialog(this);
+            if(new SettingsForm().ShowDialog(this) == DialogResult.OK)
+            {
+                EventBus.PublishEvent(EventFactory.CreateInternalReconfigured());
+            }
         }
     }
 }

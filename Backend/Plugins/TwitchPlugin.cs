@@ -25,7 +25,7 @@ namespace Slipstream.Backend.Plugins
         private bool RequestReconnect;
         private bool AnnouncedConnected = false;
 
-        public TwitchPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, ITwitchConfiguration twitchConfiguration) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin")
+        public TwitchPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, ITwitchConfiguration twitchConfiguration) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin", true)
         {
             EventFactory = eventFactory;
             EventBus = eventBus;

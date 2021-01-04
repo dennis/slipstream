@@ -14,7 +14,7 @@ namespace Slipstream.Backend.Plugins
         private readonly IList<FileSystemWatcher> fileSystemWatchers = new List<FileSystemWatcher>();
         private readonly bool InitialScan = false;
 
-        public FileMonitorPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IFileMonitorConfiguration fileMonitorConfiguration) : base(id, "FileMonitorPlugin", "FileMonitorPlugin", "Core")
+        public FileMonitorPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IFileMonitorConfiguration fileMonitorConfiguration) : base(id, "FileMonitorPlugin", "FileMonitorPlugin", "Core", true)
         {
             EventFactory = eventFactory;
             EventBus = eventBus;

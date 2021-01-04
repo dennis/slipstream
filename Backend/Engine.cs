@@ -13,10 +13,10 @@ namespace Slipstream.Backend
         private readonly IEventBus EventBus;
         private readonly IPluginManager PluginManager;
         private readonly IEventBusSubscription Subscription;
-        private readonly PluginFactory PluginFactory;
+        private readonly IPluginFactory PluginFactory;
         private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
 
-        public Engine(IEventFactory eventFactory, IEventBus eventBus, PluginFactory pluginFactory, IPluginManager pluginManager) : base("engine")
+        public Engine(IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager) : base("engine")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
@@ -30,6 +30,7 @@ namespace Slipstream.Backend
             EventHandler.OnInternalCommandPluginEnable += (s, e) => PluginManager.FindPluginAndExecute(e.Event.Id, (plugin) => PluginManager.EnablePlugin(plugin));
             EventHandler.OnInternalCommandPluginDisable += (s, e) => PluginManager.FindPluginAndExecute(e.Event.Id, (plugin) => PluginManager.DisablePlugin(plugin));
             EventHandler.OnInternalCommandPluginStates += (s, e) => OnCommandPluginStates(e.Event);
+            EventHandler.OnInternalReconfigured += (s, e) => OnInternalReconfigured();
 
             // Plugins..
             RegisterPlugin(EventFactory.CreateInternalCommandPluginRegister("FileMonitorPlugin", "FileMonitorPlugin"));
@@ -42,6 +43,11 @@ namespace Slipstream.Backend
 
             // Tell Plugins that we're live - this will make eventbus distribute events
             EventBus.Enabled = true;
+        }
+
+        private void OnInternalReconfigured()
+        {
+            PluginManager.RestartReconfigurablePlugins();
         }
 
         private void OnCommandPluginStates(InternalCommandPluginStates _)
@@ -73,7 +79,6 @@ namespace Slipstream.Backend
 
         private void OnCommandPluginRegister(Shared.Events.Internal.InternalCommandPluginRegister ev)
         {
-
             PluginManager.RegisterPlugin(PluginFactory.CreatePlugin(ev.Id, ev.PluginName));
         }
 

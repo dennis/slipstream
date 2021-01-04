@@ -1,7 +1,7 @@
 ﻿using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using System.Collections.Generic;
-using System.Diagnostics;
+//using System.Diagnostics;
 using System.IO;
 using EventHandler = Slipstream.Shared.EventHandler;
 
@@ -56,8 +56,6 @@ namespace Slipstream.Backend.Plugins
 
         private void EventHandler_OnFileMonitorScanCompleted(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorScanCompleted> e)
         {
-            Debug.Assert(BootUp);
-
             BootUp = false;
         }
 
@@ -97,10 +95,8 @@ namespace Slipstream.Backend.Plugins
 
         private void EventHandler_OnFileMonitorFileRenamed(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileRenamed> e)
         {
-            if (e.Event.FilePath == null || e.Event.OldFilePath == null)
+            if (e.Event.FilePath == null || e.Event.OldFilePath == null || BootUp)
                 return;
-
-            Debug.Assert(!BootUp);
 
             if (IsApplicable(e.Event.OldFilePath))
                 DeletedFile(e.Event.OldFilePath);
@@ -110,10 +106,8 @@ namespace Slipstream.Backend.Plugins
 
         private void EventHandler_OnFileMonitorFileChanged(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileChanged> e)
         {
-            if (e.Event.FilePath == null || !IsApplicable(e.Event.FilePath))
+            if (e.Event.FilePath == null || !IsApplicable(e.Event.FilePath) || BootUp)
                 return;
-
-            Debug.Assert(!BootUp);
 
             DeletedFile(e.Event.FilePath);
             NewFile(e.Event.FilePath);
@@ -121,10 +115,8 @@ namespace Slipstream.Backend.Plugins
 
         private void EventHandler_OnFileMonitorFileDeleted(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileDeleted> e)
         {
-            if (e.Event.FilePath == null || !IsApplicable(e.Event.FilePath))
+            if (e.Event.FilePath == null || !IsApplicable(e.Event.FilePath) || BootUp)
                 return;
-
-            Debug.Assert(!BootUp);
 
             DeletedFile(e.Event.FilePath);
         }

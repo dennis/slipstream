@@ -19,7 +19,7 @@ namespace Slipstream.Backend.Plugins
         private TcpClient? Client = null;
         private readonly ITxrxService TxrxService;
 
-        public TransmitterPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, ITxrxConfiguration txrxConfiguration) : base(id, "TransmitterPlugin", "TransmitterPlugin", "TransmitterPlugin")
+        public TransmitterPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, ITxrxConfiguration txrxConfiguration) : base(id, "TransmitterPlugin", "TransmitterPlugin", "TransmitterPlugin", true)
         {
             EventBus = eventBus;
             EventFactory = eventFactory;

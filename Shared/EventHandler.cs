@@ -43,6 +43,10 @@ namespace Slipstream.Shared
 
         public delegate void OnInternalInitializedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalInitialized> e);
         public event OnInternalInitializedHandler? OnInternalInitialized;
+
+        public delegate void OnInternalReconfiguredHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalReconfigured> e);
+        public event OnInternalReconfiguredHandler? OnInternalReconfigured;
+        
         #endregion
 
         #region FileMonitor
@@ -191,8 +195,16 @@ namespace Slipstream.Shared
                     else
                         OnInternalInitialized.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalInitialized>(tev));
                     break;
+                    
+                case Shared.Events.Internal.InternalReconfigured tev:
+                    if (OnInternalReconfigured == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnInternalReconfigured.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalReconfigured>(tev));
+                    break;
 
                 // File Monitor
+
                 case Shared.Events.FileMonitor.FileMonitorFileCreated tev:
                     if (OnFileMonitorFileCreated == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));

@@ -132,7 +132,8 @@
     <Compile Include="Backend\EventBus.cs" />
     <Compile Include="Backend\EventBusSubscription.cs" />
     <Compile Include="Backend\IEngine.cs" />
-    <Compile Include="Backend\PluginFactory.cs" />
+    <Compile Include="Backend\IPluginFactory.cs" />
+    <Compile Include="Backend\IPluginManager.cs" />
     <Compile Include="Backend\PluginManager.cs" />
     <Compile Include="Backend\Plugins\ReceiverPlugin.cs" />
     <Compile Include="Backend\Plugins\TransmitterPlugin.cs" />
@@ -163,6 +164,7 @@
     </Compile>
     <Compile Include="Shared\EventFactory.cs" />
     <Compile Include="Shared\Events\FileMonitor\FileMonitorScanCompleted.cs" />
+    <Compile Include="Shared\Events\Internal\InternalReconfigured.cs" />
     <Compile Include="Shared\Events\Internal\InternalInitialized.cs" />
     <Compile Include="Shared\Events\Internal\InternalCommandPluginStates.cs" />
     <Compile Include="Shared\Events\UI\UIButtonTriggered.cs" />

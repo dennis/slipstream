@@ -78,6 +78,11 @@ namespace Slipstream.Shared
             return new InternalPluginState { Id = pluginId, PluginName = pluginName, DisplayName = displayName, PluginStatus = pluginStatus.ToString() };
         }
 
+        public InternalReconfigured CreateInternalReconfigured()
+        {
+            return new InternalReconfigured();
+        }
+
         public IRacingCarCompletedLap CreateIRacingCarCompletedLap(double sessionTime, long carIdx, double time, int lapsCompleted, float? fuelDiff, bool localUser)
         {
             return new IRacingCarCompletedLap
@@ -88,7 +93,6 @@ namespace Slipstream.Shared
                 LapsCompleted = lapsCompleted,
                 FuelDiff = fuelDiff,
                 LocalUser = localUser,
-
             };
         }
 

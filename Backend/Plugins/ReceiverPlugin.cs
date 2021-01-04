@@ -19,9 +19,9 @@ namespace Slipstream.Backend.Plugins
         private readonly ITxrxService TxrxService;
         private Socket? Client;
         private const int READ_BUFFER_SIZE = 1024 * 16;
-        readonly byte[] ReadBuffer = new byte[READ_BUFFER_SIZE];
+        private readonly byte[] ReadBuffer = new byte[READ_BUFFER_SIZE];
 
-        public ReceiverPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, ITxrxConfiguration txrxConfiguration) : base(id, "ReceiverPlugin", "ReceiverPlugin", "ReceiverPlugin")
+        public ReceiverPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, ITxrxConfiguration txrxConfiguration) : base(id, "ReceiverPlugin", "ReceiverPlugin", "ReceiverPlugin", true)
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
@@ -68,6 +68,9 @@ namespace Slipstream.Backend.Plugins
         {
             Debug.Assert(Client == null);
             Debug.Assert(Listener != null);
+
+            if (!Listener!.Pending())
+                return;
 
             Client = Listener!.AcceptSocket();
 

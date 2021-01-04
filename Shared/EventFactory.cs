@@ -431,5 +431,14 @@ namespace Slipstream.Shared
                 Text = text
             };
         }
+
+        IRacingDriverIncident IEventFactory.CreateIRacingDriverIncident(int totalIncidents, int incidentDelta)
+        {
+            return new IRacingDriverIncident
+            {
+                IncidentCount = totalIncidents,
+                IncidentDelta = incidentDelta
+            };
+        }
     }
 }

@@ -36,6 +36,8 @@ namespace Slipstream.Frontend
 
             settings.Save();
 
+            DialogResult = DialogResult.OK;
+
             Close();
         }
 

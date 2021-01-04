@@ -1,6 +1,5 @@
 ﻿using Slipstream.Shared;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using EventHandler = Slipstream.Shared.EventHandler;
 
@@ -12,7 +11,9 @@ namespace Slipstream.Backend.Plugins
     {
         private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
-        private readonly IDictionary<string, string> Scripts = new Dictionary<string, string>();
+        private readonly IPluginManager PluginManager;
+        private readonly IPluginFactory PluginFactory;
+        private readonly IDictionary<string, IPlugin> Scripts = new Dictionary<string, IPlugin>();
 
         // At bootup we will receive zero or more FileCreated events ending with a ScanCompleted. 
         // If we count the (relevant) files found that launches LuaPlugin, we can keep an eye on PluginState
@@ -20,10 +21,12 @@ namespace Slipstream.Backend.Plugins
         private bool BootUp = true;
         private readonly List<string> WaitingForLuaScripts = new List<string>();
 
-        public FileTriggerPlugin(string id, IEventFactory eventFactory, IEventBus eventBus) : base(id, "FileTriggerPlugin", "FileTriggerPlugin", "Core")
+        public FileTriggerPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IPluginManager pluginManager, IPluginFactory pluginFactory) : base(id, "FileTriggerPlugin", "FileTriggerPlugin", "Core")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
+            PluginManager = pluginManager;
+            PluginFactory = pluginFactory;
 
             EventHandler.OnFileMonitorFileCreated += EventHandler_OnFileMonitorFileCreated;
             EventHandler.OnFileMonitorFileDeleted += EventHandler_OnFileMonitorFileDeleted;
@@ -44,7 +47,6 @@ namespace Slipstream.Backend.Plugins
                     // We're done
                     EventHandler.OnInternalPluginState -= EventHandler_OnInternalPluginState;
 
-                    EventBus.PublishEvent(new Shared.Events.Internal.InternalInitialized());
                     EventBus.PublishEvent(EventFactory.CreateInternalInitialized());
                 }
             }
@@ -52,9 +54,12 @@ namespace Slipstream.Backend.Plugins
 
         private void EventHandler_OnFileMonitorScanCompleted(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorScanCompleted> e)
         {
-            Debug.Assert(BootUp);
-
             BootUp = false;
+        }
+
+        class LuaConfiguration : ILuaConfiguration
+        {
+            public string FilePath { get; set; } = "";
         }
 
         private void NewFile(string filePath)
@@ -64,7 +69,6 @@ namespace Slipstream.Backend.Plugins
                 return;
             }
 
-            string pluginName = "LuaPlugin";
             string pluginId = Path.GetFileName(filePath);
 
             if (BootUp)
@@ -72,27 +76,28 @@ namespace Slipstream.Backend.Plugins
                 WaitingForLuaScripts.Add(pluginId);
             }
 
-            EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginRegister(pluginId, pluginName, EventFactory.CreateLuaSettings(pluginId, filePath)));
-            EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginEnable(pluginId));
 
-            Scripts.Add(filePath, pluginId);
+            var plugin = PluginFactory.CreatePlugin(pluginId, "LuaPlugin", (ILuaConfiguration)new LuaConfiguration { FilePath = filePath });
+
+            PluginManager.RegisterPlugin(plugin);
+            PluginManager.EnablePlugin(plugin);
+
+            Scripts.Add(filePath, plugin);
         }
 
         private void DeletedFile(string filePath)
         {
-            var ev = EventFactory.CreateInternalCommandPluginUnregister(Scripts[filePath]);
-
-            EventBus.PublishEvent(ev);
+            PluginManager.UnregisterPlugin(Scripts[filePath]);
 
             Scripts.Remove(filePath);
         }
 
         private void EventHandler_OnFileMonitorFileRenamed(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileRenamed> e)
         {
-            if (e.Event.FilePath == null || e.Event.OldFilePath == null)
+            // If we're been unregistered (while app is running) and re-registered,we need to ignore these events
+            // until we're ready (received the FileMonitorScanCompleted). We need to revisit this later.
+            if (e.Event.FilePath == null || e.Event.OldFilePath == null || BootUp)
                 return;
-
-            Debug.Assert(!BootUp);
 
             if (IsApplicable(e.Event.OldFilePath))
                 DeletedFile(e.Event.OldFilePath);
@@ -102,10 +107,8 @@ namespace Slipstream.Backend.Plugins
 
         private void EventHandler_OnFileMonitorFileChanged(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileChanged> e)
         {
-            if (e.Event.FilePath == null || !IsApplicable(e.Event.FilePath))
+            if (e.Event.FilePath == null || !IsApplicable(e.Event.FilePath) || BootUp)
                 return;
-
-            Debug.Assert(!BootUp);
 
             DeletedFile(e.Event.FilePath);
             NewFile(e.Event.FilePath);
@@ -113,10 +116,8 @@ namespace Slipstream.Backend.Plugins
 
         private void EventHandler_OnFileMonitorFileDeleted(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileDeleted> e)
         {
-            if (e.Event.FilePath == null || !IsApplicable(e.Event.FilePath))
+            if (e.Event.FilePath == null || !IsApplicable(e.Event.FilePath) || BootUp)
                 return;
-
-            Debug.Assert(!BootUp);
 
             DeletedFile(e.Event.FilePath);
         }

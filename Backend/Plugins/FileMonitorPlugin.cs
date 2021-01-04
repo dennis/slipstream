@@ -1,6 +1,5 @@
 using Slipstream.Shared;
 using Slipstream.Shared.Events.FileMonitor;
-using Slipstream.Shared.Events.Setting;
 using System.Collections.Generic;
 using System.IO;
 
@@ -15,14 +14,12 @@ namespace Slipstream.Backend.Plugins
         private readonly IList<FileSystemWatcher> fileSystemWatchers = new List<FileSystemWatcher>();
         private readonly bool InitialScan = false;
 
-        public FileMonitorPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, FileMonitorSettings settings) : base(id, "FileMonitorPlugin", "FileMonitorPlugin", "Core")
+        public FileMonitorPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IFileMonitorConfiguration fileMonitorConfiguration) : base(id, "FileMonitorPlugin", "FileMonitorPlugin", "Core", true)
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
 
-            OnFileMonitorSettings(settings);
-
-            EventHandler.OnSettingFileMonitorSettings += (s, e) => OnFileMonitorSettings(e.Event);
+            StartMonitoring(fileMonitorConfiguration.FileMonitorPaths);
         }
 
         public override void OnDisable()
@@ -56,17 +53,14 @@ namespace Slipstream.Backend.Plugins
             EventBus.PublishEvent(new FileMonitorScanCompleted());
         }
 
-        private void OnFileMonitorSettings(FileMonitorSettings ev)
+        private void StartMonitoring(string[] paths)
         {
             // Delete all watchers, and then recreate them
             foreach (var watcher in fileSystemWatchers)
                 watcher.Dispose();
             fileSystemWatchers.Clear();
 
-            if (ev.Paths == null)
-                return;
-
-            foreach (var path in ev.Paths)
+            foreach (var path in paths)
             {
                 var watcher = new FileSystemWatcher(path);
                 watcher.Created += WatcherOnCreated;

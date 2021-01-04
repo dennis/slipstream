@@ -8,6 +8,5 @@ namespace Slipstream.Shared.Events.Internal
         public bool ExcludeFromTxrx => true;
         public string Id { get; set; } = "INVALID-PLUGIN-ID";
         public string PluginName { get; set; } = "INVALID-PLUGIN-NAME";
-        public IEvent? Settings;
     }
 }

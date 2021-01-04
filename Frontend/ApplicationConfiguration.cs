@@ -1,56 +1,26 @@
 ﻿using Slipstream.Shared;
-using Slipstream.Shared.Events.Setting;
 
 namespace Slipstream.Frontend
 {
     public class ApplicationConfiguration : IApplicationConfiguration
     {
-        private readonly IEventFactory EventFactory;
         private readonly Properties.Settings Settings;
 
-        public ApplicationConfiguration(IEventFactory eventFactory)
+        public ApplicationConfiguration()
         {
-            EventFactory = eventFactory;
             Settings = Properties.Settings.Default;
 
-            System.IO.Directory.CreateDirectory(GetAudioPath());
-            System.IO.Directory.CreateDirectory(GetScriptsPath());
+            System.IO.Directory.CreateDirectory(AudioPath);
+            System.IO.Directory.CreateDirectory(ScriptPath);
         }
 
-        public string GetAudioPath()
-        {
-            return @"Audio\";
-        }
-
-        public AudioSettings GetAudioSettingsEvent()
-        {
-            return EventFactory.CreateAudioSettings(GetAudioPath());
-        }
-
-        public FileMonitorSettings GetFileMonitorSettingsEvent()
-        {
-            return EventFactory.CreateFileMonitorSettings(new string[] { GetScriptsPath() });
-        }
-
-        public string GetScriptsPath()
-        {
-            return @"Scripts\";
-        }
-
-        public TwitchSettings GetTwitchSettingsEvent()
-        {
-            return EventFactory.CreateTwitchSettings
-            (
-                twitchUsername: Settings.TwitchUsername,
-                twitchChannel: Settings.TwitchChannel,
-                twitchToken: Settings.TwitchToken,
-                twitchLog: Settings.TwitchLog
-            );
-        }
-
-        public TxrxSettings GetTxrxSettingsEvent()
-        {
-            return EventFactory.CreateTxrxSettings(Settings.TxrxIpPort);
-        }
+        public string TxrxIpPort => Settings.TxrxIpPort;
+        public string AudioPath => @"Audio\";
+        public string ScriptPath => @"Scripts\";
+        public string[] FileMonitorPaths => new string[] { ScriptPath };
+        public string TwitchUsername => Settings.TwitchUsername;
+        public string TwitchChannel => Settings.TwitchChannel;
+        public string TwitchToken => Settings.TwitchToken;
+        public bool TwitchLog => Settings.TwitchLog;
     }
 }

@@ -17,6 +17,7 @@ namespace Slipstream.Backend.Plugins
         private readonly iRacingConnection Connection = new iRacingConnection();
         private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
+
         private bool InitializedSeen;
 
         private class CarState
@@ -77,7 +78,6 @@ namespace Slipstream.Backend.Plugins
             EventBus = eventBus;
             EventHandler.OnInternalInitialized += (s, e) => InitializedSeen = true;
         }
-
 
         public override void OnEnable()
         {

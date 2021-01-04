@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace Slipstream.Backend.Services
 {
-    public class EventSerdeService
+    public class EventSerdeService : IEventSerdeService
     {
         private static readonly Dictionary<string, Type> EventsMap = new Dictionary<string, Type>();
 

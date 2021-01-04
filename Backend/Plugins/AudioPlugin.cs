@@ -1,7 +1,5 @@
 using NAudio.Wave;
 using Slipstream.Shared;
-using Slipstream.Shared.Events.Setting;
-using Slipstream.Shared.Events.UI;
 using System;
 using System.Speech.Synthesis;
 using System.Threading;
@@ -15,27 +13,21 @@ namespace Slipstream.Backend.Plugins
     {
         private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
-        private string? Path;
+        private readonly string Path;
         private readonly SpeechSynthesizer Synthesizer;
 
-        public AudioPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, AudioSettings settings) : base(id, "AudioPlugin", "AudioPlugin", "Audio")
+        public AudioPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IAudioConfiguration audioConfiguration) : base(id, "AudioPlugin", "AudioPlugin", "Audio", true)
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
 
-            EventHandler_OnSettingAudioSettings(settings);
+            Path = audioConfiguration.AudioPath;
 
             Synthesizer = new SpeechSynthesizer();
             Synthesizer.SetOutputToDefaultAudioDevice();
 
             EventHandler.OnAudioCommandSay += EventHandler_OnUtilitySay;
             EventHandler.OnAudioCommandPlay += EventHandler_OnAudioCommandPlay;
-            EventHandler.OnSettingAudioSettings += (s, e) => EventHandler_OnSettingAudioSettings(e.Event);
-        }
-
-        private void EventHandler_OnSettingAudioSettings(AudioSettings e)
-        {
-            Path = e.Path;
         }
 
         private void EventHandler_OnAudioCommandPlay(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Audio.AudioCommandPlay> e)

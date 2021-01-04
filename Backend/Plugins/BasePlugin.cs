@@ -36,6 +36,7 @@ namespace Slipstream.Backend.Plugins
         public bool PendingOnDisable { get { return pendingOnDisable; } set { pendingOnDisable = value; } }
 
         public event IPlugin.OnStateChangedHandler? OnStateChanged;
+        public bool Reconfigurable { get; private set; }
 
         public string WorkerName
         {
@@ -45,12 +46,13 @@ namespace Slipstream.Backend.Plugins
 
         public Shared.EventHandler EventHandler { get; } = new Shared.EventHandler();
 
-        public BasePlugin(string id, string name, string displayName, string workerName)
+        public BasePlugin(string id, string name, string displayName, string workerName, bool reconfigurable = false)
         {
             Id = id;
             Name = name;
             DisplayName = displayName;
             WorkerName = workerName;
+            Reconfigurable = reconfigurable;
         }
 
         public void Disable()

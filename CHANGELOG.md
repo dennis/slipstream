@@ -1,7 +1,10 @@
 ﻿# Changelog
 
 ## Next version
-[Full Changelog](https://github.com/dennis/slipstream/compare/v0.2.0...main)
+[Full Changelog](https://github.com/dennis/slipstream/compare/v0.3.0...main)
+
+## [0.3.0](https://github.com/dennis/slipstream/releases/tag/v0.3.0) (2020-01-05)
+[Full Changelog](https://github.com/dennis/slipstream/compare/v0.2.0...v0.3.0)
 
 **Improvements**
  - Lua: Add event_to_json() function, that will convert a Slipstream event to a json string. Change debug.lua to use that, making it trivial.
@@ -20,6 +23,8 @@
    - CommandTwitchSendMessage to TwitchCommandSendMessage
    - CommandWriteToConsole to UICommandWriteToConsole
  - Buttons: Make simple buttons in UI using Lua (create_button("text")) and remove them again (delete_button("text"))
+ - Lua: Adds functions to control plugins: register_plugin, unregister_plugin, enable_plugin, disable_plugin
+ - init-<versionno>.lua is read upon startup. Here you can define what plugins to register and enable. If file is not found, one is created
 
 ## [0.2.0](https://github.com/dennis/slipstream/releases/tag/v0.2.0) (2020-12-30)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.1.0...v0.2.0)

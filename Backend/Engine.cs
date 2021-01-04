@@ -66,18 +66,19 @@ enable_plugin(""TwitchPlugin"")
 register_plugin(""TransmitterPlugin"", ""TransmitterPlugin"")
 register_plugin(""ReceiverPlugin"", ""ReceiverPlugin"")
 
--- FileMonitorPlugin monitors the script directory and sends out events
--- every time a file is created, renamed, modified or deleted
-register_plugin(""FileMonitorPlugin"", ""FileMonitorPlugin"")
-enable_plugin(""FileMonitorPlugin"")
-
 -- FileTriggerPlugin listens for FileMonitorPlugin events and acts on them.
 -- Currently it will only act on files ending with .lua, which it launches
 -- a plugin for. If the file is modified, it will take down the plugin and
 -- launch a new one with the same file. If files are moved out of the directory
 -- it is consider as if it were deleted. Deleted files are taken down.
 register_plugin(""FileTriggerPlugin"", ""FileTriggerPlugin"")
-enable_plugin(""FileTriggerPlugin"")");
+enable_plugin(""FileTriggerPlugin"")
+
+-- FileMonitorPlugin monitors the script directory and sends out events
+-- every time a file is created, renamed, modified or deleted
+register_plugin(""FileMonitorPlugin"", ""FileMonitorPlugin"")
+enable_plugin(""FileMonitorPlugin"")
+");
                 }
 
                 luaService.Parse(filename: initFilename, logPrefix: "INIT");

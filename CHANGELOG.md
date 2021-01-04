@@ -1,7 +1,10 @@
 ﻿# Changelog
 
 ## Next version
-[Full Changelog](https://github.com/dennis/slipstream/compare/v0.2.0...main)
+[Full Changelog](https://github.com/dennis/slipstream/compare/v0.3.0...main)
+
+## [0.3.0](https://github.com/dennis/slipstream/releases/tag/v0.3.0) (2020-01-05)
+[Full Changelog](https://github.com/dennis/slipstream/compare/v0.2.0...v0.3.0)
 
 **Improvements**
  - Lua: Add event_to_json() function, that will convert a Slipstream event to a json string. Change debug.lua to use that, making it trivial.

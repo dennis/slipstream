@@ -1,7 +1,5 @@
-﻿using Slipstream.Backend.Services;
-using Slipstream.Shared;
+﻿using Slipstream.Shared;
 using System.Collections.Generic;
-//using System.Diagnostics;
 using System.IO;
 using EventHandler = Slipstream.Shared.EventHandler;
 
@@ -13,8 +11,8 @@ namespace Slipstream.Backend.Plugins
     {
         private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
-        private readonly IStateService StateService;
         private readonly IPluginManager PluginManager;
+        private readonly IPluginFactory PluginFactory;
         private readonly IDictionary<string, IPlugin> Scripts = new Dictionary<string, IPlugin>();
 
         // At bootup we will receive zero or more FileCreated events ending with a ScanCompleted. 
@@ -23,12 +21,12 @@ namespace Slipstream.Backend.Plugins
         private bool BootUp = true;
         private readonly List<string> WaitingForLuaScripts = new List<string>();
 
-        public FileTriggerPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IStateService stateService, IPluginManager pluginManager) : base(id, "FileTriggerPlugin", "FileTriggerPlugin", "Core")
+        public FileTriggerPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IPluginManager pluginManager, IPluginFactory pluginFactory) : base(id, "FileTriggerPlugin", "FileTriggerPlugin", "Core")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
-            StateService = stateService;
             PluginManager = pluginManager;
+            PluginFactory = pluginFactory;
 
             EventHandler.OnFileMonitorFileCreated += EventHandler_OnFileMonitorFileCreated;
             EventHandler.OnFileMonitorFileDeleted += EventHandler_OnFileMonitorFileDeleted;
@@ -78,8 +76,9 @@ namespace Slipstream.Backend.Plugins
                 WaitingForLuaScripts.Add(pluginId);
             }
 
-            // Use PluginManager director
-            var plugin = new LuaPlugin(pluginId, EventFactory, EventBus, StateService, new LuaConfiguration { FilePath = filePath });
+
+            var plugin = PluginFactory.CreatePlugin(pluginId, "LuaPlugin", (ILuaConfiguration)new LuaConfiguration { FilePath = filePath });
+
             PluginManager.RegisterPlugin(plugin);
             PluginManager.EnablePlugin(plugin);
 
@@ -95,6 +94,8 @@ namespace Slipstream.Backend.Plugins
 
         private void EventHandler_OnFileMonitorFileRenamed(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileRenamed> e)
         {
+            // If we're been unregistered (while app is running) and re-registered,we need to ignore these events
+            // until we're ready (received the FileMonitorScanCompleted). We need to revisit this later.
             if (e.Event.FilePath == null || e.Event.OldFilePath == null || BootUp)
                 return;
 

@@ -141,6 +141,7 @@
     <Compile Include="Backend\Plugins\BasePlugin.cs" />
     <Compile Include="Backend\Plugins\TwitchPlugin.cs" />
     <Compile Include="Backend\Services\IEventSerdeService.cs" />
+    <Compile Include="Backend\Services\ILuaSevice.cs" />
     <Compile Include="Backend\Services\IStateService.cs" />
     <Compile Include="Backend\Services\EventSerdeService.cs" />
     <Compile Include="Backend\Services\ITxrxService.cs" />

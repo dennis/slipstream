@@ -14,6 +14,6 @@ namespace Slipstream.Backend
         public void DisablePlugin(IPlugin p);
         public void FindPluginAndExecute(string pluginId, Action<IPlugin> a);
         public void ForAllPluginsExecute(Action<IPlugin> a);
-        void RestartReconfigurablePlugins();
+        public void RestartReconfigurablePlugins();
     }
 }

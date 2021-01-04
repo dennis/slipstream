@@ -5,11 +5,6 @@ using Slipstream.Shared;
 
 namespace Slipstream.Backend.Services
 {
-    public interface ILuaSevice
-    {
-        ILuaContext Parse(string filename, string logPrefix);
-    }
-
     public class LuaService : ILuaSevice
     {
         private readonly IEventFactory EventFactory;

@@ -36,7 +36,7 @@ namespace Slipstream.Backend.Plugins
         public bool PendingOnDisable { get { return pendingOnDisable; } set { pendingOnDisable = value; } }
 
         public event IPlugin.OnStateChangedHandler? OnStateChanged;
-        public bool Reconfigurable { get; protected set; }
+        public bool Reconfigurable { get; private set; }
 
         public string WorkerName
         {

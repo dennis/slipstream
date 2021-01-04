@@ -190,13 +190,24 @@ namespace Slipstream.Backend
             return name switch
             {
                 "FileMonitorPlugin" => new FileMonitorPlugin(id, EventFactory, EventBus, ApplicationConfiguration),
-                "FileTriggerPlugin" => new FileTriggerPlugin(id, EventFactory, EventBus, StateService, this),
+                "FileTriggerPlugin" => new FileTriggerPlugin(id, EventFactory, EventBus, this, this),
                 "AudioPlugin" => new AudioPlugin(id, EventFactory, EventBus, ApplicationConfiguration),
                 "IRacingPlugin" => new IRacingPlugin(id, EventFactory, EventBus),
                 "TwitchPlugin" => new TwitchPlugin(id, EventFactory, EventBus, ApplicationConfiguration),
                 "TransmitterPlugin" => new TransmitterPlugin(id, EventFactory, EventBus, TxrxService, ApplicationConfiguration),
                 "ReceiverPlugin" => new ReceiverPlugin(id, EventFactory, EventBus, TxrxService, ApplicationConfiguration),
                 _ => throw new Exception($"Unknown plugin '{name}'"),
+            };
+        }
+
+        public IPlugin CreatePlugin<T>(string pluginId, string name, T configuration)
+        {
+            return name switch
+            {
+#pragma warning disable CS8604 // Possible null reference argument.
+                "LuaPlugin" when configuration is ILuaConfiguration => new LuaPlugin(pluginId, EventFactory, EventBus, StateService, configuration as ILuaConfiguration),
+#pragma warning restore CS8604 // Possible null reference argument.
+                _ => throw new Exception($"Unknown configurable plugin '{name}'"),
             };
         }
 

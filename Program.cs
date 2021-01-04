@@ -49,6 +49,7 @@ namespace Slipstream
             services.AddScoped<Backend.Services.IEventSerdeService, Backend.Services.EventSerdeService>();
             services.AddScoped<Backend.IPluginManager, Backend.PluginManager>();
             services.AddScoped<Backend.IPluginFactory, Backend.PluginManager>();
+            services.AddScoped<Backend.Services.ILuaSevice, Backend.Services.LuaService>();
             services.AddSingleton<Shared.IApplicationVersionService, Shared.ApplicationVersionService>();
         }
     }

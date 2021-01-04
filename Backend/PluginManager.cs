@@ -51,7 +51,6 @@ namespace Slipstream.Backend
             EmitPluginStateChanged(p, PluginStatusEnum.Unregistered);
         }
 
-
         private void EmitPluginStateChanged(IPlugin plugin, PluginStatusEnum pluginStatus)
         {
             EmitEvent(EventFactory.CreateInternalPluginState(plugin.Id, plugin.Name, plugin.DisplayName, pluginStatus));
@@ -67,6 +66,11 @@ namespace Slipstream.Backend
 
         private void RegisterPluginWithoutLock(IPlugin plugin)
         {
+            if(Plugins.ContainsKey(plugin.Id))
+            {
+                Plugins.Remove(plugin.Id);
+            }
+
             PluginWorker? worker;
 
             if (PluginWorkers.ContainsKey(plugin.WorkerName))
@@ -118,7 +122,7 @@ namespace Slipstream.Backend
             }
             else
             {
-                throw new Exception($"Can't find plugin '{pluginId}'");
+                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"Can't find plugin '{pluginId}'"));
             }
         }
 

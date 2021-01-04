@@ -152,6 +152,7 @@
     <Compile Include="Backend\Services\LuaServiceLib\LuaException.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\StateMethodCollection.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\TwitchMethodCollection.cs" />
+    <Compile Include="Backend\Services\LuaServiceLib\InternalMethodCollection.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\UIMethodCollection.cs" />
     <Compile Include="Backend\Services\StateService.cs" />
     <Compile Include="Backend\Services\TxrxService.cs" />

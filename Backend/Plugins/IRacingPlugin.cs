@@ -19,6 +19,16 @@ namespace Slipstream.Backend.Plugins
         private readonly IEventBus EventBus;
         private bool InitializedSeen;
 
+        private class DriverState
+        {
+            public int PlayerCarDriverIncidentCount { get; set; }
+
+            public void ClearState()
+            {
+                PlayerCarDriverIncidentCount = 0;
+            }
+        }
+
         private class CarState
         {
             public bool LastOnPitRoad { get; set; }
@@ -69,6 +79,7 @@ namespace Slipstream.Backend.Plugins
         private IRacingSessionState? LastSessionState;
         private IRacingRaceFlags? LastRaceFlags;
         private IRacingWeatherInfo? LastWeatherInfo;
+        private readonly DriverState driverState = new DriverState();
         private bool Connected;
 
         public IRacingPlugin(string id, IEventFactory eventFactory, IEventBus eventBus) : base(id, "IRacingPlugin", "IRacingPlugin", "IRacingPlugin")
@@ -126,6 +137,19 @@ namespace Slipstream.Backend.Plugins
             HandleState(data);
             HandleLapsCompleted(data);
             HandlePitUsage(data);
+            HandleIncident(data);
+        }
+
+        private void HandleIncident(DataSample data)
+        {
+            int incidents = Convert.ToInt32(data.Telemetry["PlayerCarDriverIncidentCount"]);
+            var incidentDelta = incidents - this.driverState.PlayerCarDriverIncidentCount;
+
+            if(incidentDelta > 0)
+            {
+                this.driverState.PlayerCarDriverIncidentCount = incidents;
+                EventBus.PublishEvent(EventFactory.CreateIRacingDriverIncident(totalIncidents: incidents, incidentDelta: incidentDelta));
+            }
         }
 
         private CarState GetCarState(long idx, DataSample data)

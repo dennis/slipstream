@@ -21,6 +21,7 @@
    - CommandWriteToConsole to UICommandWriteToConsole
  - Buttons: Make simple buttons in UI using Lua (create_button("text")) and remove them again (delete_button("text"))
  - Lua: Adds functions to control plugins: register_plugin, unregister_plugin, enable_plugin, disable_plugin
+ - init-<versionno>.lua is read upon startup. Here you can define what plugins to register and enable. If file is not found, one is created
 
 ## [0.2.0](https://github.com/dennis/slipstream/releases/tag/v0.2.0) (2020-12-30)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.1.0...v0.2.0)

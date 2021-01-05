@@ -25,6 +25,7 @@ namespace Slipstream.Backend.Services.LuaServiceLib
                 StateMethodCollection.Register(stateService, Lua);
                 UIMethodCollection.Register(eventBus, eventFactory, Lua);
                 InternalMethodCollection.Register(eventBus, eventFactory, Lua);
+                HttpMethodCollection.Register(eventBus, eventFactory, Lua);
 
                 // Fix paths, so we can require() files relative to where the script is located
                 var ScriptPath = Path.GetDirectoryName(filePath).Replace("\\", "\\\\");

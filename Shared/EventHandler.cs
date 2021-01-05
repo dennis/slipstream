@@ -124,6 +124,9 @@ namespace Slipstream.Shared
 
         public delegate void OnIRacingPitstopReportHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingPitstopReport> e);
         public event OnIRacingPitstopReportHandler? OnIRacingPitstopReport;
+
+        public delegate void OnIracingDriverIncidentHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingDriverIncident> e);
+        public event OnIracingDriverIncidentHandler? OnIracingDriverIncident;
         #endregion
 
         #region Events: Twitch
@@ -366,6 +369,13 @@ namespace Slipstream.Shared
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnIRacingPitstopReport.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingPitstopReport>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingDriverIncident tev:
+                    if (OnIracingDriverIncident == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIracingDriverIncident(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingDriverIncident>(tev));
                     break;
 
                 // Twitch

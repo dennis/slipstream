@@ -1,8 +1,9 @@
 using System;
+using System.Collections.Generic;
 
 namespace Slipstream.Shared.Events.IRacing
 {
-    public class IRacingCurrentSession : IEvent, IEquatable<IRacingCurrentSession>
+    public class IRacingCurrentSession : IEvent
     {
         public string EventType => "IRacingCurrentSession";
         public bool ExcludeFromTxrx => false;
@@ -12,13 +13,29 @@ namespace Slipstream.Shared.Events.IRacing
         public int TotalSessionLaps { get; set; }
         public double TotalSessionTime { get; set; }
 
-        public bool Equals(IRacingCurrentSession other)
+        public override bool Equals(object obj)
         {
-            return SessionType == other.SessionType &&
-                TimeLimited == other.TimeLimited &&
-                LapsLimited == other.LapsLimited &&
-                TotalSessionLaps == other.TotalSessionLaps &&
-                TotalSessionTime == other.TotalSessionTime;
+            return obj is IRacingCurrentSession session &&
+                   EventType == session.EventType &&
+                   ExcludeFromTxrx == session.ExcludeFromTxrx &&
+                   SessionType == session.SessionType &&
+                   TimeLimited == session.TimeLimited &&
+                   LapsLimited == session.LapsLimited &&
+                   TotalSessionLaps == session.TotalSessionLaps &&
+                   TotalSessionTime == session.TotalSessionTime;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = 2106272073;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
+            hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(SessionType);
+            hashCode = hashCode * -1521134295 + TimeLimited.GetHashCode();
+            hashCode = hashCode * -1521134295 + LapsLimited.GetHashCode();
+            hashCode = hashCode * -1521134295 + TotalSessionLaps.GetHashCode();
+            hashCode = hashCode * -1521134295 + TotalSessionTime.GetHashCode();
+            return hashCode;
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿#nullable enable
 
+using System.Collections.Generic;
+
 namespace Slipstream.Shared.Events.IRacing
 {
     public class IRacingCarInfo : IEvent
@@ -18,6 +20,45 @@ namespace Slipstream.Shared.Events.IRacing
         public long CurrentDriverIRating { get; set; }
         public bool LocalUser { get; set; }
         public long Spectator { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is IRacingCarInfo info &&
+                   EventType == info.EventType &&
+                   ExcludeFromTxrx == info.ExcludeFromTxrx &&
+                   SessionTime == info.SessionTime &&
+                   CarIdx == info.CarIdx &&
+                   CarNumber == info.CarNumber &&
+                   CurrentDriverUserID == info.CurrentDriverUserID &&
+                   CurrentDriverName == info.CurrentDriverName &&
+                   TeamID == info.TeamID &&
+                   TeamName == info.TeamName &&
+                   CarName == info.CarName &&
+                   CarNameShort == info.CarNameShort &&
+                   CurrentDriverIRating == info.CurrentDriverIRating &&
+                   LocalUser == info.LocalUser &&
+                   Spectator == info.Spectator;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = 854757270;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
+            hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
+            hashCode = hashCode * -1521134295 + SessionTime.GetHashCode();
+            hashCode = hashCode * -1521134295 + CarIdx.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(CarNumber);
+            hashCode = hashCode * -1521134295 + CurrentDriverUserID.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(CurrentDriverName);
+            hashCode = hashCode * -1521134295 + TeamID.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(TeamName);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(CarName);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(CarNameShort);
+            hashCode = hashCode * -1521134295 + CurrentDriverIRating.GetHashCode();
+            hashCode = hashCode * -1521134295 + LocalUser.GetHashCode();
+            hashCode = hashCode * -1521134295 + Spectator.GetHashCode();
+            return hashCode;
+        }
 
         public bool SameAs(IRacingCarInfo other)
         {

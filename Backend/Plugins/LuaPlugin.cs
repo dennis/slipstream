@@ -8,11 +8,10 @@ using EventHandler = Slipstream.Shared.EventHandler;
 
 namespace Slipstream.Backend.Plugins
 {
-
     public class LuaPlugin : BasePlugin
     {
         private readonly IEventFactory EventFactory;
-        private readonly IEventBus EventBus;
+        private readonly CapturingEventBus EventBus;
         private readonly LuaService LuaService;
         private ILuaContext? LuaContext;
         private readonly string Prefix = "<UNKNOWN>";
@@ -21,21 +20,19 @@ namespace Slipstream.Backend.Plugins
         public LuaPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IStateService stateService, ILuaConfiguration configuration) : base(id, "LuaPlugin", "LuaPlugin", "Lua")
         {
             EventFactory = eventFactory;
-            EventBus = eventBus;
+            EventBus = new CapturingEventBus(eventBus);
 
-            LuaService = new LuaService(eventFactory, eventBus, stateService);
+            LuaService = new LuaService(eventFactory, EventBus, stateService);
 
             // Avoid that WriteToConsole is evaluated by Lua, that in turn will 
             // add more WriteToConsole events, making a endless loop
             EventHandler.OnUICommandWriteToConsole += (s, e) => { };
             EventHandler.OnDefault += (s, e) => LuaContext?.HandleEvent(e.Event);
 
-
             FilePath = configuration.FilePath;
             Prefix = Path.GetFileName(FilePath);
 
             StartLua();
-
         }
 
         private void StartLua()
@@ -53,6 +50,11 @@ namespace Slipstream.Backend.Plugins
             {
                 HandleLuaException(e);
             }
+
+            var eventsCaptured = EventBus.CapturedEvents;
+            EventBus.StopCapturing();
+
+            EventBus.PublishEvent(EventFactory.CreateInternalBootupEvents(eventsCaptured));
         }
 
         private void HandleLuaException(LuaException e)
@@ -66,7 +68,6 @@ namespace Slipstream.Backend.Plugins
             LuaContext?.Dispose();
             LuaContext = null;
         }
-
         public override void OnEnable()
         {
             StartLua();

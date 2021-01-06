@@ -24,7 +24,10 @@ namespace Slipstream.Backend
         protected Worker(string name)
         {
             Name = name;
-            WorkerThread = new Thread(new ThreadStart(this.Main));
+            WorkerThread = new Thread(new ThreadStart(this.Main))
+            {
+                Name = name
+            };
         }
 
         public void Start()

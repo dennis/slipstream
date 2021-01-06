@@ -60,9 +60,12 @@ namespace Slipstream.Backend
             {
                 if (fromStart)
                 {
-                    foreach(var e in Events)
+                    lock(Events)
                     {
-                        subscription.Add(e);
+                        foreach (var e in Events)
+                        {
+                            subscription.Add(e);
+                        }
                     }
                 }
 

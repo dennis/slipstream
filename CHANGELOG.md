@@ -2,6 +2,11 @@
 
 ## Next version
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.3.0...main)
+ - Lua: Deduplicate identical events. If one or more scripts sends the same
+   event on the eventbus during start, they will be deduplicated. This means,
+   that we avoid having the same response to the same command repeated several
+   times. Fx. Having multiple scripts that asks for IRacing WeatherInfo upon
+   start, will be deduplicated as only one response is needed for these scripts.
 
 ## [0.3.0](https://github.com/dennis/slipstream/releases/tag/v0.3.0) (2020-01-05)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.2.0...v0.3.0)

@@ -1,6 +1,5 @@
 ﻿using Slipstream.Shared;
 using System;
-using System.Diagnostics;
 
 #nullable enable
 
@@ -18,36 +17,24 @@ namespace Slipstream.Backend.Services
 
         public string Serialize(IEvent e)
         {
-            string json = Serde.Serialize(e);
-
-            Debug.Assert(!json.Contains("\n"));
-
-            return json + "\n";
+            return Serde.Serialize(e);
         }
 
-        public void Parse(string data, Action<IEvent> processLine)
+        public void Parse(string data, Action<IEvent> processEvent)
         {
-            int consumedPos = 0;
-            int pos;
-            for (pos = 0; pos < data.Length; pos++)
+            for(int pos = data.Length-1; pos > 0; pos-- )
             {
-                if (data[pos] == '\n')
+                if(data[pos] == '\n')
                 {
-                    string line = UnterminatedJson + data.Substring(consumedPos, pos - consumedPos);
-                    consumedPos = pos + 1; // We want to skip \n
-                    UnterminatedJson = String.Empty;
+                    string chunk = UnterminatedJson + data.Substring(0, pos);
+                    UnterminatedJson = data.Substring(pos);
 
-                    IEvent? e = Serde.Deserialize(line);
-                    if (e != null)
+                    foreach(var @event in Serde.DeserializeMultiple(chunk))
                     {
-                        processLine(e);
+                        processEvent(@event);
                     }
+                    return;
                 }
-            }
-
-            if (consumedPos < pos)
-            {
-                UnterminatedJson += data.Substring(consumedPos);
             }
         }
     }

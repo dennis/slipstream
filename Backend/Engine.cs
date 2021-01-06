@@ -100,16 +100,9 @@ enable_plugin(""FileMonitorPlugin"")
 
         private void OnInternalBootupEvents(InternalBootupEvents @event)
         {
-            foreach(var e in @event.Events.Split('\n'))
+            foreach(var e in EventSerdeService.DeserializeMultiple(@event.Events))
             {
-                if(e.Length > 0)
-                {
-                    var f = EventSerdeService.Deserialize(e);
-                    if(f != null)
-                    {
-                        CapturedBootupEvents.Add(f);
-                    }
-                }
+                CapturedBootupEvents.Add(e);
             }
 
             // Postponing deadline

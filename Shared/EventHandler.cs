@@ -137,6 +137,9 @@ namespace Slipstream.Shared
         public delegate void OnIRacingCommandSendWeatherInfoHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendWeatherInfo> e);
         public event OnIRacingCommandSendWeatherInfoHandler? OnIRacingCommandSendWeatherInfo;
 
+        public delegate void OnIRacingCommandSendCurrentSessionHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendCurrentSession> e);
+        public event OnIRacingCommandSendCurrentSessionHandler? OnIRacingCommandSendCurrentSession;
+
         public delegate void OnIRacingDriverIncidentHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingDriverIncident> e);
         public event OnIRacingDriverIncidentHandler? OnIRacingDriverIncident;
         #endregion
@@ -409,6 +412,13 @@ namespace Slipstream.Shared
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnIRacingCommandSendWeatherInfo.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendWeatherInfo>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingCommandSendCurrentSession tev:
+                    if (OnIRacingCommandSendCurrentSession == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingCommandSendCurrentSession.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendCurrentSession>(tev));
                     break;
 
                 case Shared.Events.IRacing.IRacingDriverIncident tev:

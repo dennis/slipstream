@@ -10,6 +10,7 @@
  - Lua: Add iracing_send_car_info() that will make IRacingPlugin send all the CarInfo
  - Lua: Add iracing_send_track_info() that will make IRacingPlugin send all TrackInfo
  - Lua: Add iracing_send_weather_info() that will make IRacingPlugin send all WeatherInfo
+ - Lua: Add iracing_send_current_session() that will make IRacingPlugin send CurrentSession
 
 ## [0.3.0](https://github.com/dennis/slipstream/releases/tag/v0.3.0) (2020-01-05)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.2.0...v0.3.0)

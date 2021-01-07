@@ -413,6 +413,11 @@ namespace Slipstream.Shared
             return new IRacingCommandSendWeatherInfo();
         }
 
+        public IRacingCommandSendCurrentSession CreateIRacingCommandSendCurrentSession()
+        {
+            return new IRacingCommandSendCurrentSession();
+        }
+
         public TwitchConnected CreateTwitchConnected()
         {
             return new TwitchConnected();

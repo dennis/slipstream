@@ -147,6 +147,7 @@ namespace Slipstream.Shared
             string fogLevel
         );
         IRacingCommandSendCarInfo CreateIRacingCommandSendCarInfo();
+        IRacingCommandSendTrackInfo CreateIRacingCommandSendTrackInfo();
 
         TwitchCommandSendMessage CreateTwitchCommandSendMessage(string message);
         TwitchConnected CreateTwitchConnected();

@@ -174,6 +174,7 @@
     <Compile Include="Shared\Events\Internal\InternalReconfigured.cs" />
     <Compile Include="Shared\Events\Internal\InternalInitialized.cs" />
     <Compile Include="Shared\Events\Internal\InternalCommandPluginStates.cs" />
+    <Compile Include="Shared\Events\IRacing\IRacingCommandSendTrackInfo.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingDriverIncident.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingCommandSendCarInfo.cs" />
     <Compile Include="Shared\Events\UI\UIButtonTriggered.cs" />

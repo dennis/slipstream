@@ -83,6 +83,7 @@ namespace Slipstream.Backend.Plugins
         private readonly DriverState driverState = new DriverState();
         private bool Connected;
 
+        private bool SendTrackInfo = false;
         private bool SendCarInfo = false;
 
         public IRacingPlugin(string id, IEventFactory eventFactory, IEventBus eventBus) : base(id, "IRacingPlugin", "IRacingPlugin", "IRacingPlugin")
@@ -92,6 +93,7 @@ namespace Slipstream.Backend.Plugins
 
             EventHandler.OnInternalInitialized += (s, e) => InitializedSeen = true;
             EventHandler.OnIRacingCommandSendCarInfo += (s, e) => { if (InitializedSeen) SendCarInfo = true; };
+            EventHandler.OnIRacingCommandSendTrackInfo += (s, e) => { if (InitializedSeen) SendTrackInfo = true; };
         }
 
         public override void OnEnable()
@@ -470,9 +472,15 @@ namespace Slipstream.Backend.Plugins
             {
                 LastWeatherInfo = null;
                 LastSessionInfo = null;
-                Connected = true;
 
                 EventBus.PublishEvent(EventFactory.CreateIRacingConnected());
+
+                Connected = true;
+                SendTrackInfo = true;
+            }
+
+            if (SendTrackInfo)
+            {
                 EventBus.PublishEvent(EventFactory.CreateIRacingTrackInfo
                 (
                     trackId: data.SessionData.WeekendInfo.TrackID,
@@ -484,6 +492,8 @@ namespace Slipstream.Backend.Plugins
                     trackConfigName: data.SessionData.WeekendInfo.TrackConfigName,
                     trackType: data.SessionData.WeekendInfo.TrackType
                 ));
+
+                SendTrackInfo = false;
             }
         }
 

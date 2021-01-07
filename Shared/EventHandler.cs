@@ -131,8 +131,11 @@ namespace Slipstream.Shared
         public delegate void OnIRacingCommandSendCarInfoHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendCarInfo> e);
         public event OnIRacingCommandSendCarInfoHandler? OnIRacingCommandSendCarInfo;
 
-        public delegate void OnIracingDriverIncidentHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingDriverIncident> e);
-        public event OnIracingDriverIncidentHandler? OnIracingDriverIncident;
+        public delegate void OnIRacingCommandSendTrackInfoHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendTrackInfo> e);
+        public event OnIRacingCommandSendTrackInfoHandler? OnIRacingCommandSendTrackInfo;
+
+        public delegate void OnIRacingDriverIncidentHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingDriverIncident> e);
+        public event OnIRacingDriverIncidentHandler? OnIRacingDriverIncident;
         #endregion
 
         #region Events: Twitch
@@ -389,13 +392,20 @@ namespace Slipstream.Shared
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnIRacingCommandSendCarInfo.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendCarInfo>(tev));
-                    break; 
+                    break;
 
-                case Shared.Events.IRacing.IRacingDriverIncident tev:
-                    if (OnIracingDriverIncident == null)
+                case Shared.Events.IRacing.IRacingCommandSendTrackInfo tev:
+                    if (OnIRacingCommandSendTrackInfo == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnIracingDriverIncident(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingDriverIncident>(tev));
+                        OnIRacingCommandSendTrackInfo.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendTrackInfo>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingDriverIncident tev:
+                    if (OnIRacingDriverIncident == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingDriverIncident(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingDriverIncident>(tev));
                     break;
 
                 // Twitch

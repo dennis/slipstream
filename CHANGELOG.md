@@ -7,6 +7,8 @@
    that we avoid having the same response to the same command repeated several
    times. Fx. Having multiple scripts that asks for IRacing WeatherInfo upon
    start, will be deduplicated as only one response is needed for these scripts.
+ - Lua: Add iracing_send_car_info() that will make IRacingPlugin send all the CarInfo
+ 
 
 ## [0.3.0](https://github.com/dennis/slipstream/releases/tag/v0.3.0) (2020-01-05)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.2.0...v0.3.0)

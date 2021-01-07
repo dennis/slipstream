@@ -83,11 +83,15 @@ namespace Slipstream.Backend.Plugins
         private readonly DriverState driverState = new DriverState();
         private bool Connected;
 
+        private bool SendCarInfo = false;
+
         public IRacingPlugin(string id, IEventFactory eventFactory, IEventBus eventBus) : base(id, "IRacingPlugin", "IRacingPlugin", "IRacingPlugin")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
+
             EventHandler.OnInternalInitialized += (s, e) => InitializedSeen = true;
+            EventHandler.OnIRacingCommandSendCarInfo += (s, e) => { if (InitializedSeen) SendCarInfo = true; };
         }
 
         public override void OnEnable()
@@ -408,13 +412,15 @@ namespace Slipstream.Backend.Plugins
                 );
 
 
-                if (!carState.CarInfo.SameAs(@event))
+                if (!carState.CarInfo.SameAs(@event) || SendCarInfo)
                 {
                     EventBus.PublishEvent(@event);
 
                     carState.CarInfo = @event;
                 }
             }
+
+            SendCarInfo = false;
         }
 
         private void HandleCurrentSession(DataSample data)

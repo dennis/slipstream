@@ -391,6 +391,11 @@ namespace Slipstream.Shared
             };
         }
 
+        public IRacingCommandSendCarInfo CreateIRacingCommandSendCarInfo()
+        {
+            return new IRacingCommandSendCarInfo();
+        }
+
         public TwitchCommandSendMessage CreateTwitchCommandSendMessage(string message)
         {
             return new TwitchCommandSendMessage

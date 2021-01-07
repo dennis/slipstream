@@ -408,6 +408,10 @@ namespace Slipstream.Shared
                 Message = message
             };
         }
+        public IRacingCommandSendWeatherInfo CreateIRacingCommandSendWeatherInfo()
+        {
+            return new IRacingCommandSendWeatherInfo();
+        }
 
         public TwitchConnected CreateTwitchConnected()
         {

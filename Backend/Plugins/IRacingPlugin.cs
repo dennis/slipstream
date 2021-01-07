@@ -85,6 +85,7 @@ namespace Slipstream.Backend.Plugins
 
         private bool SendTrackInfo = false;
         private bool SendCarInfo = false;
+        private bool SendWeatherInfo = false;
 
         public IRacingPlugin(string id, IEventFactory eventFactory, IEventBus eventBus) : base(id, "IRacingPlugin", "IRacingPlugin", "IRacingPlugin")
         {
@@ -94,6 +95,7 @@ namespace Slipstream.Backend.Plugins
             EventHandler.OnInternalInitialized += (s, e) => InitializedSeen = true;
             EventHandler.OnIRacingCommandSendCarInfo += (s, e) => { if (InitializedSeen) SendCarInfo = true; };
             EventHandler.OnIRacingCommandSendTrackInfo += (s, e) => { if (InitializedSeen) SendTrackInfo = true; };
+            EventHandler.OnIRacingCommandSendWeatherInfo += (s, e) => { if (InitializedSeen) SendWeatherInfo = true; };
         }
 
         public override void OnEnable()
@@ -458,11 +460,12 @@ namespace Slipstream.Backend.Plugins
                 fogLevel: data.SessionData.WeekendInfo.TrackFogLevel
             );
 
-            if (LastWeatherInfo == null || !weatherInfo.DifferentTo(LastWeatherInfo))
+            if (LastWeatherInfo == null || !weatherInfo.DifferentTo(LastWeatherInfo) || SendWeatherInfo)
             {
                 EventBus.PublishEvent(weatherInfo);
 
                 LastWeatherInfo = weatherInfo;
+                SendWeatherInfo = false;
             }
         }
 

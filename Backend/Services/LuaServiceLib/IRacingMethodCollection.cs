@@ -29,6 +29,7 @@ namespace Slipstream.Backend.Services.LuaServiceLib
                 lua.DoString(@"
 function iracing_send_car_info(); iracing:send_car_info(); end
 function iracing_send_track_info(); iracing:send_track_info(); end
+function iracing_send_weather_info(); iracing:send_weather_info(); end
 ");
             }
 
@@ -42,6 +43,12 @@ function iracing_send_track_info(); iracing:send_track_info(); end
             public void send_track_info()
             {
                 EventBus.PublishEvent(EventFactory.CreateIRacingCommandSendTrackInfo());
+            }
+
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
+            public void send_weather_info()
+            {
+                EventBus.PublishEvent(EventFactory.CreateIRacingCommandSendWeatherInfo());
             }
         }
     }

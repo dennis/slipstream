@@ -423,6 +423,10 @@ namespace Slipstream.Shared
             return new IRacingCommandSendSessionState();
         }
 
+        public IRacingCommandSendRaceFlags CreateIRacingCommandSendRaceFlags()
+        {
+            return new IRacingCommandSendRaceFlags();
+        }
         public TwitchConnected CreateTwitchConnected()
         {
             return new TwitchConnected();

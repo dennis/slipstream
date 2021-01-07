@@ -176,6 +176,7 @@
     <Compile Include="Shared\Events\Internal\InternalCommandPluginStates.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingCommandSendTrackInfo.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingCommandSendSessionState.cs" />
+    <Compile Include="Shared\Events\IRacing\IRacingCommandSendRaceFlags.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingCommandSendWeatherInfo.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingCommandSendCurrentSession.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingDriverIncident.cs" />

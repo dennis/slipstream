@@ -88,6 +88,7 @@ namespace Slipstream.Backend.Plugins
         private bool SendWeatherInfo = false;
         private bool SendCurrentSession = false;
         private bool SendSessionState = false;
+        private bool SendRaceFlags = false;
 
         public IRacingPlugin(string id, IEventFactory eventFactory, IEventBus eventBus) : base(id, "IRacingPlugin", "IRacingPlugin", "IRacingPlugin")
         {
@@ -100,6 +101,7 @@ namespace Slipstream.Backend.Plugins
             EventHandler.OnIRacingCommandSendWeatherInfo += (s, e) => { if (InitializedSeen) SendWeatherInfo = true; };
             EventHandler.OnIRacingCommandSendCurrentSession += (s, e) => { if (InitializedSeen) SendCurrentSession = true; };
             EventHandler.OnIRacingCommandSendSessionState += (s, e) => { if (InitializedSeen) SendSessionState = true; };
+            EventHandler.OnIRacingCommandSendRaceFlags += (s, e) => { if (InitializedSeen) SendRaceFlags = true; };
         }
 
         public override void OnEnable()
@@ -377,7 +379,7 @@ namespace Slipstream.Backend.Plugins
                 yellowWaving: sessionFlags.HasFlag(SessionFlags.yellowWaving)
             );
 
-            if (LastRaceFlags == null || !LastRaceFlags.DifferentTo(@event))
+            if (LastRaceFlags == null || !LastRaceFlags.DifferentTo(@event) || SendRaceFlags)
             {
                 if (@event.Green)
                 {
@@ -391,6 +393,7 @@ namespace Slipstream.Backend.Plugins
 
                 EventBus.PublishEvent(@event);
                 LastRaceFlags = @event;
+                SendRaceFlags = false;
             }
         }
 

@@ -31,6 +31,7 @@ function iracing_send_car_info(); iracing:send_car_info(); end
 function iracing_send_track_info(); iracing:send_track_info(); end
 function iracing_send_weather_info(); iracing:send_weather_info(); end
 function iracing_send_current_session(); iracing:send_current_session(); end
+function iracing_send_session_state(); iracing:send_session_state(); end
 ");
             }
 
@@ -56,6 +57,12 @@ function iracing_send_current_session(); iracing:send_current_session(); end
             public void send_current_session()
             {
                 EventBus.PublishEvent(EventFactory.CreateIRacingCommandSendCurrentSession());
+            }
+
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
+            public void send_session_state()
+            {
+                EventBus.PublishEvent(EventFactory.CreateIRacingCommandSendSessionState());
             }
         }
     }

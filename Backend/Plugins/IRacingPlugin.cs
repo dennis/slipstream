@@ -87,6 +87,7 @@ namespace Slipstream.Backend.Plugins
         private bool SendCarInfo = false;
         private bool SendWeatherInfo = false;
         private bool SendCurrentSession = false;
+        private bool SendSessionState = false;
 
         public IRacingPlugin(string id, IEventFactory eventFactory, IEventBus eventBus) : base(id, "IRacingPlugin", "IRacingPlugin", "IRacingPlugin")
         {
@@ -98,6 +99,7 @@ namespace Slipstream.Backend.Plugins
             EventHandler.OnIRacingCommandSendTrackInfo += (s, e) => { if (InitializedSeen) SendTrackInfo = true; };
             EventHandler.OnIRacingCommandSendWeatherInfo += (s, e) => { if (InitializedSeen) SendWeatherInfo = true; };
             EventHandler.OnIRacingCommandSendCurrentSession += (s, e) => { if (InitializedSeen) SendCurrentSession = true; };
+            EventHandler.OnIRacingCommandSendSessionState += (s, e) => { if (InitializedSeen) SendSessionState = true; };
         }
 
         public override void OnEnable()
@@ -327,7 +329,7 @@ namespace Slipstream.Backend.Plugins
                 state: SessionStateMapping[data.Telemetry.SessionState]
             );
 
-            if (LastSessionState == null || !LastSessionState.DifferentTo(@event))
+            if (LastSessionState == null || !LastSessionState.DifferentTo(@event) || SendSessionState)
             {
                 EventBus.PublishEvent(@event);
                 LastSessionState = @event;
@@ -336,6 +338,8 @@ namespace Slipstream.Backend.Plugins
                 {
                     carState.Value.ClearState();
                 }
+
+                SendSessionState = false;
             }
         }
 

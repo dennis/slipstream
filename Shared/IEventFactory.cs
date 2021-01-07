@@ -150,6 +150,7 @@ namespace Slipstream.Shared
         IRacingCommandSendTrackInfo CreateIRacingCommandSendTrackInfo();
         IRacingCommandSendWeatherInfo CreateIRacingCommandSendWeatherInfo();
         IRacingCommandSendCurrentSession CreateIRacingCommandSendCurrentSession();
+        IRacingCommandSendSessionState CreateIRacingCommandSendSessionState();
 
         TwitchCommandSendMessage CreateTwitchCommandSendMessage(string message);
         TwitchConnected CreateTwitchConnected();

@@ -140,6 +140,9 @@ namespace Slipstream.Shared
         public delegate void OnIRacingCommandSendCurrentSessionHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendCurrentSession> e);
         public event OnIRacingCommandSendCurrentSessionHandler? OnIRacingCommandSendCurrentSession;
 
+        public delegate void OnIRacingCommandSendSessionStateHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendSessionState> e);
+        public event OnIRacingCommandSendSessionStateHandler? OnIRacingCommandSendSessionState;
+
         public delegate void OnIRacingDriverIncidentHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingDriverIncident> e);
         public event OnIRacingDriverIncidentHandler? OnIRacingDriverIncident;
         #endregion
@@ -419,6 +422,13 @@ namespace Slipstream.Shared
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnIRacingCommandSendCurrentSession.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendCurrentSession>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingCommandSendSessionState tev:
+                    if (OnIRacingCommandSendSessionState == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingCommandSendSessionState.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendSessionState>(tev));
                     break;
 
                 case Shared.Events.IRacing.IRacingDriverIncident tev:

@@ -10,7 +10,7 @@ using EventHandler = Slipstream.Shared.EventHandler;
 
 namespace Slipstream.Backend.Plugins
 {
-    internal class TransmitterPlugin : BasePlugin
+    public class TransmitterPlugin : BasePlugin
     {
         private readonly IEventBus EventBus;
         private readonly IEventFactory EventFactory;
@@ -44,7 +44,7 @@ namespace Slipstream.Backend.Plugins
                 EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Invalid TxrxIpPort provided: '{txrxConfiguration.TxrxIpPort}'"));
             }
 
-            EventHandler.OnDefault += (s, e) => OnEvent(e.Event);
+            EventHandler.OnDefault += (_, e) => OnEvent(e.Event);
 
             // To avoid that we get an endless loop, we will Unregister the "other" end in this instance
             EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginUnregister("ReceiverPlugin"));
@@ -52,16 +52,14 @@ namespace Slipstream.Backend.Plugins
 
         private void OnEvent(IEvent @event)
         {
-            if (Client == null || !Client.Connected || @event.ExcludeFromTxrx)
+            if (Client?.Connected != true || @event.ExcludeFromTxrx)
                 return;
 
             try
             {
                 string json = TxrxService.Serialize(@event);
 
-                Debug.WriteLine($"Sending '{json}'");
-
-                byte[] data = System.Text.Encoding.Unicode.GetBytes(json);
+                byte[] data = System.Text.Encoding.UTF8.GetBytes(json);
 
                 Client.GetStream().Write(data, 0, data.Length);
             }

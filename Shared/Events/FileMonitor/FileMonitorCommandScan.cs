@@ -2,18 +2,18 @@
 
 using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.Internal
+namespace Slipstream.Shared.Events.FileMonitor
 {
-    public class InternalInitialized : IEvent
+    public class FileMonitorCommandScan : IEvent
     {
-        public string EventType => "InternalInitialized";
+        public string EventType => "FileMonitorCommandScan";
         public bool ExcludeFromTxrx => true;
 
         public override bool Equals(object? obj)
         {
-            return obj is InternalInitialized initialized &&
-                   EventType == initialized.EventType &&
-                   ExcludeFromTxrx == initialized.ExcludeFromTxrx;
+            return obj is FileMonitorCommandScan scan &&
+                   EventType == scan.EventType &&
+                   ExcludeFromTxrx == scan.ExcludeFromTxrx;
         }
 
         public override int GetHashCode()

@@ -75,11 +75,6 @@ namespace Slipstream.Shared
             return new InternalCommandPluginUnregister { Id = pluginId };
         }
 
-        public InternalInitialized CreateInternalInitialized()
-        {
-            return new InternalInitialized();
-        }
-
         public InternalPluginState CreateInternalPluginState(string pluginId, string pluginName, string displayName, PluginStatusEnum pluginStatus)
         {
             return new InternalPluginState { Id = pluginId, PluginName = pluginName, DisplayName = displayName, PluginStatus = pluginStatus.ToString() };
@@ -391,12 +386,46 @@ namespace Slipstream.Shared
             };
         }
 
+        public IRacingCommandSendCarInfo CreateIRacingCommandSendCarInfo()
+        {
+            return new IRacingCommandSendCarInfo();
+        }
+
+        public IRacingCommandSendTrackInfo CreateIRacingCommandSendTrackInfo()
+        {
+            return new IRacingCommandSendTrackInfo();
+        }
+
         public TwitchCommandSendMessage CreateTwitchCommandSendMessage(string message)
         {
             return new TwitchCommandSendMessage
             {
                 Message = message
             };
+        }
+        public IRacingCommandSendWeatherInfo CreateIRacingCommandSendWeatherInfo()
+        {
+            return new IRacingCommandSendWeatherInfo();
+        }
+
+        public IRacingCommandSendCurrentSession CreateIRacingCommandSendCurrentSession()
+        {
+            return new IRacingCommandSendCurrentSession();
+        }
+
+        public IRacingCommandSendSessionState CreateIRacingCommandSendSessionState()
+        {
+            return new IRacingCommandSendSessionState();
+        }
+
+        public IRacingCommandSendRaceFlags CreateIRacingCommandSendRaceFlags()
+        {
+            return new IRacingCommandSendRaceFlags();
+        }
+
+        public FileMonitorCommandScan CreateFileMonitorCommandScan()
+        {
+            return new FileMonitorCommandScan();
         }
 
         public TwitchConnected CreateTwitchConnected()

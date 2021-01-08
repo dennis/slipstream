@@ -40,7 +40,6 @@ namespace Slipstream.Shared
         InternalCommandPluginRegister CreateInternalCommandPluginRegister(string pluginId, string pluginName);
         InternalCommandPluginStates CreateInternalCommandPluginStates();
         InternalCommandPluginUnregister CreateInternalCommandPluginUnregister(string pluginId);
-        InternalInitialized CreateInternalInitialized();
         InternalPluginState CreateInternalPluginState(string pluginId, string pluginName, string displayName, PluginStatusEnum pluginStatus);
         InternalReconfigured CreateInternalReconfigured();
         InternalBootupEvents CreateInternalBootupEvents(IEvent[] events);
@@ -146,6 +145,13 @@ namespace Slipstream.Shared
             string relativeHumidity,
             string fogLevel
         );
+        IRacingCommandSendCarInfo CreateIRacingCommandSendCarInfo();
+        IRacingCommandSendTrackInfo CreateIRacingCommandSendTrackInfo();
+        IRacingCommandSendWeatherInfo CreateIRacingCommandSendWeatherInfo();
+        IRacingCommandSendCurrentSession CreateIRacingCommandSendCurrentSession();
+        IRacingCommandSendSessionState CreateIRacingCommandSendSessionState();
+        IRacingCommandSendRaceFlags CreateIRacingCommandSendRaceFlags();
+        FileMonitorCommandScan CreateFileMonitorCommandScan();
 
         TwitchCommandSendMessage CreateTwitchCommandSendMessage(string message);
         TwitchConnected CreateTwitchConnected();

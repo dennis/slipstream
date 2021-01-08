@@ -181,8 +181,6 @@ namespace Slipstream.Backend
                         EnablePlugin(newPlugin);
                 }
             }
-
-            EventBus.PublishEvent(EventFactory.CreateInternalInitialized());
         }
 
         public IPlugin CreatePlugin(string id, string name)

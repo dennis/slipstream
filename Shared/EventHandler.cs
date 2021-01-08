@@ -41,9 +41,6 @@ namespace Slipstream.Shared
         public delegate void OnInternalCommandPluginStatesHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginStates> e);
         public event OnInternalCommandPluginStatesHandler? OnInternalCommandPluginStates;
 
-        public delegate void OnInternalInitializedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalInitialized> e);
-        public event OnInternalInitializedHandler? OnInternalInitialized;
-
         public delegate void OnInternalReconfiguredHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalReconfigured> e);
         public event OnInternalReconfiguredHandler? OnInternalReconfigured;
 
@@ -52,7 +49,10 @@ namespace Slipstream.Shared
 
         #endregion
 
-        #region FileMonitor
+        #region Events: FileMonitor
+        public delegate void OnFileMonitorCommandScanHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorCommandScan> e);
+        public event OnFileMonitorCommandScanHandler? OnFileMonitorCommandScan;
+
         public delegate void OnFileMonitorFileCreatedHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileCreated> e);
         public event OnFileMonitorFileCreatedHandler? OnFileMonitorFileCreated;
 
@@ -128,8 +128,26 @@ namespace Slipstream.Shared
         public delegate void OnIRacingPitstopReportHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingPitstopReport> e);
         public event OnIRacingPitstopReportHandler? OnIRacingPitstopReport;
 
-        public delegate void OnIracingDriverIncidentHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingDriverIncident> e);
-        public event OnIracingDriverIncidentHandler? OnIracingDriverIncident;
+        public delegate void OnIRacingCommandSendCarInfoHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendCarInfo> e);
+        public event OnIRacingCommandSendCarInfoHandler? OnIRacingCommandSendCarInfo;
+
+        public delegate void OnIRacingCommandSendTrackInfoHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendTrackInfo> e);
+        public event OnIRacingCommandSendTrackInfoHandler? OnIRacingCommandSendTrackInfo;
+
+        public delegate void OnIRacingCommandSendWeatherInfoHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendWeatherInfo> e);
+        public event OnIRacingCommandSendWeatherInfoHandler? OnIRacingCommandSendWeatherInfo;
+
+        public delegate void OnIRacingCommandSendCurrentSessionHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendCurrentSession> e);
+        public event OnIRacingCommandSendCurrentSessionHandler? OnIRacingCommandSendCurrentSession;
+
+        public delegate void OnIRacingCommandSendSessionStateHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendSessionState> e);
+        public event OnIRacingCommandSendSessionStateHandler? OnIRacingCommandSendSessionState;
+
+        public delegate void OnIRacingCommandSendRaceFlagsHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendRaceFlags> e);
+        public event OnIRacingCommandSendRaceFlagsHandler? OnIRacingCommandSendRaceFlags;
+
+        public delegate void OnIRacingDriverIncidentHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingDriverIncident> e);
+        public event OnIRacingDriverIncidentHandler? OnIRacingDriverIncident;
         #endregion
 
         #region Events: Twitch
@@ -195,20 +213,12 @@ namespace Slipstream.Shared
                     else
                         OnInternalCommandPluginStates.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginStates>(tev));
                     break;
-                case Shared.Events.Internal.InternalInitialized tev:
-                    if (OnInternalInitialized == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalInitialized.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalInitialized>(tev));
-                    break;
-                    
                 case Shared.Events.Internal.InternalReconfigured tev:
                     if (OnInternalReconfigured == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnInternalReconfigured.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalReconfigured>(tev));
                     break;
-
                 case Shared.Events.Internal.InternalBootupEvents tev:
                     if (OnInternalBootupEvents == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
@@ -218,6 +228,12 @@ namespace Slipstream.Shared
 
                 // File Monitor
 
+                case Shared.Events.FileMonitor.FileMonitorCommandScan tev:
+                    if (OnFileMonitorCommandScan == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnFileMonitorCommandScan.Invoke(this, new EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorCommandScan>(tev));
+                    break;
                 case Shared.Events.FileMonitor.FileMonitorFileCreated tev:
                     if (OnFileMonitorFileCreated == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
@@ -381,11 +397,53 @@ namespace Slipstream.Shared
                         OnIRacingPitstopReport.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingPitstopReport>(tev));
                     break;
 
-                case Shared.Events.IRacing.IRacingDriverIncident tev:
-                    if (OnIracingDriverIncident == null)
+                case Shared.Events.IRacing.IRacingCommandSendCarInfo tev:
+                    if (OnIRacingCommandSendCarInfo == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnIracingDriverIncident(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingDriverIncident>(tev));
+                        OnIRacingCommandSendCarInfo.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendCarInfo>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingCommandSendTrackInfo tev:
+                    if (OnIRacingCommandSendTrackInfo == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingCommandSendTrackInfo.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendTrackInfo>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingCommandSendWeatherInfo tev:
+                    if (OnIRacingCommandSendWeatherInfo == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingCommandSendWeatherInfo.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendWeatherInfo>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingCommandSendCurrentSession tev:
+                    if (OnIRacingCommandSendCurrentSession == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingCommandSendCurrentSession.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendCurrentSession>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingCommandSendSessionState tev:
+                    if (OnIRacingCommandSendSessionState == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingCommandSendSessionState.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendSessionState>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingCommandSendRaceFlags tev:
+                    if (OnIRacingCommandSendRaceFlags == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingCommandSendRaceFlags.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendRaceFlags>(tev));
+                    break;
+
+                case Shared.Events.IRacing.IRacingDriverIncident tev:
+                    if (OnIRacingDriverIncident == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnIRacingDriverIncident(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingDriverIncident>(tev));
                     break;
 
                 // Twitch

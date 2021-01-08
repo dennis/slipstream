@@ -12,11 +12,12 @@ using static Slipstream.Shared.IEventFactory;
 
 namespace Slipstream.Backend.Plugins
 {
-    class IRacingPlugin : BasePlugin
+    internal class IRacingPlugin : BasePlugin
     {
         private readonly iRacingConnection Connection = new iRacingConnection();
         private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
+
         private class DriverState
         {
             public int PlayerCarDriverIncidentCount { get; set; }
@@ -63,6 +64,7 @@ namespace Slipstream.Backend.Plugins
             { iRacingSDK.SessionState.Racing, IRacingSessionStateEnum.Racing },
             { iRacingSDK.SessionState.Warmup, IRacingSessionStateEnum.Warmup },
         };
+
         private static readonly Dictionary<string, IRacingSessionTypeEnum> IRacingSessionTypes = new Dictionary<string, IRacingSessionTypeEnum>()
         {
             { "Practice", IRacingSessionTypeEnum.Practice },
@@ -100,18 +102,8 @@ namespace Slipstream.Backend.Plugins
             EventHandler.OnIRacingCommandSendRaceFlags += (s, e) => { SendRaceFlags = true; };
         }
 
-        public override void OnEnable()
-        {
-            Reset();
-        }
-
         public override void Loop()
         {
-            if (!Enabled)
-            {
-                return;
-            }
-
             try
             {
                 foreach (var data in Connection.GetDataFeed().WithCorrectedDistances().WithCorrectedPercentages())
@@ -155,7 +147,7 @@ namespace Slipstream.Backend.Plugins
             int incidents = Convert.ToInt32(data.Telemetry["PlayerCarDriverIncidentCount"]);
             var incidentDelta = incidents - this.driverState.PlayerCarDriverIncidentCount;
 
-            if(incidentDelta > 0)
+            if (incidentDelta > 0)
             {
                 this.driverState.PlayerCarDriverIncidentCount = incidents;
                 EventBus.PublishEvent(EventFactory.CreateIRacingDriverIncident(totalIncidents: incidents, incidentDelta: incidentDelta));
@@ -267,10 +259,10 @@ namespace Slipstream.Backend.Plugins
 
         private void HandleLapsCompleted(DataSample data)
         {
-            // We cant use data.Telemetry.Cars[].LastTime, as it wont contain data if 
+            // We cant use data.Telemetry.Cars[].LastTime, as it wont contain data if
             // the driver had an incident. So we calculate it ourself which will be slightly
             // off compared to IRacings own timing.
-            // If you plan to use LastTime, please remember to wait approx 2.5 before reading 
+            // If you plan to use LastTime, please remember to wait approx 2.5 before reading
             // LastTime, as the value is updated with about 2.5s delay
             var now = data.Telemetry.SessionTime;
 
@@ -290,7 +282,7 @@ namespace Slipstream.Backend.Plugins
                     // 1st time is when leaving the pits / or whatever lap it is on when we join
                     // 2nd time is start of first real lap (that we see in full)
                     // 3rd+ is lap times (we can begin timing laps)
-                    // if "we" are doing laps, then we know we joined with the car, 
+                    // if "we" are doing laps, then we know we joined with the car,
                     // so we can track laps from the 1st one.
                     // for everybody else, we need to see them crossing the line 3 or more times as describe above
                     if (carState.ObservedCrossFinishingLine >= 3 || (localUser && lapsCompleted > 0))
@@ -415,11 +407,10 @@ namespace Slipstream.Backend.Plugins
                     currentDriverIRating: driver.IRating,
                     localUser: data.SessionData.DriverInfo.DriverCarIdx == driver.CarID,
                     spectator: driver.IsSpectator
-                    // Seems not to be exposed by SDK:
-                    // DriverIncidentCount
-                    // TeamIncidentCount
+                // Seems not to be exposed by SDK:
+                // DriverIncidentCount
+                // TeamIncidentCount
                 );
-
 
                 if (!carState.CarInfo.SameAs(@event) || SendCarInfo)
                 {

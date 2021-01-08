@@ -13,7 +13,7 @@ namespace Slipstream.Shared
     {
         public enum PluginStatusEnum
         {
-            Registered, Unregistered, Enabled, Disabled
+            Registered, Unregistered
         }
 
         public enum IRacingSessionTypeEnum
@@ -33,9 +33,6 @@ namespace Slipstream.Shared
         FileMonitorFileCreated CreateFileMonitorFileCreated(string path);
         FileMonitorFileDeleted CreateFileMonitorFileDeleted(string filePath);
         FileMonitorFileRenamed CreateFileMonitorFileRenamed(string filePath, string oldFilePath);
-
-        InternalCommandPluginDisable CreateInternalCommandPluginDisable(string pluginId);
-        InternalCommandPluginEnable CreateInternalCommandPluginEnable(string pluginId);
 
         InternalCommandPluginRegister CreateInternalCommandPluginRegister(string pluginId, string pluginName);
         InternalCommandPluginStates CreateInternalCommandPluginStates();

@@ -9,7 +9,7 @@ using System.Net.Sockets;
 
 namespace Slipstream.Backend.Plugins
 {
-    class ReceiverPlugin : BasePlugin
+    internal class ReceiverPlugin : BasePlugin
     {
         private readonly IEventBus EventBus;
         private readonly IEventFactory EventFactory;
@@ -41,18 +41,9 @@ namespace Slipstream.Backend.Plugins
             {
                 EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin: Invalid TxrxHost provided: '{txrxConfiguration.TxrxIpPort}'"));
             }
-        }
 
-        public override void OnEnable()
-        {
             // To avoid that we get an endless loop, we will Unregister the "other" end in this instance
             EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginUnregister("TransmitterPlugin"));
-        }
-
-        public override void OnDisable()
-        {
-            Client?.Dispose();
-            Client = null;
         }
 
         private void SetupListener()
@@ -109,7 +100,7 @@ namespace Slipstream.Backend.Plugins
 
         public override void Loop()
         {
-            if (!Enabled || Ip.Length == 0)
+            if (Ip.Length == 0)
                 return;
 
             if (Listener == null)

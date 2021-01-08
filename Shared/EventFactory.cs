@@ -50,16 +50,6 @@ namespace Slipstream.Shared
             return new FileMonitorFileRenamed { FilePath = filePath, OldFilePath = oldFilePath };
         }
 
-        public InternalCommandPluginDisable CreateInternalCommandPluginDisable(string pluginId)
-        {
-            return new InternalCommandPluginDisable { Id = pluginId };
-        }
-
-        public InternalCommandPluginEnable CreateInternalCommandPluginEnable(string pluginId)
-        {
-            return new InternalCommandPluginEnable { Id = pluginId };
-        }
-
         public InternalCommandPluginRegister CreateInternalCommandPluginRegister(string pluginId, string pluginName)
         {
             return new InternalCommandPluginRegister { Id = pluginId, PluginName = pluginName };

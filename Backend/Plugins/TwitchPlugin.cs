@@ -12,7 +12,7 @@ using EventHandler = Slipstream.Shared.EventHandler;
 
 namespace Slipstream.Backend.Plugins
 {
-    class TwitchPlugin : BasePlugin
+    internal class TwitchPlugin : BasePlugin
     {
         private TwitchClient? Client;
         private readonly IEventFactory EventFactory;
@@ -32,7 +32,7 @@ namespace Slipstream.Backend.Plugins
 
             EventHandler.OnTwitchCommandSendMessage += (s, e) =>
             {
-                if (Client != null && Client.JoinedChannels.Count > 0 && Enabled)
+                if (Client != null && Client.JoinedChannels.Count > 0)
                 {
                     Client.SendMessage(TwitchChannel, e.Event.Message);
                 }
@@ -46,11 +46,6 @@ namespace Slipstream.Backend.Plugins
                 TwitchChannel = TwitchUsername;
         }
 
-        public override void OnDisable()
-        {
-            Disconnect();
-        }
-
         private void Disconnect()
         {
             AnnounceDisconnected();
@@ -58,14 +53,9 @@ namespace Slipstream.Backend.Plugins
             Client = null;
         }
 
-        public override void OnEnable()
-        {
-            Connect();
-        }
-
         public override void Loop()
         {
-            if(RequestReconnect)
+            if (RequestReconnect)
             {
                 Disconnect();
                 Connect();
@@ -96,9 +86,6 @@ namespace Slipstream.Backend.Plugins
 
         private void Connect()
         {
-            if (!Enabled)
-                return;
-            
             if (string.IsNullOrEmpty(TwitchUsername) || string.IsNullOrEmpty(TwitchToken))
                 return;
 
@@ -122,7 +109,7 @@ namespace Slipstream.Backend.Plugins
             Client.OnError += OnError;
             Client.OnIncorrectLogin += OnIncorrectLogin;
             Client.OnJoinedChannel += OnJoinedChannel;
-            if(TwitchLog)
+            if (TwitchLog)
                 Client.OnLog += OnLog;
 
             Client.Connect();
@@ -141,13 +128,11 @@ namespace Slipstream.Backend.Plugins
         private void OnIncorrectLogin(object sender, OnIncorrectLoginArgs e)
         {
             EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"Twitch Error: {e.Exception.Message}"));
-            EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginDisable(this.Id));
         }
 
         private void OnError(object sender, OnErrorEventArgs e)
         {
             EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"Twitch Error: {e.Exception.Message}"));
-            EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginDisable(this.Id));
         }
 
         private void OnDisconnect(object sender, OnDisconnectedEventArgs e)

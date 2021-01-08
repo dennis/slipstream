@@ -7,7 +7,7 @@ using System.IO;
 
 namespace Slipstream.Backend.Plugins
 {
-    class FileMonitorPlugin : BasePlugin
+    internal class FileMonitorPlugin : BasePlugin
     {
         private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
@@ -21,22 +21,6 @@ namespace Slipstream.Backend.Plugins
             EventHandler.OnFileMonitorCommandScan += (s, e) => { ScanExistingFiles(); };
 
             StartMonitoring(fileMonitorConfiguration.FileMonitorPaths);
-        }
-
-        public override void OnDisable()
-        {
-            UpdateWatchers();
-        }
-
-        private void UpdateWatchers()
-        {
-            foreach (var watcher in fileSystemWatchers)
-                watcher.EnableRaisingEvents = Enabled;
-        }
-
-        public override void OnEnable()
-        {
-            UpdateWatchers();
 
             ScanExistingFiles();
         }
@@ -68,7 +52,7 @@ namespace Slipstream.Backend.Plugins
                 watcher.Changed += WatcherOnChanged;
                 watcher.Deleted += WatcherOnDeleted;
                 watcher.Renamed += WatcherOnRenamed;
-                watcher.EnableRaisingEvents = Enabled;
+                watcher.EnableRaisingEvents = true;
 
                 fileSystemWatchers.Add(watcher);
             }

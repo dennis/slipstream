@@ -14,6 +14,7 @@
  - Lua: Add iracing_send_session_state() that will make IRacingPlugin send SessionState
  - Lua: Add iracing_send_race_flags() that will make IRacingPlugin send race flags
  - InternalInitialized event removed. Refactored to avoid having it
+ - Lua: Removed plugin_enable(), plugin_disable(). Register/Unregister them instead
 
 ## [0.3.0](https://github.com/dennis/slipstream/releases/tag/v0.3.0) (2020-01-05)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.2.0...v0.3.0)

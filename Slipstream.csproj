@@ -210,8 +210,6 @@
     <Compile Include="Shared\Events\IRacing\IRacingConnected.cs" />
     <Compile Include="Shared\Events\Internal\InternalCommandPluginUnregister.cs" />
     <Compile Include="Shared\Events\Internal\InternalCommandPluginRegister.cs" />
-    <Compile Include="Shared\Events\Internal\InternalCommandPluginEnable.cs" />
-    <Compile Include="Shared\Events\Internal\InternalCommandPluginDisable.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchCommandSendMessage.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchReceivedCommand.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchDisconnected.cs" />

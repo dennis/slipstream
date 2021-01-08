@@ -7,7 +7,7 @@ using EventHandler = Slipstream.Shared.EventHandler;
 
 namespace Slipstream.Backend.Plugins
 {
-    class FileTriggerPlugin : BasePlugin
+    internal class FileTriggerPlugin : BasePlugin
     {
         private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
@@ -15,10 +15,11 @@ namespace Slipstream.Backend.Plugins
         private readonly IPluginFactory PluginFactory;
         private readonly IDictionary<string, IPlugin> Scripts = new Dictionary<string, IPlugin>();
 
-        // At bootup we will receive zero or more FileCreated events ending with a ScanCompleted. 
+        // At bootup we will receive zero or more FileCreated events ending with a ScanCompleted.
         // If we count the (relevant) files found that launches LuaPlugin, we can keep an eye on PluginState
         // and determine when they are ready. Once all Lua scripts are ready, we can publish Initialized event
         private bool BootUp = true;
+
         private readonly List<string> WaitingForLuaScripts = new List<string>();
 
         public FileTriggerPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IPluginManager pluginManager, IPluginFactory pluginFactory) : base(id, "FileTriggerPlugin", "FileTriggerPlugin", "Core")
@@ -40,11 +41,11 @@ namespace Slipstream.Backend.Plugins
 
         private void EventHandler_OnInternalPluginState(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.InternalPluginState> e)
         {
-            if(e.Event.PluginStatus == "Registered" && e.Event.PluginName == "LuaPlugin")
+            if (e.Event.PluginStatus == "Registered" && e.Event.PluginName == "LuaPlugin")
             {
                 WaitingForLuaScripts.Remove(e.Event.Id);
 
-                if(WaitingForLuaScripts.Count == 0)
+                if (WaitingForLuaScripts.Count == 0)
                 {
                     // We're done
                     EventHandler.OnInternalPluginState -= EventHandler_OnInternalPluginState;
@@ -57,7 +58,7 @@ namespace Slipstream.Backend.Plugins
             BootUp = false;
         }
 
-        class LuaConfiguration : ILuaConfiguration
+        private class LuaConfiguration : ILuaConfiguration
         {
             public string FilePath { get; set; } = "";
         }
@@ -76,11 +77,9 @@ namespace Slipstream.Backend.Plugins
                 WaitingForLuaScripts.Add(pluginId);
             }
 
-
             var plugin = PluginFactory.CreatePlugin(pluginId, "LuaPlugin", (ILuaConfiguration)new LuaConfiguration { FilePath = filePath });
 
             PluginManager.RegisterPlugin(plugin);
-            PluginManager.EnablePlugin(plugin);
 
             Scripts.Add(filePath, plugin);
         }

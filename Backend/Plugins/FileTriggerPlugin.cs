@@ -34,6 +34,8 @@ namespace Slipstream.Backend.Plugins
             EventHandler.OnFileMonitorFileRenamed += EventHandler_OnFileMonitorFileRenamed;
             EventHandler.OnFileMonitorScanCompleted += EventHandler_OnFileMonitorScanCompleted;
             EventHandler.OnInternalPluginState += EventHandler_OnInternalPluginState;
+
+            EventBus.PublishEvent(EventFactory.CreateFileMonitorCommandScan());
         }
 
         private void EventHandler_OnInternalPluginState(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.InternalPluginState> e)

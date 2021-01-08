@@ -52,7 +52,10 @@ namespace Slipstream.Shared
 
         #endregion
 
-        #region FileMonitor
+        #region Events: FileMonitor
+        public delegate void OnFileMonitorCommandScanHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorCommandScan> e);
+        public event OnFileMonitorCommandScanHandler? OnFileMonitorCommandScan;
+
         public delegate void OnFileMonitorFileCreatedHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileCreated> e);
         public event OnFileMonitorFileCreatedHandler? OnFileMonitorFileCreated;
 
@@ -236,6 +239,12 @@ namespace Slipstream.Shared
 
                 // File Monitor
 
+                case Shared.Events.FileMonitor.FileMonitorCommandScan tev:
+                    if (OnFileMonitorCommandScan == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnFileMonitorCommandScan.Invoke(this, new EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorCommandScan>(tev));
+                    break;
                 case Shared.Events.FileMonitor.FileMonitorFileCreated tev:
                     if (OnFileMonitorFileCreated == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));

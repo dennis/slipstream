@@ -427,6 +427,12 @@ namespace Slipstream.Shared
         {
             return new IRacingCommandSendRaceFlags();
         }
+
+        public FileMonitorCommandScan CreateFileMonitorCommandScan()
+        {
+            return new FileMonitorCommandScan();
+        }
+
         public TwitchConnected CreateTwitchConnected()
         {
             return new TwitchConnected();

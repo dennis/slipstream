@@ -253,6 +253,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <None Include="CHANGELOG.md" />
+    <None Include="CODE_OF_CONDUCT.md" />
+    <None Include="docs\release-checklist.md" />
+    <None Include="README.md" />
     <None Include="Frontend\App.config" />
     <None Include="LuaScripts\debug.lua" />
     <None Include="packages.config" />

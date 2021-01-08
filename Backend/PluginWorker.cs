@@ -32,7 +32,7 @@ namespace Slipstream.Backend
 
         private void Plugin_OnStateChanged(IPlugin plugin, IPlugin.EventHandlerArgs<IPlugin> e)
         {
-            EventBus.PublishEvent(EventFactory.CreateInternalPluginState(plugin.Id, plugin.Name, plugin.DisplayName, plugin.Enabled ? IEventFactory.PluginStatusEnum.Enabled : IEventFactory.PluginStatusEnum.Disabled));
+            EventBus.PublishEvent(EventFactory.CreateInternalPluginState(plugin.Id, plugin.Name, plugin.DisplayName, IEventFactory.PluginStatusEnum.Registered));
         }
 
         public void RemovePlugin(IPlugin plugin)
@@ -58,23 +58,10 @@ namespace Slipstream.Backend
                     {
                         foreach (var plugin in Plugins)
                         {
-                            if (plugin.PendingOnEnable)
-                            {
-                                plugin.OnEnable();
-                                plugin.PendingOnEnable = false;
-                            }
-
-                            if (plugin.PendingOnDisable)
-                            {
-                                plugin.OnDisable();
-                                plugin.PendingOnDisable = false;
-                            }
-
                             plugin.EventHandler.HandleEvent(e);
                         }
                     }
                 }
-
 
                 lock (Plugins)
                 {

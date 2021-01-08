@@ -24,7 +24,7 @@ namespace Slipstream.Backend.Plugins
 
             LuaService = new LuaService(eventFactory, EventBus, stateService);
 
-            // Avoid that WriteToConsole is evaluated by Lua, that in turn will 
+            // Avoid that WriteToConsole is evaluated by Lua, that in turn will
             // add more WriteToConsole events, making a endless loop
             EventHandler.OnUICommandWriteToConsole += (s, e) => { };
             EventHandler.OnDefault += (s, e) => LuaContext?.HandleEvent(e.Event);
@@ -37,9 +37,6 @@ namespace Slipstream.Backend.Plugins
 
         private void StartLua()
         {
-            if (!Enabled || FilePath == null)
-                return;
-
             DisplayName = "Lua: " + Path.GetFileName(FilePath);
 
             try
@@ -63,21 +60,8 @@ namespace Slipstream.Backend.Plugins
             EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginUnregister(Id));
         }
 
-        public override void OnDisable()
-        {
-            LuaContext?.Dispose();
-            LuaContext = null;
-        }
-        public override void OnEnable()
-        {
-            StartLua();
-        }
-
         public override void Loop()
         {
-            if (!Enabled || FilePath == null)
-                return;
-
             try
             {
                 LuaContext?.Loop();

@@ -147,7 +147,6 @@ namespace Slipstream.Frontend
                     Size = new System.Drawing.Size(180, 22),
                     Text = e.DisplayName
                 };
-                item.Click += PluginMenuItem_Click;
                 MenuPluginItems.Add(e.Id, item);
 
                 ExecuteSecure(() => PluginsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { item }));
@@ -156,6 +155,16 @@ namespace Slipstream.Frontend
             switch (e.PluginStatus)
             {
                 case "Registered":
+                    switch (e.Id)
+                    {
+                        case "TransmitterPlugin":
+                            ExecuteSecure(() => Text = $"{CleanTitle} <<< transmitting to {ApplicationConfiguration.TxrxIpPort} >>>");
+                            break;
+
+                        case "ReceiverPlugin":
+                            ExecuteSecure(() => Text = $"{CleanTitle} <<< receiving from {ApplicationConfiguration.TxrxIpPort} >>>");
+                            break;
+                    }
                     break;
                 case "Unregistered":
                     {
@@ -166,60 +175,19 @@ namespace Slipstream.Frontend
 
                             ExecuteSecure(() => PluginsToolStripMenuItem.DropDownItems.Remove(item));
                         }
-                    }
-                    break;
-                case "Enabled":
-                    {
+
                         switch (e.Id)
                         {
                             case "TransmitterPlugin":
-                                ExecuteSecure(() => Text = $"{CleanTitle} <<< transmitting to {ApplicationConfiguration.TxrxIpPort} >>>");
+                                ExecuteSecure(() => Text = CleanTitle);
                                 break;
 
                             case "ReceiverPlugin":
-                                ExecuteSecure(() => Text = $"{CleanTitle} <<< receiving from {ApplicationConfiguration.TxrxIpPort} >>>");
+                                ExecuteSecure(() => Text = CleanTitle);
                                 break;
                         }
-
-                        var item = MenuPluginItems[e.Id];
-
-                        ExecuteSecure(() => item.CheckState = CheckState.Checked);
-                        ExecuteSecure(() => item.Text = e.DisplayName);
                     }
                     break;
-                case "Disabled":
-                    {
-                        var item = MenuPluginItems[e.Id];
-
-                        ExecuteSecure(() => item.CheckState = CheckState.Unchecked);
-                        ExecuteSecure(() => item.Text = e.DisplayName);
-                    }
-                    switch (e.Id)
-                    {
-                        case "TransmitterPlugin":
-                            ExecuteSecure(() => Text = CleanTitle);
-                            break;
-
-                        case "ReceiverPlugin":
-                            ExecuteSecure(() => Text = CleanTitle);
-                            break;
-                    }
-                    break;
-            }
-        }
-
-        private void PluginMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!(sender is ToolStripMenuItem item))
-                return;
-
-            if (item.CheckState == CheckState.Checked)
-            {
-                EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginDisable(item.Name));
-            }
-            else
-            {
-                EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginEnable(item.Name));
             }
         }
         #endregion

@@ -33,8 +33,6 @@ namespace Slipstream.Backend.Services.LuaServiceLib
                 lua.DoString(@"
 function register_plugin(id,name); internal:register_plugin(id,name); end
 function unregister_plugin(id); internal:unregister_plugin(id); end
-function enable_plugin(id); internal:enable_plugin(id); end
-function disable_plugin(id); internal:disable_plugin(id); end
 ");
             }
 
@@ -48,18 +46,6 @@ function disable_plugin(id); internal:disable_plugin(id); end
             public void unregister_plugin(string id)
             {
                 EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginUnregister(id));
-            }
-
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
-            public void enable_plugin(string id)
-            {
-                EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginEnable(id));
-            }
-
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
-            public void disable_plugin(string id)
-            {
-                EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginDisable(id));
             }
         }
     }

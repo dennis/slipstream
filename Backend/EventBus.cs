@@ -40,6 +40,7 @@ namespace Slipstream.Backend
             {
                 if (enabled)
                 {
+                    Debug.WriteLine($"Publising event: {e}");
                     foreach (var l in Listeners)
                     {
                         l.Add(e);

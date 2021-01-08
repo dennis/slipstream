@@ -91,27 +91,9 @@ namespace Slipstream.Backend
             EmitPluginStateChanged(plugin, PluginStatusEnum.Registered);
         }
 
-        public void EnablePlugin(IPlugin p)
-        {
-            p.Enable();
-        }
-
-        public void DisablePlugins()
-        {
-            foreach (var p in Plugins)
-            {
-                DisablePlugin(p.Value);
-            }
-        }
-
         private void EmitEvent(IEvent e)
         {
             EventBus.PublishEvent(e);
-        }
-
-        public void DisablePlugin(IPlugin p)
-        {
-            p.Disable();
         }
 
         public void FindPluginAndExecute(string pluginId, Action<IPlugin> a)
@@ -176,9 +158,6 @@ namespace Slipstream.Backend
                     IPlugin newPlugin = CreatePlugin(plugin.Id, plugin.Name);
 
                     RegisterPluginWithoutLock(newPlugin);
-
-                    if (plugin.Enabled)
-                        EnablePlugin(newPlugin);
                 }
             }
         }
@@ -223,7 +202,6 @@ namespace Slipstream.Backend
         {
             lock(Plugins)
             {
-                DisablePlugins();
                 UnregisterPluginsWithoutLock();
                 Plugins.Clear();
                 foreach (var worker in PluginWorkers)

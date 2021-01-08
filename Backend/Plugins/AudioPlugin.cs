@@ -9,7 +9,7 @@ using EventHandler = Slipstream.Shared.EventHandler;
 
 namespace Slipstream.Backend.Plugins
 {
-    class AudioPlugin : BasePlugin
+    internal class AudioPlugin : BasePlugin
     {
         private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;

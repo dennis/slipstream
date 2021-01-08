@@ -29,12 +29,6 @@ namespace Slipstream.Shared
         public delegate void OnInternalCommandPluginUnregisterHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginUnregister> e);
         public event OnInternalCommandPluginUnregisterHandler? OnInternalCommandPluginUnregister;
 
-        public delegate void OnInternalCommandPluginEnableHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginEnable> e);
-        public event OnInternalCommandPluginEnableHandler? OnInternalCommandPluginEnable;
-
-        public delegate void OnInternalCommandPluginDisableHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginDisable> e);
-        public event OnInternalCommandPluginDisableHandler? OnInternalCommandPluginDisable;
-
         public delegate void OnInternalPluginStateHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalPluginState> e);
         public event OnInternalPluginStateHandler? OnInternalPluginState;
 
@@ -188,18 +182,6 @@ namespace Slipstream.Shared
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnInternalCommandPluginUnregister.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginUnregister>(tev));
-                    break;
-                case Shared.Events.Internal.InternalCommandPluginEnable tev:
-                    if (OnInternalCommandPluginEnable == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalCommandPluginEnable.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginEnable>(tev));
-                    break;
-                case Shared.Events.Internal.InternalCommandPluginDisable tev:
-                    if (OnInternalCommandPluginDisable == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalCommandPluginDisable.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginDisable>(tev));
                     break;
                 case Shared.Events.Internal.InternalPluginState tev:
                     if (OnInternalPluginState == null)

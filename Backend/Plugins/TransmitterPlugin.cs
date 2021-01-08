@@ -10,7 +10,7 @@ using EventHandler = Slipstream.Shared.EventHandler;
 
 namespace Slipstream.Backend.Plugins
 {
-    class TransmitterPlugin : BasePlugin
+    internal class TransmitterPlugin : BasePlugin
     {
         private readonly IEventBus EventBus;
         private readonly IEventFactory EventFactory;
@@ -45,11 +45,14 @@ namespace Slipstream.Backend.Plugins
             }
 
             EventHandler.OnDefault += (s, e) => OnEvent(e.Event);
+
+            // To avoid that we get an endless loop, we will Unregister the "other" end in this instance
+            EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginUnregister("ReceiverPlugin"));
         }
 
         private void OnEvent(IEvent @event)
         {
-            if (!Enabled || Client == null || !Client.Connected || @event.ExcludeFromTxrx)
+            if (Client == null || !Client.Connected || @event.ExcludeFromTxrx)
                 return;
 
             try
@@ -119,20 +122,9 @@ namespace Slipstream.Backend.Plugins
             Thread.Sleep(1000);
         }
 
-        public override void OnEnable()
-        {
-            // To avoid that we get an endless loop, we will Unregister the "other" end in this instance
-            EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginUnregister("ReceiverPlugin"));
-        }
-
-        public override void OnDisable()
-        {
-            Reset();
-        }
-
         public override void Loop()
         {
-            if (!Enabled || Ip.Length == 0)
+            if (Ip.Length == 0)
                 return;
 
             if (Client == null)

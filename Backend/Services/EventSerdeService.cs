@@ -25,22 +25,24 @@ namespace Slipstream.Backend.Services
 
         public IEvent? Deserialize(string json)
         {
-            var eventType = JsonDocument.Parse(json).RootElement.GetProperty("EventType").GetString();
-
-            Debug.Assert(eventType != null);
-
-            json = json.Replace(@"\n", "\n");
-
-            var obj = JsonSerializer.Deserialize(json, EventsMap[eventType!]);
-
-            if (obj != null)
+            if(JsonDocument.Parse(json).RootElement.TryGetProperty("EventType", out JsonElement eventTypeProp))
             {
-                return (IEvent)obj;
+                var eventType = eventTypeProp.GetString();
+
+                if (eventType != null && EventsMap.ContainsKey(eventType))
+                {
+                    json = json.Replace(@"\n", "\n");
+
+                    var obj = JsonSerializer.Deserialize(json, EventsMap[eventType!]);
+
+                    if (obj != null)
+                    {
+                        return (IEvent)obj;
+                    }
+                }
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         public IEvent[] DeserializeMultiple(string json)

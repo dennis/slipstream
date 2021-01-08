@@ -9,7 +9,7 @@ using System.Net.Sockets;
 
 namespace Slipstream.Backend.Plugins
 {
-    internal class ReceiverPlugin : BasePlugin
+    public class ReceiverPlugin : BasePlugin
     {
         private readonly IEventBus EventBus;
         private readonly IEventFactory EventFactory;
@@ -75,26 +75,32 @@ namespace Slipstream.Backend.Plugins
             try
             {
                 if (Client!.Available == 0)
+                {
+                    // Check if disconnceted
+                    if (Client!.Poll(200, SelectMode.SelectRead) && Client!.Available == 0)
+                    {
+                        EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin disconnected {Client.RemoteEndPoint}"));
+
+                        Client.Dispose();
+                        Client = null;
+                    }
+
                     return;
+                }
 
                 int length = Client.Receive(ReadBuffer);
 
-                string json = System.Text.Encoding.Unicode.GetString(ReadBuffer, 0, length);
+                string json = System.Text.Encoding.UTF8.GetString(ReadBuffer, 0, length);
 
                 TxrxService.Parse(json, (@event) => EventBus.PublishEvent(@event));
-
-                // Check if disconnceted
-                if (Client!.Poll(200, SelectMode.SelectRead) && Client!.Available == 0)
-                {
-                    EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin disconnected {Client.RemoteEndPoint}"));
-
-                    Client.Dispose();
-                    Client = null;
-                }
             }
             catch (SocketException e)
             {
                 EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin: Cant receieve data: {e.Message}"));
+            }
+            catch(TxrxService.TxrxServiceException e)
+            {
+                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin: Error parsing data: {e.Message}"));
             }
         }
 

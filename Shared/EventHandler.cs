@@ -41,9 +41,6 @@ namespace Slipstream.Shared
         public delegate void OnInternalCommandPluginStatesHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginStates> e);
         public event OnInternalCommandPluginStatesHandler? OnInternalCommandPluginStates;
 
-        public delegate void OnInternalInitializedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalInitialized> e);
-        public event OnInternalInitializedHandler? OnInternalInitialized;
-
         public delegate void OnInternalReconfiguredHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalReconfigured> e);
         public event OnInternalReconfiguredHandler? OnInternalReconfigured;
 
@@ -216,20 +213,12 @@ namespace Slipstream.Shared
                     else
                         OnInternalCommandPluginStates.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginStates>(tev));
                     break;
-                case Shared.Events.Internal.InternalInitialized tev:
-                    if (OnInternalInitialized == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalInitialized.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalInitialized>(tev));
-                    break;
-                    
                 case Shared.Events.Internal.InternalReconfigured tev:
                     if (OnInternalReconfigured == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnInternalReconfigured.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalReconfigured>(tev));
                     break;
-
                 case Shared.Events.Internal.InternalBootupEvents tev:
                     if (OnInternalBootupEvents == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));

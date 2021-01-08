@@ -48,8 +48,6 @@ namespace Slipstream.Backend.Plugins
                 {
                     // We're done
                     EventHandler.OnInternalPluginState -= EventHandler_OnInternalPluginState;
-
-                    EventBus.PublishEvent(EventFactory.CreateInternalInitialized());
                 }
             }
         }

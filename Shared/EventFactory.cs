@@ -75,11 +75,6 @@ namespace Slipstream.Shared
             return new InternalCommandPluginUnregister { Id = pluginId };
         }
 
-        public InternalInitialized CreateInternalInitialized()
-        {
-            return new InternalInitialized();
-        }
-
         public InternalPluginState CreateInternalPluginState(string pluginId, string pluginName, string displayName, PluginStatusEnum pluginStatus)
         {
             return new InternalPluginState { Id = pluginId, PluginName = pluginName, DisplayName = displayName, PluginStatus = pluginStatus.ToString() };

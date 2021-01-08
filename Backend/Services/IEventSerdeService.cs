@@ -8,5 +8,7 @@ namespace Slipstream.Backend.Services
     {
         IEvent? Deserialize(string json);
         string Serialize(IEvent @event);
+        IEvent[] DeserializeMultiple(string json);
+        string SerializeMultiple(IEvent[] events);
     }
 }

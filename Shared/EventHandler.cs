@@ -46,7 +46,10 @@ namespace Slipstream.Shared
 
         public delegate void OnInternalReconfiguredHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalReconfigured> e);
         public event OnInternalReconfiguredHandler? OnInternalReconfigured;
-        
+
+        public delegate void OnInternalBootupEventsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalBootupEvents> e);
+        public event OnInternalBootupEventsHandler? OnInternalBootupEvents;
+
         #endregion
 
         #region FileMonitor
@@ -204,6 +207,13 @@ namespace Slipstream.Shared
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnInternalReconfigured.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalReconfigured>(tev));
+                    break;
+
+                case Shared.Events.Internal.InternalBootupEvents tev:
+                    if (OnInternalBootupEvents == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnInternalBootupEvents.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalBootupEvents>(tev));
                     break;
 
                 // File Monitor

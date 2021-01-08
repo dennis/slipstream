@@ -29,6 +29,8 @@ namespace Slipstream.Backend.Services
 
             Debug.Assert(eventType != null);
 
+            json = json.Replace(@"\n", "\n");
+
             var obj = JsonSerializer.Deserialize(json, EventsMap[eventType!]);
 
             if (obj != null)
@@ -41,9 +43,42 @@ namespace Slipstream.Backend.Services
             }
         }
 
+        public IEvent[] DeserializeMultiple(string json)
+        {
+            var result = new List<IEvent>();
+
+            foreach(var line in json.Split('\n'))
+            {
+                if(line.Length > 0)
+                {
+                    var @event = Deserialize(line);
+
+                    if(@event != null)
+                    {
+                        result.Add(@event);
+                    }
+                }
+            }
+
+            return result.ToArray();
+        }
+
         public string Serialize(IEvent @event)
         {
-            return JsonSerializer.Serialize(@event, EventsMap[@event.EventType], null);
+            var json = JsonSerializer.Serialize(@event, EventsMap[@event.EventType], null);
+
+            return json.Replace("\n", @"\n") + "\n";
+        }
+
+        public string SerializeMultiple(IEvent[] events)
+        {
+            string result = "";
+            foreach(var @event in events)
+            {
+                result += Serialize(@event);
+            }
+
+            return result;
         }
     }
 }

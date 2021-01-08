@@ -187,20 +187,30 @@ namespace Slipstream.Backend
 
         public IPlugin CreatePlugin(string id, string name)
         {
+            return CreatePlugin(id, name, EventBus);
+        }
+
+        public IPlugin CreatePlugin(string id, string name, IEventBus eventBus)
+        {
             return name switch
             {
-                "FileMonitorPlugin" => new FileMonitorPlugin(id, EventFactory, EventBus, ApplicationConfiguration),
-                "FileTriggerPlugin" => new FileTriggerPlugin(id, EventFactory, EventBus, this, this),
-                "AudioPlugin" => new AudioPlugin(id, EventFactory, EventBus, ApplicationConfiguration),
-                "IRacingPlugin" => new IRacingPlugin(id, EventFactory, EventBus),
-                "TwitchPlugin" => new TwitchPlugin(id, EventFactory, EventBus, ApplicationConfiguration),
-                "TransmitterPlugin" => new TransmitterPlugin(id, EventFactory, EventBus, TxrxService, ApplicationConfiguration),
-                "ReceiverPlugin" => new ReceiverPlugin(id, EventFactory, EventBus, TxrxService, ApplicationConfiguration),
+                "FileMonitorPlugin" => new FileMonitorPlugin(id, EventFactory, eventBus, ApplicationConfiguration),
+                "FileTriggerPlugin" => new FileTriggerPlugin(id, EventFactory, eventBus, this, this),
+                "AudioPlugin" => new AudioPlugin(id, EventFactory, eventBus, ApplicationConfiguration),
+                "IRacingPlugin" => new IRacingPlugin(id, EventFactory, eventBus),
+                "TwitchPlugin" => new TwitchPlugin(id, EventFactory, eventBus, ApplicationConfiguration),
+                "TransmitterPlugin" => new TransmitterPlugin(id, EventFactory, eventBus, TxrxService, ApplicationConfiguration),
+                "ReceiverPlugin" => new ReceiverPlugin(id, EventFactory, eventBus, TxrxService, ApplicationConfiguration),
                 _ => throw new Exception($"Unknown plugin '{name}'"),
             };
         }
 
         public IPlugin CreatePlugin<T>(string pluginId, string name, T configuration)
+        {
+            return CreatePlugin(pluginId, name, EventBus, configuration);
+        }
+
+        public IPlugin CreatePlugin<T>(string pluginId, string name, IEventBus eventBus, T configuration)
         {
             return name switch
             {

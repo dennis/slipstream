@@ -2,7 +2,9 @@
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Internal;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using static Slipstream.Shared.IEventFactory;
 
 #nullable enable
@@ -16,14 +18,19 @@ namespace Slipstream.Backend
         private readonly IPluginManager PluginManager;
         private readonly IEventBusSubscription Subscription;
         private readonly IPluginFactory PluginFactory;
+        private readonly IEventSerdeService EventSerdeService;
         private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
 
-        public Engine(IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, ILuaSevice luaService, IApplicationVersionService applicationVersionService) : base("engine")
+        private DateTime? BootupEventsDeadline;
+        private readonly List<IEvent> CapturedBootupEvents = new List<IEvent>();
+
+        public Engine(IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, ILuaSevice luaService, IApplicationVersionService applicationVersionService, IEventSerdeService eventSerdeService) : base("engine")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
             PluginFactory = pluginFactory;
             PluginManager = pluginManager;
+            EventSerdeService = eventSerdeService;
 
             Subscription = EventBus.RegisterListener();
 
@@ -33,6 +40,9 @@ namespace Slipstream.Backend
             EventHandler.OnInternalCommandPluginDisable += (s, e) => PluginManager.FindPluginAndExecute(e.Event.Id, (plugin) => PluginManager.DisablePlugin(plugin));
             EventHandler.OnInternalCommandPluginStates += (s, e) => OnCommandPluginStates(e.Event);
             EventHandler.OnInternalReconfigured += (s, e) => OnInternalReconfigured();
+            EventHandler.OnInternalBootupEvents += (s, e) => OnInternalBootupEvents(e.Event);
+
+            BootupEventsDeadline = DateTime.Now.AddMilliseconds(500);
 
             // Plugins..
             {
@@ -88,6 +98,17 @@ enable_plugin(""FileMonitorPlugin"")
             EventBus.Enabled = true;
         }
 
+        private void OnInternalBootupEvents(InternalBootupEvents @event)
+        {
+            foreach(var e in EventSerdeService.DeserializeMultiple(@event.Events))
+            {
+                CapturedBootupEvents.Add(e);
+            }
+
+            // Postponing deadline
+            BootupEventsDeadline = DateTime.Now.AddMilliseconds(500);
+        }
+
         private void OnInternalReconfigured()
         {
             PluginManager.RestartReconfigurablePlugins();
@@ -120,6 +141,20 @@ enable_plugin(""FileMonitorPlugin"")
         {
             while (!Stopped)
             {
+                if(BootupEventsDeadline != null && BootupEventsDeadline <= DateTime.Now)
+                {
+                    // We have collected the events published when LuaScripts were booting. To avoid
+                    // publishing the same events multiple times, we remove duplicates and then publish it
+                    foreach (var e in CapturedBootupEvents.Distinct())
+                    {
+                        EventBus.PublishEvent(e);
+                    }
+
+                    CapturedBootupEvents.Clear();
+
+                    BootupEventsDeadline = null;
+                }
+ 
                 EventHandler.HandleEvent(Subscription.NextEvent(10));
             }
         }

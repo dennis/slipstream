@@ -1,4 +1,5 @@
-﻿using Slipstream.Shared.Events.Audio;
+﻿using Slipstream.Backend.Services;
+using Slipstream.Shared.Events.Audio;
 using Slipstream.Shared.Events.FileMonitor;
 using Slipstream.Shared.Events.Internal;
 using Slipstream.Shared.Events.IRacing;
@@ -13,6 +14,12 @@ namespace Slipstream.Shared
 {
     public class EventFactory : IEventFactory
     {
+        private readonly IEventSerdeService EventSerdeService;
+        public EventFactory(IEventSerdeService eventSerdeService)
+        {
+            EventSerdeService = eventSerdeService;
+        }
+
         public AudioCommandPlay CreateAudioCommandPlay(string filename, float? volume)
         {
             return new AudioCommandPlay { Filename = filename, Volume = volume };
@@ -81,6 +88,21 @@ namespace Slipstream.Shared
         public InternalReconfigured CreateInternalReconfigured()
         {
             return new InternalReconfigured();
+        }
+
+        public InternalBootupEvents CreateInternalBootupEvents(IEvent[] events)
+        {
+            string json = "";
+
+            foreach(var e in events)
+            {
+                json += EventSerdeService.Serialize(e) + "\n";
+            }
+
+            return new InternalBootupEvents
+            {
+                Events = json
+            };
         }
 
         public IRacingCarCompletedLap CreateIRacingCarCompletedLap(double sessionTime, long carIdx, double time, int lapsCompleted, float? fuelDiff, bool localUser)

@@ -20,8 +20,7 @@ namespace Slipstream.Backend.Services
 
         public ILuaContext Parse(string filename, string logPrefix)
         {
-            var ctx = new LuaContext(EventFactory, EventBus, StateService, filename, logPrefix);
-            return ctx;
+            return new LuaContext(EventFactory, EventBus, StateService, filename, logPrefix);
         }
     }
 }

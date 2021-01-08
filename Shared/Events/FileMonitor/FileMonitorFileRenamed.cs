@@ -1,5 +1,7 @@
 ﻿#nullable enable
 
+using System.Collections.Generic;
+
 namespace Slipstream.Shared.Events.FileMonitor
 {
     public class FileMonitorFileRenamed : IEvent
@@ -8,5 +10,24 @@ namespace Slipstream.Shared.Events.FileMonitor
         public bool ExcludeFromTxrx => true;
         public string? FilePath { get; set; }
         public string? OldFilePath { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is FileMonitorFileRenamed renamed &&
+                   EventType == renamed.EventType &&
+                   ExcludeFromTxrx == renamed.ExcludeFromTxrx &&
+                   FilePath == renamed.FilePath &&
+                   OldFilePath == renamed.OldFilePath;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = 1615632865;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
+            hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string?>.Default.GetHashCode(FilePath);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string?>.Default.GetHashCode(OldFilePath);
+            return hashCode;
+        }
     }
 }

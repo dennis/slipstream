@@ -17,9 +17,6 @@ namespace Slipstream.Backend.Plugins
         private readonly iRacingConnection Connection = new iRacingConnection();
         private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
-
-        private bool InitializedSeen;
-
         private class DriverState
         {
             public int PlayerCarDriverIncidentCount { get; set; }
@@ -95,13 +92,12 @@ namespace Slipstream.Backend.Plugins
             EventFactory = eventFactory;
             EventBus = eventBus;
 
-            EventHandler.OnInternalInitialized += (s, e) => InitializedSeen = true;
-            EventHandler.OnIRacingCommandSendCarInfo += (s, e) => { if (InitializedSeen) SendCarInfo = true; };
-            EventHandler.OnIRacingCommandSendTrackInfo += (s, e) => { if (InitializedSeen) SendTrackInfo = true; };
-            EventHandler.OnIRacingCommandSendWeatherInfo += (s, e) => { if (InitializedSeen) SendWeatherInfo = true; };
-            EventHandler.OnIRacingCommandSendCurrentSession += (s, e) => { if (InitializedSeen) SendCurrentSession = true; };
-            EventHandler.OnIRacingCommandSendSessionState += (s, e) => { if (InitializedSeen) SendSessionState = true; };
-            EventHandler.OnIRacingCommandSendRaceFlags += (s, e) => { if (InitializedSeen) SendRaceFlags = true; };
+            EventHandler.OnIRacingCommandSendCarInfo += (s, e) => { SendCarInfo = true; };
+            EventHandler.OnIRacingCommandSendTrackInfo += (s, e) => { SendTrackInfo = true; };
+            EventHandler.OnIRacingCommandSendWeatherInfo += (s, e) => { SendWeatherInfo = true; };
+            EventHandler.OnIRacingCommandSendCurrentSession += (s, e) => { SendCurrentSession = true; };
+            EventHandler.OnIRacingCommandSendSessionState += (s, e) => { SendSessionState = true; };
+            EventHandler.OnIRacingCommandSendRaceFlags += (s, e) => { SendRaceFlags = true; };
         }
 
         public override void OnEnable()
@@ -111,7 +107,7 @@ namespace Slipstream.Backend.Plugins
 
         public override void Loop()
         {
-            if (!Enabled || !InitializedSeen)
+            if (!Enabled)
             {
                 return;
             }

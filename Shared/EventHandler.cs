@@ -35,8 +35,8 @@ namespace Slipstream.Shared
         public delegate void OnInternalCommandPluginStatesHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginStates> e);
         public event OnInternalCommandPluginStatesHandler? OnInternalCommandPluginStates;
 
-        public delegate void OnInternalReconfiguredHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalReconfigured> e);
-        public event OnInternalReconfiguredHandler? OnInternalReconfigured;
+        public delegate void OnInternalCommandReconfigureHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandReconfigure> e);
+        public event OnInternalCommandReconfigureHandler? OnInternalCommandReconfigure;
 
         public delegate void OnInternalBootupEventsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalBootupEvents> e);
         public event OnInternalBootupEventsHandler? OnInternalBootupEvents;
@@ -201,11 +201,11 @@ namespace Slipstream.Shared
                     else
                         OnInternalCommandPluginStates.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginStates>(tev));
                     break;
-                case Shared.Events.Internal.InternalReconfigured tev:
-                    if (OnInternalReconfigured == null)
+                case Shared.Events.Internal.InternalCommandReconfigure tev:
+                    if (OnInternalCommandReconfigure == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnInternalReconfigured.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalReconfigured>(tev));
+                        OnInternalCommandReconfigure.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandReconfigure>(tev));
                     break;
                 case Shared.Events.Internal.InternalBootupEvents tev:
                     if (OnInternalBootupEvents == null)

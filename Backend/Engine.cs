@@ -37,7 +37,7 @@ namespace Slipstream.Backend
             EventHandler.OnInternalCommandPluginRegister += (s, e) => OnCommandPluginRegister(e.Event);
             EventHandler.OnInternalCommandPluginUnregister += (s, e) => OnCommandPluginUnregister(e.Event);
             EventHandler.OnInternalCommandPluginStates += (s, e) => OnCommandPluginStates(e.Event);
-            EventHandler.OnInternalReconfigured += (s, e) => OnInternalReconfigured();
+            EventHandler.OnInternalCommandReconfigure += (s, e) => OnInternalReconfigured();
             EventHandler.OnInternalBootupEvents += (s, e) => OnInternalBootupEvents(e.Event);
 
             BootupEventsDeadline = DateTime.Now.AddMilliseconds(500);

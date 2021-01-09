@@ -70,9 +70,9 @@ namespace Slipstream.Shared
             return new InternalPluginState { Id = pluginId, PluginName = pluginName, DisplayName = displayName, PluginStatus = pluginStatus.ToString() };
         }
 
-        public InternalReconfigured CreateInternalReconfigured()
+        public InternalCommandReconfigure CreateInternalCommandReconfigure()
         {
-            return new InternalReconfigured();
+            return new InternalCommandReconfigure();
         }
 
         public InternalBootupEvents CreateInternalBootupEvents(IEvent[] events)

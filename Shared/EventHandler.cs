@@ -38,8 +38,8 @@ namespace Slipstream.Shared
         public delegate void OnInternalCommandReconfigureHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandReconfigure> e);
         public event OnInternalCommandReconfigureHandler? OnInternalCommandReconfigure;
 
-        public delegate void OnInternalBootupEventsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalBootupEvents> e);
-        public event OnInternalBootupEventsHandler? OnInternalBootupEvents;
+        public delegate void OnInternalCommandDeduplicateEventsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandDeduplicateEvents> e);
+        public event OnInternalCommandDeduplicateEventsHandler? OnInternalCommandDeduplicateEvents;
 
         #endregion
 
@@ -207,11 +207,11 @@ namespace Slipstream.Shared
                     else
                         OnInternalCommandReconfigure.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandReconfigure>(tev));
                     break;
-                case Shared.Events.Internal.InternalBootupEvents tev:
-                    if (OnInternalBootupEvents == null)
+                case Shared.Events.Internal.InternalCommandDeduplicateEvents tev:
+                    if (OnInternalCommandDeduplicateEvents == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnInternalBootupEvents.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalBootupEvents>(tev));
+                        OnInternalCommandDeduplicateEvents.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandDeduplicateEvents>(tev));
                     break;
 
                 // File Monitor

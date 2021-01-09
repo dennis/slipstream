@@ -39,7 +39,7 @@ namespace Slipstream.Shared
         InternalCommandPluginUnregister CreateInternalCommandPluginUnregister(string pluginId);
         InternalPluginState CreateInternalPluginState(string pluginId, string pluginName, string displayName, PluginStatusEnum pluginStatus);
         InternalCommandReconfigure CreateInternalCommandReconfigure();
-        InternalBootupEvents CreateInternalBootupEvents(IEvent[] events);
+        InternalCommandDeduplicateEvents CreateInternalCommandDeduplicateEvents(IEvent[] events);
 
         IRacingCarCompletedLap CreateIRacingCarCompletedLap(double sessionTime, long carIdx, double time, int lapsCompleted, float? fuelDiff, bool localUser);
         IRacingCarInfo CreateIRacingCarInfo(

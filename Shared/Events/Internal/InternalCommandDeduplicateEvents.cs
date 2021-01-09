@@ -2,9 +2,9 @@
 
 namespace Slipstream.Shared.Events.Internal
 {
-    public class InternalBootupEvents : IEvent
+    public class InternalCommandDeduplicateEvents : IEvent
     {
-        public string EventType => "InternalBootupEvents";
+        public string EventType => "InternalCommandDeduplicateEvents";
 
         public bool ExcludeFromTxrx => true;
 
@@ -12,7 +12,7 @@ namespace Slipstream.Shared.Events.Internal
 
         public override bool Equals(object obj)
         {
-            return obj is InternalBootupEvents events &&
+            return obj is InternalCommandDeduplicateEvents events &&
                    EventType == events.EventType &&
                    ExcludeFromTxrx == events.ExcludeFromTxrx &&
                    Events == events.Events;

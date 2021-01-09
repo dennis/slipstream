@@ -75,7 +75,7 @@ namespace Slipstream.Shared
             return new InternalCommandReconfigure();
         }
 
-        public InternalBootupEvents CreateInternalBootupEvents(IEvent[] events)
+        public InternalCommandDeduplicateEvents CreateInternalCommandDeduplicateEvents(IEvent[] events)
         {
             string json = "";
 
@@ -84,7 +84,7 @@ namespace Slipstream.Shared
                 json += EventSerdeService.Serialize(e) + "\n";
             }
 
-            return new InternalBootupEvents
+            return new InternalCommandDeduplicateEvents
             {
                 Events = json
             };

@@ -38,7 +38,7 @@ namespace Slipstream.Backend
             EventHandler.OnInternalCommandPluginUnregister += (s, e) => OnCommandPluginUnregister(e.Event);
             EventHandler.OnInternalCommandPluginStates += (s, e) => OnCommandPluginStates(e.Event);
             EventHandler.OnInternalCommandReconfigure += (s, e) => OnInternalReconfigured();
-            EventHandler.OnInternalBootupEvents += (s, e) => OnInternalBootupEvents(e.Event);
+            EventHandler.OnInternalCommandDeduplicateEvents += (s, e) => OnInternalCommandDeduplicateEvents(e.Event);
 
             BootupEventsDeadline = DateTime.Now.AddMilliseconds(500);
 
@@ -91,7 +91,7 @@ register_plugin(""FileMonitorPlugin"", ""FileMonitorPlugin"")
             EventBus.Enabled = true;
         }
 
-        private void OnInternalBootupEvents(InternalBootupEvents @event)
+        private void OnInternalCommandDeduplicateEvents(InternalCommandDeduplicateEvents @event)
         {
             foreach(var e in EventSerdeService.DeserializeMultiple(@event.Events))
             {

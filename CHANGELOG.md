@@ -18,7 +18,8 @@
  - UI: Stores/restores Window position and size
  - Event: Adds TwitchReceivedMessage event (captures all messages, not only commands)
  - Event: Removes TwitchReceivedCommand event as this is already sent as a TwitchReceivedMessage
-
+ - Event: Adds TwitchReceivedWhisper event
+ - 
 ## [0.3.0](https://github.com/dennis/slipstream/releases/tag/v0.3.0) (2020-01-05)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.2.0...v0.3.0)
 

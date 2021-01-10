@@ -105,6 +105,7 @@ namespace Slipstream.Backend.Plugins
 
             Client.OnConnected += OnConnected;
             Client.OnMessageReceived += OnMessageReceived;
+            Client.OnWhisperReceived += OnWhisperReceived;
             Client.OnDisconnected += OnDisconnect;
             Client.OnError += OnError;
             Client.OnIncorrectLogin += OnIncorrectLogin;
@@ -158,6 +159,15 @@ namespace Slipstream.Backend.Plugins
                     vip: chatMessage.IsVip,
                     broadcaster: chatMessage.IsBroadcaster
                 ));
+        }
+
+        private void OnWhisperReceived(object sender, OnWhisperReceivedArgs e)
+        {
+            var message = e.WhisperMessage;
+
+            EventBus.PublishEvent(
+                EventFactory.CreateTwitchReceivedWhisper(message.DisplayName, message.Message)
+            );
         }
 
         private void OnConnected(object sender, OnConnectedArgs e)

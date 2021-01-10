@@ -441,6 +441,15 @@ namespace Slipstream.Shared
             };
         }
 
+        public TwitchReceivedWhisper CreateTwitchReceivedWhisper(string from, string message)
+        {
+            return new TwitchReceivedWhisper
+            {
+                From = from,
+                Message = message
+            };
+        }
+
         public UICommandWriteToConsole CreateUICommandWriteToConsole(string message)
         {
             return new UICommandWriteToConsole

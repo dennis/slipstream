@@ -4,14 +4,14 @@ using System.Collections.Generic;
 
 namespace Slipstream.Shared.Events.Internal
 {
-    public class InternalReconfigured : IEvent
+    public class InternalCommandReconfigure : IEvent
     {
-        public string EventType => "InternalReconfigured";
+        public string EventType => "InternalCommandReconfigure";
         public bool ExcludeFromTxrx => true;
 
         public override bool Equals(object? obj)
         {
-            return obj is InternalReconfigured reconfigured &&
+            return obj is InternalCommandReconfigure reconfigured &&
                    EventType == reconfigured.EventType &&
                    ExcludeFromTxrx == reconfigured.ExcludeFromTxrx;
         }

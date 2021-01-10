@@ -2,45 +2,35 @@
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Internal;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using static Slipstream.Shared.IEventFactory;
 
 #nullable enable
 
 namespace Slipstream.Backend
 {
-    partial class Engine : Worker, IEngine, IDisposable
+    class Engine : Worker, IEngine, IDisposable
     {
         private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly IPluginManager PluginManager;
         private readonly IEventBusSubscription Subscription;
         private readonly IPluginFactory PluginFactory;
-        private readonly IEventSerdeService EventSerdeService;
         private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
 
-        private DateTime? BootupEventsDeadline;
-        private readonly List<IEvent> CapturedBootupEvents = new List<IEvent>();
-
-        public Engine(IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, ILuaSevice luaService, IApplicationVersionService applicationVersionService, IEventSerdeService eventSerdeService) : base("engine")
+        public Engine(IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, ILuaSevice luaService, IApplicationVersionService applicationVersionService) : base("engine")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
             PluginFactory = pluginFactory;
             PluginManager = pluginManager;
-            EventSerdeService = eventSerdeService;
 
             Subscription = EventBus.RegisterListener();
 
             EventHandler.OnInternalCommandPluginRegister += (s, e) => OnCommandPluginRegister(e.Event);
             EventHandler.OnInternalCommandPluginUnregister += (s, e) => OnCommandPluginUnregister(e.Event);
             EventHandler.OnInternalCommandPluginStates += (s, e) => OnCommandPluginStates(e.Event);
-            EventHandler.OnInternalReconfigured += (s, e) => OnInternalReconfigured();
-            EventHandler.OnInternalBootupEvents += (s, e) => OnInternalBootupEvents(e.Event);
-
-            BootupEventsDeadline = DateTime.Now.AddMilliseconds(500);
+            EventHandler.OnInternalCommandReconfigure += (s, e) => OnInternalReconfigured();
 
             // Plugins..
             {
@@ -71,12 +61,12 @@ register_plugin(""TwitchPlugin"", ""TwitchPlugin"")
 -- register_plugin(""TransmitterPlugin"", ""TransmitterPlugin"")
 -- register_plugin(""ReceiverPlugin"", ""ReceiverPlugin"")
 
--- FileTriggerPlugin listens for FileMonitorPlugin events and acts on them.
--- Currently it will only act on files ending with .lua, which it launches
--- a plugin for. If the file is modified, it will take down the plugin and
+-- LuaManagerPlugin listens for FileMonitorPlugin events and acts on them.
+-- It will only act on files ending with .lua, which it launches
+-- a LuaPlugin for. If the file is modified, it will take down the plugin and
 -- launch a new one with the same file. If files are moved out of the directory
 -- it is consider as if it were deleted. Deleted files are taken down.
-register_plugin(""FileTriggerPlugin"", ""FileTriggerPlugin"")
+register_plugin(""LuaManagerPlugin"", ""LuaManagerPlugin"")
 
 -- FileMonitorPlugin monitors the script directory and sends out events
 -- every time a file is created, renamed, modified or deleted
@@ -89,17 +79,6 @@ register_plugin(""FileMonitorPlugin"", ""FileMonitorPlugin"")
 
             // Tell Plugins that we're live - this will make eventbus distribute events
             EventBus.Enabled = true;
-        }
-
-        private void OnInternalBootupEvents(InternalBootupEvents @event)
-        {
-            foreach(var e in EventSerdeService.DeserializeMultiple(@event.Events))
-            {
-                CapturedBootupEvents.Add(e);
-            }
-
-            // Postponing deadline
-            BootupEventsDeadline = DateTime.Now.AddMilliseconds(500);
         }
 
         private void OnInternalReconfigured()
@@ -134,20 +113,6 @@ register_plugin(""FileMonitorPlugin"", ""FileMonitorPlugin"")
         {
             while (!Stopped)
             {
-                if(BootupEventsDeadline != null && BootupEventsDeadline <= DateTime.Now)
-                {
-                    // We have collected the events published when LuaScripts were booting. To avoid
-                    // publishing the same events multiple times, we remove duplicates and then publish it
-                    foreach (var e in CapturedBootupEvents.Distinct())
-                    {
-                        EventBus.PublishEvent(e);
-                    }
-
-                    CapturedBootupEvents.Clear();
-
-                    BootupEventsDeadline = null;
-                }
-
                 EventHandler.HandleEvent(Subscription.NextEvent(10));
             }
         }

@@ -15,6 +15,12 @@
  - Lua: Add iracing_send_race_flags() that will make IRacingPlugin send race flags
  - InternalInitialized event removed. Refactored to avoid having it
  - Lua: Removed plugin_enable(), plugin_disable(). Register/Unregister them instead
+ - Renamed Events:
+   - UICommandWriteToConsole is now UIMethodCollection
+   - InternalReconfigured is now InternalCommandReconfigure
+   - InternalBootupEvents is now InternalCommandDeduplicateEvents
+   - InternalCommandDeduplicateEvents is now LuaManagerCommandDeduplicateEvents
+ - Plugin renamed: FileTriggerPlugin to LuaManagerPlugin
  - UI: Stores/restores Window position and size
  - Event: Adds TwitchReceivedMessage event (captures all messages, not only commands)
  - Event: Removes TwitchReceivedCommand event as this is already sent as a TwitchReceivedMessage

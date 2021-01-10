@@ -19,11 +19,11 @@ namespace Slipstream.Backend.Services.LuaServiceLib
             {
                 Lua = new Lua();
 
-                CoreMethodCollection_ = CoreMethodCollection.Register(eventFactory, eventBus, logPrefix, new EventSerdeService(), Lua);
+                CoreMethodCollection_ = CoreMethodCollection.Register(eventFactory, eventBus, new EventSerdeService(), Lua);
                 AudioMethodCollection.Register(eventBus, eventFactory, Lua);
                 TwitchMethodCollection.Register(eventBus, eventFactory, Lua);
                 StateMethodCollection.Register(stateService, Lua);
-                UIMethodCollection.Register(eventBus, eventFactory, Lua);
+                UIMethodCollection.Register(eventBus, eventFactory, logPrefix, Lua);
                 InternalMethodCollection.Register(eventBus, eventFactory, Lua);
                 HttpMethodCollection.Register(eventBus, eventFactory, Lua);
                 IRacingMethodCollection.Register(eventBus, eventFactory, Lua);

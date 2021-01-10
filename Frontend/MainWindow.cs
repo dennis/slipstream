@@ -228,7 +228,7 @@ namespace Slipstream.Frontend
         {
             if(new SettingsForm().ShowDialog(this) == DialogResult.OK)
             {
-                EventBus.PublishEvent(EventFactory.CreateInternalReconfigured());
+                EventBus.PublishEvent(EventFactory.CreateInternalCommandReconfigure());
             }
         }
     }

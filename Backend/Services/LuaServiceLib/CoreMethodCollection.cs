@@ -23,7 +23,6 @@ namespace Slipstream.Backend.Services.LuaServiceLib
                 }
             }
 
-            private readonly string Prefix;
             private readonly IEventFactory EventFactory;
             private readonly IEventBus EventBus;
             private readonly IEventSerdeService EventSerdeService;
@@ -31,18 +30,17 @@ namespace Slipstream.Backend.Services.LuaServiceLib
             private readonly IDictionary<string, DelayedExecution> DebounceDelayedFunctions = new Dictionary<string, DelayedExecution>();
             private readonly IDictionary<string, DelayedExecution> WaitDelayedFunctions = new Dictionary<string, DelayedExecution>();
 
-            public static CoreMethodCollection Register(IEventFactory eventFactory, IEventBus eventBus, string logPrefix, IEventSerdeService eventSerdeService, Lua lua)
+            public static CoreMethodCollection Register(IEventFactory eventFactory, IEventBus eventBus, IEventSerdeService eventSerdeService, Lua lua)
             {
-                var m = new CoreMethodCollection(eventFactory, eventBus, logPrefix, eventSerdeService);
+                var m = new CoreMethodCollection(eventFactory, eventBus, eventSerdeService);
 
                 m.Register(lua);
 
                 return m;
             }
 
-            public CoreMethodCollection(IEventFactory eventFactory, IEventBus eventBus, string logPrefix, IEventSerdeService eventSerdeService)
+            public CoreMethodCollection(IEventFactory eventFactory, IEventBus eventBus, IEventSerdeService eventSerdeService)
             {
-                Prefix = logPrefix;
                 EventFactory = eventFactory;
                 EventBus = eventBus;
                 EventSerdeService = eventSerdeService;
@@ -54,17 +52,10 @@ namespace Slipstream.Backend.Services.LuaServiceLib
 
                 // Make old Lua script work as before
                 lua.DoString(@"
-function print(s); core:print(s); end
 function debounce(a, b, c); core:debounce(a, b, c); end
 function wait(a, b, c); core:wait(a, b, c); end
 function event_to_json(a); return core:event_to_json(a); end
 ");
-            }
-
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
-            public void print(string s)
-            {
-                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"{Prefix}: {s}"));
             }
 
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
@@ -73,10 +64,6 @@ function event_to_json(a); return core:event_to_json(a); end
                 if (func != null)
                 {
                     DebounceDelayedFunctions[name] = new DelayedExecution(func, DateTime.Now.AddSeconds(debounceLength));
-                }
-                else
-                {
-                    print("Can't debounce without a function");
                 }
             }
 
@@ -87,10 +74,6 @@ function event_to_json(a); return core:event_to_json(a); end
                 {
                     if (!WaitDelayedFunctions.ContainsKey(name))
                         WaitDelayedFunctions[name] = new DelayedExecution(func, DateTime.Now.AddSeconds(duration));
-                }
-                else
-                {
-                    print("Can't wait without a function");
                 }
             }
 

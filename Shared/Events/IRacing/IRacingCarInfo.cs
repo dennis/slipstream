@@ -20,7 +20,7 @@ namespace Slipstream.Shared.Events.IRacing
         public long CurrentDriverIRating { get; set; }
         public string CurrentDriverLicense { get; set; } = string.Empty;
         public bool LocalUser { get; set; }
-        public long Spectator { get; set; }
+        public bool Spectator { get; set; }
 
         public override bool Equals(object? obj)
         {

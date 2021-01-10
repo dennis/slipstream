@@ -156,6 +156,9 @@ namespace Slipstream.Shared
 
         public delegate void OnTwitchCommandSendMessageHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchCommandSendMessage> e);
         public event OnTwitchCommandSendMessageHandler? OnTwitchCommandSendMessage;
+
+        public delegate void OnTwitchReceivedMessageHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedMessage> e);
+        public event OnTwitchReceivedMessageHandler? OnTwitchReceivedMessage;
         #endregion
 
         public void HandleEvent(IEvent? ev)
@@ -456,6 +459,13 @@ namespace Slipstream.Shared
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnTwitchCommandSendMessage.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchCommandSendMessage>(tev));
+                    break;
+
+                case Shared.Events.Twitch.TwitchReceivedMessage tev:
+                    if (OnTwitchReceivedMessage == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnTwitchReceivedMessage.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedMessage>(tev));
                     break;
 
                 default:

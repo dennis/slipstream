@@ -181,6 +181,7 @@
     <Compile Include="Shared\Events\IRacing\IRacingCommandSendCurrentSession.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingDriverIncident.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingCommandSendCarInfo.cs" />
+    <Compile Include="Shared\Events\Twitch\TwitchReceivedMessage.cs" />
     <Compile Include="Shared\Events\UI\UIButtonTriggered.cs" />
     <Compile Include="Shared\Events\UI\UICommandDeleteButton.cs" />
     <Compile Include="Shared\Events\UI\UICommandCreateButton.cs" />

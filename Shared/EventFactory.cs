@@ -441,6 +441,19 @@ namespace Slipstream.Shared
             };
         }
 
+        public TwitchReceivedMessage CreateTwitchReceivedMessage(string from, string message, bool moderator, bool subscriber, bool vip, bool broadcaster)
+        {
+            return new TwitchReceivedMessage
+            {
+                From = from,
+                Message = message,
+                Moderator = moderator,
+                Subscriber = subscriber,
+                Vip = vip,
+                Broadcaster = broadcaster
+            };
+        }
+
         public UICommandWriteToConsole CreateUICommandWriteToConsole(string message)
         {
             return new UICommandWriteToConsole

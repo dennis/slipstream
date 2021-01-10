@@ -428,19 +428,6 @@ namespace Slipstream.Shared
             return new TwitchDisconnected();
         }
 
-        public TwitchReceivedCommand CreateTwitchReceivedCommand(string from, string message, bool moderator, bool subscriber, bool vip, bool broadcaster)
-        {
-            return new TwitchReceivedCommand
-            {
-                From = from,
-                Message = message,
-                Moderator = moderator,
-                Subscriber = subscriber,
-                Vip = vip,
-                Broadcaster = broadcaster
-            };
-        }
-
         public TwitchReceivedMessage CreateTwitchReceivedMessage(string from, string message, bool moderator, bool subscriber, bool vip, bool broadcaster)
         {
             return new TwitchReceivedMessage

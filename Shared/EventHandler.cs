@@ -151,9 +151,6 @@ namespace Slipstream.Shared
         public delegate void OnTwitchDisconnectedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchDisconnected> e);
         public event OnTwitchDisconnectedHandler? OnTwitchDisconnected;
 
-        public delegate void OnTwitchReceivedCommandHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedCommand> e);
-        public event OnTwitchReceivedCommandHandler? OnTwitchReceivedCommand;
-
         public delegate void OnTwitchCommandSendMessageHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchCommandSendMessage> e);
         public event OnTwitchCommandSendMessageHandler? OnTwitchCommandSendMessage;
 
@@ -445,13 +442,6 @@ namespace Slipstream.Shared
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnTwitchDisconnected.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchDisconnected>(tev));
-                    break;
-
-                case Shared.Events.Twitch.TwitchReceivedCommand tev:
-                    if (OnTwitchReceivedCommand == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnTwitchReceivedCommand.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedCommand>(tev));
                     break;
 
                 case Shared.Events.Twitch.TwitchCommandSendMessage tev:

@@ -154,7 +154,6 @@ namespace Slipstream.Shared
         TwitchConnected CreateTwitchConnected();
         IRacingDriverIncident CreateIRacingDriverIncident(int totalIncidents, int incidentDelta);
         TwitchDisconnected CreateTwitchDisconnected();
-        TwitchReceivedCommand CreateTwitchReceivedCommand(string from, string message, bool moderator, bool subscriber, bool vip, bool broadcaster);
         TwitchReceivedMessage CreateTwitchReceivedMessage(string from, string message, bool moderator, bool subscriber, bool vip, bool broadcaster);
 
         UICommandWriteToConsole CreateUICommandWriteToConsole(string message);

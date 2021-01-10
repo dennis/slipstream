@@ -212,7 +212,6 @@
     <Compile Include="Shared\Events\Internal\InternalCommandPluginUnregister.cs" />
     <Compile Include="Shared\Events\Internal\InternalCommandPluginRegister.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchCommandSendMessage.cs" />
-    <Compile Include="Shared\Events\Twitch\TwitchReceivedCommand.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchDisconnected.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchConnected.cs" />
     <Compile Include="Shared\Events\Audio\AudioCommandPlay.cs" />

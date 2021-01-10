@@ -37,9 +37,11 @@ namespace Slipstream.Shared
 
         public delegate void OnInternalCommandReconfigureHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandReconfigure> e);
         public event OnInternalCommandReconfigureHandler? OnInternalCommandReconfigure;
+        #endregion
 
-        public delegate void OnInternalCommandDeduplicateEventsHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandDeduplicateEvents> e);
-        public event OnInternalCommandDeduplicateEventsHandler? OnInternalCommandDeduplicateEvents;
+        #region Events: LuaManager
+        public delegate void OnInternalCommandDeduplicateEventsHandler(EventHandler source, EventHandlerArgs<Shared.Events.LuaManager.LuaManagerCommandDeduplicateEvents> e);
+        public event OnInternalCommandDeduplicateEventsHandler? OnLuaManagerCommandDeduplicateEvents;
 
         #endregion
 
@@ -207,11 +209,14 @@ namespace Slipstream.Shared
                     else
                         OnInternalCommandReconfigure.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandReconfigure>(tev));
                     break;
-                case Shared.Events.Internal.InternalCommandDeduplicateEvents tev:
-                    if (OnInternalCommandDeduplicateEvents == null)
+
+                // LuaManager
+
+                case Shared.Events.LuaManager.LuaManagerCommandDeduplicateEvents tev:
+                    if (OnLuaManagerCommandDeduplicateEvents == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
-                        OnInternalCommandDeduplicateEvents.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandDeduplicateEvents>(tev));
+                        OnLuaManagerCommandDeduplicateEvents.Invoke(this, new EventHandlerArgs<Shared.Events.LuaManager.LuaManagerCommandDeduplicateEvents>(tev));
                     break;
 
                 // File Monitor

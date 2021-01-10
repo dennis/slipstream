@@ -1,6 +1,6 @@
 ﻿using Slipstream.Backend.Services;
 using Slipstream.Shared;
-using Slipstream.Shared.Events.Internal;
+using Slipstream.Shared.Events.LuaManager;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,14 +44,14 @@ namespace Slipstream.Backend.Plugins
             EventHandler.OnFileMonitorFileRenamed += EventHandler_OnFileMonitorFileRenamed;
             EventHandler.OnFileMonitorScanCompleted += EventHandler_OnFileMonitorScanCompleted;
             EventHandler.OnInternalPluginState += EventHandler_OnInternalPluginState;
-            EventHandler.OnInternalCommandDeduplicateEvents += (s, e) => EventHandler_OnInternalCommandDeduplicateEvents(e.Event);
+            EventHandler.OnLuaManagerCommandDeduplicateEvents += (s, e) => EventHandler_OnInternalCommandDeduplicateEvents(e.Event);
 
             BootupEventsDeadline = DateTime.Now.AddMilliseconds(500);
 
             EventBus.PublishEvent(EventFactory.CreateFileMonitorCommandScan());
         }
 
-        private void EventHandler_OnInternalCommandDeduplicateEvents(InternalCommandDeduplicateEvents @event)
+        private void EventHandler_OnInternalCommandDeduplicateEvents(LuaManagerCommandDeduplicateEvents @event)
         {
             foreach (var e in EventSerdeService.DeserializeMultiple(@event.Events))
             {

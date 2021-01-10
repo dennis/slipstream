@@ -3,6 +3,7 @@ using Slipstream.Shared.Events.Audio;
 using Slipstream.Shared.Events.FileMonitor;
 using Slipstream.Shared.Events.Internal;
 using Slipstream.Shared.Events.IRacing;
+using Slipstream.Shared.Events.LuaManager;
 using Slipstream.Shared.Events.Twitch;
 using Slipstream.Shared.Events.UI;
 using System;
@@ -75,7 +76,7 @@ namespace Slipstream.Shared
             return new InternalCommandReconfigure();
         }
 
-        public InternalCommandDeduplicateEvents CreateInternalCommandDeduplicateEvents(IEvent[] events)
+        public LuaManagerCommandDeduplicateEvents CreateLuaManagerCommandDeduplicateEvents(IEvent[] events)
         {
             string json = "";
 
@@ -84,7 +85,7 @@ namespace Slipstream.Shared
                 json += EventSerdeService.Serialize(e) + "\n";
             }
 
-            return new InternalCommandDeduplicateEvents
+            return new LuaManagerCommandDeduplicateEvents
             {
                 Events = json
             };

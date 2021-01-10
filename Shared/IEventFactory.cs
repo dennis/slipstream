@@ -2,6 +2,7 @@
 using Slipstream.Shared.Events.FileMonitor;
 using Slipstream.Shared.Events.Internal;
 using Slipstream.Shared.Events.IRacing;
+using Slipstream.Shared.Events.LuaManager;
 using Slipstream.Shared.Events.Twitch;
 using Slipstream.Shared.Events.UI;
 
@@ -39,7 +40,7 @@ namespace Slipstream.Shared
         InternalCommandPluginUnregister CreateInternalCommandPluginUnregister(string pluginId);
         InternalPluginState CreateInternalPluginState(string pluginId, string pluginName, string displayName, PluginStatusEnum pluginStatus);
         InternalCommandReconfigure CreateInternalCommandReconfigure();
-        InternalCommandDeduplicateEvents CreateInternalCommandDeduplicateEvents(IEvent[] events);
+        LuaManagerCommandDeduplicateEvents CreateLuaManagerCommandDeduplicateEvents(IEvent[] events);
 
         IRacingCarCompletedLap CreateIRacingCarCompletedLap(double sessionTime, long carIdx, double time, int lapsCompleted, float? fuelDiff, bool localUser);
         IRacingCarInfo CreateIRacingCarInfo(

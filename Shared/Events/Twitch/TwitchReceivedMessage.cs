@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace Slipstream.Shared.Events.Twitch
 {
-    public class TwitchReceivedCommand : IEvent
+    public class TwitchReceivedMessage : IEvent
     {
-        public string EventType => "TwitchReceivedCommand";
+        public string EventType => "TwitchReceivedMessage";
         public bool ExcludeFromTxrx => false;
         public string From { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
@@ -17,15 +17,15 @@ namespace Slipstream.Shared.Events.Twitch
 
         public override bool Equals(object? obj)
         {
-            return obj is TwitchReceivedCommand command &&
-                   EventType == command.EventType &&
-                   ExcludeFromTxrx == command.ExcludeFromTxrx &&
-                   From == command.From &&
-                   Message == command.Message &&
-                   Moderator == command.Moderator &&
-                   Subscriber == command.Subscriber &&
-                   Vip == command.Vip &&
-                   Broadcaster == command.Broadcaster;
+            return obj is TwitchReceivedMessage message &&
+                   EventType == message.EventType &&
+                   ExcludeFromTxrx == message.ExcludeFromTxrx &&
+                   From == message.From &&
+                   Message == message.Message &&
+                   Moderator == message.Moderator &&
+                   Subscriber == message.Subscriber &&
+                   Vip == message.Vip &&
+                   Broadcaster == message.Broadcaster;
         }
 
         public override int GetHashCode()

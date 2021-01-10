@@ -37,6 +37,7 @@ namespace Slipstream.Backend.Plugins
                     Client.SendMessage(TwitchChannel, e.Event.Message);
                 }
             };
+            EventHandler.OnTwitchCommandSendWhisper += (_, e) => Client?.SendWhisper(e.Event.To, e.Event.Message);
 
             TwitchUsername = twitchConfiguration.TwitchUsername;
             TwitchChannel = twitchConfiguration.TwitchChannel;
@@ -104,7 +105,8 @@ namespace Slipstream.Backend.Plugins
             Client.Initialize(credentials, TwitchChannel);
 
             Client.OnConnected += OnConnected;
-            Client.OnChatCommandReceived += OnChatCommandReceived;
+            Client.OnMessageReceived += OnMessageReceived;
+            Client.OnWhisperReceived += OnWhisperReceived;
             Client.OnDisconnected += OnDisconnect;
             Client.OnError += OnError;
             Client.OnIncorrectLogin += OnIncorrectLogin;
@@ -141,15 +143,15 @@ namespace Slipstream.Backend.Plugins
             RequestReconnect = true;
         }
 
-        private void OnChatCommandReceived(object sender, OnChatCommandReceivedArgs e)
+        private void OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
-            var chatMessage = e.Command.ChatMessage;
+            var chatMessage = e.ChatMessage;
 
             if (chatMessage.IsMe)
                 return;
 
             EventBus.PublishEvent(
-                EventFactory.CreateTwitchReceivedCommand
+                EventFactory.CreateTwitchReceivedMessage
                 (
                     from: chatMessage.DisplayName,
                     message: chatMessage.Message,
@@ -158,6 +160,15 @@ namespace Slipstream.Backend.Plugins
                     vip: chatMessage.IsVip,
                     broadcaster: chatMessage.IsBroadcaster
                 ));
+        }
+
+        private void OnWhisperReceived(object sender, OnWhisperReceivedArgs e)
+        {
+            var message = e.WhisperMessage;
+
+            EventBus.PublishEvent(
+                EventFactory.CreateTwitchReceivedWhisper(message.DisplayName, message.Message)
+            );
         }
 
         private void OnConnected(object sender, OnConnectedArgs e)

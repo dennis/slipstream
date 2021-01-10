@@ -151,11 +151,17 @@ namespace Slipstream.Shared
         public delegate void OnTwitchDisconnectedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchDisconnected> e);
         public event OnTwitchDisconnectedHandler? OnTwitchDisconnected;
 
-        public delegate void OnTwitchReceivedCommandHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedCommand> e);
-        public event OnTwitchReceivedCommandHandler? OnTwitchReceivedCommand;
-
         public delegate void OnTwitchCommandSendMessageHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchCommandSendMessage> e);
         public event OnTwitchCommandSendMessageHandler? OnTwitchCommandSendMessage;
+
+        public delegate void OnTwitchCommandSendWhisperHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchCommandSendWhisper> e);
+        public event OnTwitchCommandSendWhisperHandler? OnTwitchCommandSendWhisper;
+
+        public delegate void OnTwitchReceivedMessageHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedMessage> e);
+        public event OnTwitchReceivedMessageHandler? OnTwitchReceivedMessage;
+
+        public delegate void OnTwitchReceivedWhisperHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedWhisper> e);
+        public event OnTwitchReceivedWhisperHandler? OnTwitchReceivedWhisper;
         #endregion
 
         public void HandleEvent(IEvent? ev)
@@ -444,18 +450,32 @@ namespace Slipstream.Shared
                         OnTwitchDisconnected.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchDisconnected>(tev));
                     break;
 
-                case Shared.Events.Twitch.TwitchReceivedCommand tev:
-                    if (OnTwitchReceivedCommand == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnTwitchReceivedCommand.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedCommand>(tev));
-                    break;
-
                 case Shared.Events.Twitch.TwitchCommandSendMessage tev:
                     if (OnTwitchCommandSendMessage == null)
                         OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
                     else
                         OnTwitchCommandSendMessage.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchCommandSendMessage>(tev));
+                    break;
+
+                case Shared.Events.Twitch.TwitchCommandSendWhisper tev:
+                    if (OnTwitchCommandSendWhisper == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnTwitchCommandSendWhisper.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchCommandSendWhisper>(tev));
+                    break;
+
+                case Shared.Events.Twitch.TwitchReceivedMessage tev:
+                    if (OnTwitchReceivedMessage == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnTwitchReceivedMessage.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedMessage>(tev));
+                    break;
+
+                case Shared.Events.Twitch.TwitchReceivedWhisper tev:
+                    if (OnTwitchReceivedWhisper == null)
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
+                    else
+                        OnTwitchReceivedWhisper.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedWhisper>(tev));
                     break;
 
                 default:

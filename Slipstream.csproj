@@ -181,6 +181,9 @@
     <Compile Include="Shared\Events\IRacing\IRacingCommandSendCurrentSession.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingDriverIncident.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingCommandSendCarInfo.cs" />
+    <Compile Include="Shared\Events\Twitch\TwitchCommandSendWhisper.cs" />
+    <Compile Include="Shared\Events\Twitch\TwitchReceivedWhisper.cs" />
+    <Compile Include="Shared\Events\Twitch\TwitchReceivedMessage.cs" />
     <Compile Include="Shared\Events\UI\UIButtonTriggered.cs" />
     <Compile Include="Shared\Events\UI\UICommandDeleteButton.cs" />
     <Compile Include="Shared\Events\UI\UICommandCreateButton.cs" />
@@ -211,7 +214,6 @@
     <Compile Include="Shared\Events\Internal\InternalCommandPluginUnregister.cs" />
     <Compile Include="Shared\Events\Internal\InternalCommandPluginRegister.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchCommandSendMessage.cs" />
-    <Compile Include="Shared\Events\Twitch\TwitchReceivedCommand.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchDisconnected.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchConnected.cs" />
     <Compile Include="Shared\Events\Audio\AudioCommandPlay.cs" />

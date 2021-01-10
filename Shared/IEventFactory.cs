@@ -27,6 +27,11 @@ namespace Slipstream.Shared
             Checkered, CoolDown, GetInCar, Invalid, ParadeLaps, Racing, Warmup
         }
 
+        public enum IRacingCategoryEnum
+        {
+            Road, Oval, DirtOval, DirtRoad
+        }
+
         AudioCommandPlay CreateAudioCommandPlay(string filename, float? volume);
         AudioCommandSay CreateAudioCommandSay(string message, float? volume);
 
@@ -54,11 +59,12 @@ namespace Slipstream.Shared
             string carName,
             string carNameShort,
             long currentDriverIRating,
+            string currentDriverLicense,
             bool localUser,
             long spectator
         );
         IRacingConnected CreateIRacingConnected();
-        IRacingCurrentSession CreateIRacingCurrentSession(IRacingSessionTypeEnum sessionType, bool timeLimited, bool lapsLimited, int totalSessionLaps, double totalSessionTime);
+        IRacingCurrentSession CreateIRacingCurrentSession(IRacingCategoryEnum category, IRacingSessionTypeEnum sessionType, bool timeLimited, bool lapsLimited, int totalSessionLaps, double totalSessionTime);
         IRacingDisconnected CreateIRacingDisconnected();
         IRacingPitEnter CreateIRacingPitEnter(double sessionTime, long carIdx, bool localUser);
         IRacingPitExit CreateIRacingPitExit(double sessionTime, long carIdx, bool localUser, double? duration);

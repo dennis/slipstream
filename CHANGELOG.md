@@ -2,6 +2,9 @@
 
 ## Next version
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.4.0...main)
+  - Bugfix: Event IRacingCarInfo now sets LocalUser correctly
+  - Event: Added CurrentDriverLicense to IRacingCarInfo
+- - Event: Added Category to IRacingCurrentSession
 
 ## [0.4.0](https://github.com/dennis/slipstream/releases/tag/v0.3.0) (2020-01-10)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.3.0...v0.4.0)

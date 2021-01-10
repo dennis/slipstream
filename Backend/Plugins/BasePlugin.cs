@@ -48,7 +48,7 @@ namespace Slipstream.Backend.Plugins
         {
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
         }
     }

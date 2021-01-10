@@ -22,7 +22,7 @@ namespace Slipstream.Backend.Plugins
         private readonly string TwitchChannel;
         private readonly string TwitchToken;
         private readonly bool TwitchLog;
-        private bool RequestReconnect;
+        private bool RequestReconnect = true;
         private bool AnnouncedConnected = false;
 
         public TwitchPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, ITwitchConfiguration twitchConfiguration) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin", true)
@@ -30,9 +30,9 @@ namespace Slipstream.Backend.Plugins
             EventFactory = eventFactory;
             EventBus = eventBus;
 
-            EventHandler.OnTwitchCommandSendMessage += (s, e) =>
+            EventHandler.OnTwitchCommandSendMessage += (_, e) =>
             {
-                if (Client != null && Client.JoinedChannels.Count > 0)
+                if (Client?.JoinedChannels.Count > 0)
                 {
                     Client.SendMessage(TwitchChannel, e.Event.Message);
                 }
@@ -89,7 +89,7 @@ namespace Slipstream.Backend.Plugins
             if (string.IsNullOrEmpty(TwitchUsername) || string.IsNullOrEmpty(TwitchToken))
                 return;
 
-            if (Client != null && Client.IsConnected)
+            if (Client?.IsConnected == true)
                 return;
 
             ConnectionCredentials credentials = new ConnectionCredentials(TwitchUsername, TwitchToken, "ws://irc-ws.chat.twitch.tv:80");
@@ -153,16 +153,21 @@ namespace Slipstream.Backend.Plugins
                 (
                     from: chatMessage.DisplayName,
                     message: chatMessage.Message,
-                    broadcaster: chatMessage.IsBroadcaster,
                     moderator: chatMessage.IsModerator,
                     subscriber: chatMessage.IsSubscriber,
-                    vip: chatMessage.IsVip
+                    vip: chatMessage.IsVip,
+                    broadcaster: chatMessage.IsBroadcaster
                 ));
         }
 
         private void OnConnected(object sender, OnConnectedArgs e)
         {
             EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"Twitch connected as {TwitchUsername} to channel {TwitchChannel}"));
+        }
+
+        public override void Dispose()
+        {
+            Disconnect();
         }
     }
 }

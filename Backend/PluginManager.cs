@@ -49,6 +49,7 @@ namespace Slipstream.Backend
         {
             PluginWorkers[p.WorkerName].RemovePlugin(p);
             EmitPluginStateChanged(p, PluginStatusEnum.Unregistered);
+            p.Dispose();
         }
 
         private void EmitPluginStateChanged(IPlugin plugin, PluginStatusEnum pluginStatus)
@@ -210,6 +211,5 @@ namespace Slipstream.Backend
                 }
             }
         }
-
     }
 }

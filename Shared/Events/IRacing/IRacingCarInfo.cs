@@ -18,6 +18,7 @@ namespace Slipstream.Shared.Events.IRacing
         public string CarName { get; set; } = string.Empty;
         public string CarNameShort { get; set; } = string.Empty;
         public long CurrentDriverIRating { get; set; }
+        public string CurrentDriverLicense { get; set; } = string.Empty;
         public bool LocalUser { get; set; }
         public long Spectator { get; set; }
 
@@ -36,6 +37,7 @@ namespace Slipstream.Shared.Events.IRacing
                    CarName == info.CarName &&
                    CarNameShort == info.CarNameShort &&
                    CurrentDriverIRating == info.CurrentDriverIRating &&
+                   CurrentDriverLicense == info.CurrentDriverLicense &&
                    LocalUser == info.LocalUser &&
                    Spectator == info.Spectator;
         }
@@ -55,6 +57,7 @@ namespace Slipstream.Shared.Events.IRacing
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(CarName);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(CarNameShort);
             hashCode = hashCode * -1521134295 + CurrentDriverIRating.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(CurrentDriverLicense);
             hashCode = hashCode * -1521134295 + LocalUser.GetHashCode();
             hashCode = hashCode * -1521134295 + Spectator.GetHashCode();
             return hashCode;
@@ -68,6 +71,7 @@ namespace Slipstream.Shared.Events.IRacing
                 CurrentDriverUserID.Equals(other.CurrentDriverUserID) &&
                 CurrentDriverName.Equals(other.CurrentDriverName) &&
                 CurrentDriverIRating.Equals(other.CurrentDriverIRating) &&
+                CurrentDriverLicense.Equals(other.CurrentDriverLicense) &&
                 TeamID.Equals(other.TeamID) &&
                 TeamName.Equals(other.TeamName) &&
                 CarName.Equals(other.CarName) &&

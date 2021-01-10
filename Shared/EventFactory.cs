@@ -115,6 +115,7 @@ namespace Slipstream.Shared
             string carName,
             string carNameShort,
             long currentDriverIRating,
+            string currentDriverLicense,
             bool localUser,
             long spectator)
         {
@@ -130,6 +131,7 @@ namespace Slipstream.Shared
                 CarName = carName,
                 CarNameShort = carNameShort,
                 CurrentDriverIRating = currentDriverIRating,
+                CurrentDriverLicense = currentDriverLicense,
                 LocalUser = localUser,
                 Spectator = spectator,
             };
@@ -140,7 +142,7 @@ namespace Slipstream.Shared
             return new IRacingConnected();
         }
 
-        public IRacingCurrentSession CreateIRacingCurrentSession(IRacingSessionTypeEnum sessionType, bool timeLimited, bool lapsLimited, int totalSessionLaps, double totalSessionTime)
+        public IRacingCurrentSession CreateIRacingCurrentSession(IRacingCategoryEnum category, IRacingSessionTypeEnum sessionType, bool timeLimited, bool lapsLimited, int totalSessionLaps, double totalSessionTime)
         {
             string sessionTypeStr = sessionType switch
             {
@@ -153,8 +155,18 @@ namespace Slipstream.Shared
                 _ => throw new Exception($"Unexpected IRacingSessionTypeEnum '{sessionType}"),
             };
 
+            string categoryStr = category switch
+            {
+                IRacingCategoryEnum.Road => "Road",
+                IRacingCategoryEnum.Oval => "Oval",
+                IRacingCategoryEnum.DirtOval => "DirtOval",
+                IRacingCategoryEnum.DirtRoad => "DirtRoad",
+      _ => throw new Exception($"Unexpected IRacingCategoryEnum '{category}"),
+            };
+
             return new IRacingCurrentSession
             {
+                Category = categoryStr,
                 SessionType = sessionTypeStr,
                 TimeLimited = timeLimited,
                 LapsLimited = lapsLimited,

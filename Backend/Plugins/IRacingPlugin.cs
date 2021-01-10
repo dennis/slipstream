@@ -75,6 +75,14 @@ namespace Slipstream.Backend.Plugins
             { "Warmup", IRacingSessionTypeEnum.Warmup },
         };
 
+        private static readonly Dictionary<string, IRacingCategoryEnum> IRacingCategoryTypes = new Dictionary<string, IRacingCategoryEnum>()
+        {
+            { "Road", IRacingCategoryEnum.Road },
+            { "Oval", IRacingCategoryEnum.Oval },
+            { "DirtRoad", IRacingCategoryEnum.DirtRoad },
+            { "DirtOval", IRacingCategoryEnum.DirtOval },
+        };
+
         private IRacingCurrentSession? LastSessionInfo;
         private IRacingSessionState? LastSessionState;
         private IRacingRaceFlags? LastRaceFlags;
@@ -94,12 +102,12 @@ namespace Slipstream.Backend.Plugins
             EventFactory = eventFactory;
             EventBus = eventBus;
 
-            EventHandler.OnIRacingCommandSendCarInfo += (s, e) => { SendCarInfo = true; };
-            EventHandler.OnIRacingCommandSendTrackInfo += (s, e) => { SendTrackInfo = true; };
-            EventHandler.OnIRacingCommandSendWeatherInfo += (s, e) => { SendWeatherInfo = true; };
-            EventHandler.OnIRacingCommandSendCurrentSession += (s, e) => { SendCurrentSession = true; };
-            EventHandler.OnIRacingCommandSendSessionState += (s, e) => { SendSessionState = true; };
-            EventHandler.OnIRacingCommandSendRaceFlags += (s, e) => { SendRaceFlags = true; };
+            EventHandler.OnIRacingCommandSendCarInfo += (s, e) => SendCarInfo = true;
+            EventHandler.OnIRacingCommandSendTrackInfo += (s, e) => SendTrackInfo = true;
+            EventHandler.OnIRacingCommandSendWeatherInfo += (s, e) => SendWeatherInfo = true;
+            EventHandler.OnIRacingCommandSendCurrentSession += (s, e) => SendCurrentSession = true;
+            EventHandler.OnIRacingCommandSendSessionState += (s, e) => SendSessionState = true;
+            EventHandler.OnIRacingCommandSendRaceFlags += (s, e) => SendRaceFlags = true;
         }
 
         public override void Loop()
@@ -405,7 +413,8 @@ namespace Slipstream.Backend.Plugins
                     carName: driver.CarScreenName,
                     carNameShort: driver.CarScreenNameShort,
                     currentDriverIRating: driver.IRating,
-                    localUser: data.SessionData.DriverInfo.DriverCarIdx == driver.CarID,
+                    currentDriverLicense: driver.LicString,
+                    localUser: data.SessionData.DriverInfo.DriverCarIdx == driver.CarIdx,
                     spectator: driver.IsSpectator
                 // Seems not to be exposed by SDK:
                 // DriverIncidentCount
@@ -428,6 +437,7 @@ namespace Slipstream.Backend.Plugins
             var sessionData = data.SessionData.SessionInfo.Sessions[data.Telemetry.SessionNum];
             var sessionInfo = EventFactory.CreateIRacingCurrentSession
             (
+                category: IRacingCategoryTypes[data.SessionData.WeekendInfo.Category],
                 sessionType: IRacingSessionTypes[sessionData.SessionType],
                 timeLimited: sessionData.IsLimitedTime,
                 lapsLimited: sessionData.IsLimitedSessionLaps,
@@ -472,6 +482,8 @@ namespace Slipstream.Backend.Plugins
             {
                 LastWeatherInfo = null;
                 LastSessionInfo = null;
+                driverState.ClearState();
+                CarsTracked.Clear();
 
                 EventBus.PublishEvent(EventFactory.CreateIRacingConnected());
 

@@ -7,6 +7,7 @@ namespace Slipstream.Shared.Events.IRacing
     {
         public string EventType => "IRacingCurrentSession";
         public bool ExcludeFromTxrx => false;
+        public string Category { get; set; } = "";
         public string SessionType { get; set; } = "";
         public bool TimeLimited { get; set; }
         public bool LapsLimited { get; set; }
@@ -18,6 +19,7 @@ namespace Slipstream.Shared.Events.IRacing
             return obj is IRacingCurrentSession session &&
                    EventType == session.EventType &&
                    ExcludeFromTxrx == session.ExcludeFromTxrx &&
+                   Category == session.Category &&
                    SessionType == session.SessionType &&
                    TimeLimited == session.TimeLimited &&
                    LapsLimited == session.LapsLimited &&
@@ -30,6 +32,7 @@ namespace Slipstream.Shared.Events.IRacing
             int hashCode = 2106272073;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
             hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Category);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(SessionType);
             hashCode = hashCode * -1521134295 + TimeLimited.GetHashCode();
             hashCode = hashCode * -1521134295 + LapsLimited.GetHashCode();

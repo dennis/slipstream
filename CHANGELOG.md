@@ -1,7 +1,10 @@
 ﻿# Changelog
 
 ## Next version
-[Full Changelog](https://github.com/dennis/slipstream/compare/v0.3.0...main)
+[Full Changelog](https://github.com/dennis/slipstream/compare/v0.4.0...main)
+
+## [0.4.0](https://github.com/dennis/slipstream/releases/tag/v0.3.0) (2020-01-10)
+[Full Changelog](https://github.com/dennis/slipstream/compare/v0.3.0...v0.4.0)
  - Lua: Deduplicate identical events. If one or more scripts sends the same
    event on the eventbus during start, they will be deduplicated. This means,
    that we avoid having the same response to the same command repeated several

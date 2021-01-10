@@ -156,6 +156,7 @@ namespace Slipstream.Shared
         TwitchDisconnected CreateTwitchDisconnected();
         TwitchReceivedMessage CreateTwitchReceivedMessage(string from, string message, bool moderator, bool subscriber, bool vip, bool broadcaster);
         TwitchReceivedWhisper CreateTwitchReceivedWhisper(string from, string message);
+        TwitchCommandSendWhisper CreateTwitchCommandSendWhisper(string to, string message);
 
         UICommandWriteToConsole CreateUICommandWriteToConsole(string message);
         UICommandCreateButton CreateUICommandCreateButton(string text);

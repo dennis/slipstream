@@ -37,6 +37,7 @@ namespace Slipstream.Backend.Plugins
                     Client.SendMessage(TwitchChannel, e.Event.Message);
                 }
             };
+            EventHandler.OnTwitchCommandSendWhisper += (_, e) => Client?.SendWhisper(e.Event.To, e.Event.Message);
 
             TwitchUsername = twitchConfiguration.TwitchUsername;
             TwitchChannel = twitchConfiguration.TwitchChannel;

@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using Slipstream.Properties;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.UI;
 using System;
@@ -40,6 +41,19 @@ namespace Slipstream.Frontend
 
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
+            Settings.Default.WindowLocation = Location;
+
+            // Copy window size to app settings
+            if (WindowState == FormWindowState.Normal)
+            {
+                Settings.Default.WindowSize = Size;
+            }
+            else
+            {
+                Settings.Default.WindowSize = RestoreBounds.Size;
+            }
+            Settings.Default.Save();
+
             EventBusSubscription?.Dispose();
             EventBusSubscription = null;
             EventHandlerThread?.Abort(); // abit harsh?
@@ -49,6 +63,9 @@ namespace Slipstream.Frontend
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
+            Location = Settings.Default.WindowLocation;
+            Size = Settings.Default.WindowSize;
+
             EventBusSubscription = EventBus.RegisterListener(fromBeginning: true);
             EventHandlerThread = new Thread(new ThreadStart(this.EventListenerMain));
             EventHandlerThread.Start();

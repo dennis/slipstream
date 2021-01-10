@@ -50,18 +50,6 @@ namespace Slipstream.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string TxrxIpPort {
-            get {
-                return ((string)(this["TxrxIpPort"]));
-            }
-            set {
-                this["TxrxIpPort"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string TwitchChannel {
             get {
                 return ((string)(this["TwitchChannel"]));
@@ -80,6 +68,42 @@ namespace Slipstream.Properties {
             }
             set {
                 this["TwitchLog"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TxrxIpPort {
+            get {
+                return ((string)(this["TxrxIpPort"]));
+            }
+            set {
+                this["TxrxIpPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50, 50")]
+        public global::System.Drawing.Point WindowLocation {
+            get {
+                return ((global::System.Drawing.Point)(this["WindowLocation"]));
+            }
+            set {
+                this["WindowLocation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("816, 489")]
+        public global::System.Drawing.Size WindowSize {
+            get {
+                return ((global::System.Drawing.Size)(this["WindowSize"]));
+            }
+            set {
+                this["WindowSize"] = value;
             }
         }
     }

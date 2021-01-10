@@ -1,18 +1,23 @@
-﻿using Slipstream.Shared;
+﻿using Slipstream.Backend.Services;
+using Slipstream.Shared;
+using Slipstream.Shared.Events.Internal;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using EventHandler = Slipstream.Shared.EventHandler;
 
 #nullable enable
 
 namespace Slipstream.Backend.Plugins
 {
-    internal class FileTriggerPlugin : BasePlugin
+    internal class LuaManagerPlugin : BasePlugin
     {
         private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly IPluginManager PluginManager;
         private readonly IPluginFactory PluginFactory;
+        private readonly IEventSerdeService EventSerdeService;
         private readonly IDictionary<string, IPlugin> Scripts = new Dictionary<string, IPlugin>();
 
         // At bootup we will receive zero or more FileCreated events ending with a ScanCompleted.
@@ -22,12 +27,16 @@ namespace Slipstream.Backend.Plugins
 
         private readonly List<string> WaitingForLuaScripts = new List<string>();
 
-        public FileTriggerPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IPluginManager pluginManager, IPluginFactory pluginFactory) : base(id, "FileTriggerPlugin", "FileTriggerPlugin", "Core")
+        private DateTime? BootupEventsDeadline;
+        private readonly List<IEvent> CapturedBootupEvents = new List<IEvent>();
+
+        public LuaManagerPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IPluginManager pluginManager, IPluginFactory pluginFactory, IEventSerdeService eventSerdeService) : base(id, "LuaManagerPlugin", "LuaManagerPlugin", "Core")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
             PluginManager = pluginManager;
             PluginFactory = pluginFactory;
+            EventSerdeService = eventSerdeService;
 
             EventHandler.OnFileMonitorFileCreated += EventHandler_OnFileMonitorFileCreated;
             EventHandler.OnFileMonitorFileDeleted += EventHandler_OnFileMonitorFileDeleted;
@@ -35,8 +44,22 @@ namespace Slipstream.Backend.Plugins
             EventHandler.OnFileMonitorFileRenamed += EventHandler_OnFileMonitorFileRenamed;
             EventHandler.OnFileMonitorScanCompleted += EventHandler_OnFileMonitorScanCompleted;
             EventHandler.OnInternalPluginState += EventHandler_OnInternalPluginState;
+            EventHandler.OnInternalCommandDeduplicateEvents += (s, e) => EventHandler_OnInternalCommandDeduplicateEvents(e.Event);
+
+            BootupEventsDeadline = DateTime.Now.AddMilliseconds(500);
 
             EventBus.PublishEvent(EventFactory.CreateFileMonitorCommandScan());
+        }
+
+        private void EventHandler_OnInternalCommandDeduplicateEvents(InternalCommandDeduplicateEvents @event)
+        {
+            foreach (var e in EventSerdeService.DeserializeMultiple(@event.Events))
+            {
+                CapturedBootupEvents.Add(e);
+            }
+
+            // Postponing deadline
+            BootupEventsDeadline = DateTime.Now.AddMilliseconds(500);
         }
 
         private void EventHandler_OnInternalPluginState(EventHandler source, EventHandler.EventHandlerArgs<Shared.Events.Internal.InternalPluginState> e)
@@ -132,6 +155,23 @@ namespace Slipstream.Backend.Plugins
         private bool IsApplicable(string FilePath)
         {
             return Path.GetExtension(FilePath) == ".lua";
+        }
+
+        public override void Loop()
+        {
+            if (BootupEventsDeadline != null && BootupEventsDeadline <= DateTime.Now)
+            {
+                // We have collected the events published when LuaScripts were booting. To avoid
+                // publishing the same events multiple times, we remove duplicates and then publish it
+                foreach (var e in CapturedBootupEvents.Distinct())
+                {
+                    EventBus.PublishEvent(e);
+                }
+
+                CapturedBootupEvents.Clear();
+
+                BootupEventsDeadline = null;
+            }
         }
     }
 }

@@ -200,7 +200,7 @@
     <Compile Include="Shared\Events\IRacing\IRacingSessionState.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingWeatherInfo.cs" />
     <Compile Include="Backend\Plugins\LuaPlugin.cs" />
-    <Compile Include="Backend\Plugins\FileTriggerPlugin.cs" />
+    <Compile Include="Backend\Plugins\LuaManagerPlugin.cs" />
     <Compile Include="Backend\Plugins\FileMonitorPlugin.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingTrackInfo.cs" />
     <Compile Include="Backend\PluginWorker.cs" />

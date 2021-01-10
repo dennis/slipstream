@@ -18,14 +18,15 @@ namespace Slipstream.Backend
         private readonly IApplicationConfiguration ApplicationConfiguration;
         private readonly IStateService StateService;
         private readonly ITxrxService TxrxService;
-
-        public PluginManager(IEventFactory eventFactory, IEventBus eventBus, IApplicationConfiguration applicationConfiguration, IStateService stateService, ITxrxService txrxService)
+        private readonly IEventSerdeService EventSerdeService;
+        public PluginManager(IEventFactory eventFactory, IEventBus eventBus, IApplicationConfiguration applicationConfiguration, IStateService stateService, ITxrxService txrxService, IEventSerdeService eventSerdeService)
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
             ApplicationConfiguration = applicationConfiguration;
             StateService = stateService;
             TxrxService = txrxService;
+            EventSerdeService = eventSerdeService;
         }
 
         private void UnregisterPluginsWithoutLock()
@@ -173,7 +174,7 @@ namespace Slipstream.Backend
             return name switch
             {
                 "FileMonitorPlugin" => new FileMonitorPlugin(id, EventFactory, eventBus, ApplicationConfiguration),
-                "FileTriggerPlugin" => new FileTriggerPlugin(id, EventFactory, eventBus, this, this),
+                "LuaManagerPlugin" => new LuaManagerPlugin(id, EventFactory, eventBus, this, this, EventSerdeService),
                 "AudioPlugin" => new AudioPlugin(id, EventFactory, eventBus, ApplicationConfiguration),
                 "IRacingPlugin" => new IRacingPlugin(id, EventFactory, eventBus),
                 "TwitchPlugin" => new TwitchPlugin(id, EventFactory, eventBus, ApplicationConfiguration),

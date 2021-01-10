@@ -61,7 +61,7 @@ namespace Slipstream.Shared
             long currentDriverIRating,
             string currentDriverLicense,
             bool localUser,
-            long spectator
+            bool spectator
         );
         IRacingConnected CreateIRacingConnected();
         IRacingCurrentSession CreateIRacingCurrentSession(IRacingCategoryEnum category, IRacingSessionTypeEnum sessionType, bool timeLimited, bool lapsLimited, int totalSessionLaps, double totalSessionTime);

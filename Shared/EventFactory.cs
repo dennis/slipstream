@@ -117,7 +117,7 @@ namespace Slipstream.Shared
             long currentDriverIRating,
             string currentDriverLicense,
             bool localUser,
-            long spectator)
+            bool spectator)
         {
             return new IRacingCarInfo
             {
@@ -147,9 +147,9 @@ namespace Slipstream.Shared
             string sessionTypeStr = sessionType switch
             {
                 IRacingSessionTypeEnum.Practice => "Practice",
-                IRacingSessionTypeEnum.OpenQualify => "Open Qualify",
-                IRacingSessionTypeEnum.LoneQualify => "Lone Qualify",
-                IRacingSessionTypeEnum.OfflineTesting => "Offline Testing",
+                IRacingSessionTypeEnum.OpenQualify => "OpenQualify",
+                IRacingSessionTypeEnum.LoneQualify => "LoneQualify",
+                IRacingSessionTypeEnum.OfflineTesting => "OfflineTesting",
                 IRacingSessionTypeEnum.Race => "Race",
                 IRacingSessionTypeEnum.Warmup => "Warmup",
                 _ => throw new Exception($"Unexpected IRacingSessionTypeEnum '{sessionType}"),

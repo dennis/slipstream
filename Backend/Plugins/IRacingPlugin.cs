@@ -415,7 +415,7 @@ namespace Slipstream.Backend.Plugins
                     currentDriverIRating: driver.IRating,
                     currentDriverLicense: driver.LicString,
                     localUser: data.SessionData.DriverInfo.DriverCarIdx == driver.CarIdx,
-                    spectator: driver.IsSpectator
+                    spectator: driver.IsSpectator != 0
                 // Seems not to be exposed by SDK:
                 // DriverIncidentCount
                 // TeamIncidentCount

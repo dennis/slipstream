@@ -1,5 +1,6 @@
 using Serilog;
 using Slipstream.Shared;
+using Slipstream.Shared.Factories;
 using System;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
@@ -17,7 +18,7 @@ namespace Slipstream.Backend.Plugins
     {
         private TwitchClient? Client;
         private readonly ILogger Logger;
-        private readonly IEventFactory EventFactory;
+        private readonly ITwitchEventFactory EventFactory;
         private readonly IEventBus EventBus;
 
         private readonly string TwitchUsername;
@@ -27,7 +28,7 @@ namespace Slipstream.Backend.Plugins
         private bool RequestReconnect = true;
         private bool AnnouncedConnected = false;
 
-        public TwitchPlugin(string id, ILogger logger, IEventFactory eventFactory, IEventBus eventBus, ITwitchConfiguration twitchConfiguration) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin", true)
+        public TwitchPlugin(string id, ILogger logger, ITwitchEventFactory eventFactory, IEventBus eventBus, ITwitchConfiguration twitchConfiguration) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin", true)
         {
             Logger = logger;
             EventFactory = eventFactory;

@@ -2,6 +2,7 @@
 using Slipstream.Backend.Services;
 using Slipstream.Backend.Services.LuaServiceLib;
 using Slipstream.Shared;
+using Slipstream.Shared.Factories;
 using System.IO;
 using EventHandler = Slipstream.Shared.EventHandler;
 
@@ -12,17 +13,29 @@ namespace Slipstream.Backend.Plugins
     public class LuaPlugin : BasePlugin
     {
         private readonly ILogger Logger;
-        private readonly IEventFactory EventFactory;
+        private readonly ILuaEventFactory LuaEventFactory;
+        private readonly IInternalEventFactory InternalEventFactory;
+        private readonly IAudioEventFactory AudioEventFactory;
+        private readonly IUIEventFactory UIEventFactory;
+        private readonly ITwitchEventFactory TwitchEventFactory;
+        private readonly IIRacingEventFactory IRacingEventFactory;
         private readonly CapturingEventBus EventBus;
         private readonly LuaService LuaService;
         private ILuaContext? LuaContext;
         private readonly string Prefix = "<UNKNOWN>";
         private readonly string FilePath;
 
-        public LuaPlugin(string id, ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IStateService stateService, ILuaConfiguration configuration) : base(id, "LuaPlugin", "LuaPlugin", "Lua")
+        public LuaPlugin(string id,
+            ILogger logger,
+            IEventFactory eventFactory,
+            IEventBus eventBus,
+            IStateService stateService,
+            ILuaConfiguration configuration
+        ) : base(id, "LuaPlugin", "LuaPlugin", "Lua")
         {
             Logger = logger;
-            EventFactory = eventFactory;
+            LuaEventFactory = eventFactory.Get<ILuaEventFactory>();
+            InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
             EventBus = new CapturingEventBus(eventBus);
 
             LuaService = new LuaService(logger, eventFactory, EventBus, stateService);
@@ -54,13 +67,13 @@ namespace Slipstream.Backend.Plugins
             var eventsCaptured = EventBus.CapturedEvents;
             EventBus.StopCapturing();
 
-            EventBus.PublishEvent(EventFactory.CreateLuaManagerCommandDeduplicateEvents(eventsCaptured));
+            EventBus.PublishEvent(LuaEventFactory.CreateLuaManagerCommandDeduplicateEvents(eventsCaptured));
         }
 
         private void HandleLuaException(LuaException e)
         {
             Logger.Error("Lua error: {Message}", e.Message);
-            EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginUnregister(Id));
+            EventBus.PublishEvent(InternalEventFactory.CreateInternalCommandPluginUnregister(Id));
         }
 
         public override void Loop()

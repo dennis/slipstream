@@ -3,6 +3,7 @@
 using Slipstream.Properties;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.UI;
+using Slipstream.Shared.Factories;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -16,7 +17,8 @@ namespace Slipstream.Frontend
     {
         private Thread? EventHandlerThread;
         private readonly IEventBus EventBus;
-        private readonly IEventFactory EventFactory;
+        private readonly IInternalEventFactory InternalEventFactory;
+        private readonly IUIEventFactory UIEventFactory;
         private IEventBusSubscription? EventBusSubscription;
         private readonly BlockingCollection<string> PendingMessages = new BlockingCollection<string>();
         private readonly IDictionary<string, ToolStripMenuItem> MenuPluginItems = new Dictionary<string, ToolStripMenuItem>();
@@ -26,7 +28,9 @@ namespace Slipstream.Frontend
 
         public MainWindow(IEventFactory eventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, ApplicationConfiguration applicationConfiguration)
         {
-            EventFactory = eventFactory;
+            InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
+            UIEventFactory = eventFactory.Get<IUIEventFactory>();
+
             EventBus = eventBus;
             ApplicationConfiguration = applicationConfiguration;
 
@@ -108,7 +112,7 @@ namespace Slipstream.Frontend
             EventHandler.OnUICommandDeleteButton += (s, e) => EventHandler_OnUICommandDeleteButton(e.Event);
 
             // Request full state of all known plugins, so we get any that might be started before "us"
-            EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginStates());
+            EventBus.PublishEvent(InternalEventFactory.CreateInternalCommandPluginStates());
 
             while (true)
             {
@@ -131,7 +135,7 @@ namespace Slipstream.Frontend
                 b.Click += (s, e) =>
                 {
                     if (s is Button b)
-                        EventBus.PublishEvent(EventFactory.CreateUIButtonTriggered(b.Text));
+                        EventBus.PublishEvent(UIEventFactory.CreateUIButtonTriggered(b.Text));
                 };
 
                 LuaButtons.Add(@event.Text, b);
@@ -228,7 +232,7 @@ namespace Slipstream.Frontend
         {
             if(new SettingsForm().ShowDialog(this) == DialogResult.OK)
             {
-                EventBus.PublishEvent(EventFactory.CreateInternalCommandReconfigure());
+                EventBus.PublishEvent(InternalEventFactory.CreateInternalCommandReconfigure());
             }
         }
     }

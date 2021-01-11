@@ -1,7 +1,9 @@
 ﻿using Slipstream.Shared;
 using Slipstream.Shared.Events.Internal;
+using Slipstream.Shared.Factories;
 using System.Collections.Generic;
 using System.Threading;
+using static Slipstream.Shared.Factories.IInternalEventFactory;
 
 #nullable enable
 
@@ -12,9 +14,9 @@ namespace Slipstream.Backend
         private readonly IList<IPlugin> Plugins = new List<IPlugin>();
         private readonly IEventBusSubscription Subscription;
         private readonly IEventBus EventBus;
-        private readonly IEventFactory EventFactory;
+        private readonly IInternalEventFactory EventFactory;
 
-        public PluginWorker(string name, IEventBusSubscription subscription, IEventFactory eventFactory, IEventBus eventBus) : base(name)
+        public PluginWorker(string name, IEventBusSubscription subscription, IInternalEventFactory eventFactory, IEventBus eventBus) : base(name)
         {
             Subscription = subscription;
             EventBus = eventBus;
@@ -32,7 +34,7 @@ namespace Slipstream.Backend
 
         private void Plugin_OnStateChanged(IPlugin plugin, IPlugin.EventHandlerArgs<IPlugin> e)
         {
-            EventBus.PublishEvent(EventFactory.CreateInternalPluginState(plugin.Id, plugin.Name, plugin.DisplayName, IEventFactory.PluginStatusEnum.Registered));
+            EventBus.PublishEvent(EventFactory.CreateInternalPluginState(plugin.Id, plugin.Name, plugin.DisplayName, PluginStatusEnum.Registered));
         }
 
         public void RemovePlugin(IPlugin plugin)

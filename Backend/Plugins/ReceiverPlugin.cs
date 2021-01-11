@@ -1,6 +1,7 @@
 using Serilog;
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
+using Slipstream.Shared.Factories;
 using System;
 using System.Diagnostics;
 using System.Net;
@@ -14,7 +15,7 @@ namespace Slipstream.Backend.Plugins
     {
         private readonly ILogger Logger;
         private readonly IEventBus EventBus;
-        private readonly IEventFactory EventFactory;
+        private readonly IInternalEventFactory EventFactory;
         private readonly string Ip = "";
         private readonly Int32 Port = 42424;
         private TcpListener? Listener;
@@ -23,7 +24,7 @@ namespace Slipstream.Backend.Plugins
         private const int READ_BUFFER_SIZE = 1024 * 16;
         private readonly byte[] ReadBuffer = new byte[READ_BUFFER_SIZE];
 
-        public ReceiverPlugin(string id, ILogger logger, IEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, ITxrxConfiguration txrxConfiguration) : base(id, "ReceiverPlugin", "ReceiverPlugin", "ReceiverPlugin", true)
+        public ReceiverPlugin(string id, ILogger logger, IInternalEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, ITxrxConfiguration txrxConfiguration) : base(id, "ReceiverPlugin", "ReceiverPlugin", "ReceiverPlugin", true)
         {
             Logger = logger;
             EventFactory = eventFactory;

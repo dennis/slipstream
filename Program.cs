@@ -3,6 +3,7 @@ using System;
 using System.Windows.Forms;
 using Serilog;
 using Slipstream.Shared;
+using Slipstream.Shared.Factories;
 
 #nullable enable
 
@@ -48,7 +49,6 @@ namespace Slipstream
             services.AddScoped<Frontend.ApplicationConfiguration>();
             services.AddScoped<Shared.IApplicationConfiguration, Frontend.ApplicationConfiguration>();
             services.AddScoped<Shared.IEventBus, Backend.EventBus>();
-            services.AddScoped<Shared.IEventFactory, Shared.EventFactory>();
             services.AddScoped<Shared.IEventProducer>(x => x.GetService<Backend.EventBus>());
             services.AddScoped<Backend.IEngine, Backend.Engine>();
             services.AddScoped<Backend.Services.IStateService>(x => new Backend.Services.StateService(x.GetService<ILogger>(), Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Slipstream\state.txt"));
@@ -56,6 +56,7 @@ namespace Slipstream
             services.AddScoped<Backend.Services.IEventSerdeService, Backend.Services.EventSerdeService>();
             services.AddScoped<Backend.IPluginManager, Backend.PluginManager>();
             services.AddScoped<Backend.IPluginFactory, Backend.PluginManager>();
+            services.AddScoped<IEventFactory, EventFactory>();
             services.AddScoped<Backend.Services.ILuaSevice, Backend.Services.LuaService>();
             services.AddSingleton<Shared.IApplicationVersionService, Shared.ApplicationVersionService>();
 
@@ -75,7 +76,7 @@ namespace Slipstream
             public PopulateSink(SlipstreamConsoleSink sink, IEventBus eventBus, IEventFactory eventFactory)
             {
                 sink.EventBus = eventBus;
-                sink.EventFactory = eventFactory;
+                sink.EventFactory = eventFactory.Get<IUIEventFactory>();
             }
         }
     }

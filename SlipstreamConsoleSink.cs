@@ -2,8 +2,8 @@
 using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
-using Slipstream;
 using Slipstream.Shared;
+using Slipstream.Shared.Factories;
 
 #nullable enable
 
@@ -13,7 +13,7 @@ namespace Slipstream
     {
         private readonly object ThreadLock = new object();
         public IEventBus? EventBus { get; set; }
-        public IEventFactory? EventFactory { get; set; }
+        public IUIEventFactory? EventFactory { get; set; }
 
         public void Emit(LogEvent logEvent)
         {

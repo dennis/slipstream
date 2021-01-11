@@ -1,6 +1,7 @@
 ﻿using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.LuaManager;
+using Slipstream.Shared.Factories;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +14,7 @@ namespace Slipstream.Backend.Plugins
 {
     internal class LuaManagerPlugin : BasePlugin
     {
-        private readonly IEventFactory EventFactory;
+        private readonly IFileMonitorEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly IPluginManager PluginManager;
         private readonly IPluginFactory PluginFactory;
@@ -30,7 +31,7 @@ namespace Slipstream.Backend.Plugins
         private DateTime? BootupEventsDeadline;
         private readonly List<IEvent> CapturedBootupEvents = new List<IEvent>();
 
-        public LuaManagerPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IPluginManager pluginManager, IPluginFactory pluginFactory, IEventSerdeService eventSerdeService) : base(id, "LuaManagerPlugin", "LuaManagerPlugin", "Core")
+        public LuaManagerPlugin(string id, IFileMonitorEventFactory eventFactory, IEventBus eventBus, IPluginManager pluginManager, IPluginFactory pluginFactory, IEventSerdeService eventSerdeService) : base(id, "LuaManagerPlugin", "LuaManagerPlugin", "Core")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;

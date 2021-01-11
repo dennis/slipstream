@@ -1,12 +1,13 @@
 ﻿using iRacingSDK;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.IRacing;
+using Slipstream.Shared.Factories;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using static Slipstream.Shared.IEventFactory;
+using static Slipstream.Shared.Factories.IIRacingEventFactory;
 
 #nullable enable
 
@@ -15,7 +16,7 @@ namespace Slipstream.Backend.Plugins
     internal class IRacingPlugin : BasePlugin
     {
         private readonly iRacingConnection Connection = new iRacingConnection();
-        private readonly IEventFactory EventFactory;
+        private readonly IIRacingEventFactory EventFactory;
         private readonly IEventBus EventBus;
 
         private class DriverState
@@ -97,7 +98,7 @@ namespace Slipstream.Backend.Plugins
         private bool SendSessionState = false;
         private bool SendRaceFlags = false;
 
-        public IRacingPlugin(string id, IEventFactory eventFactory, IEventBus eventBus) : base(id, "IRacingPlugin", "IRacingPlugin", "IRacingPlugin")
+        public IRacingPlugin(string id, IIRacingEventFactory eventFactory, IEventBus eventBus) : base(id, "IRacingPlugin", "IRacingPlugin", "IRacingPlugin")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;

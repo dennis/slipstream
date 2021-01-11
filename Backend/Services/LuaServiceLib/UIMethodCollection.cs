@@ -1,6 +1,7 @@
 ﻿using NLua;
 using Serilog;
 using Slipstream.Shared;
+using Slipstream.Shared.Factories;
 
 #nullable enable
 
@@ -12,10 +13,10 @@ namespace Slipstream.Backend.Services.LuaServiceLib
         {
             private readonly ILogger Logger;
             private readonly IEventBus EventBus;
-            private readonly IEventFactory EventFactory;
+            private readonly IUIEventFactory EventFactory;
             private readonly string Prefix;
 
-            public static UIMethodCollection Register(ILogger logger, IEventBus eventBus, IEventFactory eventFactory, string logPrefix, Lua lua)
+            public static UIMethodCollection Register(ILogger logger, IEventBus eventBus, IUIEventFactory eventFactory, string logPrefix, Lua lua)
             {
                 var m = new UIMethodCollection(logger, eventBus, eventFactory, logPrefix);
 
@@ -24,7 +25,7 @@ namespace Slipstream.Backend.Services.LuaServiceLib
                 return m;
             }
 
-            public UIMethodCollection(ILogger logger, IEventBus eventBus, IEventFactory eventFactory, string logPrefix)
+            public UIMethodCollection(ILogger logger, IEventBus eventBus, IUIEventFactory eventFactory, string logPrefix)
             {
                 Logger = logger;
                 EventBus = eventBus;

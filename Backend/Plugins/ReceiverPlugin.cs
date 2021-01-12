@@ -1,3 +1,4 @@
+using Serilog;
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using System;
@@ -11,6 +12,7 @@ namespace Slipstream.Backend.Plugins
 {
     public class ReceiverPlugin : BasePlugin
     {
+        private readonly ILogger Logger;
         private readonly IEventBus EventBus;
         private readonly IEventFactory EventFactory;
         private readonly string Ip = "";
@@ -21,8 +23,9 @@ namespace Slipstream.Backend.Plugins
         private const int READ_BUFFER_SIZE = 1024 * 16;
         private readonly byte[] ReadBuffer = new byte[READ_BUFFER_SIZE];
 
-        public ReceiverPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, ITxrxConfiguration txrxConfiguration) : base(id, "ReceiverPlugin", "ReceiverPlugin", "ReceiverPlugin", true)
+        public ReceiverPlugin(string id, ILogger logger, IEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, ITxrxConfiguration txrxConfiguration) : base(id, "ReceiverPlugin", "ReceiverPlugin", "ReceiverPlugin", true)
         {
+            Logger = logger;
             EventFactory = eventFactory;
             EventBus = eventBus;
             TxrxService = txrxService;
@@ -34,12 +37,12 @@ namespace Slipstream.Backend.Plugins
                 Ip = input[0];
                 if (!Int32.TryParse(input[1], out Port))
                 {
-                    EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin: Invalid port in TxrxHost provided: '{txrxConfiguration.TxrxIpPort}'"));
+                    Logger.Error("ReceiverPlugin: Invalid port in TxrxHost provided: {TxrxIpPort}", txrxConfiguration.TxrxIpPort);
                 }
             }
             else
             {
-                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin: Invalid TxrxHost provided: '{txrxConfiguration.TxrxIpPort}'"));
+                Logger.Error("ReceiverPlugin: Invalid TxrxHost provided: {TxrxIpPort}", txrxConfiguration.TxrxIpPort);
             }
 
             // To avoid that we get an endless loop, we will Unregister the "other" end in this instance
@@ -52,7 +55,7 @@ namespace Slipstream.Backend.Plugins
             Listener = new TcpListener(localAddr, Port);
             Listener.Start();
 
-            EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin listening on {Listener.LocalEndpoint}"));
+            Logger.Information("ReceiverPlugin listening on {Endpoint}", Listener.LocalEndpoint);
         }
 
         private void AcceptClient()
@@ -65,7 +68,7 @@ namespace Slipstream.Backend.Plugins
 
             Client = Listener!.AcceptSocket();
 
-            EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin got a connection from {Client.RemoteEndPoint}"));
+            Logger.Information("ReceiverPlugin got a connection from {Endpoint}", Client.RemoteEndPoint);
         }
 
         private void ReadData()
@@ -79,7 +82,7 @@ namespace Slipstream.Backend.Plugins
                     // Check if disconnceted
                     if (Client!.Poll(200, SelectMode.SelectRead) && Client!.Available == 0)
                     {
-                        EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin disconnected {Client.RemoteEndPoint}"));
+                        Logger.Information("ReceiverPlugin disconnected {Endpoint}", Client.RemoteEndPoint);
 
                         Client.Dispose();
                         Client = null;
@@ -96,11 +99,11 @@ namespace Slipstream.Backend.Plugins
             }
             catch (SocketException e)
             {
-                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin: Cant receieve data: {e.Message}"));
+                Logger.Information("ReceiverPlugin: Cant receieve data: {Message}", e.Message);
             }
             catch(TxrxService.TxrxServiceException e)
             {
-                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"ReceiverPlugin: Error parsing data: {e.Message}"));
+                Logger.Information("ReceiverPlugin: Error parsing data {Message}", e.Message);
             }
         }
 

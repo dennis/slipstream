@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using Serilog;
 using Slipstream.Backend.Plugins;
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
@@ -19,7 +20,9 @@ namespace Slipstream.Backend
         private readonly IStateService StateService;
         private readonly ITxrxService TxrxService;
         private readonly IEventSerdeService EventSerdeService;
-        public PluginManager(IEventFactory eventFactory, IEventBus eventBus, IApplicationConfiguration applicationConfiguration, IStateService stateService, ITxrxService txrxService, IEventSerdeService eventSerdeService)
+        private readonly ILogger Logger;
+
+        public PluginManager(IEventFactory eventFactory, IEventBus eventBus, IApplicationConfiguration applicationConfiguration, IStateService stateService, ITxrxService txrxService, IEventSerdeService eventSerdeService, ILogger logger)
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
@@ -27,6 +30,7 @@ namespace Slipstream.Backend
             StateService = stateService;
             TxrxService = txrxService;
             EventSerdeService = eventSerdeService;
+            Logger = logger;
         }
 
         private void UnregisterPluginsWithoutLock()
@@ -51,6 +55,7 @@ namespace Slipstream.Backend
             PluginWorkers[p.WorkerName].RemovePlugin(p);
             EmitPluginStateChanged(p, PluginStatusEnum.Unregistered);
             p.Dispose();
+            Logger.Verbose("Removed plugin: {pluginId}", p.Id);
         }
 
         private void EmitPluginStateChanged(IPlugin plugin, PluginStatusEnum pluginStatus)
@@ -77,10 +82,13 @@ namespace Slipstream.Backend
 
             if (PluginWorkers.ContainsKey(plugin.WorkerName))
             {
+                Logger.Verbose("Assigning plugin {PluginId} to worker {WorkerName}", plugin.Id, plugin.WorkerName);
+
                 worker = PluginWorkers[plugin.WorkerName];
             }
             else
             {
+                Logger.Verbose("Creating worker {workerName} for {PluginId}", plugin.WorkerName, plugin.Id);
                 worker = new PluginWorker(plugin.WorkerName, EventBus.RegisterListener(), EventFactory, EventBus);
                 worker.Start();
                 PluginWorkers.Add(worker.Name, worker);
@@ -106,7 +114,7 @@ namespace Slipstream.Backend
             }
             else
             {
-                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"Can't find plugin '{pluginId}'"));
+                Logger.Error("Can't find plugin {pluginId}", plugin);
             }
         }
 
@@ -175,11 +183,11 @@ namespace Slipstream.Backend
             {
                 "FileMonitorPlugin" => new FileMonitorPlugin(id, EventFactory, eventBus, ApplicationConfiguration),
                 "LuaManagerPlugin" => new LuaManagerPlugin(id, EventFactory, eventBus, this, this, EventSerdeService),
-                "AudioPlugin" => new AudioPlugin(id, EventFactory, eventBus, ApplicationConfiguration),
+                "AudioPlugin" => new AudioPlugin(id, Logger.ForContext(typeof(AudioPlugin)), ApplicationConfiguration),
                 "IRacingPlugin" => new IRacingPlugin(id, EventFactory, eventBus),
-                "TwitchPlugin" => new TwitchPlugin(id, EventFactory, eventBus, ApplicationConfiguration),
-                "TransmitterPlugin" => new TransmitterPlugin(id, EventFactory, eventBus, TxrxService, ApplicationConfiguration),
-                "ReceiverPlugin" => new ReceiverPlugin(id, EventFactory, eventBus, TxrxService, ApplicationConfiguration),
+                "TwitchPlugin" => new TwitchPlugin(id, Logger.ForContext(typeof(TwitchPlugin)), EventFactory, eventBus, ApplicationConfiguration),
+                "TransmitterPlugin" => new TransmitterPlugin(id, Logger.ForContext(typeof(TransmitterPlugin)), EventFactory, eventBus, TxrxService, ApplicationConfiguration),
+                "ReceiverPlugin" => new ReceiverPlugin(id, Logger.ForContext(typeof(ReceiverPlugin)), EventFactory, eventBus, TxrxService, ApplicationConfiguration),
                 _ => throw new Exception($"Unknown plugin '{name}'"),
             };
         }
@@ -194,7 +202,7 @@ namespace Slipstream.Backend
             return name switch
             {
 #pragma warning disable CS8604 // Possible null reference argument.
-                "LuaPlugin" when configuration is ILuaConfiguration => new LuaPlugin(pluginId, EventFactory, EventBus, StateService, configuration as ILuaConfiguration),
+                "LuaPlugin" when configuration is ILuaConfiguration => new LuaPlugin(pluginId, Logger.ForContext(typeof(LuaPlugin)), EventFactory, EventBus, StateService, configuration as ILuaConfiguration),
 #pragma warning restore CS8604 // Possible null reference argument.
                 _ => throw new Exception($"Unknown configurable plugin '{name}'"),
             };

@@ -1,3 +1,4 @@
+using Serilog;
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using System;
@@ -12,6 +13,7 @@ namespace Slipstream.Backend.Plugins
 {
     public class TransmitterPlugin : BasePlugin
     {
+        private readonly ILogger Logger;
         private readonly IEventBus EventBus;
         private readonly IEventFactory EventFactory;
         private readonly string Ip = "";
@@ -19,8 +21,9 @@ namespace Slipstream.Backend.Plugins
         private TcpClient? Client = null;
         private readonly ITxrxService TxrxService;
 
-        public TransmitterPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, ITxrxConfiguration txrxConfiguration) : base(id, "TransmitterPlugin", "TransmitterPlugin", "TransmitterPlugin", true)
+        public TransmitterPlugin(string id, ILogger logger, IEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, ITxrxConfiguration txrxConfiguration) : base(id, "TransmitterPlugin", "TransmitterPlugin", "TransmitterPlugin", true)
         {
+            Logger = logger;
             EventBus = eventBus;
             EventFactory = eventFactory;
             TxrxService = txrxService;
@@ -32,7 +35,7 @@ namespace Slipstream.Backend.Plugins
                 Ip = input[0];
                 if (!Int32.TryParse(input[1], out Port))
                 {
-                    EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Invalid port in TxrxIpPort provided: '{txrxConfiguration.TxrxIpPort}'"));
+                    Logger.Error("TransmitterPlugin: Invalid port in TxrxIpPort provided: {TxrxIpPort}", txrxConfiguration.TxrxIpPort);
                 }
                 else
                 {
@@ -41,7 +44,7 @@ namespace Slipstream.Backend.Plugins
             }
             else
             {
-                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Invalid TxrxIpPort provided: '{txrxConfiguration.TxrxIpPort}'"));
+                Logger.Error("TransmitterPlugin: Invalid TxrxIpPort provided: {TxrxIpPort}", txrxConfiguration.TxrxIpPort);
             }
 
             EventHandler.OnDefault += (_, e) => OnEvent(e.Event);
@@ -65,12 +68,14 @@ namespace Slipstream.Backend.Plugins
             }
             catch (SocketException e)
             {
-                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Cant send {@event.EventType}: {e.Message}"));
+                Logger.Error("TransmitterPlugin: Cant send {EventType}: {Message}", @event.EventType, e.Message);
+
                 Reset();
             }
             catch (System.IO.IOException e)
             {
-                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Cant send {@event.EventType}: {e.Message}"));
+                Logger.Error("TransmitterPlugin: Cant send {EventType}: {Message}", @event.EventType, e.Message);
+
                 Reset();
             }
         }
@@ -100,19 +105,19 @@ namespace Slipstream.Backend.Plugins
 
                 if (success)
                 {
-                    EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Connected to '{Ip}:{Port}'"));
+                    Logger.Information("TransmitterPlugin: Connected to {Ip}:{Port}", Ip, Port);
                     return;
                 }
                 else
                 {
-                    EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Can't connect to '{Ip}:{Port}'"));
+                    Logger.Error("TransmitterPlugin: Can't connect to {Ip}:{Port}", Ip, Port);
                     Client?.Dispose();
                     Client = null;
                 }
             }
             catch (Exception e)
             {
-                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"TransmitterPlugin: Error connecting to '{Ip}:{Port}': {e.Message}"));
+                Logger.Error("TransmitterPlugin: Error connecting to {Ip}:{Port}: {Message}", Ip, Port, e.Message);
             }
 
             Client = null;

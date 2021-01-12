@@ -1,4 +1,5 @@
 using NAudio.Wave;
+using Serilog;
 using Slipstream.Shared;
 using System;
 using System.Speech.Synthesis;
@@ -11,15 +12,13 @@ namespace Slipstream.Backend.Plugins
 {
     internal class AudioPlugin : BasePlugin
     {
-        private readonly IEventFactory EventFactory;
-        private readonly IEventBus EventBus;
+        private readonly ILogger Logger;
         private readonly string Path;
         private readonly SpeechSynthesizer Synthesizer;
 
-        public AudioPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IAudioConfiguration audioConfiguration) : base(id, "AudioPlugin", "AudioPlugin", "Audio", true)
+        public AudioPlugin(string id, ILogger logger, IAudioConfiguration audioConfiguration) : base(id, "AudioPlugin", "AudioPlugin", "Audio", true)
         {
-            EventFactory = eventFactory;
-            EventBus = eventBus;
+            Logger = logger;
 
             Path = audioConfiguration.AudioPath;
 
@@ -54,7 +53,7 @@ namespace Slipstream.Backend.Plugins
             }
             catch (Exception ex)
             {
-                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole("Playing audio file failed: " + ex.Message));
+                Logger.Error("Playing audio file failed: {Message}", ex.Message);
             }
         }
 

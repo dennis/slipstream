@@ -1,4 +1,5 @@
-﻿using Slipstream.Shared;
+﻿using Serilog;
+using Slipstream.Shared;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,8 +12,7 @@ namespace Slipstream.Backend.Services
     public class StateService : IStateService
     {
         private readonly IDictionary<string, StateValue> KeyValues = new Dictionary<string, StateValue>();
-        private readonly IEventFactory EventFactory;
-        private readonly IEventBus EventBus;
+        private readonly ILogger Logger;
         private readonly string FilePath;
         private DateTime? NextKeyExpiresAt;
 
@@ -28,10 +28,9 @@ namespace Slipstream.Backend.Services
             }
         }
 
-        public StateService(IEventFactory eventFactory, IEventBus eventBus, string filePath)
+        public StateService(ILogger logger, string filePath)
         {
-            EventFactory = eventFactory;
-            EventBus = eventBus;
+            Logger = logger;
             FilePath = filePath;
 
             ReadStateFromFile();
@@ -103,7 +102,7 @@ namespace Slipstream.Backend.Services
 
             if (!IsValidKey(key))
             {
-                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"'{key}' is not a valid state key. Ignoring"));
+                Logger.Error("{Key} is not a valid state key. Ignoring", key);
                 return;
             }
 
@@ -137,7 +136,7 @@ namespace Slipstream.Backend.Services
 
                     if (kval.ExpiresAt < now)
                     {
-                        EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"'{k}' expired"));
+                        Logger.Verbose("{Key} expired", key);
                         SetState(k, "");
                     }
                     else

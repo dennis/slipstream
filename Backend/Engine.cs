@@ -1,4 +1,5 @@
-﻿using Slipstream.Backend.Services;
+﻿using Serilog;
+using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Internal;
 using System;
@@ -9,21 +10,31 @@ using static Slipstream.Shared.IEventFactory;
 
 namespace Slipstream.Backend
 {
-    class Engine : Worker, IEngine, IDisposable
+    internal class Engine : Worker, IEngine, IDisposable
     {
         private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly IPluginManager PluginManager;
         private readonly IEventBusSubscription Subscription;
         private readonly IPluginFactory PluginFactory;
+        private readonly ILogger Logger;
         private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
 
-        public Engine(IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, ILuaSevice luaService, IApplicationVersionService applicationVersionService) : base("engine")
+        public Engine(
+            IEventFactory eventFactory,
+            IEventBus eventBus,
+            IPluginFactory pluginFactory,
+            IPluginManager pluginManager,
+            ILuaSevice luaService,
+            IApplicationVersionService applicationVersionService,
+            ILogger logger
+        ) : base("engine")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
             PluginFactory = pluginFactory;
             PluginManager = pluginManager;
+            Logger = logger;
 
             Subscription = EventBus.RegisterListener();
 
@@ -38,6 +49,7 @@ namespace Slipstream.Backend
 
                 if (!File.Exists(initFilename))
                 {
+                    Logger.Information("No {initcfg} file found, creating", initFilename);
                     File.WriteAllText(initFilename, @"
 -- This file is auto generated upon startup, if it doesnt exist. So if you
 -- ever break it, just rename/delete it, and a new working one is created.
@@ -74,6 +86,7 @@ register_plugin(""FileMonitorPlugin"", ""FileMonitorPlugin"")
 ");
                 }
 
+                Logger.Information("Loading {initcfg}", initFilename);
                 luaService.Parse(filename: initFilename, logPrefix: "INIT");
             }
 

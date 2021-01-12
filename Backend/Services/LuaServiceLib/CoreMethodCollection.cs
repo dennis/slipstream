@@ -1,4 +1,5 @@
 ﻿using NLua;
+using Serilog;
 using Slipstream.Shared;
 using System;
 using System.Collections.Generic;
@@ -23,26 +24,22 @@ namespace Slipstream.Backend.Services.LuaServiceLib
                 }
             }
 
-            private readonly IEventFactory EventFactory;
-            private readonly IEventBus EventBus;
             private readonly IEventSerdeService EventSerdeService;
 
             private readonly IDictionary<string, DelayedExecution> DebounceDelayedFunctions = new Dictionary<string, DelayedExecution>();
             private readonly IDictionary<string, DelayedExecution> WaitDelayedFunctions = new Dictionary<string, DelayedExecution>();
 
-            public static CoreMethodCollection Register(IEventFactory eventFactory, IEventBus eventBus, IEventSerdeService eventSerdeService, Lua lua)
+            public static CoreMethodCollection Register(IEventSerdeService eventSerdeService, Lua lua)
             {
-                var m = new CoreMethodCollection(eventFactory, eventBus, eventSerdeService);
+                var m = new CoreMethodCollection(eventSerdeService);
 
                 m.Register(lua);
 
                 return m;
             }
 
-            public CoreMethodCollection(IEventFactory eventFactory, IEventBus eventBus, IEventSerdeService eventSerdeService)
+            public CoreMethodCollection(IEventSerdeService eventSerdeService)
             {
-                EventFactory = eventFactory;
-                EventBus = eventBus;
                 EventSerdeService = eventSerdeService;
             }
 

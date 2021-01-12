@@ -1,5 +1,5 @@
 ﻿using NLua;
-using Slipstream.Shared;
+using Serilog;
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -11,20 +11,18 @@ namespace Slipstream.Backend.Services.LuaServiceLib
     {
         public class HttpMethodCollection
         {
-            private readonly IEventBus EventBus;
-            private readonly IEventFactory EventFactory;
+            private readonly ILogger Logger;
 
-            public static HttpMethodCollection Register(IEventBus eventBus, IEventFactory eventFactory, Lua lua)
+            public static HttpMethodCollection Register(ILogger logger, Lua lua)
             {
-                var m = new HttpMethodCollection(eventBus, eventFactory);
+                var m = new HttpMethodCollection(logger);
                 m.Register(lua);
                 return m;
             }
 
-            private HttpMethodCollection(IEventBus eventBus, IEventFactory eventFactory)
+            private HttpMethodCollection(ILogger logger)
             {
-                EventBus = eventBus;
-                EventFactory = eventFactory;
+                Logger = logger;
             }
 
             public void Register(Lua lua)
@@ -53,11 +51,11 @@ function post_as_json(u, b); http:post_as_json(u, b); end
                     if(response.IsSuccessStatusCode)
                     {
                         var responseContent = await response.Content.ReadAsStringAsync();
-                        EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"post_as_json response: {responseContent}"));
+                        Logger.Verbose("post_as_json response {Response}", responseContent);
                     }
                     else
                     {
-                        EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"post_as_json ERROR: uri: {uri}\nbody: {body}\n {(int)response.StatusCode} - {response.ReasonPhrase}"));
+                        Logger.Error("post_as_json ERROR: uri: {Uri}\nbody: {Body}\n {(int)StatusCode} - {ReasonPhrase}", uri, body, (int)response.StatusCode, response.ReasonPhrase);
                     }
                 }
             }

@@ -15,10 +15,6 @@ namespace Slipstream.Backend.Plugins
         private readonly ILogger Logger;
         private readonly ILuaEventFactory LuaEventFactory;
         private readonly IInternalEventFactory InternalEventFactory;
-        private readonly IAudioEventFactory AudioEventFactory;
-        private readonly IUIEventFactory UIEventFactory;
-        private readonly ITwitchEventFactory TwitchEventFactory;
-        private readonly IIRacingEventFactory IRacingEventFactory;
         private readonly CapturingEventBus EventBus;
         private readonly LuaService LuaService;
         private ILuaContext? LuaContext;

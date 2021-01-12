@@ -17,11 +17,14 @@ namespace Slipstream
 
         public void Emit(LogEvent logEvent)
         {
+            if (EventBus == null || EventFactory == null)
+                return;
+
             lock (ThreadLock)
             {
                 var message = logEvent.RenderMessage();
 
-                EventBus?.PublishEvent(EventFactory?.CreateUICommandWriteToConsole(message));
+                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole(message));
             }
         }
     }

@@ -9,7 +9,7 @@ using static Slipstream.Shared.Factories.IInternalEventFactory;
 
 namespace Slipstream.Backend
 {
-    class PluginWorker : Worker
+    internal class PluginWorker : Worker
     {
         private readonly IList<IPlugin> Plugins = new List<IPlugin>();
         private readonly IEventBusSubscription Subscription;
@@ -70,7 +70,7 @@ namespace Slipstream.Backend
                     foreach (var plugin in Plugins)
                     {
                         plugin.Loop();
-                        invoked += 1;
+                        invoked++;
                     }
                 }
 

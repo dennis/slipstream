@@ -1,4 +1,5 @@
-﻿using Slipstream.Backend.Services;
+﻿using Serilog;
+using Slipstream.Backend.Services;
 using Slipstream.Backend.Services.LuaServiceLib;
 using Slipstream.Shared;
 using System.IO;
@@ -10,6 +11,7 @@ namespace Slipstream.Backend.Plugins
 {
     public class LuaPlugin : BasePlugin
     {
+        private readonly ILogger Logger;
         private readonly IEventFactory EventFactory;
         private readonly CapturingEventBus EventBus;
         private readonly LuaService LuaService;
@@ -17,12 +19,13 @@ namespace Slipstream.Backend.Plugins
         private readonly string Prefix = "<UNKNOWN>";
         private readonly string FilePath;
 
-        public LuaPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IStateService stateService, ILuaConfiguration configuration) : base(id, "LuaPlugin", "LuaPlugin", "Lua")
+        public LuaPlugin(string id, ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IStateService stateService, ILuaConfiguration configuration) : base(id, "LuaPlugin", "LuaPlugin", "Lua")
         {
+            Logger = logger;
             EventFactory = eventFactory;
             EventBus = new CapturingEventBus(eventBus);
 
-            LuaService = new LuaService(eventFactory, EventBus, stateService);
+            LuaService = new LuaService(logger, eventFactory, EventBus, stateService);
 
             // Avoid that WriteToConsole is evaluated by Lua, that in turn will
             // add more WriteToConsole events, making a endless loop
@@ -56,7 +59,7 @@ namespace Slipstream.Backend.Plugins
 
         private void HandleLuaException(LuaException e)
         {
-            EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"{Prefix}: ERROR: { e.Message}"));
+            Logger.Error("Lua error: {Message}", e.Message);
             EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginUnregister(Id));
         }
 

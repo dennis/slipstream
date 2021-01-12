@@ -1,13 +1,17 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Windows.Forms;
+using Serilog;
+using Slipstream.Shared;
+
+#nullable enable
 
 namespace Slipstream
 {
-    static class Program
+    internal static class Program
     {
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -17,7 +21,10 @@ namespace Slipstream
             ConfigureServices(services);
 
             using ServiceProvider serviceProvider = services.BuildServiceProvider();
-            string cwd = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $@"\Slipstream\";
+
+            var _ = serviceProvider.GetService<PopulateSink>(); // HACK: Will inject EventBus/EventFactory into sink
+
+            string cwd = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Slipstream\";
             System.IO.Directory.CreateDirectory(cwd);
             System.IO.Directory.SetCurrentDirectory(cwd);
 
@@ -44,13 +51,32 @@ namespace Slipstream
             services.AddScoped<Shared.IEventFactory, Shared.EventFactory>();
             services.AddScoped<Shared.IEventProducer>(x => x.GetService<Backend.EventBus>());
             services.AddScoped<Backend.IEngine, Backend.Engine>();
-            services.AddScoped<Backend.Services.IStateService>(x => new Backend.Services.StateService(x.GetService<Shared.IEventFactory>(), x.GetService<Shared.IEventBus>(), Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $@"\Slipstream\state.txt"));
+            services.AddScoped<Backend.Services.IStateService>(x => new Backend.Services.StateService(x.GetService<ILogger>(), Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Slipstream\state.txt"));
             services.AddScoped<Backend.Services.ITxrxService, Backend.Services.TxrxService>();
             services.AddScoped<Backend.Services.IEventSerdeService, Backend.Services.EventSerdeService>();
             services.AddScoped<Backend.IPluginManager, Backend.PluginManager>();
             services.AddScoped<Backend.IPluginFactory, Backend.PluginManager>();
             services.AddScoped<Backend.Services.ILuaSevice, Backend.Services.LuaService>();
             services.AddSingleton<Shared.IApplicationVersionService, Shared.ApplicationVersionService>();
+
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .WriteTo.Console()
+                .WriteTo.SlipstreamConsoleSink(out SlipstreamConsoleSink sink)
+                .CreateLogger();
+
+            services.AddScoped<ILogger>(_ => logger);
+            services.AddScoped<SlipstreamConsoleSink>(_ => sink);
+            services.AddScoped<PopulateSink>();
+        }
+
+        private class PopulateSink
+        {
+            public PopulateSink(SlipstreamConsoleSink sink, IEventBus eventBus, IEventFactory eventFactory)
+            {
+                sink.EventBus = eventBus;
+                sink.EventFactory = eventFactory;
+            }
         }
     }
 }

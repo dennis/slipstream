@@ -1,4 +1,5 @@
 ﻿using NLua;
+using Serilog;
 using Slipstream.Shared;
 using System.Collections.Generic;
 using System.IO;
@@ -13,19 +14,19 @@ namespace Slipstream.Backend.Services.LuaServiceLib
         private readonly LuaFunction? HandleFunc;
         private Lua? Lua;
 
-        public LuaContext(IEventFactory eventFactory, IEventBus eventBus, IStateService stateService, string filePath, string logPrefix)
+        public LuaContext(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IStateService stateService, string filePath, string logPrefix)
         {
             try
             {
                 Lua = new Lua();
 
-                CoreMethodCollection_ = CoreMethodCollection.Register(eventFactory, eventBus, new EventSerdeService(), Lua);
+                CoreMethodCollection_ = CoreMethodCollection.Register(new EventSerdeService(), Lua);
                 AudioMethodCollection.Register(eventBus, eventFactory, Lua);
                 TwitchMethodCollection.Register(eventBus, eventFactory, Lua);
                 StateMethodCollection.Register(stateService, Lua);
-                UIMethodCollection.Register(eventBus, eventFactory, logPrefix, Lua);
+                UIMethodCollection.Register(logger, eventBus, eventFactory, logPrefix, Lua);
                 InternalMethodCollection.Register(eventBus, eventFactory, Lua);
-                HttpMethodCollection.Register(eventBus, eventFactory, Lua);
+                HttpMethodCollection.Register(logger, Lua);
                 IRacingMethodCollection.Register(eventBus, eventFactory, Lua);
 
                 // Fix paths, so we can require() files relative to where the script is located

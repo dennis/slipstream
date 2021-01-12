@@ -1,3 +1,4 @@
+using Serilog;
 using Slipstream.Shared;
 using System;
 using TwitchLib.Client;
@@ -15,6 +16,7 @@ namespace Slipstream.Backend.Plugins
     internal class TwitchPlugin : BasePlugin
     {
         private TwitchClient? Client;
+        private readonly ILogger Logger;
         private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
 
@@ -25,8 +27,9 @@ namespace Slipstream.Backend.Plugins
         private bool RequestReconnect = true;
         private bool AnnouncedConnected = false;
 
-        public TwitchPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, ITwitchConfiguration twitchConfiguration) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin", true)
+        public TwitchPlugin(string id, ILogger logger, IEventFactory eventFactory, IEventBus eventBus, ITwitchConfiguration twitchConfiguration) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin", true)
         {
+            Logger = logger;
             EventFactory = eventFactory;
             EventBus = eventBus;
 
@@ -124,17 +127,17 @@ namespace Slipstream.Backend.Plugins
 
         private void OnLog(object sender, OnLogArgs e)
         {
-            EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"Twitch log: {e.Data}"));
+            Logger.Verbose("Twitch log: {Data}", e.Data);
         }
 
         private void OnIncorrectLogin(object sender, OnIncorrectLoginArgs e)
         {
-            EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"Twitch Error: {e.Exception.Message}"));
+            Logger.Error("Twitch Error: {Message}}", e.Exception.Message);
         }
 
         private void OnError(object sender, OnErrorEventArgs e)
         {
-            EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"Twitch Error: {e.Exception.Message}"));
+            Logger.Error("Twitch Error: {Message}}", e.Exception.Message);
         }
 
         private void OnDisconnect(object sender, OnDisconnectedEventArgs e)
@@ -173,7 +176,7 @@ namespace Slipstream.Backend.Plugins
 
         private void OnConnected(object sender, OnConnectedArgs e)
         {
-            EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole($"Twitch connected as {TwitchUsername} to channel {TwitchChannel}"));
+            Logger.Information("Twitch connected as {TwitchUsername} to channel {TwitchChannel}", TwitchUsername, TwitchChannel);
         }
 
         public override void Dispose()

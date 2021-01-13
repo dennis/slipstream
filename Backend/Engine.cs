@@ -2,9 +2,9 @@
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Internal;
+using Slipstream.Shared.Factories;
 using System;
 using System.IO;
-using static Slipstream.Shared.IEventFactory;
 
 #nullable enable
 
@@ -12,7 +12,7 @@ namespace Slipstream.Backend
 {
     internal class Engine : Worker, IEngine, IDisposable
     {
-        private readonly IEventFactory EventFactory;
+        private readonly IInternalEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly IPluginManager PluginManager;
         private readonly IEventBusSubscription Subscription;
@@ -20,17 +20,9 @@ namespace Slipstream.Backend
         private readonly ILogger Logger;
         private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
 
-        public Engine(
-            IEventFactory eventFactory,
-            IEventBus eventBus,
-            IPluginFactory pluginFactory,
-            IPluginManager pluginManager,
-            ILuaSevice luaService,
-            IApplicationVersionService applicationVersionService,
-            ILogger logger
-        ) : base("engine")
+        public Engine(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, ILuaSevice luaService, IApplicationVersionService applicationVersionService) : base("engine")
         {
-            EventFactory = eventFactory;
+            EventFactory = eventFactory.Get<IInternalEventFactory>();
             EventBus = eventBus;
             PluginFactory = pluginFactory;
             PluginManager = pluginManager;
@@ -38,10 +30,12 @@ namespace Slipstream.Backend
 
             Subscription = EventBus.RegisterListener();
 
-            EventHandler.OnInternalCommandPluginRegister += (s, e) => OnCommandPluginRegister(e.Event);
-            EventHandler.OnInternalCommandPluginUnregister += (s, e) => OnCommandPluginUnregister(e.Event);
-            EventHandler.OnInternalCommandPluginStates += (s, e) => OnCommandPluginStates(e.Event);
-            EventHandler.OnInternalCommandReconfigure += (s, e) => OnInternalReconfigured();
+            var internalEventHandler = EventHandler.Get<Slipstream.Shared.EventHandlers.Internal>();
+
+            internalEventHandler.OnInternalCommandPluginRegister += (s, e) => OnCommandPluginRegister(e.Event);
+            internalEventHandler.OnInternalCommandPluginUnregister += (s, e) => OnCommandPluginUnregister(e.Event);
+            internalEventHandler.OnInternalCommandPluginStates += (s, e) => OnCommandPluginStates(e.Event);
+            internalEventHandler.OnInternalCommandReconfigure += (s, e) => OnInternalReconfigured();
 
             // Plugins..
             {
@@ -103,7 +97,7 @@ register_plugin(""FileMonitorPlugin"", ""FileMonitorPlugin"")
         {
             PluginManager.ForAllPluginsExecute(
                 (a) => EventBus.PublishEvent(
-                    EventFactory.CreateInternalPluginState(a.Id, a.Name, a.DisplayName, PluginStatusEnum.Registered)
+                    EventFactory.CreateInternalPluginState(a.Id, a.Name, a.DisplayName, IInternalEventFactory.PluginStatusEnum.Registered)
             ));
         }
 

@@ -1,6 +1,7 @@
 ﻿using NLua;
 using Serilog;
 using Slipstream.Shared;
+using Slipstream.Shared.Factories;
 using System;
 using System.Collections.Generic;
 

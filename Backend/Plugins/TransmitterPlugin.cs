@@ -1,6 +1,7 @@
 using Serilog;
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
+using Slipstream.Shared.Factories;
 using System;
 using System.Diagnostics;
 using System.Net.Sockets;
@@ -15,13 +16,13 @@ namespace Slipstream.Backend.Plugins
     {
         private readonly ILogger Logger;
         private readonly IEventBus EventBus;
-        private readonly IEventFactory EventFactory;
+        private readonly IInternalEventFactory EventFactory;
         private readonly string Ip = "";
         private readonly Int32 Port = 42424;
         private TcpClient? Client = null;
         private readonly ITxrxService TxrxService;
 
-        public TransmitterPlugin(string id, ILogger logger, IEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, ITxrxConfiguration txrxConfiguration) : base(id, "TransmitterPlugin", "TransmitterPlugin", "TransmitterPlugin", true)
+        public TransmitterPlugin(string id, ILogger logger, IInternalEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, ITxrxConfiguration txrxConfiguration) : base(id, "TransmitterPlugin", "TransmitterPlugin", "TransmitterPlugin", true)
         {
             Logger = logger;
             EventBus = eventBus;

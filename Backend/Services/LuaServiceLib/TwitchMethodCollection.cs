@@ -1,5 +1,6 @@
 ﻿using NLua;
 using Slipstream.Shared;
+using Slipstream.Shared.Factories;
 
 #nullable enable
 
@@ -10,16 +11,16 @@ namespace Slipstream.Backend.Services.LuaServiceLib
         public class TwitchMethodCollection
         {
             private readonly IEventBus EventBus;
-            private readonly IEventFactory EventFactory;
+            private readonly ITwitchEventFactory EventFactory;
 
-            public static TwitchMethodCollection Register(IEventBus eventBus, IEventFactory eventFactory, Lua lua)
+            public static TwitchMethodCollection Register(IEventBus eventBus, ITwitchEventFactory eventFactory, Lua lua)
             {
                 var m = new TwitchMethodCollection(eventBus, eventFactory);
                 m.Register(lua);
                 return m;
             }
 
-            public TwitchMethodCollection(IEventBus eventBus, IEventFactory eventFactory)
+            public TwitchMethodCollection(IEventBus eventBus, ITwitchEventFactory eventFactory)
             {
                 EventBus = eventBus;
                 EventFactory = eventFactory;

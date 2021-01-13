@@ -4,15 +4,22 @@ using Serilog;
 using Slipstream.Backend.Plugins;
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
+using Slipstream.Shared.Factories;
 using System;
 using System.Collections.Generic;
-using static Slipstream.Shared.IEventFactory;
+using System.Diagnostics;
+using static Slipstream.Shared.Factories.IInternalEventFactory;
 
 namespace Slipstream.Backend
 {
     public class PluginManager : IPluginManager, IPluginFactory
     {
         private readonly IEventFactory EventFactory;
+        private readonly IInternalEventFactory InternalEventFactory;
+        private readonly IFileMonitorEventFactory FileMonitorEventFactory;
+        private readonly IIRacingEventFactory IRacingEventFactory;
+        private readonly ITwitchEventFactory TwitchEventFactory;
+
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, IPlugin> Plugins = new Dictionary<string, IPlugin>();
         private readonly IDictionary<string, PluginWorker> PluginWorkers = new Dictionary<string, PluginWorker>();
@@ -22,9 +29,21 @@ namespace Slipstream.Backend
         private readonly IEventSerdeService EventSerdeService;
         private readonly ILogger Logger;
 
-        public PluginManager(IEventFactory eventFactory, IEventBus eventBus, IApplicationConfiguration applicationConfiguration, IStateService stateService, ITxrxService txrxService, IEventSerdeService eventSerdeService, ILogger logger)
+        public PluginManager(
+            IEventFactory eventFactory,
+            IEventBus eventBus,
+            IApplicationConfiguration applicationConfiguration,
+            IStateService stateService,
+            ITxrxService txrxService,
+            IEventSerdeService eventSerdeService,
+            ILogger logger
+        )
         {
             EventFactory = eventFactory;
+            InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
+            FileMonitorEventFactory = eventFactory.Get<IFileMonitorEventFactory>();
+            IRacingEventFactory = eventFactory.Get<IIRacingEventFactory>();
+            TwitchEventFactory = eventFactory.Get<ITwitchEventFactory>();
             EventBus = eventBus;
             ApplicationConfiguration = applicationConfiguration;
             StateService = stateService;
@@ -60,7 +79,7 @@ namespace Slipstream.Backend
 
         private void EmitPluginStateChanged(IPlugin plugin, PluginStatusEnum pluginStatus)
         {
-            EmitEvent(EventFactory.CreateInternalPluginState(plugin.Id, plugin.Name, plugin.DisplayName, pluginStatus));
+            EmitEvent(InternalEventFactory.CreateInternalPluginState(plugin.Id, plugin.Name, plugin.DisplayName, pluginStatus));
         }
 
         public void RegisterPlugin(IPlugin plugin)
@@ -89,7 +108,7 @@ namespace Slipstream.Backend
             else
             {
                 Logger.Verbose("Creating worker {workerName} for {PluginId}", plugin.WorkerName, plugin.Id);
-                worker = new PluginWorker(plugin.WorkerName, EventBus.RegisterListener(), EventFactory, EventBus);
+                worker = new PluginWorker(plugin.WorkerName, EventBus.RegisterListener(), InternalEventFactory, EventBus);
                 worker.Start();
                 PluginWorkers.Add(worker.Name, worker);
             }
@@ -181,13 +200,13 @@ namespace Slipstream.Backend
         {
             return name switch
             {
-                "FileMonitorPlugin" => new FileMonitorPlugin(id, EventFactory, eventBus, ApplicationConfiguration),
-                "LuaManagerPlugin" => new LuaManagerPlugin(id, EventFactory, eventBus, this, this, EventSerdeService),
+                "FileMonitorPlugin" => new FileMonitorPlugin(id, FileMonitorEventFactory, eventBus, ApplicationConfiguration),
+                "LuaManagerPlugin" => new LuaManagerPlugin(id, FileMonitorEventFactory, eventBus, this, this, EventSerdeService),
                 "AudioPlugin" => new AudioPlugin(id, Logger.ForContext(typeof(AudioPlugin)), ApplicationConfiguration),
-                "IRacingPlugin" => new IRacingPlugin(id, EventFactory, eventBus),
-                "TwitchPlugin" => new TwitchPlugin(id, Logger.ForContext(typeof(TwitchPlugin)), EventFactory, eventBus, ApplicationConfiguration),
-                "TransmitterPlugin" => new TransmitterPlugin(id, Logger.ForContext(typeof(TransmitterPlugin)), EventFactory, eventBus, TxrxService, ApplicationConfiguration),
-                "ReceiverPlugin" => new ReceiverPlugin(id, Logger.ForContext(typeof(ReceiverPlugin)), EventFactory, eventBus, TxrxService, ApplicationConfiguration),
+                "IRacingPlugin" => new IRacingPlugin(id, IRacingEventFactory, eventBus),
+                "TwitchPlugin" => new TwitchPlugin(id, Logger.ForContext(typeof(TwitchPlugin)), TwitchEventFactory, eventBus, ApplicationConfiguration),
+                "TransmitterPlugin" => new TransmitterPlugin(id, Logger.ForContext(typeof(TransmitterPlugin)), InternalEventFactory, eventBus, TxrxService, ApplicationConfiguration),
+                "ReceiverPlugin" => new ReceiverPlugin(id, Logger.ForContext(typeof(ReceiverPlugin)), InternalEventFactory, eventBus, TxrxService, ApplicationConfiguration),
                 _ => throw new Exception($"Unknown plugin '{name}'"),
             };
         }
@@ -202,7 +221,15 @@ namespace Slipstream.Backend
             return name switch
             {
 #pragma warning disable CS8604 // Possible null reference argument.
-                "LuaPlugin" when configuration is ILuaConfiguration => new LuaPlugin(pluginId, Logger.ForContext(typeof(LuaPlugin)), EventFactory, EventBus, StateService, configuration as ILuaConfiguration),
+                "LuaPlugin" when configuration is ILuaConfiguration => new LuaPlugin(
+                    pluginId,
+                    Logger.ForContext(typeof(LuaPlugin)),
+                    EventFactory,
+                    EventBus,
+                    StateService,
+                    EventSerdeService,
+                    configuration as ILuaConfiguration
+                ),
 #pragma warning restore CS8604 // Possible null reference argument.
                 _ => throw new Exception($"Unknown configurable plugin '{name}'"),
             };

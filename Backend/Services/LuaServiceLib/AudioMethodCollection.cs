@@ -1,5 +1,6 @@
 ﻿using NLua;
 using Slipstream.Shared;
+using Slipstream.Shared.Factories;
 
 #nullable enable
 
@@ -10,16 +11,16 @@ namespace Slipstream.Backend.Services.LuaServiceLib
         public class AudioMethodCollection
         {
             private readonly IEventBus EventBus;
-            private readonly IEventFactory EventFactory;
+            private readonly IAudioEventFactory EventFactory;
 
-            public static AudioMethodCollection Register(IEventBus eventBus, IEventFactory eventFactory, Lua lua)
+            public static AudioMethodCollection Register(IEventBus eventBus, IAudioEventFactory eventFactory, Lua lua)
             {
                 var m = new AudioMethodCollection(eventBus, eventFactory);
                 m.Register(lua);
                 return m;
             }
 
-            public AudioMethodCollection(IEventBus eventBus, IEventFactory eventFactory)
+            public AudioMethodCollection(IEventBus eventBus, IAudioEventFactory eventFactory)
             {
                 EventBus = eventBus;
                 EventFactory = eventFactory;

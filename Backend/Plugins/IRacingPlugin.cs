@@ -1,12 +1,14 @@
 ﻿using iRacingSDK;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.IRacing;
+using Slipstream.Shared.Factories;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using static Slipstream.Shared.IEventFactory;
+using static Slipstream.Shared.Factories.IIRacingEventFactory;
+using EventHandler = Slipstream.Shared.EventHandler;
 
 #nullable enable
 
@@ -15,7 +17,7 @@ namespace Slipstream.Backend.Plugins
     internal class IRacingPlugin : BasePlugin
     {
         private readonly iRacingConnection Connection = new iRacingConnection();
-        private readonly IEventFactory EventFactory;
+        private readonly IIRacingEventFactory EventFactory;
         private readonly IEventBus EventBus;
 
         private class DriverState
@@ -97,17 +99,19 @@ namespace Slipstream.Backend.Plugins
         private bool SendSessionState = false;
         private bool SendRaceFlags = false;
 
-        public IRacingPlugin(string id, IEventFactory eventFactory, IEventBus eventBus) : base(id, "IRacingPlugin", "IRacingPlugin", "IRacingPlugin")
+        public IRacingPlugin(string id, IIRacingEventFactory eventFactory, IEventBus eventBus) : base(id, "IRacingPlugin", "IRacingPlugin", "IRacingPlugin")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
 
-            EventHandler.OnIRacingCommandSendCarInfo += (s, e) => SendCarInfo = true;
-            EventHandler.OnIRacingCommandSendTrackInfo += (s, e) => SendTrackInfo = true;
-            EventHandler.OnIRacingCommandSendWeatherInfo += (s, e) => SendWeatherInfo = true;
-            EventHandler.OnIRacingCommandSendCurrentSession += (s, e) => SendCurrentSession = true;
-            EventHandler.OnIRacingCommandSendSessionState += (s, e) => SendSessionState = true;
-            EventHandler.OnIRacingCommandSendRaceFlags += (s, e) => SendRaceFlags = true;
+            var IRacingEventHandler = EventHandler.Get<Slipstream.Shared.EventHandlers.IRacing>();
+
+            IRacingEventHandler.OnIRacingCommandSendCarInfo += (s, e) => SendCarInfo = true;
+            IRacingEventHandler.OnIRacingCommandSendTrackInfo += (s, e) => SendTrackInfo = true;
+            IRacingEventHandler.OnIRacingCommandSendWeatherInfo += (s, e) => SendWeatherInfo = true;
+            IRacingEventHandler.OnIRacingCommandSendCurrentSession += (s, e) => SendCurrentSession = true;
+            IRacingEventHandler.OnIRacingCommandSendSessionState += (s, e) => SendSessionState = true;
+            IRacingEventHandler.OnIRacingCommandSendRaceFlags += (s, e) => SendRaceFlags = true;
         }
 
         public override void Loop()
@@ -192,7 +196,7 @@ namespace Slipstream.Backend.Plugins
                     var now = data.Telemetry.SessionTime;
                     if (onPitRoad)
                     {
-                        EventBus.PublishEvent(EventFactory.CreateIRacingPitEnter(carIdx: i, localUser: localUser, sessionTime: now));
+                        EventBus.PublishEvent(EventFactory.CreateIRacingPitEnter(sessionTime: now, carIdx: i, localUser: localUser));
                         carState.PitEnteredAt = data.Telemetry.SessionTime;
                     }
                     else
@@ -205,7 +209,7 @@ namespace Slipstream.Backend.Plugins
                         // If duration is zero, then the pitstop started before we joined
                         if (duration != null)
                         {
-                            EventBus.PublishEvent(EventFactory.CreateIRacingPitExit(carIdx: i, localUser: localUser, sessionTime: now, duration: duration));
+                            EventBus.PublishEvent(EventFactory.CreateIRacingPitExit(sessionTime: now, carIdx: i, localUser: localUser, duration: duration));
                             carState.PitEnteredAt = null;
 
                             if (localUser && data.Telemetry.CarIdxLapCompleted[i] > 0)
@@ -281,9 +285,9 @@ namespace Slipstream.Backend.Plugins
 
                 if (lapsCompleted != -1 && carState.LastLap != lapsCompleted)
                 {
-                    carState.ObservedCrossFinishingLine += 1;
+                    carState.ObservedCrossFinishingLine++;
                     if (lapsCompleted == 0) // This is initial lap, so we can use times from next lap
-                        carState.ObservedCrossFinishingLine += 1;
+                        carState.ObservedCrossFinishingLine++;
 
                     bool localUser = i == data.SessionData.DriverInfo.DriverCarIdx;
 
@@ -307,9 +311,8 @@ namespace Slipstream.Backend.Plugins
                             carIdx: i,
                             time: lapTime,
                             lapsCompleted: lapsCompleted,
-                            localUser: localUser,
-                            fuelDiff: localUser ? usedFuel : null
-                        );
+                            fuelDiff: localUser ? usedFuel : null,
+                            localUser: localUser);
 
                         EventBus.PublishEvent(@event);
                     }
@@ -327,7 +330,7 @@ namespace Slipstream.Backend.Plugins
                 state: SessionStateMapping[data.Telemetry.SessionState]
             );
 
-            if (LastSessionState == null || !LastSessionState.DifferentTo(@event) || SendSessionState)
+            if (LastSessionState?.DifferentTo(@event) != true || SendSessionState)
             {
                 EventBus.PublishEvent(@event);
                 LastSessionState = @event;
@@ -375,7 +378,7 @@ namespace Slipstream.Backend.Plugins
                 yellowWaving: sessionFlags.HasFlag(SessionFlags.yellowWaving)
             );
 
-            if (LastRaceFlags == null || !LastRaceFlags.DifferentTo(@event) || SendRaceFlags)
+            if (LastRaceFlags?.DifferentTo(@event) != true || SendRaceFlags)
             {
                 if (@event.Green)
                 {
@@ -480,10 +483,7 @@ namespace Slipstream.Backend.Plugins
         {
             if (!Connected)
             {
-                LastWeatherInfo = null;
-                LastSessionInfo = null;
-                driverState.ClearState();
-                CarsTracked.Clear();
+                Reset();
 
                 EventBus.PublishEvent(EventFactory.CreateIRacingConnected());
 
@@ -512,6 +512,7 @@ namespace Slipstream.Backend.Plugins
         private void Reset()
         {
             CarsTracked.Clear();
+            driverState.ClearState();
             LastSessionInfo = null;
             LastSessionState = null;
             LastRaceFlags = null;

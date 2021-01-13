@@ -1,5 +1,6 @@
 using Slipstream.Shared;
 using Slipstream.Shared.Events.FileMonitor;
+using Slipstream.Shared.Factories;
 using System.Collections.Generic;
 using System.IO;
 
@@ -9,16 +10,17 @@ namespace Slipstream.Backend.Plugins
 {
     internal class FileMonitorPlugin : BasePlugin
     {
-        private readonly IEventFactory EventFactory;
+        private readonly IFileMonitorEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly IList<FileSystemWatcher> fileSystemWatchers = new List<FileSystemWatcher>();
 
-        public FileMonitorPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IFileMonitorConfiguration fileMonitorConfiguration) : base(id, "FileMonitorPlugin", "FileMonitorPlugin", "Core", true)
+        public FileMonitorPlugin(string id, IFileMonitorEventFactory eventFactory, IEventBus eventBus, IFileMonitorConfiguration fileMonitorConfiguration) : base(id, "FileMonitorPlugin", "FileMonitorPlugin", "Core", true)
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
 
-            EventHandler.OnFileMonitorCommandScan += (s, e) => { ScanExistingFiles(); };
+            var FileMonitor = EventHandler.Get<Slipstream.Shared.EventHandlers.FileMonitor>();
+            FileMonitor.OnFileMonitorCommandScan += (s, e) => ScanExistingFiles();
 
             StartMonitoring(fileMonitorConfiguration.FileMonitorPaths);
 

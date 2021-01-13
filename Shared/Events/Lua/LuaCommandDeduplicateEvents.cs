@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.LuaManager
+namespace Slipstream.Shared.Events.Lua
 {
-    public class LuaManagerCommandDeduplicateEvents : IEvent
+    public class LuaCommandDeduplicateEvents : IEvent
     {
-        public string EventType => "LuaManagerCommandDeduplicateEvents";
+        public string EventType => "LuaCommandDeduplicateEvents";
 
         public bool ExcludeFromTxrx => true;
 
@@ -12,7 +12,7 @@ namespace Slipstream.Shared.Events.LuaManager
 
         public override bool Equals(object obj)
         {
-            return obj is LuaManagerCommandDeduplicateEvents events &&
+            return obj is LuaCommandDeduplicateEvents events &&
                    EventType == events.EventType &&
                    ExcludeFromTxrx == events.ExcludeFromTxrx &&
                    Events == events.Events;

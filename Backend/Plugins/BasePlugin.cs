@@ -25,7 +25,7 @@ namespace Slipstream.Backend.Plugins
 
         public event IPlugin.OnStateChangedHandler? OnStateChanged;
 
-        public bool Reconfigurable { get; private set; }
+        public bool Reconfigurable { get; }
 
         public string WorkerName
         {

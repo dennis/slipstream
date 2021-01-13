@@ -1,5 +1,6 @@
 ﻿using NLua;
 using Slipstream.Shared;
+using Slipstream.Shared.Factories;
 
 #nullable enable
 
@@ -10,9 +11,9 @@ namespace Slipstream.Backend.Services.LuaServiceLib
         public class InternalMethodCollection
         {
             private readonly IEventBus EventBus;
-            private readonly IEventFactory EventFactory;
+            private readonly IInternalEventFactory EventFactory;
 
-            public static InternalMethodCollection Register(IEventBus eventBus, IEventFactory eventFactory, Lua lua)
+            public static InternalMethodCollection Register(IEventBus eventBus, IInternalEventFactory eventFactory, Lua lua)
             {
                 var m = new InternalMethodCollection(eventBus, eventFactory);
 
@@ -21,7 +22,7 @@ namespace Slipstream.Backend.Services.LuaServiceLib
                 return m;
             }
 
-            public InternalMethodCollection(IEventBus eventBus, IEventFactory eventFactory)
+            public InternalMethodCollection(IEventBus eventBus, IInternalEventFactory eventFactory)
             {
                 EventBus = eventBus;
                 EventFactory = eventFactory;

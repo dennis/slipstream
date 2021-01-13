@@ -1,6 +1,7 @@
 ﻿using NLua;
 using Serilog;
 using Slipstream.Shared;
+using Slipstream.Shared.Factories;
 using System.Collections.Generic;
 using System.IO;
 
@@ -14,20 +15,34 @@ namespace Slipstream.Backend.Services.LuaServiceLib
         private readonly LuaFunction? HandleFunc;
         private Lua? Lua;
 
-        public LuaContext(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IStateService stateService, string filePath, string logPrefix)
+        public LuaContext(
+            ILogger logger,
+            IEventFactory eventFactory,
+            IEventBus eventBus,
+            IStateService stateService,
+            IEventSerdeService eventSerdeService,
+            string filePath,
+            string logPrefix
+        )
         {
             try
             {
                 Lua = new Lua();
 
-                CoreMethodCollection_ = CoreMethodCollection.Register(new EventSerdeService(), Lua);
-                AudioMethodCollection.Register(eventBus, eventFactory, Lua);
-                TwitchMethodCollection.Register(eventBus, eventFactory, Lua);
+                var audioEventFactory = eventFactory.Get<IAudioEventFactory>();
+                var twitchEventFactory = eventFactory.Get<ITwitchEventFactory>();
+                var uiEventFactory = eventFactory.Get<IUIEventFactory>();
+                var internalEventFactory = eventFactory.Get<IInternalEventFactory>();
+                var iRacingEventFactory = eventFactory.Get<IIRacingEventFactory>();
+
+                CoreMethodCollection_ = CoreMethodCollection.Register(eventSerdeService, Lua);
+                AudioMethodCollection.Register(eventBus, audioEventFactory, Lua);
+                TwitchMethodCollection.Register(eventBus, twitchEventFactory, Lua);
                 StateMethodCollection.Register(stateService, Lua);
-                UIMethodCollection.Register(logger, eventBus, eventFactory, logPrefix, Lua);
-                InternalMethodCollection.Register(eventBus, eventFactory, Lua);
+                UIMethodCollection.Register(logger, eventBus, uiEventFactory, logPrefix, Lua);
+                InternalMethodCollection.Register(eventBus, internalEventFactory, Lua);
                 HttpMethodCollection.Register(logger, Lua);
-                IRacingMethodCollection.Register(eventBus, eventFactory, Lua);
+                IRacingMethodCollection.Register(eventBus, iRacingEventFactory, Lua);
 
                 // Fix paths, so we can require() files relative to where the script is located
                 var ScriptPath = Path.GetDirectoryName(filePath).Replace("\\", "\\\\");

@@ -1,6 +1,7 @@
 ﻿using Slipstream.Backend.Services;
 using Slipstream.Shared;
-using Slipstream.Shared.Events.LuaManager;
+using Slipstream.Shared.Events.Lua;
+using Slipstream.Shared.Factories;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +14,7 @@ namespace Slipstream.Backend.Plugins
 {
     internal class LuaManagerPlugin : BasePlugin
     {
-        private readonly IEventFactory EventFactory;
+        private readonly IFileMonitorEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly IPluginManager PluginManager;
         private readonly IPluginFactory PluginFactory;
@@ -30,7 +31,7 @@ namespace Slipstream.Backend.Plugins
         private DateTime? BootupEventsDeadline;
         private readonly List<IEvent> CapturedBootupEvents = new List<IEvent>();
 
-        public LuaManagerPlugin(string id, IEventFactory eventFactory, IEventBus eventBus, IPluginManager pluginManager, IPluginFactory pluginFactory, IEventSerdeService eventSerdeService) : base(id, "LuaManagerPlugin", "LuaManagerPlugin", "Core")
+        public LuaManagerPlugin(string id, IFileMonitorEventFactory eventFactory, IEventBus eventBus, IPluginManager pluginManager, IPluginFactory pluginFactory, IEventSerdeService eventSerdeService) : base(id, "LuaManagerPlugin", "LuaManagerPlugin", "Core")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
@@ -38,20 +39,24 @@ namespace Slipstream.Backend.Plugins
             PluginFactory = pluginFactory;
             EventSerdeService = eventSerdeService;
 
-            EventHandler.OnFileMonitorFileCreated += EventHandler_OnFileMonitorFileCreated;
-            EventHandler.OnFileMonitorFileDeleted += EventHandler_OnFileMonitorFileDeleted;
-            EventHandler.OnFileMonitorFileChanged += EventHandler_OnFileMonitorFileChanged;
-            EventHandler.OnFileMonitorFileRenamed += EventHandler_OnFileMonitorFileRenamed;
-            EventHandler.OnFileMonitorScanCompleted += EventHandler_OnFileMonitorScanCompleted;
-            EventHandler.OnInternalPluginState += EventHandler_OnInternalPluginState;
-            EventHandler.OnLuaManagerCommandDeduplicateEvents += (s, e) => EventHandler_OnInternalCommandDeduplicateEvents(e.Event);
+            var fileMonitor = EventHandler.Get<Shared.EventHandlers.FileMonitor>();
+            var @internal = EventHandler.Get<Shared.EventHandlers.Internal>();
+            var lua = EventHandler.Get<Shared.EventHandlers.Lua>();
+
+            fileMonitor.OnFileMonitorFileCreated += EventHandler_OnFileMonitorFileCreated;
+            fileMonitor.OnFileMonitorFileDeleted += EventHandler_OnFileMonitorFileDeleted;
+            fileMonitor.OnFileMonitorFileChanged += EventHandler_OnFileMonitorFileChanged;
+            fileMonitor.OnFileMonitorFileRenamed += EventHandler_OnFileMonitorFileRenamed;
+            fileMonitor.OnFileMonitorScanCompleted += EventHandler_OnFileMonitorScanCompleted;
+            @internal.OnInternalPluginState += EventHandler_OnInternalPluginState;
+            lua.OnLuaCommandDeduplicateEvents += (s, e) => EventHandler_OnLuaCommandDeduplicateEvents(e.Event);
 
             BootupEventsDeadline = DateTime.Now.AddMilliseconds(500);
 
             EventBus.PublishEvent(EventFactory.CreateFileMonitorCommandScan());
         }
 
-        private void EventHandler_OnInternalCommandDeduplicateEvents(LuaManagerCommandDeduplicateEvents @event)
+        private void EventHandler_OnLuaCommandDeduplicateEvents(LuaCommandDeduplicateEvents @event)
         {
             foreach (var e in EventSerdeService.DeserializeMultiple(@event.Events))
             {
@@ -71,7 +76,7 @@ namespace Slipstream.Backend.Plugins
                 if (WaitingForLuaScripts.Count == 0)
                 {
                     // We're done
-                    EventHandler.OnInternalPluginState -= EventHandler_OnInternalPluginState;
+                    EventHandler.Get<Shared.EventHandlers.Internal>().OnInternalPluginState -= EventHandler_OnInternalPluginState;
                 }
             }
         }

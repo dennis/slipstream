@@ -1,9 +1,21 @@
 ﻿#nullable enable
 
+using Slipstream.Shared.EventHandlers;
 using System;
+using System.Collections.Generic;
 
 namespace Slipstream.Shared
 {
+    internal interface IEventHandler
+    {
+        internal enum HandledStatus
+        {
+            NotMine, Handled, UseDefault
+        }
+
+        HandledStatus HandleEvent(IEvent @event);
+    }
+
     public class EventHandler
     {
         public class EventHandlerArgs<T> : EventArgs
@@ -16,475 +28,62 @@ namespace Slipstream.Shared
             }
         }
 
+        internal readonly IDictionary<dynamic, IEventHandler> Handlers = new Dictionary<dynamic, IEventHandler>();
+
         private volatile bool enabled = true;
         public bool Enabled { get { return enabled; } set { enabled = value; } }
 
+        public EventHandler()
+        {
+            Handlers.Add(typeof(Internal), new Internal(this));
+            Handlers.Add(typeof(Lua), new Lua(this));
+            Handlers.Add(typeof(UI), new UI(this));
+            Handlers.Add(typeof(Audio), new Audio(this));
+            Handlers.Add(typeof(IRacing), new IRacing(this));
+            Handlers.Add(typeof(Twitch), new Twitch(this));
+            Handlers.Add(typeof(FileMonitor), new FileMonitor(this));
+        }
+
         public delegate void OnDefaultHandler(EventHandler source, EventHandlerArgs<IEvent> e);
+
         public event OnDefaultHandler? OnDefault;
 
-        #region Events: Internal
-        public delegate void OnInternalCommandPluginRegisterHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginRegister> e);
-        public event OnInternalCommandPluginRegisterHandler? OnInternalCommandPluginRegister;
-
-        public delegate void OnInternalCommandPluginUnregisterHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginUnregister> e);
-        public event OnInternalCommandPluginUnregisterHandler? OnInternalCommandPluginUnregister;
-
-        public delegate void OnInternalPluginStateHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalPluginState> e);
-        public event OnInternalPluginStateHandler? OnInternalPluginState;
-
-        public delegate void OnInternalCommandPluginStatesHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginStates> e);
-        public event OnInternalCommandPluginStatesHandler? OnInternalCommandPluginStates;
-
-        public delegate void OnInternalCommandReconfigureHandler(EventHandler source, EventHandlerArgs<Shared.Events.Internal.InternalCommandReconfigure> e);
-        public event OnInternalCommandReconfigureHandler? OnInternalCommandReconfigure;
-        #endregion
-
-        #region Events: LuaManager
-        public delegate void OnInternalCommandDeduplicateEventsHandler(EventHandler source, EventHandlerArgs<Shared.Events.LuaManager.LuaManagerCommandDeduplicateEvents> e);
-        public event OnInternalCommandDeduplicateEventsHandler? OnLuaManagerCommandDeduplicateEvents;
-
-        #endregion
-
-        #region Events: FileMonitor
-        public delegate void OnFileMonitorCommandScanHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorCommandScan> e);
-        public event OnFileMonitorCommandScanHandler? OnFileMonitorCommandScan;
-
-        public delegate void OnFileMonitorFileCreatedHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileCreated> e);
-        public event OnFileMonitorFileCreatedHandler? OnFileMonitorFileCreated;
-
-        public delegate void OnFileMonitorFileChangedHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileChanged> e);
-        public event OnFileMonitorFileChangedHandler? OnFileMonitorFileChanged;
-
-        public delegate void OnFileMonitorFileDeletedHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileDeleted> e);
-        public event OnFileMonitorFileDeletedHandler? OnFileMonitorFileDeleted;
-
-        public delegate void OnFileMonitorFileRenamedHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileRenamed> e);
-        public event OnFileMonitorFileRenamedHandler? OnFileMonitorFileRenamed;
-
-        public delegate void OnFileMonitorScanCompletedHandler(EventHandler source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorScanCompleted> e);
-        public event OnFileMonitorScanCompletedHandler? OnFileMonitorScanCompleted;
-        #endregion
-
-        #region Events: UI
-        public delegate void OnUICommandWriteToConsoleHandler(EventHandler source, EventHandlerArgs<Shared.Events.UI.UICommandWriteToConsole> e);
-        public event OnUICommandWriteToConsoleHandler? OnUICommandWriteToConsole;
-
-        public delegate void OnUICommandCreateButtonHandler(EventHandler source, EventHandlerArgs<Shared.Events.UI.UICommandCreateButton> e);
-        public event OnUICommandCreateButtonHandler? OnUICommandCreateButton;
-
-        public delegate void OnUICommandDeleteButtonHandler(EventHandler source, EventHandlerArgs<Shared.Events.UI.UICommandDeleteButton> e);
-        public event OnUICommandDeleteButtonHandler? OnUICommandDeleteButton;
-
-        public delegate void OnUIButtonTriggeredHandler(EventHandler source, EventHandlerArgs<Shared.Events.UI.UIButtonTriggered> e);
-        public event OnUIButtonTriggeredHandler? OnUIButtonTriggered;
-        #endregion
-
-        #region Events: Audio
-        public delegate void OnAudioCommandSayHandler(EventHandler source, EventHandlerArgs<Shared.Events.Audio.AudioCommandSay> e);
-        public event OnAudioCommandSayHandler? OnAudioCommandSay;
-
-        public delegate void OnAudioCommandPlayHandler(EventHandler source, EventHandlerArgs<Shared.Events.Audio.AudioCommandPlay> e);
-        public event OnAudioCommandPlayHandler? OnAudioCommandPlay;
-        #endregion
-
-        #region Events: IRacing
-        public delegate void OnIRacingConnectedHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingConnected> e);
-        public event OnIRacingConnectedHandler? OnIRacingConnected;
-
-        public delegate void OnIRacingDisconnectedHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingDisconnected> e);
-        public event OnIRacingDisconnectedHandler? OnIRacingDisconnected;
-
-        public delegate void OnIRacingTrackInfoHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingTrackInfo> e);
-        public event OnIRacingTrackInfoHandler? OnIRacingTrackInfo;
-
-        public delegate void OnIRacingWeatherInfoHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingWeatherInfo> e);
-        public event OnIRacingWeatherInfoHandler? OnIRacingWeatherInfo;
-
-        public delegate void OnIRacingCurrentSessionHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCurrentSession> e);
-        public event OnIRacingCurrentSessionHandler? OnIRacingCurrentSession;
-
-        public delegate void OnIRacingCarInfoHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCarInfo> e);
-        public event OnIRacingCarInfoHandler? OnIRacingCarInfo;
-
-        public delegate void OnIRacingRaceFlagsHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingRaceFlags> e);
-        public event OnIRacingRaceFlagsHandler? OnIRacingRaceFlags;
-
-        public delegate void OnIRacingSessionStateHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingSessionState> e);
-        public event OnIRacingSessionStateHandler? OnIRacingSessionState;
-
-        public delegate void OnIRacingCarCompletedLapHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCarCompletedLap> e);
-        public event OnIRacingCarCompletedLapHandler? OnIRacingCarCompletedLap;
-
-        public delegate void OnIRacingPitEnterHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingPitEnter> e);
-        public event OnIRacingPitEnterHandler? OnIRacingPitEnter;
-
-        public delegate void OnIRacingPitExitHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingPitExit> e);
-        public event OnIRacingPitExitHandler? OnIRacingPitExit;
-
-        public delegate void OnIRacingPitstopReportHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingPitstopReport> e);
-        public event OnIRacingPitstopReportHandler? OnIRacingPitstopReport;
-
-        public delegate void OnIRacingCommandSendCarInfoHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendCarInfo> e);
-        public event OnIRacingCommandSendCarInfoHandler? OnIRacingCommandSendCarInfo;
-
-        public delegate void OnIRacingCommandSendTrackInfoHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendTrackInfo> e);
-        public event OnIRacingCommandSendTrackInfoHandler? OnIRacingCommandSendTrackInfo;
-
-        public delegate void OnIRacingCommandSendWeatherInfoHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendWeatherInfo> e);
-        public event OnIRacingCommandSendWeatherInfoHandler? OnIRacingCommandSendWeatherInfo;
-
-        public delegate void OnIRacingCommandSendCurrentSessionHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendCurrentSession> e);
-        public event OnIRacingCommandSendCurrentSessionHandler? OnIRacingCommandSendCurrentSession;
-
-        public delegate void OnIRacingCommandSendSessionStateHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendSessionState> e);
-        public event OnIRacingCommandSendSessionStateHandler? OnIRacingCommandSendSessionState;
-
-        public delegate void OnIRacingCommandSendRaceFlagsHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendRaceFlags> e);
-        public event OnIRacingCommandSendRaceFlagsHandler? OnIRacingCommandSendRaceFlags;
-
-        public delegate void OnIRacingDriverIncidentHandler(EventHandler source, EventHandlerArgs<Shared.Events.IRacing.IRacingDriverIncident> e);
-        public event OnIRacingDriverIncidentHandler? OnIRacingDriverIncident;
-        #endregion
-
-        #region Events: Twitch
-        public delegate void OnTwitchConnectedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchConnected> e);
-        public event OnTwitchConnectedHandler? OnTwitchConnected;
-
-        public delegate void OnTwitchDisconnectedHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchDisconnected> e);
-        public event OnTwitchDisconnectedHandler? OnTwitchDisconnected;
-
-        public delegate void OnTwitchCommandSendMessageHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchCommandSendMessage> e);
-        public event OnTwitchCommandSendMessageHandler? OnTwitchCommandSendMessage;
-
-        public delegate void OnTwitchCommandSendWhisperHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchCommandSendWhisper> e);
-        public event OnTwitchCommandSendWhisperHandler? OnTwitchCommandSendWhisper;
-
-        public delegate void OnTwitchReceivedMessageHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedMessage> e);
-        public event OnTwitchReceivedMessageHandler? OnTwitchReceivedMessage;
-
-        public delegate void OnTwitchReceivedWhisperHandler(EventHandler source, EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedWhisper> e);
-        public event OnTwitchReceivedWhisperHandler? OnTwitchReceivedWhisper;
-        #endregion
+        public T Get<T>()
+        {
+            return (T)Handlers[typeof(T)];
+        }
 
         public void HandleEvent(IEvent? ev)
         {
             if (ev == null || !Enabled)
                 return;
 
-            switch (ev)
+            bool handled = false;
+
+            foreach (var h in Handlers)
             {
-                case null:
-                    // ignore
-                    break;
+                switch (h.Value.HandleEvent(ev))
+                {
+                    case IEventHandler.HandledStatus.Handled:
+                        handled = true;
+                        break;
 
-                // Internal
+                    case IEventHandler.HandledStatus.UseDefault:
+                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(ev));
+                        handled = true;
+                        break;
 
-                case Shared.Events.Internal.InternalCommandPluginRegister tev:
-                    if (OnInternalCommandPluginRegister == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalCommandPluginRegister.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginRegister>(tev));
-                    break;
-                case Shared.Events.Internal.InternalCommandPluginUnregister tev:
-                    if (OnInternalCommandPluginUnregister == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalCommandPluginUnregister.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginUnregister>(tev));
-                    break;
-                case Shared.Events.Internal.InternalPluginState tev:
-                    if (OnInternalPluginState == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalPluginState.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalPluginState>(tev));
-                    break;
-                case Shared.Events.Internal.InternalCommandPluginStates tev:
-                    if (OnInternalCommandPluginStates == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalCommandPluginStates.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandPluginStates>(tev));
-                    break;
-                case Shared.Events.Internal.InternalCommandReconfigure tev:
-                    if (OnInternalCommandReconfigure == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnInternalCommandReconfigure.Invoke(this, new EventHandlerArgs<Shared.Events.Internal.InternalCommandReconfigure>(tev));
-                    break;
+                    case IEventHandler.HandledStatus.NotMine:
+                        break;
+                }
 
-                // LuaManager
-
-                case Shared.Events.LuaManager.LuaManagerCommandDeduplicateEvents tev:
-                    if (OnLuaManagerCommandDeduplicateEvents == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnLuaManagerCommandDeduplicateEvents.Invoke(this, new EventHandlerArgs<Shared.Events.LuaManager.LuaManagerCommandDeduplicateEvents>(tev));
+                if (handled)
                     break;
+            }
 
-                // File Monitor
-
-                case Shared.Events.FileMonitor.FileMonitorCommandScan tev:
-                    if (OnFileMonitorCommandScan == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnFileMonitorCommandScan.Invoke(this, new EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorCommandScan>(tev));
-                    break;
-                case Shared.Events.FileMonitor.FileMonitorFileCreated tev:
-                    if (OnFileMonitorFileCreated == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnFileMonitorFileCreated.Invoke(this, new EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileCreated>(tev));
-                    break;
-                case Shared.Events.FileMonitor.FileMonitorFileChanged tev:
-                    if (OnFileMonitorFileChanged == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnFileMonitorFileChanged.Invoke(this, new EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileChanged>(tev));
-                    break;
-                case Shared.Events.FileMonitor.FileMonitorFileDeleted tev:
-                    if (OnFileMonitorFileDeleted == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnFileMonitorFileDeleted.Invoke(this, new EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileDeleted>(tev));
-                    break;
-                case Shared.Events.FileMonitor.FileMonitorFileRenamed tev:
-                    if (OnFileMonitorFileRenamed == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnFileMonitorFileRenamed.Invoke(this, new EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileRenamed>(tev));
-                    break;
-                case Shared.Events.FileMonitor.FileMonitorScanCompleted tev:
-                    if (OnFileMonitorScanCompleted == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnFileMonitorScanCompleted.Invoke(this, new EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorScanCompleted>(tev));
-                    break;
-
-                // Audio
-
-                case Shared.Events.Audio.AudioCommandSay tev:
-                    if (OnAudioCommandSay == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnAudioCommandSay.Invoke(this, new EventHandlerArgs<Shared.Events.Audio.AudioCommandSay>(tev));
-                    break;
-
-                case Shared.Events.Audio.AudioCommandPlay tev:
-                    if (OnAudioCommandPlay == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnAudioCommandPlay.Invoke(this, new EventHandlerArgs<Shared.Events.Audio.AudioCommandPlay>(tev));
-                    break;
-
-                // UI
-
-                case Shared.Events.UI.UICommandWriteToConsole tev:
-                    if (OnUICommandWriteToConsole == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnUICommandWriteToConsole.Invoke(this, new EventHandlerArgs<Shared.Events.UI.UICommandWriteToConsole>(tev));
-                    break;
-
-                case Shared.Events.UI.UICommandCreateButton tev:
-                    if (OnUICommandCreateButton == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnUICommandCreateButton.Invoke(this, new EventHandlerArgs<Shared.Events.UI.UICommandCreateButton>(tev));
-                    break;
-
-                case Shared.Events.UI.UICommandDeleteButton tev:
-                    if (OnUICommandDeleteButton == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnUICommandDeleteButton.Invoke(this, new EventHandlerArgs<Shared.Events.UI.UICommandDeleteButton>(tev));
-                    break;
-
-                case Shared.Events.UI.UIButtonTriggered tev:
-                    if (OnUIButtonTriggered == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnUIButtonTriggered.Invoke(this, new EventHandlerArgs<Shared.Events.UI.UIButtonTriggered>(tev));
-                    break;
-
-                // IRacing
-
-                case Shared.Events.IRacing.IRacingConnected tev:
-                    if (OnIRacingConnected == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnIRacingConnected.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingConnected>(tev));
-                    break;
-
-                case Shared.Events.IRacing.IRacingDisconnected tev:
-                    if (OnIRacingDisconnected == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnIRacingDisconnected.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingDisconnected>(tev));
-                    break;
-
-                case Shared.Events.IRacing.IRacingTrackInfo tev:
-                    if (OnIRacingTrackInfo == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnIRacingTrackInfo.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingTrackInfo>(tev));
-                    break;
-
-                case Shared.Events.IRacing.IRacingWeatherInfo tev:
-                    if (OnIRacingWeatherInfo == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnIRacingWeatherInfo.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingWeatherInfo>(tev));
-                    break;
-
-                case Shared.Events.IRacing.IRacingCurrentSession tev:
-                    if (OnIRacingCurrentSession == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnIRacingCurrentSession.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCurrentSession>(tev));
-                    break;
-
-                case Shared.Events.IRacing.IRacingCarInfo tev:
-                    if (OnIRacingCarInfo == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnIRacingCarInfo.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCarInfo>(tev));
-                    break;
-
-                case Shared.Events.IRacing.IRacingRaceFlags tev:
-                    if (OnIRacingRaceFlags == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnIRacingRaceFlags.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingRaceFlags>(tev));
-                    break;
-
-                case Shared.Events.IRacing.IRacingSessionState tev:
-                    if (OnIRacingSessionState == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnIRacingSessionState.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingSessionState>(tev));
-                    break;
-
-                case Shared.Events.IRacing.IRacingCarCompletedLap tev:
-                    if (OnIRacingCarCompletedLap == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnIRacingCarCompletedLap.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCarCompletedLap>(tev));
-                    break;
-
-                case Shared.Events.IRacing.IRacingPitEnter tev:
-                    if (OnIRacingPitEnter == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnIRacingPitEnter.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingPitEnter>(tev));
-                    break;
-
-                case Shared.Events.IRacing.IRacingPitExit tev:
-                    if (OnIRacingPitExit == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnIRacingPitExit.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingPitExit>(tev));
-                    break;
-
-                case Shared.Events.IRacing.IRacingPitstopReport tev:
-                    if (OnIRacingPitstopReport == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnIRacingPitstopReport.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingPitstopReport>(tev));
-                    break;
-
-                case Shared.Events.IRacing.IRacingCommandSendCarInfo tev:
-                    if (OnIRacingCommandSendCarInfo == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnIRacingCommandSendCarInfo.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendCarInfo>(tev));
-                    break;
-
-                case Shared.Events.IRacing.IRacingCommandSendTrackInfo tev:
-                    if (OnIRacingCommandSendTrackInfo == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnIRacingCommandSendTrackInfo.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendTrackInfo>(tev));
-                    break;
-
-                case Shared.Events.IRacing.IRacingCommandSendWeatherInfo tev:
-                    if (OnIRacingCommandSendWeatherInfo == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnIRacingCommandSendWeatherInfo.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendWeatherInfo>(tev));
-                    break;
-
-                case Shared.Events.IRacing.IRacingCommandSendCurrentSession tev:
-                    if (OnIRacingCommandSendCurrentSession == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnIRacingCommandSendCurrentSession.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendCurrentSession>(tev));
-                    break;
-
-                case Shared.Events.IRacing.IRacingCommandSendSessionState tev:
-                    if (OnIRacingCommandSendSessionState == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnIRacingCommandSendSessionState.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendSessionState>(tev));
-                    break;
-
-                case Shared.Events.IRacing.IRacingCommandSendRaceFlags tev:
-                    if (OnIRacingCommandSendRaceFlags == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnIRacingCommandSendRaceFlags.Invoke(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingCommandSendRaceFlags>(tev));
-                    break;
-
-                case Shared.Events.IRacing.IRacingDriverIncident tev:
-                    if (OnIRacingDriverIncident == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnIRacingDriverIncident(this, new EventHandlerArgs<Shared.Events.IRacing.IRacingDriverIncident>(tev));
-                    break;
-
-                // Twitch
-
-                case Shared.Events.Twitch.TwitchConnected tev:
-                    if (OnTwitchConnected == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnTwitchConnected.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchConnected>(tev));
-                    break;
-
-                case Shared.Events.Twitch.TwitchDisconnected tev:
-                    if (OnTwitchDisconnected == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnTwitchDisconnected.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchDisconnected>(tev));
-                    break;
-
-                case Shared.Events.Twitch.TwitchCommandSendMessage tev:
-                    if (OnTwitchCommandSendMessage == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnTwitchCommandSendMessage.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchCommandSendMessage>(tev));
-                    break;
-
-                case Shared.Events.Twitch.TwitchCommandSendWhisper tev:
-                    if (OnTwitchCommandSendWhisper == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnTwitchCommandSendWhisper.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchCommandSendWhisper>(tev));
-                    break;
-
-                case Shared.Events.Twitch.TwitchReceivedMessage tev:
-                    if (OnTwitchReceivedMessage == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnTwitchReceivedMessage.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedMessage>(tev));
-                    break;
-
-                case Shared.Events.Twitch.TwitchReceivedWhisper tev:
-                    if (OnTwitchReceivedWhisper == null)
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(tev));
-                    else
-                        OnTwitchReceivedWhisper.Invoke(this, new EventHandlerArgs<Shared.Events.Twitch.TwitchReceivedWhisper>(tev));
-                    break;
-
-                default:
-                    throw new Exception($"Unknown event '{ev}");
+            if (!handled)
+            {
+                throw new Exception($"Unknown event '{ev}");
             }
         }
     }

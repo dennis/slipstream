@@ -1,5 +1,6 @@
 ﻿using NLua;
 using Slipstream.Shared;
+using Slipstream.Shared.Factories;
 
 namespace Slipstream.Backend.Services.LuaServiceLib
 {
@@ -8,16 +9,16 @@ namespace Slipstream.Backend.Services.LuaServiceLib
         public class IRacingMethodCollection
         {
             private readonly IEventBus EventBus;
-            private readonly IEventFactory EventFactory;
+            private readonly IIRacingEventFactory EventFactory;
 
-            public static IRacingMethodCollection Register(IEventBus eventBus, IEventFactory eventFactory, Lua lua)
+            public static IRacingMethodCollection Register(IEventBus eventBus, IIRacingEventFactory eventFactory, Lua lua)
             {
                 var m = new IRacingMethodCollection(eventBus, eventFactory);
                 m.Register(lua);
                 return m;
             }
 
-            private IRacingMethodCollection(IEventBus eventBus, IEventFactory eventFactory)
+            private IRacingMethodCollection(IEventBus eventBus, IIRacingEventFactory eventFactory)
             {
                 EventBus = eventBus;
                 EventFactory = eventFactory;

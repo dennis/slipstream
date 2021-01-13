@@ -227,6 +227,7 @@ namespace Slipstream.Backend
                     EventFactory,
                     EventBus,
                     StateService,
+                    EventSerdeService,
                     configuration as ILuaConfiguration
                 ),
 #pragma warning restore CS8604 // Possible null reference argument.

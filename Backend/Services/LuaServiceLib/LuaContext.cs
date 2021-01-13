@@ -17,13 +17,10 @@ namespace Slipstream.Backend.Services.LuaServiceLib
 
         public LuaContext(
             ILogger logger,
-            IAudioEventFactory audioEventFactory,
-            IIRacingEventFactory iRacingEventFactory,
-            IInternalEventFactory internalEventFactory,
-            IUIEventFactory uiEventFactory,
-            ITwitchEventFactory twitchEventFactory,
+            IEventFactory eventFactory,
             IEventBus eventBus,
             IStateService stateService,
+            IEventSerdeService eventSerdeService,
             string filePath,
             string logPrefix
         )
@@ -32,7 +29,13 @@ namespace Slipstream.Backend.Services.LuaServiceLib
             {
                 Lua = new Lua();
 
-                CoreMethodCollection_ = CoreMethodCollection.Register(new EventSerdeService(), Lua);
+                var audioEventFactory = eventFactory.Get<IAudioEventFactory>();
+                var twitchEventFactory = eventFactory.Get<ITwitchEventFactory>();
+                var uiEventFactory = eventFactory.Get<IUIEventFactory>();
+                var internalEventFactory = eventFactory.Get<IInternalEventFactory>();
+                var iRacingEventFactory = eventFactory.Get<IIRacingEventFactory>();
+
+                CoreMethodCollection_ = CoreMethodCollection.Register(eventSerdeService, Lua);
                 AudioMethodCollection.Register(eventBus, audioEventFactory, Lua);
                 TwitchMethodCollection.Register(eventBus, twitchEventFactory, Lua);
                 StateMethodCollection.Register(stateService, Lua);

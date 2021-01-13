@@ -26,6 +26,7 @@ namespace Slipstream.Backend.Plugins
             IEventFactory eventFactory,
             IEventBus eventBus,
             IStateService stateService,
+            IEventSerdeService eventSerdeService,
             ILuaConfiguration configuration
         ) : base(id, "LuaPlugin", "LuaPlugin", "Lua")
         {
@@ -34,7 +35,7 @@ namespace Slipstream.Backend.Plugins
             InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
             EventBus = new CapturingEventBus(eventBus);
 
-            LuaService = new LuaService(logger, eventFactory, EventBus, stateService);
+            LuaService = new LuaService(logger, eventFactory, EventBus, stateService, eventSerdeService);
 
             // Avoid that WriteToConsole is evaluated by Lua, that in turn will
             // add more WriteToConsole events, making a endless loop

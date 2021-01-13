@@ -175,6 +175,7 @@
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Shared\EventFactory.cs" />
+    <Compile Include="Shared\EventHandlers\Audio.cs" />
     <Compile Include="Shared\Factories\AudioEventFactory.cs" />
     <Compile Include="Shared\Factories\IInternalEventFactory.cs" />
     <Compile Include="Shared\Factories\UIEventFactory.cs" />
@@ -207,6 +208,7 @@
     <Compile Include="Shared\Factories\IUIEventFactory.cs" />
     <Compile Include="Shared\Factories\LuaEventFactory.cs" />
     <Compile Include="Shared\Factories\TwitchEventFactory.cs" />
+    <Compile Include="Shared\EventHandlers\FileMonitor.cs" />
     <Compile Include="Shared\IApplicationConfiguration.cs" />
     <Compile Include="Shared\ApplicationVersionService.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingPitstopReport.cs" />
@@ -257,6 +259,11 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shared\EventHandlers\Internal.cs" />
+    <Compile Include="Shared\EventHandlers\IRacing.cs" />
+    <Compile Include="Shared\EventHandlers\Lua.cs" />
+    <Compile Include="Shared\EventHandlers\Twitch.cs" />
+    <Compile Include="Shared\EventHandlers\UI.cs" />
     <Compile Include="SlipstreamConsoleSink.cs" />
     <EmbeddedResource Include="Frontend\SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>

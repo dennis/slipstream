@@ -34,14 +34,16 @@ namespace Slipstream.Backend.Plugins
             EventFactory = eventFactory;
             EventBus = eventBus;
 
-            EventHandler.OnTwitchCommandSendMessage += (_, e) =>
+            var twitchEventHandler = EventHandler.Get<Shared.EventHandlers.Twitch>();
+
+            twitchEventHandler.OnTwitchCommandSendMessage += (_, e) =>
             {
                 if (Client?.JoinedChannels.Count > 0)
                 {
                     Client.SendMessage(TwitchChannel, e.Event.Message);
                 }
             };
-            EventHandler.OnTwitchCommandSendWhisper += (_, e) => Client?.SendWhisper(e.Event.To, e.Event.Message);
+            twitchEventHandler.OnTwitchCommandSendWhisper += (_, e) => Client?.SendWhisper(e.Event.To, e.Event.Message);
 
             TwitchUsername = twitchConfiguration.TwitchUsername;
             TwitchChannel = twitchConfiguration.TwitchChannel;

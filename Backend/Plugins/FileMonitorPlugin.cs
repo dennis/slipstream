@@ -19,7 +19,8 @@ namespace Slipstream.Backend.Plugins
             EventFactory = eventFactory;
             EventBus = eventBus;
 
-            EventHandler.OnFileMonitorCommandScan += (s, e) => ScanExistingFiles();
+            var FileMonitor = EventHandler.Get<Slipstream.Shared.EventHandlers.FileMonitor>();
+            FileMonitor.OnFileMonitorCommandScan += (s, e) => ScanExistingFiles();
 
             StartMonitoring(fileMonitorConfiguration.FileMonitorPaths);
 

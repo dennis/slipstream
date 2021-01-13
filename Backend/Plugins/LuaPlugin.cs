@@ -38,7 +38,7 @@ namespace Slipstream.Backend.Plugins
 
             // Avoid that WriteToConsole is evaluated by Lua, that in turn will
             // add more WriteToConsole events, making a endless loop
-            EventHandler.OnUICommandWriteToConsole += (s, e) => { };
+            EventHandler.Get<Shared.EventHandlers.UI>().OnUICommandWriteToConsole += (s, e) => { };
             EventHandler.OnDefault += (s, e) => LuaContext?.HandleEvent(e.Event);
 
             FilePath = configuration.FilePath;

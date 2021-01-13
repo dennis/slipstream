@@ -25,8 +25,10 @@ namespace Slipstream.Backend.Plugins
             Synthesizer = new SpeechSynthesizer();
             Synthesizer.SetOutputToDefaultAudioDevice();
 
-            EventHandler.OnAudioCommandSay += EventHandler_OnUtilitySay;
-            EventHandler.OnAudioCommandPlay += EventHandler_OnAudioCommandPlay;
+            var Audio = EventHandler.Get<Shared.EventHandlers.Audio>();
+
+            Audio.OnAudioCommandSay += EventHandler_OnUtilitySay;
+            Audio.OnAudioCommandPlay += EventHandler_OnAudioCommandPlay;
         }
 
         private void EventHandler_OnAudioCommandPlay(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Audio.AudioCommandPlay> e)

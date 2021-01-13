@@ -39,13 +39,17 @@ namespace Slipstream.Backend.Plugins
             PluginFactory = pluginFactory;
             EventSerdeService = eventSerdeService;
 
-            EventHandler.OnFileMonitorFileCreated += EventHandler_OnFileMonitorFileCreated;
-            EventHandler.OnFileMonitorFileDeleted += EventHandler_OnFileMonitorFileDeleted;
-            EventHandler.OnFileMonitorFileChanged += EventHandler_OnFileMonitorFileChanged;
-            EventHandler.OnFileMonitorFileRenamed += EventHandler_OnFileMonitorFileRenamed;
-            EventHandler.OnFileMonitorScanCompleted += EventHandler_OnFileMonitorScanCompleted;
-            EventHandler.OnInternalPluginState += EventHandler_OnInternalPluginState;
-            EventHandler.OnLuaManagerCommandDeduplicateEvents += (s, e) => EventHandler_OnInternalCommandDeduplicateEvents(e.Event);
+            var fileMonitor = EventHandler.Get<Shared.EventHandlers.FileMonitor>();
+            var @internal = EventHandler.Get<Shared.EventHandlers.Internal>();
+            var lua = EventHandler.Get<Shared.EventHandlers.Lua>();
+
+            fileMonitor.OnFileMonitorFileCreated += EventHandler_OnFileMonitorFileCreated;
+            fileMonitor.OnFileMonitorFileDeleted += EventHandler_OnFileMonitorFileDeleted;
+            fileMonitor.OnFileMonitorFileChanged += EventHandler_OnFileMonitorFileChanged;
+            fileMonitor.OnFileMonitorFileRenamed += EventHandler_OnFileMonitorFileRenamed;
+            fileMonitor.OnFileMonitorScanCompleted += EventHandler_OnFileMonitorScanCompleted;
+            @internal.OnInternalPluginState += EventHandler_OnInternalPluginState;
+            lua.OnLuaManagerCommandDeduplicateEvents += (s, e) => EventHandler_OnInternalCommandDeduplicateEvents(e.Event);
 
             BootupEventsDeadline = DateTime.Now.AddMilliseconds(500);
 
@@ -72,7 +76,7 @@ namespace Slipstream.Backend.Plugins
                 if (WaitingForLuaScripts.Count == 0)
                 {
                     // We're done
-                    EventHandler.OnInternalPluginState -= EventHandler_OnInternalPluginState;
+                    EventHandler.Get<Shared.EventHandlers.Internal>().OnInternalPluginState -= EventHandler_OnInternalPluginState;
                 }
             }
         }

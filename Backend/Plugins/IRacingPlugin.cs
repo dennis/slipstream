@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using static Slipstream.Shared.Factories.IIRacingEventFactory;
+using EventHandler = Slipstream.Shared.EventHandler;
 
 #nullable enable
 
@@ -103,12 +104,14 @@ namespace Slipstream.Backend.Plugins
             EventFactory = eventFactory;
             EventBus = eventBus;
 
-            EventHandler.OnIRacingCommandSendCarInfo += (s, e) => SendCarInfo = true;
-            EventHandler.OnIRacingCommandSendTrackInfo += (s, e) => SendTrackInfo = true;
-            EventHandler.OnIRacingCommandSendWeatherInfo += (s, e) => SendWeatherInfo = true;
-            EventHandler.OnIRacingCommandSendCurrentSession += (s, e) => SendCurrentSession = true;
-            EventHandler.OnIRacingCommandSendSessionState += (s, e) => SendSessionState = true;
-            EventHandler.OnIRacingCommandSendRaceFlags += (s, e) => SendRaceFlags = true;
+            var IRacingEventHandler = EventHandler.Get<Slipstream.Shared.EventHandlers.IRacing>();
+
+            IRacingEventHandler.OnIRacingCommandSendCarInfo += (s, e) => SendCarInfo = true;
+            IRacingEventHandler.OnIRacingCommandSendTrackInfo += (s, e) => SendTrackInfo = true;
+            IRacingEventHandler.OnIRacingCommandSendWeatherInfo += (s, e) => SendWeatherInfo = true;
+            IRacingEventHandler.OnIRacingCommandSendCurrentSession += (s, e) => SendCurrentSession = true;
+            IRacingEventHandler.OnIRacingCommandSendSessionState += (s, e) => SendSessionState = true;
+            IRacingEventHandler.OnIRacingCommandSendRaceFlags += (s, e) => SendRaceFlags = true;
         }
 
         public override void Loop()

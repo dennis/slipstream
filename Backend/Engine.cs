@@ -30,10 +30,12 @@ namespace Slipstream.Backend
 
             Subscription = EventBus.RegisterListener();
 
-            EventHandler.OnInternalCommandPluginRegister += (s, e) => OnCommandPluginRegister(e.Event);
-            EventHandler.OnInternalCommandPluginUnregister += (s, e) => OnCommandPluginUnregister(e.Event);
-            EventHandler.OnInternalCommandPluginStates += (s, e) => OnCommandPluginStates(e.Event);
-            EventHandler.OnInternalCommandReconfigure += (s, e) => OnInternalReconfigured();
+            var internalEventHandler = EventHandler.Get<Slipstream.Shared.EventHandlers.Internal>();
+
+            internalEventHandler.OnInternalCommandPluginRegister += (s, e) => OnCommandPluginRegister(e.Event);
+            internalEventHandler.OnInternalCommandPluginUnregister += (s, e) => OnCommandPluginUnregister(e.Event);
+            internalEventHandler.OnInternalCommandPluginStates += (s, e) => OnCommandPluginStates(e.Event);
+            internalEventHandler.OnInternalCommandReconfigure += (s, e) => OnInternalReconfigured();
 
             // Plugins..
             {

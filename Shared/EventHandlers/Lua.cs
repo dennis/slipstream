@@ -1,6 +1,6 @@
 ﻿#nullable enable
 
-using Slipstream.Shared.Events.LuaManager;
+using Slipstream.Shared.Events.Lua;
 using static Slipstream.Shared.EventHandler;
 
 namespace Slipstream.Shared.EventHandlers
@@ -14,18 +14,18 @@ namespace Slipstream.Shared.EventHandlers
             Parent = parent;
         }
 
-        public delegate void OnInternalCommandDeduplicateEventsHandler(EventHandler source, EventHandlerArgs<LuaManagerCommandDeduplicateEvents> e);
+        public delegate void OnLuaDeduplicateEventsHandler(EventHandler source, EventHandlerArgs<LuaCommandDeduplicateEvents> e);
 
-        public event OnInternalCommandDeduplicateEventsHandler? OnLuaManagerCommandDeduplicateEvents;
+        public event OnLuaDeduplicateEventsHandler? OnLuaCommandDeduplicateEvents;
 
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)
         {
             switch (@event)
             {
-                case LuaManagerCommandDeduplicateEvents tev:
-                    if (OnLuaManagerCommandDeduplicateEvents != null)
+                case LuaCommandDeduplicateEvents tev:
+                    if (OnLuaCommandDeduplicateEvents != null)
                     {
-                        OnLuaManagerCommandDeduplicateEvents?.Invoke(Parent, new EventHandlerArgs<LuaManagerCommandDeduplicateEvents>(tev));
+                        OnLuaCommandDeduplicateEvents?.Invoke(Parent, new EventHandlerArgs<LuaCommandDeduplicateEvents>(tev));
                         return IEventHandler.HandledStatus.Handled;
                     }
                     else

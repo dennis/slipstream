@@ -1,4 +1,4 @@
-﻿using Slipstream.Shared.Events.LuaManager;
+﻿using Slipstream.Shared.Events.Lua;
 
 #nullable enable
 
@@ -6,6 +6,6 @@ namespace Slipstream.Shared.Factories
 {
     public interface ILuaEventFactory
     {
-        LuaManagerCommandDeduplicateEvents CreateLuaManagerCommandDeduplicateEvents(IEvent[] events);
+        LuaCommandDeduplicateEvents CreateLuaCommandDeduplicateEvents(IEvent[] events);
     }
 }

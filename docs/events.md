@@ -153,19 +153,19 @@ A FileMonitorCommandScan was completed.
 This coordinates the LuaPlugins in terms of launch new and taking down old ones. It consumes
 data from FileMonitorPlugin and Engine primarily.
 
-<details><summary>LuaManagerCommandDeduplicateEvents</summary><br />
+<details><summary>LuaCommandDeduplicateEvents</summary><br />
 Send a set of Events, allowing the plugin to collect them and deduplicate them before
 sending then. This is used at startup, to avoid requesting the same data in multiple 
 scripts.
 
 | Name            | Type    | Description                                            |
 |:----------------|:-------:|:-------------------------------------------------------|
-| EventType       | string  | `LuaManagerCommandDeduplicateEvents` (constant)          |
+| EventType       | string  | `LuaCommandDeduplicateEvents` (constant)          |
 | ExcludeFromTxrx | boolean | true (constant)                                        |
 | Events          | string  | JSON serialized version of the events. Separated by \n |
 
 **JSON Example:**  
-`{"EventType": "LuaManagerCommandDeduplicateEvents",  "ExcludeFromTxrx": true, "Events": "JSON-ENCODED EVENTS"}`
+`{"EventType": "LuaCommandDeduplicateEvents",  "ExcludeFromTxrx": true, "Events": "JSON-ENCODED EVENTS"}`
 </details>
 
 ## Internal

@@ -63,7 +63,7 @@ namespace Slipstream.Backend.Plugins
             var eventsCaptured = EventBus.CapturedEvents;
             EventBus.StopCapturing();
 
-            EventBus.PublishEvent(LuaEventFactory.CreateLuaManagerCommandDeduplicateEvents(eventsCaptured));
+            EventBus.PublishEvent(LuaEventFactory.CreateLuaCommandDeduplicateEvents(eventsCaptured));
         }
 
         private void HandleLuaException(LuaException e)

@@ -1,5 +1,5 @@
 ﻿using Slipstream.Backend.Services;
-using Slipstream.Shared.Events.LuaManager;
+using Slipstream.Shared.Events.Lua;
 
 #nullable enable
 
@@ -13,7 +13,7 @@ namespace Slipstream.Shared.Factories
             EventSerdeService = eventSerdeService;
         }
 
-        public LuaManagerCommandDeduplicateEvents CreateLuaManagerCommandDeduplicateEvents(IEvent[] events)
+        public LuaCommandDeduplicateEvents CreateLuaCommandDeduplicateEvents(IEvent[] events)
         {
             string json = "";
 
@@ -22,7 +22,7 @@ namespace Slipstream.Shared.Factories
                 json += EventSerdeService.Serialize(e) + "\n";
             }
 
-            return new LuaManagerCommandDeduplicateEvents
+            return new LuaCommandDeduplicateEvents
             {
                 Events = json
             };

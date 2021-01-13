@@ -89,21 +89,20 @@ function event_to_json(a); return core:event_to_json(a); end
 
             private void HandleDelayedExecution(IDictionary<string, DelayedExecution> functions)
             {
-                string? deleteKey = null;
+                var triggeredFunctions = new Dictionary<string, DelayedExecution>();
 
                 foreach (var d in functions)
                 {
                     if (d.Value.TriggersAt < DateTime.Now)
                     {
-                        d.Value.Function.Call();
-                        deleteKey = d.Key;
-                        break;
+                        triggeredFunctions.Add(d.Key, d.Value);
                     }
                 }
 
-                if (deleteKey != null)
+                foreach(var d in triggeredFunctions)
                 {
-                    functions.Remove(deleteKey);
+                    functions.Remove(d.Key);
+                    d.Value.Function.Call();
                 }
             }
         }

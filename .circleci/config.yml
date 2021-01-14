@@ -9,4 +9,5 @@
     
      steps:
        - checkout
-       - run: dotnet build
+       - run: git submodule update --recursive --init
+       - run: msbuild -t:restore

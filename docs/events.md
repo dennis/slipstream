@@ -5,9 +5,11 @@ One describes something that happen. The other describes a request for changing
 something. These are non-command (describes what happened) and c
 ommand-events (request changes).
 
-Each event contains at least two properties. 
+Each event contains at least three properties. 
  - **EventType**: Name of the event (Such as AudioCommandPlay)
  - **ExcludeFromTxrx**: Is event transmitted via TransmitterPlugin
+ - **Uptime**: Time of when the message was sent via Eventbus (in milliseconds). 
+   Time is since start of EventBus
 
 Both properties are constants.
 
@@ -43,7 +45,7 @@ Requests a mp3/wave files to be played. Filename is relative to the audio direct
 
 
 **JSON Example:** 
-`{"EventType": "AudioCommandPlay", "ExcludeFromTxrx": true, "Filename": "Ding-sound-effect.mp3", "Volume": 1}`
+`{"EventType": "AudioCommandPlay", "ExcludeFromTxrx": true,"Uptime":299, "Filename": "Ding-sound-effect.mp3", "Volume": 1}`
 </details>
 
 <details><summary>AudioCommandSay</summary><br />
@@ -57,7 +59,7 @@ Request message to read out loud using Windows text-to-speech
 | Volume          | numeric | Value from 0 .. 1, being from muted (0) to full volume (1) |
 
 **JSON Example:** 
-`{"EventType": "AudioCommandSay",  "ExcludeFromTxrx": true,  "Message": "Slipstream ready",  "Volume": 0.800000012}`
+`{"EventType": "AudioCommandSay",  "ExcludeFromTxrx": true,"Uptime":299,  "Message": "Slipstream ready",  "Volume": 0.800000012}`
 </details>
 
 ## FileMonitor
@@ -80,7 +82,7 @@ were just created. This is used at startup.
 | ExcludeFromTxrx | boolean | true (constant)                     |
 
 **JSON Example:** 
-`{"EventType": "FileMonitorCommandScan", "ExcludeFromTxrx": true}`
+`{"EventType": "FileMonitorCommandScan", "ExcludeFromTxrx": true, "Uptime":1742}`
 </details>
 
 <details><summary>FileMonitorFileChanged</summary><br />
@@ -93,7 +95,7 @@ File modified
 | FilePath        | string  | Name of the file changed            |
 
 **JSON Example:** 
-`{"EventType": "FileMonitorFileChanged",  "ExcludeFromTxrx": true,  "FilePath": "Scripts\\xiiv45pp.cru~"}`
+`{"EventType": "FileMonitorFileChanged",  "ExcludeFromTxrx": true, "Uptime":1742,  "FilePath": "Scripts\\xiiv45pp.cru~"}`
 </details>
 
 <details><summary>FileMonitorFileCreated</summary><br />
@@ -106,7 +108,7 @@ New file created
 | FilePath        | string  | Name of the file created            |
 
 **JSON Example:** 
-`{ "EventType": "FileMonitorFileCreated", "ExcludeFromTxrx": true, "FilePath": "Scripts\\debug.lua~RF3bee738a.TMP" }`
+`{ "EventType": "FileMonitorFileCreated", "ExcludeFromTxrx": true, "Uptime":1742, "FilePath": "Scripts\\debug.lua~RF3bee738a.TMP" }`
 </details>
 
 <details><summary>FileMonitorFileDeleted</summary><br />
@@ -119,7 +121,7 @@ File deleted
 | FilePath        | string  | Name of the file deleted            |
 
 **JSON Example:** 
-`{"EventType": "FileMonitorFileDeleted",  "ExcludeFromTxrx": true,  "FilePath": "Scripts\\debug.lua~RF3bee738a.TMP"}`
+`{"EventType": "FileMonitorFileDeleted",  "ExcludeFromTxrx": true, "Uptime":1742,  "FilePath": "Scripts\\debug.lua~RF3bee738a.TMP"}`
 </details>
 
 <details><summary>FileMonitorFileRenamed</summary><br />
@@ -133,7 +135,7 @@ File renamed
 | OldFilePath     | string  | Previous name of the file           |
 
 **JSON Example:** 
-`{"EventType": "FileMonitorFileRenamed",  "ExcludeFromTxrx": true,  "FilePath": "Scripts\\debug.lua",  "OldFilePath": "Scripts\\xiiv45pp.cru~"}`
+`{"EventType": "FileMonitorFileRenamed",  "ExcludeFromTxrx": true, "Uptime":1742,  "FilePath": "Scripts\\debug.lua",  "OldFilePath": "Scripts\\xiiv45pp.cru~"}`
 </details>
 
 <details><summary>FileMonitorScanCompleted</summary><br />
@@ -145,7 +147,7 @@ A FileMonitorCommandScan was completed.
 | ExcludeFromTxrx | boolean | true (constant)                       |
 
 **JSON Example:**  
-`{"EventType": "FileMonitorScanCompleted", "ExcludeFromTxrx": true}`
+`{"EventType": "FileMonitorScanCompleted", "ExcludeFromTxrx": true, "Uptime":1742}`
 </details>
 
 ## LuaManager
@@ -165,7 +167,7 @@ scripts.
 | Events          | string  | JSON serialized version of the events. Separated by \n |
 
 **JSON Example:**  
-`{"EventType": "LuaCommandDeduplicateEvents",  "ExcludeFromTxrx": true, "Events": "JSON-ENCODED EVENTS"}`
+`{"EventType": "LuaCommandDeduplicateEvents",  "ExcludeFromTxrx": true, "Uptime":1742, "Events": "JSON-ENCODED EVENTS"}`
 </details>
 
 ## Internal
@@ -186,7 +188,7 @@ Request a plugin to be consumed
 | PluginName      | string  | Name of the Plugin                         |
 
 **JSON Example:**  
-`{ "EventType": "InternalCommandPluginRegister", "ExcludeFromTxrx": true, "Id": "AudioPlugin", "PluginName": "AudioPlugin"}`
+`{ "EventType": "InternalCommandPluginRegister", "ExcludeFromTxrx": true, "Uptime":1742, "Id": "AudioPlugin", "PluginName": "AudioPlugin"}`
 </details>
 
 <details><summary>InternalCommandPluginStates</summary><br />
@@ -211,7 +213,7 @@ Request a plugin to be removed
 | Id              | string  | Id of the Plugin                             |
 
 **JSON Example:**
-`{"EventType": "InternalCommandPluginUnregister", "ExcludeFromTxrx": true, "Id": "AudioPlugin" }`
+`{"EventType": "InternalCommandPluginUnregister", "ExcludeFromTxrx": true, "Uptime":1742, "Id": "AudioPlugin" }`
 </details>
 
 <details><summary>InternalCommandReconfigure</summary><br />
@@ -224,7 +226,7 @@ Will be published if settings were changed, allowing Slipstream to restart plugi
 | ExcludeFromTxrx | boolean | true (constant)                         |
 
 **JSON Example:**
-`{ "EventType": "InternalCommandReconfigure", "ExcludeFromTxrx": true}`
+`{ "EventType": "InternalCommandReconfigure", "ExcludeFromTxrx": true}, "Uptime":1742`
 </details>
 
 <details><summary>InternalPluginState</summary><br />
@@ -241,7 +243,7 @@ registered or unregistered or upon request.
 | PluginStatus    | string  | `Registered` or `Unregistered`                       |
 
 **JSON Example:**
-`{"EventType": "InternalPluginState", "ExcludeFromTxrx": true, "Id": "AudioPlugin", "PluginName": "AudioPlugin", "DisplayName": "AudioPlugin", "PluginStatus": "Registered"}`
+`{"EventType": "InternalPluginState", "ExcludeFromTxrx": true, "Uptime":1742, "Id": "AudioPlugin", "PluginName": "AudioPlugin", "DisplayName": "AudioPlugin", "PluginStatus": "Registered"}`
 </details>
 
 ## IRacing
@@ -262,7 +264,7 @@ Published every time a driver completes a full lap.
 | LocalUser       | boolean | Is it our car?                           |
 
 **JSON Example:**
-`{"EventType":"IRacingCarCompletedLap","ExcludeFromTxrx":false,"SessionTime":7306.3000976104477,"CarIdx":5,"Time":7306.3000976104477,"LapsCompleted":9,"FuelDiff":null,"LocalUser":false}`
+`{"EventType":"IRacingCarCompletedLap","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":7306.3000976104477,"CarIdx":5,"Time":7306.3000976104477,"LapsCompleted":9,"FuelDiff":null,"LocalUser":false}`
 </details>
 
 <details><summary>IRacingCarInfo</summary><br />
@@ -286,7 +288,7 @@ Info about a new car or car with changed details (such as driver).
 | Spectator            | bool    | Is car a spectator                                              |
 
 **JSON Example:**
-`{"EventType":"IRacingCarInfo","ExcludeFromTxrx":false,"SessionTime":1058.3000081380189,"CarIdx":63,"CarNumber":"042","CurrentDriverUserID":411093,"CurrentDriverName":"Dennis M\u00F8llegaard Pedersen","TeamID":0,"TeamName":"Dennis M\u00F8llegaard Pedersen","CarName":"Mazda MX-5 Cup","CarNameShort":"MX-5 Cup","CurrentDriverIRating":1592,"CurrentDriverLicense":"A 4.50","LocalUser":true,"Spectator":true}`
+`{"EventType":"IRacingCarInfo","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":1058.3000081380189,"CarIdx":63,"CarNumber":"042","CurrentDriverUserID":411093,"CurrentDriverName":"Dennis M\u00F8llegaard Pedersen","TeamID":0,"TeamName":"Dennis M\u00F8llegaard Pedersen","CarName":"Mazda MX-5 Cup","CarNameShort":"MX-5 Cup","CurrentDriverIRating":1592,"CurrentDriverLicense":"A 4.50","LocalUser":true,"Spectator":true}`
 </details>
 
 <details><summary>IRacingCommandSendCarInfo</summary><br />
@@ -299,7 +301,7 @@ Request IRacingPlugin to send Car Info.
 | ExcludeFromTxrx | boolean | false (constant)                       |
 
 **JSON Example:**
-`{"EventType":"IRacingCommandSendCarInfo","ExcludeFromTxrx":false}`
+`{"EventType":"IRacingCommandSendCarInfo","ExcludeFromTxrx":false, "Uptime":1742}`
 </details>
 
 <details><summary>IRacingCommandSendCurrentSession</summary><br />
@@ -311,7 +313,7 @@ Request IRacingPlugin to send Current Session.
 | ExcludeFromTxrx | boolean | false (constant)                              |
 
 **JSON Example:**
-`{"EventType":"IRacingCommandSendCurrentSession","ExcludeFromTxrx":false}`
+`{"EventType":"IRacingCommandSendCurrentSession","ExcludeFromTxrx":false, "Uptime":1742}`
 </details>
 
 <details><summary>IRacingCommandSendRaceFlags</summary><br />
@@ -323,7 +325,7 @@ Request IRacingPlugin to send Race Flags.
 | ExcludeFromTxrx | boolean | false (constant)                         |
 
 **JSON Example:**
-`{"EventType":"IRacingCommandSendRaceFlags","ExcludeFromTxrx":false}`
+`{"EventType":"IRacingCommandSendRaceFlags","ExcludeFromTxrx":false, "Uptime":1742}`
 </details>
 
 <details><summary>IRacingCommandSendSessionState</summary><br />
@@ -335,7 +337,7 @@ Request IRacingPlugin to send Session State.
 | ExcludeFromTxrx | boolean | false (constant)                            |
 
 **JSON Example:**
-`{"EventType":"IRacingCommandSendSessionState","ExcludeFromTxrx":false}`
+`{"EventType":"IRacingCommandSendSessionState","ExcludeFromTxrx":false, "Uptime":1742}`
 </details>
 
 <details><summary>IRacingCommandSendTrackInfo</summary><br />
@@ -347,7 +349,7 @@ Request IRacingPlugin to send Track Info.
 | ExcludeFromTxrx | boolean | false (constant)                         |
 
 **JSON Example:**
-`{"EventType":"IRacingCommandSendTrackInfo","ExcludeFromTxrx":false}`
+`{"EventType":"IRacingCommandSendTrackInfo","ExcludeFromTxrx":false, "Uptime":1742}`
 </details>
 
 <details><summary>IRacingCommandSendWeatherInfo</summary><br />
@@ -359,7 +361,7 @@ Request IRacingPlugin to send Weather info.
 | ExcludeFromTxrx | boolean | false (constant)                           |
 
 **JSON Example:**
-`{"EventType":"IRacingCommandSendWeatherInfo","ExcludeFromTxrx":false}`
+`{"EventType":"IRacingCommandSendWeatherInfo","ExcludeFromTxrx":false, "Uptime":1742}`
 </details>
 
 <details><summary>IRacingConnected</summary><br />
@@ -371,7 +373,7 @@ Sent when connected to IRacing
 | ExcludeFromTxrx | boolean | false (constant)              |
 
 **JSON Example:**
-`{"EventType":"IRacingConnected","ExcludeFromTxrx":false}`
+`{"EventType":"IRacingConnected","ExcludeFromTxrx":false, "Uptime":1742}`
 </details>
 
 <details><summary>IRacingCurrentSession</summary><br />
@@ -388,7 +390,7 @@ Sent when connected to IRacing
 | TotalSessionTime | double  | Total session time                                                           |
 
 **JSON Example:**
-`{"EventType":"IRacingCurrentSession","ExcludeFromTxrx":false,"Category":"Road","SessionType":"Practice","TimeLimited":true,"LapsLimited":false,"TotalSessionLaps":0,"TotalSessionTime":3600}`
+`{"EventType":"IRacingCurrentSession","ExcludeFromTxrx":false, "Uptime":1742,"Category":"Road","SessionType":"Practice","TimeLimited":true,"LapsLimited":false,"TotalSessionLaps":0,"TotalSessionTime":3600}`
 </details>
 
 <details><summary>IRacingDisconnected</summary><br />
@@ -400,7 +402,7 @@ Sent when connected to IRacing
 | ExcludeFromTxrx | boolean | false (constant)                 |
 
 **JSON Example:**
-`{"EventType":"IRacingDisconnected","ExcludeFromTxrx":false}`
+`{"EventType":"IRacingDisconnected","ExcludeFromTxrx":false, "Uptime":1742}`
 </details>
 
 <details><summary>IRacingDriverIncident</summary><br />
@@ -430,7 +432,7 @@ Sent when a car enters the pit lane.
 | LocalUser       | bool    | Is it our car?                           |
 
 **JSON Example:**
-`{"EventType":"IRacingPitEnter","ExcludeFromTxrx":false,"SessionTime":1058.3000081380189,"CarIdx":6,"LocalUser":false}`
+`{"EventType":"IRacingPitEnter","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":1058.3000081380189,"CarIdx":6,"LocalUser":false}`
 </details>
 
 <details><summary>IRacingPitExit</summary><br />
@@ -446,7 +448,7 @@ Sent when a car leaves the pit lane.
 | Duration        | double  | Duration of the pitstop                  |
 
 **JSON Example:**
-`{"EventType":"IRacingPitExit","ExcludeFromTxrx":false,"SessionTime":1077.1666748046685,"CarIdx":11,"LocalUser":false,"Duration":10.233333333324026}`
+`{"EventType":"IRacingPitExit","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":1077.1666748046685,"CarIdx":11,"LocalUser":false,"Duration":10.233333333324026}`
 </details>
 
 <details><summary>IRacingPitstopReport</summary><br />
@@ -522,7 +524,7 @@ For user, this is sent after a pitshop, showing some data about the pitstop.
 | YellowWaving    | bool    |                                          |
 
 **JSON Example:**
-`{"EventType":"IRacingRaceFlags","ExcludeFromTxrx":false,"SessionTime":1058.3000081380189,"Black":false,"Blue":false,"Caution":false,"CautionWaving":false,"Checkered":false,"Crossed":false,"Debris":false,"Disqualify":false,"FiveToGo":false,"Furled":false,"Green":false,"GreenHeld":false,"OneLapToGreen":false,"RandomWaving":false,"Red":false,"Repair":false,"Servicible":false,"StartGo":false,"StartHidden":true,"StartReady":false,"StartSet":false,"TenToGo":false,"White":false,"Yellow":false,"YellowWaving":false}`
+`{"EventType":"IRacingRaceFlags","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":1058.3000081380189,"Black":false,"Blue":false,"Caution":false,"CautionWaving":false,"Checkered":false,"Crossed":false,"Debris":false,"Disqualify":false,"FiveToGo":false,"Furled":false,"Green":false,"GreenHeld":false,"OneLapToGreen":false,"RandomWaving":false,"Red":false,"Repair":false,"Servicible":false,"StartGo":false,"StartHidden":true,"StartReady":false,"StartSet":false,"TenToGo":false,"White":false,"Yellow":false,"YellowWaving":false}`
 </details>
 
 <details><summary>IRacingSessionState</summary><br />
@@ -535,7 +537,7 @@ For user, this is sent after a pitshop, showing some data about the pitstop.
 | State           | string  | `Checkered`, `CoolDown`, `GetInCar`, `Invalid`, `ParadeLaps`, `Racing`, `Warmup` |
 
 **JSON Example:**
-`{"EventType":"IRacingSessionState","ExcludeFromTxrx":false,"SessionTime":1058.3000081380189,"State":"Racing"}`
+`{"EventType":"IRacingSessionState","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":1058.3000081380189,"State":"Racing"}`
 </details>
 
 <details><summary>IRacingTrackInfo</summary><br />
@@ -554,7 +556,7 @@ For user, this is sent after a pitshop, showing some data about the pitstop.
 | TrackType             | string  |                               |
 
 **JSON Example:**
-`{"EventType":"IRacingTrackInfo","ExcludeFromTxrx":false,"TrackId":9,"TrackLength":"3.20 km","TrackDisplayName":"Summit Point Raceway","TrackCity":"Summit Point","TrackCountry":"USA","TrackDisplayShortName":"Summit","TrackConfigName":null,"TrackType":"road course"}`
+`{"EventType":"IRacingTrackInfo","ExcludeFromTxrx":false, "Uptime":1742,"TrackId":9,"TrackLength":"3.20 km","TrackDisplayName":"Summit Point Raceway","TrackCity":"Summit Point","TrackCountry":"USA","TrackDisplayShortName":"Summit","TrackConfigName":null,"TrackType":"road course"}`
 </details>
 
 <details><summary>IRacingWeatherInfo</summary><br />
@@ -572,7 +574,7 @@ For user, this is sent after a pitshop, showing some data about the pitstop.
 | FogLevel         | string  |                                 |
 
 **JSON Example:**
-`{"EventType":"IRacingWeatherInfo","ExcludeFromTxrx":false,"SessionTime":1058.3000081380189,"Skies":"Partly Cloudy","SurfaceTemp":"39.76 C","AirTemp":"25.51 C","AirPressure":"29.25 Hg","RelativeHumidity":"55 %","FogLevel":"0 %"}`
+`{"EventType":"IRacingWeatherInfo","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":1058.3000081380189,"Skies":"Partly Cloudy","SurfaceTemp":"39.76 C","AirTemp":"25.51 C","AirPressure":"29.25 Hg","RelativeHumidity":"55 %","FogLevel":"0 %"}`
 </details>
 
 ## Twitch
@@ -588,7 +590,7 @@ Sends a message to the connected twitch channel.
 | Message         | string  | Message                               |
 
 **JSON Example:**
-`{"EventType":"TwitchCommandSendMessage","ExcludeFromTxrx":false,"Message":"Hello"}`
+`{"EventType":"TwitchCommandSendMessage","ExcludeFromTxrx":false, "Uptime":1742,"Message":"Hello"}`
 </details>
 
 <details><summary>TwitchCommandSendWhisper</summary><br />
@@ -603,7 +605,7 @@ Sends a whisper to a user.
 | Message         | string  | Message                               |
 
 **JSON Example:**
-`{"EventType":"TwitchCommandSendWhisper","ExcludeFromTxrx":false,"To":"tntion", "Message":"Hello"}`
+`{"EventType":"TwitchCommandSendWhisper","ExcludeFromTxrx":false, "Uptime":1742,"To":"tntion", "Message":"Hello"}`
 </details>
 
 <details><summary>TwitchConnected</summary><br />
@@ -627,7 +629,7 @@ We were disconnected from Twitch
 | ExcludeFromTxrx | boolean | false (constant)                |
 
 **JSON Example:**
-`{"EventType":"TwitchConnected","ExcludeFromTxrx":false}`
+`{"EventType":"TwitchConnected","ExcludeFromTxrx":false, "Uptime":1742}`
 </details>
 
 <details><summary>TwitchReceivedMessage</summary><br />
@@ -646,7 +648,7 @@ A message received in the channel
 | Broadcaster     | boolean | Is sender a (twitch) broadcaster?  |
 
 **JSON Example:**
-`{"EventType":"TwitchReceivedMessage","ExcludeFromTxrx":false,"From":"TNTion","Message":"!hello","Moderator":false,"Subscriber":false,"Vip":false,"Broadcaster":true}`
+`{"EventType":"TwitchReceivedMessage","ExcludeFromTxrx":false, "Uptime":1742,"From":"TNTion","Message":"!hello","Moderator":false,"Subscriber":false,"Vip":false,"Broadcaster":true}`
 </details>
 
 <details><summary>TwitchReceivedWhisper</summary><br />
@@ -660,7 +662,7 @@ A whisper received.
 | From            | string  | Sender's username                  |
 
 **JSON Example:**
-`{"EventType":"TwitchReceivedMessage","ExcludeFromTxrx":false,"From":"TNTion","Message":"!hello"}`
+`{"EventType":"TwitchReceivedMessage","ExcludeFromTxrx":false, "Uptime":1742,"From":"TNTion","Message":"!hello"}`
 </details>
 
 ## UI
@@ -675,7 +677,7 @@ Is sent every time a button is pressed
 | Text            | string  | Text of the button             |
 
 **JSON Example:**
-`{"EventType":"UIButtonTriggered","ExcludeFromTxrx":false,"Text":"Hello"}`
+`{"EventType":"UIButtonTriggered","ExcludeFromTxrx":false, "Uptime":1742,"Text":"Hello"}`
 </details>
 
 <details><summary>UICommandCreateButton</summary><br />
@@ -688,7 +690,7 @@ Create a new button, unless it exists
 | Text            | string  | Text of the button                 |
 
 **JSON Example:**
-`{"EventType":"UICommandCreateButton","ExcludeFromTxrx":true,"Text":"Hello"}`
+`{"EventType":"UICommandCreateButton","ExcludeFromTxrx":true, "Uptime":1742,"Text":"Hello"}`
 </details>
 
 <details><summary>UICommandDeleteButton</summary><br />
@@ -701,7 +703,7 @@ Removes a button again, if it exists
 | Text            | string  | Text of the button                 |
 
 **JSON Example:**
-`{"EventType":"UICommandDeleteButton","ExcludeFromTxrx":true,"Text":"World"}`
+`{"EventType":"UICommandDeleteButton","ExcludeFromTxrx":true, "Uptime":1742,"Text":"World"}`
 </details>
 
 <details><summary>UICommandWriteToConsole</summary><br />
@@ -714,5 +716,5 @@ Output something to the console.
 | Message         | string  | Message                              |
 
 **JSON Example:**
-`{"EventType":"UICommandWriteToConsole","ExcludeFromTxrx":true,"Message":"Hello World"}`
+`{"EventType":"UICommandWriteToConsole","ExcludeFromTxrx":true, "Uptime":1742,"Message":"Hello World"}`
 </details>

@@ -6,6 +6,7 @@ namespace Slipstream.Shared.Events.Playback
     {
         public string EventType => "PlaybackSaveEvents";
         public bool ExcludeFromTxrx => true;
+        public ulong Uptime { get; set; }
         public string Filename { get; set; }
 
         public override bool Equals(object obj)

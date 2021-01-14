@@ -6,6 +6,7 @@ namespace Slipstream.Shared.Events.IRacing
     {
         public string EventType => "IRacingCarCompletedLap";
         public bool ExcludeFromTxrx => false;
+        public ulong Uptime { get; set; }
         public double SessionTime { get; set; }
         public long CarIdx { get; set; }
         public double Time { get; set; }

@@ -7,6 +7,7 @@ namespace Slipstream.Shared.Events.Playback
         public string EventType => "PlaybackInjectEvents";
         public bool ExcludeFromTxrx => true;
         public string Filename { get; set; }
+        public ulong Uptime { get; set; }
 
         public override bool Equals(object obj)
         {

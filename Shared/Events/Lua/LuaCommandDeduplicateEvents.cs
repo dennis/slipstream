@@ -5,9 +5,8 @@ namespace Slipstream.Shared.Events.Lua
     public class LuaCommandDeduplicateEvents : IEvent
     {
         public string EventType => "LuaCommandDeduplicateEvents";
-
         public bool ExcludeFromTxrx => true;
-
+        public ulong Uptime { get; set; }
         public string Events { get; set; } = "";
 
         public override bool Equals(object obj)

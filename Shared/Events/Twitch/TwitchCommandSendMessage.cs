@@ -8,6 +8,7 @@ namespace Slipstream.Shared.Events.Twitch
     {
         public string EventType => "TwitchCommandSendMessage";
         public bool ExcludeFromTxrx => false;
+        public ulong Uptime { get; set; }
         public string Message { get; set; } = string.Empty;
 
         public override bool Equals(object? obj)

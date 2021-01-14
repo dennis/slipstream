@@ -6,6 +6,7 @@ namespace Slipstream.Shared.Events.UI
     {
         public string EventType => "UIButtonTriggered";
         public bool ExcludeFromTxrx => false;
+        public ulong Uptime { get; set; }
         public string Text { get; set; } = "INVALID-NAME";
 
         public override bool Equals(object obj)

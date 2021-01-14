@@ -6,6 +6,7 @@ namespace Slipstream.Shared.Events.IRacing
     {
         public string EventType => "IRacingRaceFlags";
         public bool ExcludeFromTxrx => false;
+        public ulong Uptime { get; set; }
         public double SessionTime { get; set; }
         public bool Black { get; set; }
         public bool Blue { get; set; }

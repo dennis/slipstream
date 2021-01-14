@@ -252,9 +252,6 @@ namespace Slipstream.Frontend
 
         private void SaveEventsToFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!SaveEventsToFileToolStripMenuItem.Visible)
-                return;
-
             SaveFileDialog.FileName = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
             if (SaveFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -264,9 +261,6 @@ namespace Slipstream.Frontend
 
         private void LoadEventsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!LoadEventsToolStripMenuItem.Visible)
-                return;
-
             if (OpenFileDialog.ShowDialog() == DialogResult.OK)
             {
                 EventBus.PublishEvent(PlaybackEventFactory.CreatePlaybackInjectEvents(OpenFileDialog.FileName));

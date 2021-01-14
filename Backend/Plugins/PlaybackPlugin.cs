@@ -4,6 +4,7 @@ using Slipstream.Shared;
 using Slipstream.Shared.EventHandlers;
 using Slipstream.Shared.Events.Playback;
 using System.IO;
+using System.Threading;
 
 #nullable enable
 
@@ -36,11 +37,11 @@ namespace Slipstream.Backend.Plugins
                 AutoFlush = true
             };
 
-            IEvent? e;
+            IEvent? currentEvent;
 
-            while((e = subscription.NextEvent(0)) != null)
+            while((currentEvent = subscription.NextEvent(0)) != null)
             {
-                string json = EventSerdeService.Serialize(e);
+                string json = EventSerdeService.Serialize(currentEvent);
 
                 streamWriter.Write(json);
             }
@@ -52,11 +53,24 @@ namespace Slipstream.Backend.Plugins
         {
             string json = File.ReadAllText(@event.Filename);
 
-            foreach (var e in EventSerdeService.DeserializeMultiple(json))
+            IEvent? prevEvent = null;
+
+            foreach (var currentEvent in EventSerdeService.DeserializeMultiple(json))
             {
-                if (e.EventType != "PlaybackInjectEvents" && e.EventType != "PlaybackSaveEvents")
+                if (currentEvent.EventType != "PlaybackInjectEvents" && currentEvent.EventType != "PlaybackSaveEvents")
                 {
-                    EventBus.PublishEvent(e);
+                    if (prevEvent != null)
+                    {
+                        int duration = (int)(currentEvent.Uptime - prevEvent.Uptime);
+                        if (duration > 0)
+                        {
+                            Thread.Sleep(duration);
+                        }
+                    }
+
+                    prevEvent = currentEvent;
+
+                    EventBus.PublishEvent(currentEvent);
                 }
             }
         }

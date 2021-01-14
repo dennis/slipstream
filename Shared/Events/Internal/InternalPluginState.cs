@@ -8,6 +8,7 @@ namespace Slipstream.Shared.Events.Internal
     {
         public string EventType => "InternalPluginState";
         public bool ExcludeFromTxrx => true;
+        public ulong Uptime { get; set; }
         public string Id { get; set; } = "INVALID-PLUGIN-ID";
         public string PluginName { get; set; } = "INVALID-PLUGIN-NAME";
         public string DisplayName { get; set; } = "INVALID-DISPLAY-NAME";

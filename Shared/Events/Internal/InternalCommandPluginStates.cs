@@ -8,6 +8,7 @@ namespace Slipstream.Shared.Events.Internal
     {
         public string EventType => "InternalCommandPluginStates";
         public bool ExcludeFromTxrx => true;
+        public ulong Uptime { get; set; }
 
         public override bool Equals(object? obj)
         {

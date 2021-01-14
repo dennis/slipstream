@@ -8,6 +8,7 @@ namespace Slipstream.Shared.Events.IRacing
     {
         public string EventType => "IRacingWeatherInfo";
         public bool ExcludeFromTxrx => false;
+        public ulong Uptime { get; set; }
         public double SessionTime { get; set; }
         public string Skies { get; set; } = string.Empty;
         public string SurfaceTemp { get; set; } = string.Empty;

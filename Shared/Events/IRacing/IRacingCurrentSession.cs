@@ -7,6 +7,7 @@ namespace Slipstream.Shared.Events.IRacing
     {
         public string EventType => "IRacingCurrentSession";
         public bool ExcludeFromTxrx => false;
+        public ulong Uptime { get; set; }
         public string Category { get; set; } = "";
         public string SessionType { get; set; } = "";
         public bool TimeLimited { get; set; }

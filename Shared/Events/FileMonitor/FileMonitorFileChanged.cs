@@ -8,6 +8,7 @@ namespace Slipstream.Shared.Events.FileMonitor
     {
         public string EventType => "FileMonitorFileChanged";
         public bool ExcludeFromTxrx => true;
+        public ulong Uptime { get; set; }
         public string? FilePath { get; set; }
 
         public override bool Equals(object? obj)

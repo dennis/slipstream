@@ -25,8 +25,8 @@ namespace Slipstream.Backend.Services
         private class Meta : IEvent
         {
             public string EventType { get; set; } = String.Empty;
-
             public bool ExcludeFromTxrx { get; set; }
+            public ulong Uptime { get; set; }
         }
 
         public IEvent? Deserialize(string json)

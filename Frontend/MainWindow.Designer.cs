@@ -32,6 +32,8 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.FileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.LoadEventsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SaveEventsToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -41,6 +43,8 @@
             this.ButtonFlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.LogAreaTextBox = new System.Windows.Forms.TextBox();
             this.LogMessageUpdateTimer = new System.Windows.Forms.Timer(this.components);
+            this.SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.panel1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -71,16 +75,36 @@
             // FileToolStripMenuItem
             // 
             this.FileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.LoadEventsToolStripMenuItem,
+            this.SaveEventsToFileToolStripMenuItem,
             this.SettingsToolStripMenuItem,
             this.ExitToolStripMenuItem});
             this.FileToolStripMenuItem.Name = "FileToolStripMenuItem";
             this.FileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.FileToolStripMenuItem.Text = "&File";
             // 
+            // LoadEventsToolStripMenuItem
+            // 
+            this.LoadEventsToolStripMenuItem.Name = "LoadEventsToolStripMenuItem";
+            this.LoadEventsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.LoadEventsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.LoadEventsToolStripMenuItem.Text = "Load events";
+            this.LoadEventsToolStripMenuItem.Visible = false;
+            this.LoadEventsToolStripMenuItem.Click += new System.EventHandler(this.LoadEventsToolStripMenuItem_Click);
+            // 
+            // SaveEventsToFileToolStripMenuItem
+            // 
+            this.SaveEventsToFileToolStripMenuItem.Name = "SaveEventsToFileToolStripMenuItem";
+            this.SaveEventsToFileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.SaveEventsToFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.SaveEventsToFileToolStripMenuItem.Text = "Save events";
+            this.SaveEventsToFileToolStripMenuItem.Visible = false;
+            this.SaveEventsToFileToolStripMenuItem.Click += new System.EventHandler(this.SaveEventsToFileToolStripMenuItem_Click);
+            // 
             // SettingsToolStripMenuItem
             // 
             this.SettingsToolStripMenuItem.Name = "SettingsToolStripMenuItem";
-            this.SettingsToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.SettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.SettingsToolStripMenuItem.Text = "Settings";
             this.SettingsToolStripMenuItem.Click += new System.EventHandler(this.SettingsToolStripMenuItem_Click);
             // 
@@ -88,7 +112,7 @@
             // 
             this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
             this.ExitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.ExitToolStripMenuItem.Text = "Exit";
             this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
@@ -153,6 +177,15 @@
             this.LogMessageUpdateTimer.Interval = 250;
             this.LogMessageUpdateTimer.Tick += new System.EventHandler(this.LogMessageUpdate_Tick);
             // 
+            // SaveFileDialog
+            // 
+            this.SaveFileDialog.DefaultExt = "mjson";
+            // 
+            // OpenFileDialog
+            // 
+            this.OpenFileDialog.DefaultExt = "mjson";
+            this.OpenFileDialog.Filter = "Event files|*.mjson|All files|*.*";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -184,6 +217,10 @@
         private System.Windows.Forms.ToolStripMenuItem SettingsToolStripMenuItem;
         private System.Windows.Forms.FlowLayoutPanel ButtonFlowLayoutPanel;
         private System.Windows.Forms.TextBox LogAreaTextBox;
+        private System.Windows.Forms.ToolStripMenuItem SaveEventsToFileToolStripMenuItem;
+        private System.Windows.Forms.SaveFileDialog SaveFileDialog;
+        private System.Windows.Forms.OpenFileDialog OpenFileDialog;
+        private System.Windows.Forms.ToolStripMenuItem LoadEventsToolStripMenuItem;
     }
 }
 

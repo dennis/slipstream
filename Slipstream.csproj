@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -142,6 +142,7 @@
     <Compile Include="Backend\IPluginFactory.cs" />
     <Compile Include="Backend\IPluginManager.cs" />
     <Compile Include="Backend\PluginManager.cs" />
+    <Compile Include="Backend\Plugins\PlaybackPlugin.cs" />
     <Compile Include="Backend\Plugins\ReceiverPlugin.cs" />
     <Compile Include="Backend\Plugins\TransmitterPlugin.cs" />
     <Compile Include="Backend\Plugins\AudioPlugin.cs" />
@@ -175,8 +176,13 @@
     </Compile>
     <Compile Include="Shared\EventFactory.cs" />
     <Compile Include="Shared\EventHandlers\Audio.cs" />
+    <Compile Include="Shared\EventHandlers\Playback.cs" />
+    <Compile Include="Shared\Events\Playback\PlaybackInjectEvents.cs" />
+    <Compile Include="Shared\Events\Playback\PlaybackSaveEvents.cs" />
     <Compile Include="Shared\Factories\AudioEventFactory.cs" />
     <Compile Include="Shared\Factories\IInternalEventFactory.cs" />
+    <Compile Include="Shared\Factories\IPlaybackEventFactory.cs" />
+    <Compile Include="Shared\Factories\PlaybackEventFactory.cs" />
     <Compile Include="Shared\Factories\UIEventFactory.cs" />
     <Compile Include="Shared\Events\FileMonitor\FileMonitorCommandScan.cs" />
     <Compile Include="Shared\Events\FileMonitor\FileMonitorScanCompleted.cs" />

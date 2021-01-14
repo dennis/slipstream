@@ -20,6 +20,7 @@ namespace Slipstream.Frontend
         private readonly IEventBus EventBus;
         private readonly IInternalEventFactory InternalEventFactory;
         private readonly IUIEventFactory UIEventFactory;
+        private readonly IPlaybackEventFactory PlaybackEventFactory;
         private IEventBusSubscription? EventBusSubscription;
         private readonly BlockingCollection<string> PendingMessages = new BlockingCollection<string>();
         private readonly IDictionary<string, ToolStripMenuItem> MenuPluginItems = new Dictionary<string, ToolStripMenuItem>();
@@ -31,6 +32,7 @@ namespace Slipstream.Frontend
         {
             InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
             UIEventFactory = eventFactory.Get<IUIEventFactory>();
+            PlaybackEventFactory = eventFactory.Get<IPlaybackEventFactory>();
 
             EventBus = eventBus;
             ApplicationConfiguration = applicationConfiguration;
@@ -189,6 +191,14 @@ namespace Slipstream.Frontend
                         case "ReceiverPlugin":
                             ExecuteSecure(() => Text = $"{CleanTitle} <<< receiving from {ApplicationConfiguration.TxrxIpPort} >>>");
                             break;
+
+                        case "PlaybackPlugin":
+                            ExecuteSecure(() =>
+                            {
+                                LoadEventsToolStripMenuItem.Visible = true;
+                                SaveEventsToFileToolStripMenuItem.Visible = true;
+                            });
+                            break;
                     }
                     break;
                 case "Unregistered":
@@ -237,6 +247,29 @@ namespace Slipstream.Frontend
             if(new SettingsForm().ShowDialog(this) == DialogResult.OK)
             {
                 EventBus.PublishEvent(InternalEventFactory.CreateInternalCommandReconfigure());
+            }
+        }
+
+        private void SaveEventsToFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!SaveEventsToFileToolStripMenuItem.Visible)
+                return;
+
+            SaveFileDialog.FileName = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
+            if (SaveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                EventBus.PublishEvent(PlaybackEventFactory.CreatePlaybackSaveEvents(SaveFileDialog.FileName));
+            }
+        }
+
+        private void LoadEventsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!LoadEventsToolStripMenuItem.Visible)
+                return;
+
+            if (OpenFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                EventBus.PublishEvent(PlaybackEventFactory.CreatePlaybackInjectEvents(OpenFileDialog.FileName));
             }
         }
     }

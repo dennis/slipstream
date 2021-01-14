@@ -1,9 +1,8 @@
-﻿using Slipstream.Shared;
+﻿using Newtonsoft.Json;
+using Slipstream.Shared;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text.Json;
 
 #nullable enable
 
@@ -23,22 +22,25 @@ namespace Slipstream.Backend.Services
             }
         }
 
+        private class Meta : IEvent
+        {
+            public string EventType { get; set; } = String.Empty;
+
+            public bool ExcludeFromTxrx { get; set; }
+        }
+
         public IEvent? Deserialize(string json)
         {
-            if(JsonDocument.Parse(json).RootElement.TryGetProperty("EventType", out JsonElement eventTypeProp))
+            var meta = JsonConvert.DeserializeObject(json, typeof(Meta)) as Meta;
+            var eventType = meta?.EventType;
+
+            if (eventType != null && EventsMap.ContainsKey(eventType))
             {
-                var eventType = eventTypeProp.GetString();
+                var obj = JsonConvert.DeserializeObject(json, EventsMap[eventType!]);
 
-                if (eventType != null && EventsMap.ContainsKey(eventType))
+                if (obj != null)
                 {
-                    json = json.Replace(@"\n", "\n");
-
-                    var obj = JsonSerializer.Deserialize(json, EventsMap[eventType!]);
-
-                    if (obj != null)
-                    {
-                        return (IEvent)obj;
-                    }
+                    return (IEvent)obj;
                 }
             }
 
@@ -67,9 +69,7 @@ namespace Slipstream.Backend.Services
 
         public string Serialize(IEvent @event)
         {
-            var json = JsonSerializer.Serialize(@event, EventsMap[@event.EventType], null);
-
-            return json.Replace("\n", @"\n") + "\n";
+            return JsonConvert.SerializeObject(@event) + "\n";
         }
 
         public string SerializeMultiple(IEvent[] events)

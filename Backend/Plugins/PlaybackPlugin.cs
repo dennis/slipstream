@@ -22,13 +22,13 @@ namespace Slipstream.Backend.Plugins
             EventSerdeService = eventSerdeService;
             var playback = EventHandler.Get<Playback>();
 
-            playback.OnPlaybackInjectEvents += (s, e) => OnPlaybackInjectEvents(e.Event);
-            playback.OnPlaybackSaveEvents += (s, e) => OnPlaybackSaveEvents(e.Event);
+            playback.OnPlaybackCommandInjectEvents += (s, e) => OnPlaybackCommandInjectEvents(e.Event);
+            playback.OnPlaybackCommandSaveEvents += (s, e) => OnPlaybackCommandSaveEvents(e.Event);
 
             Logger = logger;
         }
 
-        private void OnPlaybackSaveEvents(PlaybackSaveEvents @event)
+        private void OnPlaybackCommandSaveEvents(PlaybackCommandSaveEvents @event)
         {
             var subscription = EventBus.RegisterListener(fromBeginning: true);
 
@@ -49,29 +49,35 @@ namespace Slipstream.Backend.Plugins
             Logger.Information($"Events saved to: {@event.Filename}");
         }
 
-        private void OnPlaybackInjectEvents(PlaybackInjectEvents @event)
+        private void OnPlaybackCommandInjectEvents(PlaybackCommandInjectEvents @event)
         {
             string json = File.ReadAllText(@event.Filename);
 
             IEvent? prevEvent = null;
-
-            foreach (var currentEvent in EventSerdeService.DeserializeMultiple(json))
+            try
             {
-                if (currentEvent.EventType != "PlaybackInjectEvents" && currentEvent.EventType != "PlaybackSaveEvents")
+                foreach (var currentEvent in EventSerdeService.DeserializeMultiple(json))
                 {
-                    if (prevEvent != null)
+                    if (currentEvent.EventType != "PlaybackCommandInjectEvents" && currentEvent.EventType != "PlaybackCommandSaveEvents")
                     {
-                        int duration = (int)(currentEvent.Uptime - prevEvent.Uptime);
-                        if (duration > 0)
+                        if (prevEvent != null)
                         {
-                            Thread.Sleep(duration);
+                            int duration = (int)(currentEvent.Uptime - prevEvent.Uptime);
+                            if (duration > 0)
+                            {
+                                Thread.Sleep(duration);
+                            }
                         }
+
+                        prevEvent = currentEvent;
+
+                        EventBus.PublishEvent(currentEvent);
                     }
-
-                    prevEvent = currentEvent;
-
-                    EventBus.PublishEvent(currentEvent);
                 }
+            }
+            catch (Newtonsoft.Json.JsonReaderException e)
+            {
+                Logger.Warning($"Error reading {@event.Filename}: {e.Message}");
             }
         }
     }

@@ -2,16 +2,16 @@
 
 namespace Slipstream.Shared.Events.Playback
 {
-    public class PlaybackInjectEvents : IEvent
+    public class PlaybackCommandInjectEvents : IEvent
     {
-        public string EventType => "PlaybackInjectEvents";
+        public string EventType => "PlaybackCommandInjectEvents";
         public bool ExcludeFromTxrx => true;
         public string Filename { get; set; }
         public ulong Uptime { get; set; }
 
         public override bool Equals(object obj)
         {
-            return obj is PlaybackInjectEvents events &&
+            return obj is PlaybackCommandInjectEvents events &&
                    EventType == events.EventType &&
                    ExcludeFromTxrx == events.ExcludeFromTxrx &&
                    Filename == events.Filename;

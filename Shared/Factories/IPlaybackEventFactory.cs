@@ -6,7 +6,7 @@ namespace Slipstream.Shared.Factories
 {
     public interface IPlaybackEventFactory
     {
-        PlaybackSaveEvents CreatePlaybackSaveEvents(string filename);
-        PlaybackInjectEvents CreatePlaybackInjectEvents(string filename);
+        PlaybackCommandSaveEvents CreatePlaybackCommandSaveEvents(string filename);
+        PlaybackCommandInjectEvents CreatePlaybackCommandInjectEvents(string filename);
     }
 }

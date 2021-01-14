@@ -6,17 +6,17 @@ namespace Slipstream.Shared.Factories
 {
     public class PlaybackEventFactory : IPlaybackEventFactory
     {
-        public PlaybackInjectEvents CreatePlaybackInjectEvents(string filename)
+        public PlaybackCommandInjectEvents CreatePlaybackCommandInjectEvents(string filename)
         {
-            return new PlaybackInjectEvents
+            return new PlaybackCommandInjectEvents
             {
                 Filename = filename
             };
         }
 
-        public PlaybackSaveEvents CreatePlaybackSaveEvents(string filename)
+        public PlaybackCommandSaveEvents CreatePlaybackCommandSaveEvents(string filename)
         {
-            return new PlaybackSaveEvents
+            return new PlaybackCommandSaveEvents
             {
                 Filename = filename
             };

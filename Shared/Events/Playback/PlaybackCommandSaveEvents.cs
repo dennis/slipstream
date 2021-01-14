@@ -2,7 +2,7 @@
 
 namespace Slipstream.Shared.Events.Playback
 {
-    public class PlaybackSaveEvents : IEvent
+    public class PlaybackCommandSaveEvents : IEvent
     {
         public string EventType => "PlaybackSaveEvents";
         public bool ExcludeFromTxrx => true;
@@ -11,7 +11,7 @@ namespace Slipstream.Shared.Events.Playback
 
         public override bool Equals(object obj)
         {
-            return obj is PlaybackSaveEvents events &&
+            return obj is PlaybackCommandSaveEvents events &&
                    EventType == events.EventType &&
                    ExcludeFromTxrx == events.ExcludeFromTxrx &&
                    Filename == events.Filename;

@@ -214,9 +214,6 @@ namespace Slipstream.Frontend
                         switch (e.Id)
                         {
                             case "TransmitterPlugin":
-                                ExecuteSecure(() => Text = CleanTitle);
-                                break;
-
                             case "ReceiverPlugin":
                                 ExecuteSecure(() => Text = CleanTitle);
                                 break;
@@ -255,7 +252,7 @@ namespace Slipstream.Frontend
             SaveFileDialog.FileName = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
             if (SaveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                EventBus.PublishEvent(PlaybackEventFactory.CreatePlaybackSaveEvents(SaveFileDialog.FileName));
+                EventBus.PublishEvent(PlaybackEventFactory.CreatePlaybackCommandSaveEvents(SaveFileDialog.FileName));
             }
         }
 
@@ -263,7 +260,7 @@ namespace Slipstream.Frontend
         {
             if (OpenFileDialog.ShowDialog() == DialogResult.OK)
             {
-                EventBus.PublishEvent(PlaybackEventFactory.CreatePlaybackInjectEvents(OpenFileDialog.FileName));
+                EventBus.PublishEvent(PlaybackEventFactory.CreatePlaybackCommandInjectEvents(OpenFileDialog.FileName));
             }
         }
     }

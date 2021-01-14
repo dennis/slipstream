@@ -12,8 +12,7 @@ namespace Slipstream.Backend
         private const int EVENT_MAX_SIZE = 10000;
         private const int EVENT_DELETE_SIZE = 1000; // when we hit EVENT_MAX_SIZE. How many elements should we remove?
         private volatile bool enabled = false;
-        private ulong StartedAt;
-
+        private readonly ulong StartedAt;
 
         public EventBus()
         {

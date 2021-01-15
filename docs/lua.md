@@ -5,7 +5,7 @@
 These are provided by AudioPlugin.
 
 <details><summary>audio:say(plugin_id, message, volume)</summary><br />
-Use Windows text-to-speech to say message. 
+Use Windows text-to-speech to speak message. 
 
 | Parameter | Type        | Description                  |
 |:----------|:-----------:|:-----------------------------|
@@ -14,7 +14,7 @@ Use Windows text-to-speech to say message.
 | volume    | number 0..1 | 0 is muted, 1 is full volume |
 
 ```lua
-audio:say("Hello", 0.8)
+audio:say("AudioPlugin", "Hello", 0.8)
 ```
 
 This function publishes `AudioCommandSay` event, that is handled by AudioPlugin.
@@ -32,12 +32,44 @@ Plays a wav/mp3 file relative to the audio directory (Open it via menu Help -> O
 | volume    | number 0..1 | 0 is muted, 1 is full volume |
 
 ```lua
-audio:play("ding-sound-effect.mp3", 1.0)
+audio:play("AudioPlugin", "ding-sound-effect.mp3", 1.0)
 ```
 
 This function publishes `AudioCommandPlay` event, that is handled by AudioPlugin.
 
 This function is aliased as ``play`` (deprecated)
+</details>
+
+<details><summary>audio:send_devices(plugin_id)</summary><br />
+
+Request that `AudioOutputDevice` is sent for each audio device found.
+
+| Parameter | Type        | Description                  |
+|:----------|:-----------:|:-----------------------------|
+| plugin_id | string      | which plugin should act      |
+
+```lua
+audio:send_devices("AudioPlugin")
+```
+
+This function publishes `AudioCommandSendDevices` event, that is handled by AudioPlugin.
+
+</details>
+
+<details><summary>audio:set_output(plugin_id, device_idx)</summary><br />
+Change output for a plugin to another device. All plugins starts using 
+default audio output, but can be changed via this. 
+
+| Parameter  | Type   | Description                       |
+|:-----------|:------:|:----------------------------------|
+| plugin_id  | string | which plugin should act           |
+| device_idx | number | what device to use. -1 is default |
+
+```lua
+audio:set_output("AudioPlugin", 2)
+```
+
+This function publishes `AudioCommandSetOutputDevice` event, that is handled by AudioPlugin.
 </details>
 
 ## Core

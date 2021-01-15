@@ -15,5 +15,20 @@ namespace Slipstream.Shared.Factories
         {
             return new AudioCommandSay { PluginId = pluginId, Message = message, Volume = volume };
         }
+
+        public AudioCommandSendDevices CreateAudioCommandSendDevices(string pluginId)
+        {
+            return new AudioCommandSendDevices{ PluginId = pluginId };
+        }
+
+        public AudioOutputDevice CreateAudioOutputDevice(string pluginId, string product, int deviceIdx)
+        {
+            return new AudioOutputDevice { DeviceIdx = deviceIdx, PluginId = pluginId, Product = product };
+        }
+
+        public AudioCommandSetOutputDevice CreateAudioCommandSetOutputDevice(string pluginId, int deviceIdx)
+        {
+            return new AudioCommandSetOutputDevice { PluginId = pluginId, DeviceIdx = deviceIdx };
+        }
     }
 }

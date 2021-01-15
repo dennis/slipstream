@@ -18,9 +18,21 @@ namespace Slipstream.Shared.EventHandlers
 
         public delegate void OnAudioCommandSayHandler(EventHandler source, EventHandlerArgs<AudioCommandSay> e);
 
+        public delegate void OnAudioCommandSendDevicesHandler(EventHandler source, EventHandlerArgs<AudioCommandSendDevices> e);
+
+        public delegate void OnAudioCommandSetOutputDeviceHandler(EventHandler source, EventHandlerArgs<AudioCommandSetOutputDevice> e);
+
+        public delegate void OnAudioOutputDeviceHandler(EventHandler source, EventHandlerArgs<AudioOutputDevice> e);
+
         public event OnAudioCommandPlayHandler? OnAudioCommandPlay;
 
         public event OnAudioCommandSayHandler? OnAudioCommandSay;
+
+        public event OnAudioCommandSendDevicesHandler? OnAudioCommandSendDevices;
+
+        public event OnAudioCommandSetOutputDeviceHandler? OnAudioCommandSetOutputDevice;
+
+        public event OnAudioOutputDeviceHandler? OnAudioOutputDevice;
 
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)
         {
@@ -40,6 +52,36 @@ namespace Slipstream.Shared.EventHandlers
                     if (OnAudioCommandPlay != null)
                     {
                         OnAudioCommandPlay.Invoke(Parent, new EventHandlerArgs<AudioCommandPlay>(tev));
+                        return IEventHandler.HandledStatus.Handled;
+                    }
+                    else
+                    {
+                        return IEventHandler.HandledStatus.UseDefault;
+                    }
+                case AudioCommandSendDevices tev:
+                    if (OnAudioCommandSendDevices != null)
+                    {
+                        OnAudioCommandSendDevices.Invoke(Parent, new EventHandlerArgs<AudioCommandSendDevices>(tev));
+                        return IEventHandler.HandledStatus.Handled;
+                    }
+                    else
+                    {
+                        return IEventHandler.HandledStatus.UseDefault;
+                    }
+                case AudioOutputDevice tev:
+                    if (OnAudioOutputDevice != null)
+                    {
+                        OnAudioOutputDevice.Invoke(Parent, new EventHandlerArgs<AudioOutputDevice>(tev));
+                        return IEventHandler.HandledStatus.Handled;
+                    }
+                    else
+                    {
+                        return IEventHandler.HandledStatus.UseDefault;
+                    }
+                case AudioCommandSetOutputDevice tev:
+                    if (OnAudioCommandSetOutputDevice != null)
+                    {
+                        OnAudioCommandSetOutputDevice.Invoke(Parent, new EventHandlerArgs<AudioCommandSetOutputDevice>(tev));
                         return IEventHandler.HandledStatus.Handled;
                     }
                     else

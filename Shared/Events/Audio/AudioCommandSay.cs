@@ -7,7 +7,7 @@ namespace Slipstream.Shared.Events.Audio
     public class AudioCommandSay : IEvent
     {
         public string EventType => "AudioCommandSay";
-        public bool ExcludeFromTxrx => true;
+        public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
         public string PluginId { get; set; } = "INVAILD-PLUGIN-ID";
         public string Message { get; set; } = string.Empty;

@@ -19,6 +19,7 @@ namespace Slipstream.Backend
         private readonly IFileMonitorEventFactory FileMonitorEventFactory;
         private readonly IIRacingEventFactory IRacingEventFactory;
         private readonly ITwitchEventFactory TwitchEventFactory;
+        private readonly IAudioEventFactory AudioEventFactory;
 
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, IPlugin> Plugins = new Dictionary<string, IPlugin>();
@@ -44,6 +45,7 @@ namespace Slipstream.Backend
             FileMonitorEventFactory = eventFactory.Get<IFileMonitorEventFactory>();
             IRacingEventFactory = eventFactory.Get<IIRacingEventFactory>();
             TwitchEventFactory = eventFactory.Get<ITwitchEventFactory>();
+            AudioEventFactory = eventFactory.Get<IAudioEventFactory>();
             EventBus = eventBus;
             ApplicationConfiguration = applicationConfiguration;
             StateService = stateService;
@@ -202,7 +204,7 @@ namespace Slipstream.Backend
             {
                 "FileMonitorPlugin" => new FileMonitorPlugin(id, FileMonitorEventFactory, eventBus, ApplicationConfiguration),
                 "LuaManagerPlugin" => new LuaManagerPlugin(id, FileMonitorEventFactory, eventBus, this, this, EventSerdeService),
-                "AudioPlugin" => new AudioPlugin(id, Logger.ForContext(typeof(AudioPlugin)), ApplicationConfiguration),
+                "AudioPlugin" => new AudioPlugin(id, Logger.ForContext(typeof(AudioPlugin)), eventBus, AudioEventFactory, ApplicationConfiguration),
                 "IRacingPlugin" => new IRacingPlugin(id, IRacingEventFactory, eventBus),
                 "TwitchPlugin" => new TwitchPlugin(id, Logger.ForContext(typeof(TwitchPlugin)), TwitchEventFactory, eventBus, ApplicationConfiguration),
                 "TransmitterPlugin" => new TransmitterPlugin(id, Logger.ForContext(typeof(TransmitterPlugin)), InternalEventFactory, eventBus, TxrxService, ApplicationConfiguration),

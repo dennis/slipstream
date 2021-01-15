@@ -39,13 +39,14 @@ Requests a mp3/wave files to be played. Filename is relative to the audio direct
 | Name            | Type    | Description                                                |
 |:----------------|:-------:|:-----------------------------------------------------------|
 | EventType       | string  | `AudioCommandPlay` (constant)                              |
-| ExcludeFromTxrx | boolean | true (constant)                                            |
+| ExcludeFromTxrx | boolean | false (constant)                                           |
+| PluginId        | string  | Which plugin should act                                    |
 | Filename        | string  | Filename to play, relative to the audio directory          |
 | Volume          | numeric | Value from 0 .. 1, being from muted (0) to full volume (1) |
 
 
 **JSON Example:** 
-`{"EventType": "AudioCommandPlay", "ExcludeFromTxrx": true,"Uptime":299, "Filename": "Ding-sound-effect.mp3", "Volume": 1}`
+`{"EventType": "AudioCommandPlay", "ExcludeFromTxrx": true, "Uptime":299, "PluginId": "AudioDefault", "Filename": "Ding-sound-effect.mp3", "Volume": 1}`
 </details>
 
 <details><summary>AudioCommandSay</summary><br />
@@ -54,12 +55,56 @@ Request message to read out loud using Windows text-to-speech
 | Name            | Type    | Description                                                |
 |:----------------|:-------:|:-----------------------------------------------------------|
 | EventType       | string  | `AudioCommandSay` (constant)                               |
-| ExcludeFromTxrx | boolean | true (constant)                                            |
+| ExcludeFromTxrx | boolean | false (constant)                                           |
+| PluginId        | string  | Which plugin should act                                    |
 | Message         | string  | Text to speak                                              |
 | Volume          | numeric | Value from 0 .. 1, being from muted (0) to full volume (1) |
 
 **JSON Example:** 
-`{"EventType": "AudioCommandSay",  "ExcludeFromTxrx": true,"Uptime":299,  "Message": "Slipstream ready",  "Volume": 0.800000012}`
+`{"EventType": "AudioCommandSay",  "ExcludeFromTxrx": true, "Uptime":299,  "PluginId": "AudioDefault",  "Message": "Slipstream ready",  "Volume": 0.800000012}`
+</details>
+
+<details><summary>AudioCommandSendDevices</summary><br />
+
+Send known devices via `AudioOutputDevice`.
+
+| Name            | Type    | Description                          |
+|:----------------|:-------:|:-------------------------------------|
+| EventType       | string  | `AudioCommandSendDevices` (constant) |
+| ExcludeFromTxrx | boolean | false (constant)                     |
+| PluginId        | string  | Which plugin should act              |
+
+**JSON Example:** 
+`{"EventType":"AudioCommandSendDevices","ExcludeFromTxrx":false,"PluginId":"AudioPlugin:Default"}`
+</details>
+
+<details><summary>AudioCommandSetOutputDevice</summary><br />
+
+| Name            | Type    | Description                              |
+|:----------------|:-------:|:-----------------------------------------|
+| EventType       | string  | `AudioCommandSetOutputDevice` (constant) |
+| ExcludeFromTxrx | boolean | false (constant)                         |
+| PluginId        | string  | Which plugin should act                  |
+| DeviceIdx       | int     | DeviceIdx to use for this plugin         |
+
+**JSON Example:** 
+`{"EventType":"AudioCommandSetOutputDevice","ExcludeFromTxrx":false,"PluginId":"AudioPlugin:Other","DeviceIdx":2}`
+</details>
+
+<details><summary>AudioOutputDevice</summary><br />
+
+A output device found. Note: Device with DeviceIdx -1 is the default device.
+
+| Name            | Type    | Description                                     |
+|:----------------|:-------:|:------------------------------------------------|
+| EventType       | string  | `AudioOutputDevice` (constant)                  |
+| ExcludeFromTxrx | boolean | true (constant)                                 |
+| PluginId        | string  | Plugin responding                               |
+| Product         | string  | Product as returned by Windows                  |
+| DeviceIdx       | int     | Device index, use this for selecting the device |
+
+**JSON Example:** 
+`{"EventType":"AudioOutputDevice","ExcludeFromTxrx":true,"PluginId":"AudioPlugin:Default","Product":"Microsoft Sound Mapper","DeviceIdx":-1}`
 </details>
 
 ## FileMonitor
@@ -162,7 +207,7 @@ scripts.
 
 | Name            | Type    | Description                                            |
 |:----------------|:-------:|:-------------------------------------------------------|
-| EventType       | string  | `LuaCommandDeduplicateEvents` (constant)          |
+| EventType       | string  | `LuaCommandDeduplicateEvents` (constant)               |
 | ExcludeFromTxrx | boolean | true (constant)                                        |
 | Events          | string  | JSON serialized version of the events. Separated by \n |
 

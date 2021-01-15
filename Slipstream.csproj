@@ -178,6 +178,9 @@
     <Compile Include="Shared\EventHandlers\Playback.cs" />
     <Compile Include="Shared\Events\Playback\PlaybackCommandInjectEvents.cs" />
     <Compile Include="Shared\Events\Playback\PlaybackCommandSaveEvents.cs" />
+    <Compile Include="Shared\Events\Audio\AudioCommandSetOutputDevice.cs" />
+    <Compile Include="Shared\Events\Audio\AudioCommandSendDevices.cs" />
+    <Compile Include="Shared\Events\Audio\AudioOutputDevice.cs" />
     <Compile Include="Shared\Factories\AudioEventFactory.cs" />
     <Compile Include="Shared\Factories\IInternalEventFactory.cs" />
     <Compile Include="Shared\Factories\IPlaybackEventFactory.cs" />

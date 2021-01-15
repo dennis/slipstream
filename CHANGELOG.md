@@ -10,6 +10,10 @@
   - lua: Adds audio:send_devices(..), audio:set_output(..) to control which output device to use
   - lua: Changed audio:play(..), audio:say(..) with another arguments to decide which plugin to use
   - events: Adds AudioCommandSendDevices, AudioCommandSetOutputDevice and AudioOutputDevice
+  - New plugin: PlaybackPlugin. Allows you to save seen events and inject them again (for debugging and testing)
+    - New events: PlaybackCommandInjectEvents (inject events from file), PlaybackCommandSaveEvents (save last events to file)
+    - Menu items in UI are only shown if you register that plugin: register_plugin("PlaybackPlugin", "PlaybackPlugin")_
+    - Lua: playback:save(filename), playback:load(filename). Saves and loads events (same as via menu in UI)
 
 ## [0.4.0](https://github.com/dennis/slipstream/releases/tag/v0.3.0) (2020-01-10)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.3.0...v0.4.0)

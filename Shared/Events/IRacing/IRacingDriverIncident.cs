@@ -8,9 +8,8 @@ namespace Slipstream.Shared.Events.IRacing
     {
         public string EventType => "IRacingDriverIncident";
         public bool ExcludeFromTxrx => false;
-
+        public ulong Uptime { get; set; }
         public int IncidentCount { get; set; }
-
         public int IncidentDelta { get; set; }
 
         public override bool Equals(object? obj)

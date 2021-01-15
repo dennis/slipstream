@@ -8,6 +8,7 @@ namespace Slipstream.Shared.Events.IRacing
     {
         public string EventType => "IRacingTrackInfo";
         public bool ExcludeFromTxrx => false;
+        public ulong Uptime { get; set; }
         public long TrackId { get; set; }
         public string TrackLength { get; set; } = string.Empty;
         public string TrackDisplayName { get; set; } = string.Empty;

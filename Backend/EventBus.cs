@@ -12,6 +12,12 @@ namespace Slipstream.Backend
         private const int EVENT_MAX_SIZE = 10000;
         private const int EVENT_DELETE_SIZE = 1000; // when we hit EVENT_MAX_SIZE. How many elements should we remove?
         private volatile bool enabled = false;
+        private readonly ulong StartedAt;
+
+        public EventBus()
+        {
+            StartedAt = Uptime();
+        }
 
         public bool Enabled
         {
@@ -23,8 +29,11 @@ namespace Slipstream.Backend
                 EnableAndFlushPendingEvents();
             }
         }
+
         public void PublishEvent(IEvent e)
         {
+            e.Uptime = Uptime() - StartedAt;
+
             lock (Events)
             {
                 if(Events.Count >= EVENT_MAX_SIZE)
@@ -100,6 +109,12 @@ namespace Slipstream.Backend
 
                 PendingEvents.Clear();
             }
+        }
+
+        private ulong Uptime()
+        {
+            var tick = (double)Stopwatch.GetTimestamp() * 1000 / Stopwatch.Frequency;
+            return (ulong)tick;
         }
     }
 }

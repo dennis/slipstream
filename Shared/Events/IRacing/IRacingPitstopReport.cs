@@ -8,6 +8,7 @@ namespace Slipstream.Shared.Events.IRacing
     {
         public string EventType => "IRacingPitstopReport";
         public bool ExcludeFromTxrx => false;
+        public ulong Uptime { get; set; }
         public double SessionTime { get; set; }
         public long CarIdx { get; set; }
 

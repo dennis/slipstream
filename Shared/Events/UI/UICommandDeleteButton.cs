@@ -6,6 +6,7 @@ namespace Slipstream.Shared.Events.UI
     {
         public string EventType => "UICommandDeleteButton";
         public bool ExcludeFromTxrx => true;
+        public ulong Uptime { get; set; }
         public string Text { get; set; } = "";
 
         public override bool Equals(object obj)

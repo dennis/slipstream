@@ -6,6 +6,7 @@ namespace Slipstream.Shared.Events.IRacing
     {
         public string EventType => "IRacingCommandSendWeatherInfo";
         public bool ExcludeFromTxrx => false;
+        public ulong Uptime { get; set; }
 
         public override bool Equals(object obj)
         {

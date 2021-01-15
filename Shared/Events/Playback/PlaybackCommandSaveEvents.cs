@@ -1,28 +1,28 @@
 ﻿using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.Lua
+namespace Slipstream.Shared.Events.Playback
 {
-    public class LuaCommandDeduplicateEvents : IEvent
+    public class PlaybackCommandSaveEvents : IEvent
     {
-        public string EventType => "LuaCommandDeduplicateEvents";
+        public string EventType => "PlaybackSaveEvents";
         public bool ExcludeFromTxrx => true;
         public ulong Uptime { get; set; }
-        public string Events { get; set; } = "";
+        public string Filename { get; set; }
 
         public override bool Equals(object obj)
         {
-            return obj is LuaCommandDeduplicateEvents events &&
+            return obj is PlaybackCommandSaveEvents events &&
                    EventType == events.EventType &&
                    ExcludeFromTxrx == events.ExcludeFromTxrx &&
-                   Events == events.Events;
+                   Filename == events.Filename;
         }
 
         public override int GetHashCode()
         {
-            int hashCode = -1012215078;
+            int hashCode = -1549740322;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
             hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Events);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Filename);
             return hashCode;
         }
     }

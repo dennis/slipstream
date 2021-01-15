@@ -207,6 +207,7 @@ namespace Slipstream.Backend
                 "TwitchPlugin" => new TwitchPlugin(id, Logger.ForContext(typeof(TwitchPlugin)), TwitchEventFactory, eventBus, ApplicationConfiguration),
                 "TransmitterPlugin" => new TransmitterPlugin(id, Logger.ForContext(typeof(TransmitterPlugin)), InternalEventFactory, eventBus, TxrxService, ApplicationConfiguration),
                 "ReceiverPlugin" => new ReceiverPlugin(id, Logger.ForContext(typeof(ReceiverPlugin)), InternalEventFactory, eventBus, TxrxService, ApplicationConfiguration),
+                "PlaybackPlugin" => new PlaybackPlugin(id, Logger.ForContext(typeof(PlaybackPlugin)), eventBus, EventSerdeService),
                 _ => throw new Exception($"Unknown plugin '{name}'"),
             };
         }

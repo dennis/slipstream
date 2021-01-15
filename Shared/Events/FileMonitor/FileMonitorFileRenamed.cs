@@ -8,6 +8,7 @@ namespace Slipstream.Shared.Events.FileMonitor
     {
         public string EventType => "FileMonitorFileRenamed";
         public bool ExcludeFromTxrx => true;
+        public ulong Uptime { get; set; }
         public string? FilePath { get; set; }
         public string? OldFilePath { get; set; }
 

@@ -6,6 +6,7 @@ namespace Slipstream.Shared.Events.Twitch
     {
         public string EventType => "TwitchConnected";
         public bool ExcludeFromTxrx => false;
+        public ulong Uptime { get; set; }
 
         public override bool Equals(object obj)
         {

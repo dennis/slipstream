@@ -8,6 +8,7 @@ namespace Slipstream.Shared.Events.Twitch
     {
         public string EventType => "TwitchReceivedWhisper";
         public bool ExcludeFromTxrx => false;
+        public ulong Uptime { get; set; }
         public string From { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
 

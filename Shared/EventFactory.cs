@@ -17,6 +17,7 @@ namespace Slipstream.Shared
             Factories.Add(typeof(ILuaEventFactory), new LuaEventFactory(eventSerdeService));
             Factories.Add(typeof(ITwitchEventFactory), new TwitchEventFactory());
             Factories.Add(typeof(IUIEventFactory), new UIEventFactory());
+            Factories.Add(typeof(IPlaybackEventFactory), new PlaybackEventFactory());
         }
 
         public T Get<T>()

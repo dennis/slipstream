@@ -42,6 +42,7 @@ namespace Slipstream.Shared
             Handlers.Add(typeof(IRacing), new IRacing(this));
             Handlers.Add(typeof(Twitch), new Twitch(this));
             Handlers.Add(typeof(FileMonitor), new FileMonitor(this));
+            Handlers.Add(typeof(Playback), new Playback(this));
         }
 
         public delegate void OnDefaultHandler(EventHandler source, EventHandlerArgs<IEvent> e);

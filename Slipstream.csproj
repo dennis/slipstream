@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -74,6 +73,9 @@
     <Reference Include="NAudio, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\NAudio.1.10.0\lib\net35\NAudio.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="NLua, Version=1.5.6.0, Culture=neutral, PublicKeyToken=6a194c04b9c89217, processorArchitecture=MSIL">
       <HintPath>packages\NLua.1.5.6\lib\net45\NLua.dll</HintPath>
     </Reference>
@@ -102,9 +104,6 @@
     <Reference Include="System.Speech" />
     <Reference Include="System.Text.Encodings.Web, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Text.Encodings.Web.5.0.0\lib\net461\System.Text.Encodings.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Text.Json, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>packages\System.Text.Json.5.0.0\lib\net461\System.Text.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
@@ -142,6 +141,7 @@
     <Compile Include="Backend\IPluginFactory.cs" />
     <Compile Include="Backend\IPluginManager.cs" />
     <Compile Include="Backend\PluginManager.cs" />
+    <Compile Include="Backend\Plugins\PlaybackPlugin.cs" />
     <Compile Include="Backend\Plugins\ReceiverPlugin.cs" />
     <Compile Include="Backend\Plugins\TransmitterPlugin.cs" />
     <Compile Include="Backend\Plugins\AudioPlugin.cs" />
@@ -175,8 +175,13 @@
     </Compile>
     <Compile Include="Shared\EventFactory.cs" />
     <Compile Include="Shared\EventHandlers\Audio.cs" />
+    <Compile Include="Shared\EventHandlers\Playback.cs" />
+    <Compile Include="Shared\Events\Playback\PlaybackCommandInjectEvents.cs" />
+    <Compile Include="Shared\Events\Playback\PlaybackCommandSaveEvents.cs" />
     <Compile Include="Shared\Factories\AudioEventFactory.cs" />
     <Compile Include="Shared\Factories\IInternalEventFactory.cs" />
+    <Compile Include="Shared\Factories\IPlaybackEventFactory.cs" />
+    <Compile Include="Shared\Factories\PlaybackEventFactory.cs" />
     <Compile Include="Shared\Factories\UIEventFactory.cs" />
     <Compile Include="Shared\Events\FileMonitor\FileMonitorCommandScan.cs" />
     <Compile Include="Shared\Events\FileMonitor\FileMonitorScanCompleted.cs" />

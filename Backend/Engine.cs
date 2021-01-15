@@ -77,6 +77,11 @@ register_plugin(""LuaManagerPlugin"", ""LuaManagerPlugin"")
 -- FileMonitorPlugin monitors the script directory and sends out events
 -- every time a file is created, renamed, modified or deleted
 register_plugin(""FileMonitorPlugin"", ""FileMonitorPlugin"")
+
+-- Provides save/replay of events. Please be careful if you use this. There is
+-- not much filtering, so RegisterPlugin/Unregister plugins will actually make
+-- slipstream perform these actions
+register_plugin(""PlaybackPlugin"", ""PlaybackPlugin"")
 ");
                 }
 

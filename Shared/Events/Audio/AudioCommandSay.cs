@@ -8,6 +8,7 @@ namespace Slipstream.Shared.Events.Audio
     {
         public string EventType => "AudioCommandSay";
         public bool ExcludeFromTxrx => true;
+        public ulong Uptime { get; set; }
         public string? Message { get; set; }
         public float? Volume { get; set; }
 

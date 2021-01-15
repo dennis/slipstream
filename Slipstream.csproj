@@ -154,6 +154,7 @@
     <Compile Include="Backend\Services\ITxrxService.cs" />
     <Compile Include="Backend\Services\LuaService.cs" />
     <Compile Include="Backend\Services\ILuaContext.cs" />
+    <Compile Include="Backend\Services\LuaServiceLib\PlaybackMethodCollection.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\AudioMethodCollection.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\CoreMethodCollection.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\IRacingMethodCollection.cs" />

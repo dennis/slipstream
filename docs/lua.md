@@ -4,11 +4,12 @@
 
 These are provided by AudioPlugin.
 
-<details><summary>audio:say(message, volume)</summary><br />
+<details><summary>audio:say(plugin_id, message, volume)</summary><br />
 Use Windows text-to-speech to say message. 
 
 | Parameter | Type        | Description                  |
 |:----------|:-----------:|:-----------------------------|
+| plugin_id | string      | which plugin should act      |
 | message   | string      | What to say                  |
 | volume    | number 0..1 | 0 is muted, 1 is full volume |
 
@@ -21,11 +22,12 @@ This function publishes `AudioCommandSay` event, that is handled by AudioPlugin.
 This function is aliased as ``say`` (deprecated)
 </details>
 
-<details><summary>audio:play(filename, volume)</summary><br />
+<details><summary>audio:play(plugin_id, filename, volume)</summary><br />
 Plays a wav/mp3 file relative to the audio directory (Open it via menu Help -> Open Audio Directory). 
 
 | Parameter | Type        | Description                  |
 |:----------|:-----------:|:-----------------------------|
+| plugin_id | string      | which plugin should act      |
 | filename  | string      | file to play                 |
 | volume    | number 0..1 | 0 is muted, 1 is full volume |
 

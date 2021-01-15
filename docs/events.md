@@ -40,12 +40,13 @@ Requests a mp3/wave files to be played. Filename is relative to the audio direct
 |:----------------|:-------:|:-----------------------------------------------------------|
 | EventType       | string  | `AudioCommandPlay` (constant)                              |
 | ExcludeFromTxrx | boolean | true (constant)                                            |
+| PluginId        | string  | Which plugin should play the sound                         |
 | Filename        | string  | Filename to play, relative to the audio directory          |
 | Volume          | numeric | Value from 0 .. 1, being from muted (0) to full volume (1) |
 
 
 **JSON Example:** 
-`{"EventType": "AudioCommandPlay", "ExcludeFromTxrx": true,"Uptime":299, "Filename": "Ding-sound-effect.mp3", "Volume": 1}`
+`{"EventType": "AudioCommandPlay", "ExcludeFromTxrx": true, "Uptime":299, "PluginId": "AudioDefault", "Filename": "Ding-sound-effect.mp3", "Volume": 1}`
 </details>
 
 <details><summary>AudioCommandSay</summary><br />
@@ -55,11 +56,12 @@ Request message to read out loud using Windows text-to-speech
 |:----------------|:-------:|:-----------------------------------------------------------|
 | EventType       | string  | `AudioCommandSay` (constant)                               |
 | ExcludeFromTxrx | boolean | true (constant)                                            |
+| PluginId        | string  | Which plugin should play the sound                         |
 | Message         | string  | Text to speak                                              |
 | Volume          | numeric | Value from 0 .. 1, being from muted (0) to full volume (1) |
 
 **JSON Example:** 
-`{"EventType": "AudioCommandSay",  "ExcludeFromTxrx": true,"Uptime":299,  "Message": "Slipstream ready",  "Volume": 0.800000012}`
+`{"EventType": "AudioCommandSay",  "ExcludeFromTxrx": true, "Uptime":299,  "PluginId": "AudioDefault",  "Message": "Slipstream ready",  "Volume": 0.800000012}`
 </details>
 
 ## FileMonitor
@@ -162,7 +164,7 @@ scripts.
 
 | Name            | Type    | Description                                            |
 |:----------------|:-------:|:-------------------------------------------------------|
-| EventType       | string  | `LuaCommandDeduplicateEvents` (constant)          |
+| EventType       | string  | `LuaCommandDeduplicateEvents` (constant)               |
 | ExcludeFromTxrx | boolean | true (constant)                                        |
 | Events          | string  | JSON serialized version of the events. Separated by \n |
 

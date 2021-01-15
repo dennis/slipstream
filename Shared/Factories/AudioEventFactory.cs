@@ -6,14 +6,14 @@ namespace Slipstream.Shared.Factories
 {
     public class AudioEventFactory : IAudioEventFactory
     {
-        public AudioCommandPlay CreateAudioCommandPlay(string filename, float? volume)
+        public AudioCommandPlay CreateAudioCommandPlay(string pluginId, string filename, float volume)
         {
-            return new AudioCommandPlay { Filename = filename, Volume = volume };
+            return new AudioCommandPlay { PluginId = pluginId, Filename = filename, Volume = volume };
         }
 
-        public AudioCommandSay CreateAudioCommandSay(string message, float? volume)
+        public AudioCommandSay CreateAudioCommandSay(string pluginId, string message, float volume)
         {
-            return new AudioCommandSay { Message = message, Volume = volume };
+            return new AudioCommandSay { PluginId = pluginId, Message = message, Volume = volume };
         }
     }
 }

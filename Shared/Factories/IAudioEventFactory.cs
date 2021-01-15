@@ -6,7 +6,7 @@ namespace Slipstream.Shared.Factories
 {
     public interface IAudioEventFactory
     {
-        AudioCommandPlay CreateAudioCommandPlay(string filename, float? volume);
-        AudioCommandSay CreateAudioCommandSay(string message, float? volume);
+        AudioCommandPlay CreateAudioCommandPlay(string pluginId, string filename, float volume);
+        AudioCommandSay CreateAudioCommandSay(string pluginId, string message, float volume);
     }
 }

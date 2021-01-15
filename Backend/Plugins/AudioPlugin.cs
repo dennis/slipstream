@@ -16,7 +16,7 @@ namespace Slipstream.Backend.Plugins
         private readonly string Path;
         private readonly SpeechSynthesizer Synthesizer;
 
-        public AudioPlugin(string id, ILogger logger, IAudioConfiguration audioConfiguration) : base(id, "AudioPlugin", "AudioPlugin", "Audio", true)
+        public AudioPlugin(string id, ILogger logger, IAudioConfiguration audioConfiguration) : base(id, "AudioPlugin", "AudioPlugin", id, true)
         {
             Logger = logger;
 
@@ -27,18 +27,17 @@ namespace Slipstream.Backend.Plugins
 
             var Audio = EventHandler.Get<Shared.EventHandlers.Audio>();
 
-            Audio.OnAudioCommandSay += EventHandler_OnUtilitySay;
-            Audio.OnAudioCommandPlay += EventHandler_OnAudioCommandPlay;
+            Audio.OnAudioCommandSay += (_, e) => OnAudioCommandSay(e.Event);
+            Audio.OnAudioCommandPlay += (_, e) => OnAudioCommandPlay(e.Event);
         }
 
-        private void EventHandler_OnAudioCommandPlay(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Audio.AudioCommandPlay> e)
+        private void OnAudioCommandPlay(Shared.Events.Audio.AudioCommandPlay @event)
         {
-            var filename = e.Event.Filename;
-            var volume = e.Event.Volume;
-
-            if (filename == null || volume == null || Path == null)
+            if (@event.PluginId != Id)
                 return;
 
+            var filename = @event.Filename;
+            var volume = @event.Volume;
             var filePath = System.IO.Path.Combine(Path, filename);
 
             try
@@ -59,13 +58,13 @@ namespace Slipstream.Backend.Plugins
             }
         }
 
-        private void EventHandler_OnUtilitySay(Shared.EventHandler source, Shared.EventHandler.EventHandlerArgs<Shared.Events.Audio.AudioCommandSay> e)
+        private void OnAudioCommandSay(Shared.Events.Audio.AudioCommandSay @event)
         {
-            if (e.Event == null || e.Event.Message == null || e.Event.Volume == null)
+            if (@event.PluginId != Id)
                 return;
 
-            Synthesizer.Volume = Math.Min((int)(100 * e.Event.Volume), 100);
-            Synthesizer.Speak(e.Event.Message);
+            Synthesizer.Volume = Math.Min((int)(100 * @event.Volume), 100);
+            Synthesizer.Speak(@event.Message);
         }
     }
 }

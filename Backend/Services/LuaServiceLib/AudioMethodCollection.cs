@@ -30,21 +30,21 @@ namespace Slipstream.Backend.Services.LuaServiceLib
             {
                 lua["audio"] = this;
                 lua.DoString(@"
-function say(a,b); audio:say(a,b); end
-function play(a,b); audio:play(a,b); end
+function say(plugin_id, message, volume); audio:say(plugin_id,message, volume); end
+function play(plugin_id, filename, volume); audio:play(plugin_id, filename, volume); end
 ");
             }
 
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
-            public void say(string message, float volume)
+            public void say(string pluginId, string message, float volume)
             {
-                EventBus.PublishEvent(EventFactory.CreateAudioCommandSay(message, volume));
+                EventBus.PublishEvent(EventFactory.CreateAudioCommandSay(pluginId, message, volume));
             }
 
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
-            public void play(string filename, float volume)
+            public void play(string pluginId, string filename, float volume)
             {
-                EventBus.PublishEvent(EventFactory.CreateAudioCommandPlay(filename, volume));
+                EventBus.PublishEvent(EventFactory.CreateAudioCommandPlay(pluginId, filename, volume));
             }
         }
     }

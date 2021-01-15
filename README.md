@@ -3,21 +3,59 @@
 **⚠ This project is under early and experimental development and should be considered alpha
 software ⚠**
 
-## What's Slipstream?
+## What is Slipstream?
 
 Slipstream is an application with an event-based architecture that allows 
-users to programatically handle events with the LUA scripts. The primary
+users to programatically handle events using LUA scripts. The primary
 objective for the application is to provide a dynamic and flexible solution
 to act on [iRacing](http://www.iracing.com) telemetry events.
 
 The extensibility of the core application can easily accomodate other types
-of plugins for example, Twitch chat, user interaction (button click), file monitor,
-LUA scripts and more.
+of plugins to create a comprehensive solution for iRacers and streamers. 
+
+![Slipstream Screenshot](docs/img/screen_shot.PNG)
+
+Other plugin examples are: 
+- Twitch chat
+- User interaction (button click)
+- File monitor
+- Lua scripts
+
+## How it works
 
 Events raised by the plugins are sent to Lua scripts where the events can be translated
 to real world actions like, interacting with IoT devices, playing audio samples,
 text-to-speech and more...
 
+Example script
+```
+local whitelist = {}
+
+whitelist["sassy_mcsassypants"] = true
+whitelist["larryrabbets"] = true
+
+say_name = {}
+say_name["sassy_mcsassypants"] = "Sassy"
+say_name["larryrabbets"] = "Larry"
+
+function string.starts(String,Start)
+   return string.sub(String,1,string.len(Start))==Start
+end
+
+function handle(event)
+    print(event_to_json(event))
+    if(event.EventType == "TwitchReceivedMessage") then
+		if string.starts(event.Message, "!say ") then
+			if whitelist[string.lower(event.From)] then
+                local text = string.lower(string.sub(event.Message, 6))
+				audio:say(say_name[event.From:lower()] .. " said ... " .. text, 1)
+			else
+				twitch:send_channel_message(event.From .. ": You are not whitelisted to use !say")
+			end
+		end
+	end
+end
+```
 
 ## Installation
 

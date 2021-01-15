@@ -6,7 +6,7 @@ software ⚠**
 ## What is Slipstream?
 
 Slipstream is an application with an event-based architecture that allows 
-users to programatically handle events using LUA scripts. The primary
+users to programatically handle events using Lua scripts. The primary
 objective for the application is to provide a dynamic and flexible solution
 to act on [iRacing](http://www.iracing.com) telemetry events.
 
@@ -24,11 +24,13 @@ Other plugin examples are:
 ## How it works
 
 Events raised by the plugins are sent to Lua scripts where the events can be translated
-to real world actions like, interacting with IoT devices, playing audio samples,
-text-to-speech and more...
+to real world actions like:
+- Interacting with IoT devices
+- Playing audio samples
+- Text to speech
 
 Example script
-```
+```Lua
 local whitelist = {}
 
 whitelist["sassy_mcsassypants"] = true

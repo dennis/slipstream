@@ -1,17 +1,23 @@
 ﻿# Slipstream
 
-**⚠ This project is under heavily development and should be considered alpha
+**⚠ This project is under early and experimental development and should be considered alpha
 software ⚠**
 
 ## What's Slipstream?
 
-Slipstream is an event-based application, that was built to connect or act on
-events from [IRacnig](http://www.iracing.com).
+Slipstream is an application with an event-based architecture that allows 
+users to programatically handle events with the LUA scripts. The primary
+objective for the application is to provide a dynamic and flexible solution
+to act on [iRacing](http://www.iracing.com) telemetry events.
 
-A number of Slipstream plugins generates event or acts on events. As user of
-Slipstream you can provide Lua scripts that interacts with these events as
-well. This allows you to write Lua scripts that records laptimes to a file,
-output messages to twitch, play samples or use text-to-speech to notify you.
+The extensibility of the core application can easily accomodate other types
+of plugins for example, Twitch chat, user interaction (button click), file monitor,
+LUA scripts and more.
+
+Events raised by the plugins are sent to Lua scripts where the events can be translated
+to real world actions like, interacting with IoT devices, playing audio samples,
+text-to-speech and more...
+
 
 ## Installation
 

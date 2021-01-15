@@ -47,15 +47,15 @@ end
 function handle(event)
     print(event_to_json(event))
     if(event.EventType == "TwitchReceivedMessage") then
-		if string.starts(event.Message, "!say ") then
-			if whitelist[string.lower(event.From)] then
+        if string.starts(event.Message, "!say ") then
+            if whitelist[string.lower(event.From)] then
                 local text = string.lower(string.sub(event.Message, 6))
-				audio:say(say_name[event.From:lower()] .. " said ... " .. text, 1)
-			else
-				twitch:send_channel_message(event.From .. ": You are not whitelisted to use !say")
-			end
-		end
-	end
+                audio:say(say_name[event.From:lower()] .. " said ... " .. text, 1)
+            else
+                twitch:send_channel_message(event.From .. ": You are not whitelisted to use !say")
+            end
+        end
+    end
 end
 ```
 

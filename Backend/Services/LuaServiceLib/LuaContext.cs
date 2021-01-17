@@ -61,7 +61,7 @@ namespace Slipstream.Backend.Services.LuaServiceLib
             }
             catch (NLua.Exceptions.LuaScriptException e)
             {
-                throw new LuaException($"Error initializing Lua: {e}", e);
+                throw new LuaException($"Lua: Error initializing {filePath}: {e}", e);
             }
         }
 

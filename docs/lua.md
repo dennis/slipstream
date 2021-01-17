@@ -158,18 +158,21 @@ Result will be written to the log.
 This function is aliased as ``post_as_json`` (deprecated)
 </details>
 
-## Internals
+## Internal
 
-<details><summary>internal:register_plugin(id, name)</summary><br />
+<details><summary>internal:register_plugin(args)</summary><br />
 Load a plugin. Used primarily in init.lua
 
-| Parameter | Type   | Description    |
-|:----------|:------:|:---------------|
-| id        | string | plugin id      |
-| name      | string | name of plugin |
+Args is a LUA table, with the following keys
+
+| Parameter   | Type   | Mandatory | Description                         |
+|:------------|:------:|:----------|:------------------------------------|
+| plugin_id   | string | No        | plugin id (defaults to plugin_name) |
+| plugin_name | string | Yes       | name of plugin                      |
 
 ```lua
-internal:register_plugin("TwitchPlugin", "TwitchPlugin")
+internal:register_plugin({ plugin_name = "TwitchPlugin" })
+internal:register_plugin({ plugin_id = "TwitchPlugin", plugin_name = "TwitchPlugin" })
 ```
 
 This function publishes `InternalCommandPluginRegister` event, that is handled by Engine.

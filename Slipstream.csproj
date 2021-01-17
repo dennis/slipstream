@@ -154,6 +154,9 @@
     <Compile Include="Backend\Services\ITxrxService.cs" />
     <Compile Include="Backend\Services\LuaService.cs" />
     <Compile Include="Backend\Services\ILuaContext.cs" />
+    <Compile Include="Backend\Services\LuaServiceLib\ParameterException.cs" />
+    <Compile Include="Backend\Services\LuaServiceLib\ParameterResult.cs" />
+    <Compile Include="Backend\Services\LuaServiceLib\ParameterValidator.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\PlaybackMethodCollection.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\AudioMethodCollection.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\CoreMethodCollection.cs" />
@@ -174,6 +177,7 @@
     <Compile Include="Frontend\SettingsForm.Designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="GlobalSuppressions2.cs" />
     <Compile Include="Shared\EventFactory.cs" />
     <Compile Include="Shared\EventHandlers\Audio.cs" />
     <Compile Include="Shared\EventHandlers\Playback.cs" />

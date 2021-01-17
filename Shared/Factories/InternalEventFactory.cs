@@ -1,4 +1,6 @@
-﻿using Slipstream.Shared.Events.Internal;
+﻿using Newtonsoft.Json;
+using Slipstream.Shared.Events.Internal;
+using System.Collections.Generic;
 
 #nullable enable
 
@@ -8,7 +10,14 @@ namespace Slipstream.Shared.Factories
     {
         public InternalCommandPluginRegister CreateInternalCommandPluginRegister(string pluginId, string pluginName)
         {
-            return new InternalCommandPluginRegister { Id = pluginId, PluginName = pluginName };
+            return new InternalCommandPluginRegister { Id = pluginId, PluginName = pluginName, Configuration = "{}" };
+        }
+
+        public InternalCommandPluginRegister CreateInternalCommandPluginRegister(string pluginId, string pluginName, Dictionary<string, dynamic> configuration)
+        {
+            var jsonConfig = JsonConvert.SerializeObject(configuration);
+
+            return new InternalCommandPluginRegister { Id = pluginId, PluginName = pluginName, Configuration = jsonConfig };
         }
 
         public InternalCommandPluginStates CreateInternalCommandPluginStates()

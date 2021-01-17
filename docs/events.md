@@ -231,6 +231,7 @@ Request a plugin to be consumed
 | ExcludeFromTxrx | boolean | true (constant)                            |
 | Id              | string  | Id of the Plugin                           |
 | PluginName      | string  | Name of the Plugin                         |
+| Configuration   | string  | JSON-encoded configuration                 |
 
 **JSON Example:**  
 `{ "EventType": "InternalCommandPluginRegister", "ExcludeFromTxrx": true, "Uptime":1742, "Id": "AudioPlugin", "PluginName": "AudioPlugin"}`

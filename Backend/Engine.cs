@@ -52,36 +52,36 @@ print ""Initializing""
 
 -- Listens for samples to play or text to speek. Disabling this will mute all
 -- sounds
-register_plugin(""AudioPlugin"", ""AudioPlugin"")
+register_plugin({plugin_name = ""AudioPlugin""})
 
 -- Delivers IRacing events as they happen
-register_plugin(""IRacingPlugin"", ""IRacingPlugin"")
+register_plugin({plugin_name = ""IRacingPlugin""})
 
 -- Connects to Twitch (via the values provided in Settings) and provide
 -- a way to sende and receive twitch messages
-register_plugin(""TwitchPlugin"", ""TwitchPlugin"")
+register_plugin({plugin_name = ""TwitchPlugin""})
 
 -- Only one of these may be active at a time. ReceiverPlugin listens
 -- for TCP connections, while Transmitter will send the events it sees
 -- to the destination. Both are configured as Txrx in Settings.
--- register_plugin(""TransmitterPlugin"", ""TransmitterPlugin"")
--- register_plugin(""ReceiverPlugin"", ""ReceiverPlugin"")
+register_plugin({plugin_name = ""TransmitterPlugin""})
+register_plugin({plugin_name = ""ReceiverPlugin""})
 
 -- LuaManagerPlugin listens for FileMonitorPlugin events and acts on them.
 -- It will only act on files ending with .lua, which it launches
 -- a LuaPlugin for. If the file is modified, it will take down the plugin and
 -- launch a new one with the same file. If files are moved out of the directory
 -- it is consider as if it were deleted. Deleted files are taken down.
-register_plugin(""LuaManagerPlugin"", ""LuaManagerPlugin"")
+register_plugin({plugin_name = ""LuaManagerPlugin""})
 
 -- FileMonitorPlugin monitors the script directory and sends out events
 -- every time a file is created, renamed, modified or deleted
-register_plugin(""FileMonitorPlugin"", ""FileMonitorPlugin"")
+register_plugin({plugin_name = ""FileMonitorPlugin""})
 
 -- Provides save/replay of events. Please be careful if you use this. There is
 -- not much filtering, so RegisterPlugin/Unregister plugins will actually make
 -- slipstream perform these actions
-register_plugin(""PlaybackPlugin"", ""PlaybackPlugin"")
+register_plugin({plugin_name = ""PlaybackPlugin""})
 ");
                 }
 

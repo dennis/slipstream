@@ -26,9 +26,4 @@
         string TwitchToken { get; }
         bool TwitchLog { get; }
     }
-
-    public interface ILuaConfiguration
-    {
-        string FilePath { get; }
-    }
 }

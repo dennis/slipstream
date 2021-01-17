@@ -86,11 +86,6 @@ namespace Slipstream.Backend.Plugins
             BootUp = false;
         }
 
-        private class LuaConfiguration : ILuaConfiguration
-        {
-            public string FilePath { get; set; } = "";
-        }
-
         private void NewFile(string filePath)
         {
             if (Scripts.ContainsKey(filePath))
@@ -105,7 +100,7 @@ namespace Slipstream.Backend.Plugins
                 WaitingForLuaScripts.Add(pluginId);
             }
 
-            var plugin = PluginFactory.CreatePlugin(pluginId, "LuaPlugin", (ILuaConfiguration)new LuaConfiguration { FilePath = filePath });
+            var plugin = PluginFactory.CreatePlugin(pluginId, "LuaPlugin", new Dictionary<string, dynamic> { { "filepath", filePath } });
 
             PluginManager.RegisterPlugin(plugin);
 

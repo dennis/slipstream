@@ -65,7 +65,7 @@ namespace Slipstream.Backend
 
         public void UnregisterPlugin(IPlugin p)
         {
-            lock(Plugins)
+            lock (Plugins)
             {
                 UnregisterPluginWithoutLock(p);
             }
@@ -94,7 +94,7 @@ namespace Slipstream.Backend
 
         private void RegisterPluginWithoutLock(IPlugin plugin)
         {
-            if(Plugins.ContainsKey(plugin.Id))
+            if (Plugins.ContainsKey(plugin.Id))
             {
                 Plugins.Remove(plugin.Id);
             }
@@ -169,19 +169,19 @@ namespace Slipstream.Backend
 
         public void RestartReconfigurablePlugins()
         {
-            lock(Plugins)
+            lock (Plugins)
             {
                 var restartList = new List<IPlugin>();
 
-                foreach(var oldPlugin in Plugins)
+                foreach (var oldPlugin in Plugins)
                 {
-                    if(oldPlugin.Value.Reconfigurable)
+                    if (oldPlugin.Value.Reconfigurable)
                     {
                         restartList.Add(oldPlugin.Value);
                     }
                 }
 
-                foreach(var plugin in restartList)
+                foreach (var plugin in restartList)
                 {
                     UnregisterPluginWithoutLock(plugin);
                     Plugins.Remove(plugin.Id);
@@ -214,33 +214,31 @@ namespace Slipstream.Backend
             };
         }
 
-        public IPlugin CreatePlugin<T>(string pluginId, string name, T configuration)
+        public IPlugin CreatePlugin(string pluginId, string name, Dictionary<string, dynamic> configuration)
         {
             return CreatePlugin(pluginId, name, EventBus, configuration);
         }
 
-        public IPlugin CreatePlugin<T>(string pluginId, string name, IEventBus eventBus, T configuration)
+        public IPlugin CreatePlugin(string pluginId, string name, IEventBus eventBus, Dictionary<string, dynamic> configuration)
         {
             return name switch
             {
-#pragma warning disable CS8604 // Possible null reference argument.
-                "LuaPlugin" when configuration is ILuaConfiguration => new LuaPlugin(
+                "LuaPlugin" => new LuaPlugin(
                     pluginId,
                     Logger.ForContext(typeof(LuaPlugin)),
                     EventFactory,
-                    EventBus,
+                    eventBus,
                     StateService,
                     EventSerdeService,
-                    configuration as ILuaConfiguration
+                    configuration
                 ),
-#pragma warning restore CS8604 // Possible null reference argument.
                 _ => throw new Exception($"Unknown configurable plugin '{name}'"),
             };
         }
 
         public void Dispose()
         {
-            lock(Plugins)
+            lock (Plugins)
             {
                 UnregisterPluginsWithoutLock();
                 Plugins.Clear();

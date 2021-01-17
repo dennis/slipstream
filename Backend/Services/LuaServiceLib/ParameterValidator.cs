@@ -7,95 +7,92 @@ using System.Diagnostics;
 
 namespace Slipstream.Backend.Services.LuaServiceLib
 {
-    public partial class LuaContext
+    internal class ParameterValidator
     {
-        private class ParameterValidator
+        private bool AllowUnknownArguments;
+        private readonly Dictionary<string, Type> Schema = new Dictionary<string, Type>();
+        private readonly List<string> RequriedKeys = new List<string>();
+
+        public static ParameterValidator Create()
         {
-            private bool AllowUnknownArguments;
-            private readonly Dictionary<string, Type> Schema = new Dictionary<string, Type>();
-            private readonly List<string> RequriedKeys = new List<string>();
+            return new ParameterValidator();
+        }
 
-            public static ParameterValidator Create()
+        internal ParameterValidator Permit(string key, Type type)
+        {
+            if (type == typeof(string) || type == typeof(long) || type == typeof(float) || type == typeof(bool))
             {
-                return new ParameterValidator();
+                Schema.Add(key, type);
+                return this;
             }
 
-            internal ParameterValidator Permit(string key, Type type)
+            throw new ParameterException($"Unsupported type = '{type}'");
+        }
+
+        internal ParameterValidator AllowAnythingElse()
+        {
+            AllowUnknownArguments = true;
+
+            return this;
+        }
+
+        internal ParameterValidator Required(string key, Type type)
+        {
+            Permit(key, type);
+            RequriedKeys.Add(key);
+            return this;
+        }
+
+        internal ParameterResult Parse(LuaTable source)
+        {
+            var result = new ParameterResult();
+
+            foreach (var k in source.Keys)
             {
-                if (type == typeof(string) || type == typeof(long) || type == typeof(float) || type == typeof(bool))
+                if (k.GetType() != typeof(string))
                 {
-                    Schema.Add(key, type);
-                    return this;
+                    throw new ParameterException($"Argument-name is expected to be a string {k}");
                 }
-
-                throw new ParameterException($"Unsupported type = '{type}'");
-            }
-
-            internal ParameterValidator AllowAnythingElse()
-            {
-                AllowUnknownArguments = true;
-
-                return this;
-            }
-
-            internal ParameterValidator Required(string key, Type type)
-            {
-                Permit(key, type);
-                RequriedKeys.Add(key);
-                return this;
-            }
-
-            internal ParameterResult Parse(LuaTable source)
-            {
-                var result = new ParameterResult();
-
-                foreach (var k in source.Keys)
+                else
                 {
-                    if (k.GetType() != typeof(string))
-                    {
-                        throw new ParameterException($"Argument-name is expected to be a string {k}");
-                    }
-                    else
-                    {
-                        var value = source[(string)k];
+                    var value = source[(string)k];
 
-                        if (Schema.ContainsKey((string)k))
+                    if (Schema.ContainsKey((string)k))
+                    {
+                        var type = Schema[(string)k];
+
+                        if (type == value.GetType())
                         {
-                            var type = Schema[(string)k];
-
-                            if (type == value.GetType())
-                            {
-                                result.Add((string)k, value);
-                            }
-                            else
-                            {
-                                throw new ParameterException($"Wrong type for argument '{k}'. Expected '{type}', got '{source[k].GetType()}'");
-                            }
+                            result.Add((string)k, value);
                         }
                         else
                         {
-                            if (AllowUnknownArguments)
-                            {
-                                result.Add((string)k, value);
-                            }
-                            else
-                            {
-                                throw new ParameterException($"Unknown argument '{k}'");
-                            }
+                            throw new ParameterException($"Wrong type for argument '{k}'. Expected '{type}', got '{source[k].GetType()}'");
+                        }
+                    }
+                    else
+                    {
+                        if (AllowUnknownArguments)
+                        {
+                            result.Add((string)k, value);
+                        }
+                        else
+                        {
+                            throw new ParameterException($"Unknown argument '{k}'");
                         }
                     }
                 }
-
-                foreach (var k in RequriedKeys)
-                {
-                    if (!result.ContainsKey(k))
-                    {
-                        throw new ParameterException($"Missing required argument '{k}'");
-                    }
-                }
-
-                return result;
             }
+
+            foreach (var k in RequriedKeys)
+            {
+                if (!result.ContainsKey(k))
+                {
+                    throw new ParameterException($"Missing required argument '{k}'");
+                }
+            }
+
+            return result;
         }
     }
 }

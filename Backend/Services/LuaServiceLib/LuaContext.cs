@@ -9,7 +9,7 @@ using System.IO;
 
 namespace Slipstream.Backend.Services.LuaServiceLib
 {
-    public partial class LuaContext : ILuaContext
+    public class LuaContext : ILuaContext
     {
         private readonly CoreMethodCollection CoreMethodCollection_;
         private readonly LuaFunction? HandleFunc;

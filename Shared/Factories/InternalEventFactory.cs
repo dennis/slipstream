@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
+using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Events.Internal;
-using System.Collections.Generic;
 
 #nullable enable
 
@@ -13,7 +13,7 @@ namespace Slipstream.Shared.Factories
             return new InternalCommandPluginRegister { Id = pluginId, PluginName = pluginName, Configuration = "{}" };
         }
 
-        public InternalCommandPluginRegister CreateInternalCommandPluginRegister(string pluginId, string pluginName, Dictionary<string, dynamic> configuration)
+        public InternalCommandPluginRegister CreateInternalCommandPluginRegister(string pluginId, string pluginName, Parameters configuration)
         {
             var jsonConfig = JsonConvert.SerializeObject(configuration);
 

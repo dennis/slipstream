@@ -36,7 +36,7 @@ namespace Slipstream.Backend
 
             lock (Events)
             {
-                if(Events.Count >= EVENT_MAX_SIZE)
+                if (Events.Count >= EVENT_MAX_SIZE)
                 {
                     // Is there a better way for deleting x elements from the beginning?
                     for (int i = 0; i < EVENT_DELETE_SIZE; i++)
@@ -49,7 +49,6 @@ namespace Slipstream.Backend
             {
                 if (enabled)
                 {
-                    Debug.WriteLine($"Publising event: {e}");
                     foreach (var l in Listeners)
                     {
                         l.Add(e);
@@ -70,7 +69,7 @@ namespace Slipstream.Backend
             {
                 if (fromStart)
                 {
-                    lock(Events)
+                    lock (Events)
                     {
                         foreach (var e in Events)
                         {

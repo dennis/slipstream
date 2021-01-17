@@ -2,6 +2,7 @@
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Lua;
 using Slipstream.Shared.Factories;
+using Slipstream.Shared.Helpers.StrongParameters;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,7 +32,7 @@ namespace Slipstream.Backend.Plugins
         private DateTime? BootupEventsDeadline;
         private readonly List<IEvent> CapturedBootupEvents = new List<IEvent>();
 
-        public LuaManagerPlugin(string id, IFileMonitorEventFactory eventFactory, IEventBus eventBus, IPluginManager pluginManager, IPluginFactory pluginFactory, IEventSerdeService eventSerdeService) : base(id, "LuaManagerPlugin", "LuaManagerPlugin", "Core")
+        public LuaManagerPlugin(string id, IFileMonitorEventFactory eventFactory, IEventBus eventBus, IPluginManager pluginManager, IPluginFactory pluginFactory, IEventSerdeService eventSerdeService) : base(id, "LuaManagerPlugin", id, "Core")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
@@ -100,7 +101,7 @@ namespace Slipstream.Backend.Plugins
                 WaitingForLuaScripts.Add(pluginId);
             }
 
-            var plugin = PluginFactory.CreatePlugin(pluginId, "LuaPlugin", new Dictionary<string, dynamic> { { "filepath", filePath } });
+            var plugin = PluginFactory.CreatePlugin(pluginId, "LuaPlugin", new Parameters { { "filepath", filePath } });
 
             PluginManager.RegisterPlugin(plugin);
 

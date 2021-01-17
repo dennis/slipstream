@@ -1,9 +1,13 @@
-﻿using Serilog;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Serilog;
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Internal;
 using Slipstream.Shared.Factories;
+using Slipstream.Shared.Helpers.StrongParameters;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 #nullable enable
@@ -59,13 +63,13 @@ register_plugin({plugin_name = ""IRacingPlugin""})
 
 -- Connects to Twitch (via the values provided in Settings) and provide
 -- a way to sende and receive twitch messages
-register_plugin({plugin_name = ""TwitchPlugin""})
+-- register_plugin({plugin_name = ""TwitchPlugin"", twitch_username = ""<username>"", twitch_token = ""<token>"", twitch_channel = ""<channel>""})
 
 -- Only one of these may be active at a time. ReceiverPlugin listens
 -- for TCP connections, while Transmitter will send the events it sees
 -- to the destination. Both are configured as Txrx in Settings.
-register_plugin({plugin_name = ""TransmitterPlugin""})
-register_plugin({plugin_name = ""ReceiverPlugin""})
+-- register_plugin({plugin_name = ""TransmitterPlugin"", ip = ""<yourip>"", port = <yourport>})
+-- register_plugin({plugin_name = ""ReceiverPlugin"", ip = ""<yourip>"", port = <yourport>})
 
 -- LuaManagerPlugin listens for FileMonitorPlugin events and acts on them.
 -- It will only act on files ending with .lua, which it launches
@@ -118,7 +122,10 @@ register_plugin({plugin_name = ""PlaybackPlugin""})
 
         private void OnCommandPluginRegister(Shared.Events.Internal.InternalCommandPluginRegister ev)
         {
-            PluginManager.RegisterPlugin(PluginFactory.CreatePlugin(ev.Id, ev.PluginName));
+            JObject a = JObject.Parse(ev.Configuration);
+            Parameters configuration = Parameters.From(a);
+
+            PluginManager.RegisterPlugin(PluginFactory.CreatePlugin(ev.Id, ev.PluginName, configuration));
         }
 
         protected override void Main()

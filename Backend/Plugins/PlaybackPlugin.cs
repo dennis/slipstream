@@ -16,7 +16,7 @@ namespace Slipstream.Backend.Plugins
         private readonly IEventBus EventBus;
         private readonly IEventSerdeService EventSerdeService;
 
-        public PlaybackPlugin(string id, ILogger logger, IEventBus eventBus, IEventSerdeService eventSerdeService) : base(id, "AudioPlugin", "AudioPlugin", "Audio", true)
+        public PlaybackPlugin(string id, ILogger logger, IEventBus eventBus, IEventSerdeService eventSerdeService) : base(id, "AudioPlugin", id, "Audio", true)
         {
             EventBus = eventBus;
             EventSerdeService = eventSerdeService;
@@ -39,7 +39,7 @@ namespace Slipstream.Backend.Plugins
 
             IEvent? currentEvent;
 
-            while((currentEvent = subscription.NextEvent(0)) != null)
+            while ((currentEvent = subscription.NextEvent(0)) != null)
             {
                 string json = EventSerdeService.Serialize(currentEvent);
 

@@ -2,6 +2,8 @@ using Serilog;
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using Slipstream.Shared.Factories;
+using Slipstream.Shared.Helpers.StrongParameters;
+using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using System;
 using System.Diagnostics;
 using System.Net;
@@ -13,6 +15,8 @@ namespace Slipstream.Backend.Plugins
 {
     public class ReceiverPlugin : BasePlugin
     {
+        internal static DictionaryValidator ConfigurationValidator { get; }
+
         private readonly ILogger Logger;
         private readonly IEventBus EventBus;
         private readonly IInternalEventFactory EventFactory;
@@ -24,27 +28,25 @@ namespace Slipstream.Backend.Plugins
         private const int READ_BUFFER_SIZE = 1024 * 16;
         private readonly byte[] ReadBuffer = new byte[READ_BUFFER_SIZE];
 
-        public ReceiverPlugin(string id, ILogger logger, IInternalEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, ITxrxConfiguration txrxConfiguration) : base(id, "ReceiverPlugin", "ReceiverPlugin", "ReceiverPlugin", true)
+        static ReceiverPlugin()
+        {
+            ConfigurationValidator = new DictionaryValidator()
+                .RequireString("ip")
+                .RequireLong("port")
+                ;
+        }
+
+        public ReceiverPlugin(string id, ILogger logger, IInternalEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, Parameters configuration) : base(id, "ReceiverPlugin", id, "ReceiverPlugin", true)
         {
             Logger = logger;
             EventFactory = eventFactory;
             EventBus = eventBus;
             TxrxService = txrxService;
 
-            var input = txrxConfiguration.TxrxIpPort.Split(':');
+            ConfigurationValidator.Validate(configuration);
 
-            if (input.Length == 2)
-            {
-                Ip = input[0];
-                if (!Int32.TryParse(input[1], out Port))
-                {
-                    Logger.Error("ReceiverPlugin: Invalid port in TxrxHost provided: {TxrxIpPort}", txrxConfiguration.TxrxIpPort);
-                }
-            }
-            else
-            {
-                Logger.Error("ReceiverPlugin: Invalid TxrxHost provided: {TxrxIpPort}", txrxConfiguration.TxrxIpPort);
-            }
+            Ip = configuration.Extract<string>("ip");
+            Port = (int)configuration.Extract<long>("port");
 
             // To avoid that we get an endless loop, we will Unregister the "other" end in this instance
             EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginUnregister("TransmitterPlugin"));
@@ -102,7 +104,7 @@ namespace Slipstream.Backend.Plugins
             {
                 Logger.Information("ReceiverPlugin: Cant receieve data: {Message}", e.Message);
             }
-            catch(TxrxService.TxrxServiceException e)
+            catch (TxrxService.TxrxServiceException e)
             {
                 Logger.Information("ReceiverPlugin: Error parsing data {Message}", e.Message);
             }

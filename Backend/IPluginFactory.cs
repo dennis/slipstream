@@ -1,7 +1,7 @@
 ﻿#nullable enable
 
 using Slipstream.Shared;
-using System.Collections.Generic;
+using Slipstream.Shared.Helpers.StrongParameters;
 
 namespace Slipstream.Backend
 {
@@ -11,8 +11,8 @@ namespace Slipstream.Backend
 
         IPlugin CreatePlugin(string id, string name, IEventBus eventBus);
 
-        IPlugin CreatePlugin(string pluginId, string name, Dictionary<string, dynamic> configuration);
+        IPlugin CreatePlugin(string pluginId, string name, Parameters configuration);
 
-        IPlugin CreatePlugin(string pluginId, string name, IEventBus eventBus, Dictionary<string, dynamic> configuration);
+        IPlugin CreatePlugin(string pluginId, string name, IEventBus eventBus, Parameters configuration);
     }
 }

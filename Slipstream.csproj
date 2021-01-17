@@ -154,9 +154,14 @@
     <Compile Include="Backend\Services\ITxrxService.cs" />
     <Compile Include="Backend\Services\LuaService.cs" />
     <Compile Include="Backend\Services\ILuaContext.cs" />
-    <Compile Include="Backend\Services\LuaServiceLib\ParameterException.cs" />
-    <Compile Include="Backend\Services\LuaServiceLib\ParameterResult.cs" />
-    <Compile Include="Backend\Services\LuaServiceLib\ParameterValidator.cs" />
+    <Compile Include="Shared\Helpers\StrongParameters\Validators\ArrayValidator.cs" />
+    <Compile Include="Shared\Helpers\StrongParameters\Validators\BooleanValidator.cs" />
+    <Compile Include="Shared\Helpers\StrongParameters\Validators\FloatValidator.cs" />
+    <Compile Include="Shared\Helpers\StrongParameters\Validators\IValidator.cs" />
+    <Compile Include="Shared\Helpers\StrongParameters\Validators\LongValidator.cs" />
+    <Compile Include="Shared\Helpers\StrongParameters\StrongParametersException.cs" />
+    <Compile Include="Shared\Helpers\StrongParameters\Validators\DictionaryValidator.cs" />
+    <Compile Include="Shared\Helpers\StrongParameters\Parameters.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\PlaybackMethodCollection.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\AudioMethodCollection.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\CoreMethodCollection.cs" />
@@ -165,6 +170,7 @@
     <Compile Include="Backend\Services\LuaServiceLib\LuaContext.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\LuaException.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\StateMethodCollection.cs" />
+    <Compile Include="Shared\Helpers\StrongParameters\Validators\StringValidator.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\TwitchMethodCollection.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\InternalMethodCollection.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\UIMethodCollection.cs" />
@@ -335,6 +341,7 @@
       <Name>iRacingSDK</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\KeraLua.1.2.11\build\net45\KeraLua.targets" Condition="Exists('packages\KeraLua.1.2.11\build\net45\KeraLua.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

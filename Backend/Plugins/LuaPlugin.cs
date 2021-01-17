@@ -28,8 +28,8 @@ namespace Slipstream.Backend.Plugins
             IEventBus eventBus,
             IStateService stateService,
             IEventSerdeService eventSerdeService,
-            Dictionary<string, dynamic> configuration
-        ) : base(id, "LuaPlugin", "LuaPlugin", "Lua")
+            Dictionary<dynamic, dynamic> configuration
+        ) : base(id, "LuaPlugin", id, "Lua")
         {
             Logger = logger;
             LuaEventFactory = eventFactory.Get<ILuaEventFactory>();

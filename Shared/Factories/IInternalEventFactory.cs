@@ -1,5 +1,5 @@
-﻿using Slipstream.Shared.Events.Internal;
-using System.Collections.Generic;
+﻿using Slipstream.Shared.Helpers.StrongParameters;
+using Slipstream.Shared.Events.Internal;
 
 #nullable enable
 
@@ -14,7 +14,7 @@ namespace Slipstream.Shared.Factories
 
         InternalCommandPluginRegister CreateInternalCommandPluginRegister(string pluginId, string pluginName);
 
-        InternalCommandPluginRegister CreateInternalCommandPluginRegister(string pluginId, string pluginName, Dictionary<string, dynamic> configuration);
+        InternalCommandPluginRegister CreateInternalCommandPluginRegister(string pluginId, string pluginName, Parameters configuration);
 
         InternalCommandPluginStates CreateInternalCommandPluginStates();
 

@@ -15,6 +15,7 @@
     - Menu items in UI are only shown if you register that plugin: register_plugin("PlaybackPlugin", "PlaybackPlugin")_
     - Lua: playback:save(filename), playback:load(filename). Saves and loads events (same as via menu in UI)
   - lua: Changed syntax for register_plugin(id, name). Going forward it takes a single argument a lua table. Read [docs](docs/lua.md#internal)
+  - UI: Removed settings menu. Now settings is specified in init.lua, making Settings redundant. If you remove your settings, a new one will be generated with instructions.
 
 ## [0.4.0](https://github.com/dennis/slipstream/releases/tag/v0.3.0) (2020-01-10)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.3.0...v0.4.0)

@@ -262,19 +262,6 @@ Request a plugin to be removed
 `{"EventType": "InternalCommandPluginUnregister", "ExcludeFromTxrx": true, "Uptime":1742, "Id": "AudioPlugin" }`
 </details>
 
-<details><summary>InternalCommandReconfigure</summary><br />
-
-Will be published if settings were changed, allowing Slipstream to restart plugins that might need to.
-
-| Name            | Type    | Description                             |
-|:----------------|:-------:|:----------------------------------------|
-| EventType       | string  | `InternalCommandReconfigure` (constant) |
-| ExcludeFromTxrx | boolean | true (constant)                         |
-
-**JSON Example:**
-`{ "EventType": "InternalCommandReconfigure", "ExcludeFromTxrx": true}, "Uptime":1742`
-</details>
-
 <details><summary>InternalPluginState</summary><br />
 Show the state of a plugin. These are published when plugins are 
 registered or unregistered or upon request.

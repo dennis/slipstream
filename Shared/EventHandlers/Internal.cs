@@ -20,8 +20,6 @@ namespace Slipstream.Shared.EventHandlers
 
         public delegate void OnInternalCommandPluginUnregisterHandler(EventHandler source, EventHandlerArgs<InternalCommandPluginUnregister> e);
 
-        public delegate void OnInternalCommandReconfigureHandler(EventHandler source, EventHandlerArgs<InternalCommandReconfigure> e);
-
         public delegate void OnInternalPluginStateHandler(EventHandler source, EventHandlerArgs<InternalPluginState> e);
 
         public event OnInternalCommandPluginRegisterHandler? OnInternalCommandPluginRegister;
@@ -29,8 +27,6 @@ namespace Slipstream.Shared.EventHandlers
         public event OnInternalCommandPluginStatesHandler? OnInternalCommandPluginStates;
 
         public event OnInternalCommandPluginUnregisterHandler? OnInternalCommandPluginUnregister;
-
-        public event OnInternalCommandReconfigureHandler? OnInternalCommandReconfigure;
 
         public event OnInternalPluginStateHandler? OnInternalPluginState;
 
@@ -74,16 +70,6 @@ namespace Slipstream.Shared.EventHandlers
                     if (OnInternalCommandPluginStates != null)
                     {
                         OnInternalCommandPluginStates.Invoke(Parent, new EventHandlerArgs<InternalCommandPluginStates>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case InternalCommandReconfigure tev:
-                    if (OnInternalCommandReconfigure != null)
-                    {
-                        OnInternalCommandReconfigure.Invoke(Parent, new EventHandlerArgs<InternalCommandReconfigure>(tev));
                         return IEventHandler.HandledStatus.Handled;
                     }
                     else

@@ -34,10 +34,5 @@ namespace Slipstream.Shared.Factories
         {
             return new InternalPluginState { Id = pluginId, PluginName = pluginName, DisplayName = displayName, PluginStatus = pluginStatus.ToString() };
         }
-
-        public InternalCommandReconfigure CreateInternalCommandReconfigure()
-        {
-            return new InternalCommandReconfigure();
-        }
     }
 }

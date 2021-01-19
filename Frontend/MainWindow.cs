@@ -104,7 +104,9 @@ namespace Slipstream.Frontend
         }
 
         #region EventHandlerThread methods
+
         private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
+
         private void EventListenerMain()
         {
             Debug.Assert(EventBusSubscription != null);
@@ -201,6 +203,7 @@ namespace Slipstream.Frontend
                             break;
                     }
                     break;
+
                 case "Unregistered":
                     {
                         if (MenuPluginItems.ContainsKey(e.Id))
@@ -222,7 +225,8 @@ namespace Slipstream.Frontend
                     break;
             }
         }
-        #endregion
+
+        #endregion EventHandlerThread methods
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -237,14 +241,6 @@ namespace Slipstream.Frontend
         private void OpenAudioDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Process.Start(ApplicationConfiguration.AudioPath);
-        }
-
-        private void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if(new SettingsForm().ShowDialog(this) == DialogResult.OK)
-            {
-                EventBus.PublishEvent(InternalEventFactory.CreateInternalCommandReconfigure());
-            }
         }
 
         private void SaveEventsToFileToolStripMenuItem_Click(object sender, EventArgs e)

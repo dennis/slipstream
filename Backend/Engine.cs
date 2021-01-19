@@ -39,7 +39,6 @@ namespace Slipstream.Backend
             internalEventHandler.OnInternalCommandPluginRegister += (s, e) => OnCommandPluginRegister(e.Event);
             internalEventHandler.OnInternalCommandPluginUnregister += (s, e) => OnCommandPluginUnregister(e.Event);
             internalEventHandler.OnInternalCommandPluginStates += (s, e) => OnCommandPluginStates(e.Event);
-            internalEventHandler.OnInternalCommandReconfigure += (s, e) => OnInternalReconfigured();
 
             // Plugins..
             {
@@ -62,7 +61,7 @@ register_plugin({plugin_name = ""AudioPlugin""})
 register_plugin({plugin_name = ""IRacingPlugin""})
 
 -- Connects to Twitch (via the values provided in Settings) and provide
--- a way to sende and receive twitch messages
+-- a way to sende and receive twitch messages. Generate a token here: https://twitchapps.com/tmi/
 -- register_plugin({plugin_name = ""TwitchPlugin"", twitch_username = ""<username>"", twitch_token = ""<token>"", twitch_channel = ""<channel>""})
 
 -- Only one of these may be active at a time. ReceiverPlugin listens
@@ -95,11 +94,6 @@ register_plugin({plugin_name = ""PlaybackPlugin""})
 
             // Tell Plugins that we're live - this will make eventbus distribute events
             EventBus.Enabled = true;
-        }
-
-        private void OnInternalReconfigured()
-        {
-            PluginManager.RestartReconfigurablePlugins();
         }
 
         private void OnCommandPluginStates(InternalCommandPluginStates _)

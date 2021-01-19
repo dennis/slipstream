@@ -164,42 +164,6 @@ namespace Slipstream.Backend
             }
         }
 
-        public void RestartReconfigurablePlugins()
-        {
-            lock (Plugins)
-            {
-                var restartList = new List<IPlugin>();
-
-                foreach (var oldPlugin in Plugins)
-                {
-                    if (oldPlugin.Value.Reconfigurable)
-                    {
-                        restartList.Add(oldPlugin.Value);
-                    }
-                }
-
-                foreach (var plugin in restartList)
-                {
-                    UnregisterPluginWithoutLock(plugin);
-                    Plugins.Remove(plugin.Id);
-
-                    IPlugin newPlugin = CreatePlugin(plugin.Id, plugin.Name);
-
-                    RegisterPluginWithoutLock(newPlugin);
-                }
-            }
-        }
-
-        public IPlugin CreatePlugin(string id, string name)
-        {
-            return CreatePlugin(id, name, EventBus);
-        }
-
-        public IPlugin CreatePlugin(string id, string name, IEventBus eventBus)
-        {
-            return CreatePlugin(id, name, eventBus, new Parameters());
-        }
-
         public IPlugin CreatePlugin(string pluginId, string name, Parameters configuration)
         {
             return CreatePlugin(pluginId, name, EventBus, configuration);

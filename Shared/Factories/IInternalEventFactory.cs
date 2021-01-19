@@ -21,7 +21,5 @@ namespace Slipstream.Shared.Factories
         InternalCommandPluginUnregister CreateInternalCommandPluginUnregister(string pluginId);
 
         InternalPluginState CreateInternalPluginState(string pluginId, string pluginName, string displayName, PluginStatusEnum pluginStatus);
-
-        InternalCommandReconfigure CreateInternalCommandReconfigure();
     }
 }

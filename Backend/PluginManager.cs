@@ -183,7 +183,7 @@ namespace Slipstream.Backend
                     configuration
                 ),
                 "FileMonitorPlugin" => new FileMonitorPlugin(pluginId, FileMonitorEventFactory, eventBus, configuration),
-                "LuaManagerPlugin" => new LuaManagerPlugin(pluginId, FileMonitorEventFactory, eventBus, this, this, EventSerdeService),
+                "LuaManagerPlugin" => new LuaManagerPlugin(pluginId, Logger.ForContext(typeof(LuaPlugin)), FileMonitorEventFactory, eventBus, this, this, EventSerdeService),
                 "AudioPlugin" => new AudioPlugin(pluginId, Logger.ForContext(typeof(AudioPlugin)), eventBus, AudioEventFactory, configuration),
                 "IRacingPlugin" => new IRacingPlugin(pluginId, IRacingEventFactory, eventBus),
                 "TwitchPlugin" => new TwitchPlugin(pluginId, Logger.ForContext(typeof(TwitchPlugin)), TwitchEventFactory, eventBus, configuration),

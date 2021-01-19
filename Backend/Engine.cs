@@ -119,7 +119,14 @@ register_plugin({plugin_name = ""PlaybackPlugin""})
             JObject a = JObject.Parse(ev.Configuration);
             Parameters configuration = Parameters.From(a);
 
-            PluginManager.RegisterPlugin(PluginFactory.CreatePlugin(ev.Id, ev.PluginName, configuration));
+            try
+            {
+                PluginManager.RegisterPlugin(PluginFactory.CreatePlugin(ev.Id, ev.PluginName, configuration));
+            }
+            catch(Exception e)
+            {
+                Logger.Error(e, $"Failed creating plugin '{ev.Id}' ('{ev.PluginName}'): {e.Message}");
+            }
         }
 
         protected override void Main()

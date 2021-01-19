@@ -1,4 +1,5 @@
-﻿using Slipstream.Backend.Services;
+﻿using Serilog;
+using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Lua;
 using Slipstream.Shared.Factories;
@@ -15,6 +16,7 @@ namespace Slipstream.Backend.Plugins
 {
     internal class LuaManagerPlugin : BasePlugin
     {
+        private readonly ILogger Logger;
         private readonly IFileMonitorEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly IPluginManager PluginManager;
@@ -32,8 +34,9 @@ namespace Slipstream.Backend.Plugins
         private DateTime? BootupEventsDeadline;
         private readonly List<IEvent> CapturedBootupEvents = new List<IEvent>();
 
-        public LuaManagerPlugin(string id, IFileMonitorEventFactory eventFactory, IEventBus eventBus, IPluginManager pluginManager, IPluginFactory pluginFactory, IEventSerdeService eventSerdeService) : base(id, "LuaManagerPlugin", id, "Core")
+        public LuaManagerPlugin(string id, ILogger logger, IFileMonitorEventFactory eventFactory, IEventBus eventBus, IPluginManager pluginManager, IPluginFactory pluginFactory, IEventSerdeService eventSerdeService) : base(id, "LuaManagerPlugin", id, "Core")
         {
+            Logger = logger;
             EventFactory = eventFactory;
             EventBus = eventBus;
             PluginManager = pluginManager;
@@ -101,11 +104,18 @@ namespace Slipstream.Backend.Plugins
                 WaitingForLuaScripts.Add(pluginId);
             }
 
-            var plugin = PluginFactory.CreatePlugin(pluginId, "LuaPlugin", new Parameters { { "filepath", filePath } });
+            try
+            {
+                var plugin = PluginFactory.CreatePlugin(pluginId, "LuaPlugin", new Parameters { { "filepath", filePath } });
 
-            PluginManager.RegisterPlugin(plugin);
+                PluginManager.RegisterPlugin(plugin);
 
-            Scripts.Add(filePath, plugin);
+                Scripts.Add(filePath, plugin);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Failed creating plugin for {filePath}: {e.Message}");
+            }
         }
 
         private void DeletedFile(string filePath)

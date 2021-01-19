@@ -168,6 +168,16 @@ namespace Slipstream.Backend.Plugins
             {
                 // We have collected the events published when LuaScripts were booting. To avoid
                 // publishing the same events multiple times, we remove duplicates and then publish it
+
+                // As the events likely got different timestamps, we need to reset them, so we easily
+                // can find the duplicates. Here we just the timestamp to zero. As the timestamp will
+                // be overwritten by eventbus upon publishing the event, we don't really change anything
+
+                foreach (var e in CapturedBootupEvents.Distinct())
+                {
+                    e.Uptime = 0;
+                }
+
                 foreach (var e in CapturedBootupEvents.Distinct())
                 {
                     EventBus.PublishEvent(e);

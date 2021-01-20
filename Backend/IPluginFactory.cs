@@ -1,14 +1,14 @@
 ﻿#nullable enable
 
 using Slipstream.Shared;
+using Slipstream.Shared.Helpers.StrongParameters;
 
 namespace Slipstream.Backend
 {
     public interface IPluginFactory
     {
-        IPlugin CreatePlugin(string id, string name);
-        IPlugin CreatePlugin(string id, string name, IEventBus eventBus);
-        IPlugin CreatePlugin<T>(string pluginId, string name, T configuration);
-        IPlugin CreatePlugin<T>(string pluginId, string name, IEventBus eventBus, T configuration);
+        IPlugin CreatePlugin(string pluginId, string name, Parameters configuration);
+
+        IPlugin CreatePlugin(string pluginId, string name, IEventBus eventBus, Parameters configuration);
     }
 }

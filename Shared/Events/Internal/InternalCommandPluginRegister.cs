@@ -11,6 +11,7 @@ namespace Slipstream.Shared.Events.Internal
         public ulong Uptime { get; set; }
         public string Id { get; set; } = "INVALID-PLUGIN-ID";
         public string PluginName { get; set; } = "INVALID-PLUGIN-NAME";
+        public string Configuration { get; set; } = string.Empty;
 
         public override bool Equals(object? obj)
         {
@@ -18,16 +19,18 @@ namespace Slipstream.Shared.Events.Internal
                    EventType == register.EventType &&
                    ExcludeFromTxrx == register.ExcludeFromTxrx &&
                    Id == register.Id &&
-                   PluginName == register.PluginName;
+                   PluginName == register.PluginName &&
+                   Configuration == register.Configuration;
         }
 
         public override int GetHashCode()
         {
-            int hashCode = -172428057;
+            int hashCode = 302108760;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
             hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Id);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(PluginName);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Configuration);
             return hashCode;
         }
     }

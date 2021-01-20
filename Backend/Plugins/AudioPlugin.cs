@@ -3,6 +3,8 @@ using Serilog;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Audio;
 using Slipstream.Shared.Factories;
+using Slipstream.Shared.Helpers.StrongParameters;
+using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using System;
 using System.IO;
 using System.Speech.Synthesis;
@@ -15,6 +17,8 @@ namespace Slipstream.Backend.Plugins
 {
     internal class AudioPlugin : BasePlugin
     {
+        public static DictionaryValidator ConfigurationValidator { get; }
+
         private readonly ILogger Logger;
         private readonly string Path;
         private readonly SpeechSynthesizer Synthesizer;
@@ -22,13 +26,21 @@ namespace Slipstream.Backend.Plugins
         private readonly IEventBus EventBus;
         private WaveOutEvent OutputDevice = new WaveOutEvent();
 
-        public AudioPlugin(string id, ILogger logger, IEventBus eventBus, IAudioEventFactory eventFactory, IAudioConfiguration audioConfiguration) : base(id, "AudioPlugin", "AudioPlugin", id, true)
+        static AudioPlugin()
+        {
+            ConfigurationValidator = new DictionaryValidator()
+                .PermitString("path");
+        }
+
+        public AudioPlugin(string id, ILogger logger, IEventBus eventBus, IAudioEventFactory eventFactory, Parameters configuration) : base(id, "AudioPlugin", id, id, true)
         {
             Logger = logger;
             EventBus = eventBus;
             EventFactory = eventFactory;
 
-            Path = audioConfiguration.AudioPath;
+            ConfigurationValidator.Validate(configuration);
+
+            Path = configuration.ExtractOrDefault("path", "Audio");
 
             Synthesizer = new SpeechSynthesizer();
             Synthesizer.SetOutputToDefaultAudioDevice();

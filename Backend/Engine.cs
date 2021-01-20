@@ -1,9 +1,13 @@
-﻿using Serilog;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Serilog;
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Internal;
 using Slipstream.Shared.Factories;
+using Slipstream.Shared.Helpers.StrongParameters;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 #nullable enable
@@ -35,7 +39,6 @@ namespace Slipstream.Backend
             internalEventHandler.OnInternalCommandPluginRegister += (s, e) => OnCommandPluginRegister(e.Event);
             internalEventHandler.OnInternalCommandPluginUnregister += (s, e) => OnCommandPluginUnregister(e.Event);
             internalEventHandler.OnInternalCommandPluginStates += (s, e) => OnCommandPluginStates(e.Event);
-            internalEventHandler.OnInternalCommandReconfigure += (s, e) => OnInternalReconfigured();
 
             // Plugins..
             {
@@ -52,36 +55,36 @@ print ""Initializing""
 
 -- Listens for samples to play or text to speek. Disabling this will mute all
 -- sounds
-register_plugin(""AudioPlugin"", ""AudioPlugin"")
+register_plugin({plugin_name = ""AudioPlugin""})
 
 -- Delivers IRacing events as they happen
-register_plugin(""IRacingPlugin"", ""IRacingPlugin"")
+register_plugin({plugin_name = ""IRacingPlugin""})
 
 -- Connects to Twitch (via the values provided in Settings) and provide
--- a way to sende and receive twitch messages
-register_plugin(""TwitchPlugin"", ""TwitchPlugin"")
+-- a way to sende and receive twitch messages. Generate a token here: https://twitchapps.com/tmi/
+-- register_plugin({plugin_name = ""TwitchPlugin"", twitch_username = ""<username>"", twitch_token = ""<token>"", twitch_channel = ""<channel>""})
 
 -- Only one of these may be active at a time. ReceiverPlugin listens
 -- for TCP connections, while Transmitter will send the events it sees
 -- to the destination. Both are configured as Txrx in Settings.
--- register_plugin(""TransmitterPlugin"", ""TransmitterPlugin"")
--- register_plugin(""ReceiverPlugin"", ""ReceiverPlugin"")
+-- register_plugin({plugin_name = ""TransmitterPlugin"", ip = ""<yourip>"", port = <yourport>})
+-- register_plugin({plugin_name = ""ReceiverPlugin"", ip = ""<yourip>"", port = <yourport>})
 
 -- LuaManagerPlugin listens for FileMonitorPlugin events and acts on them.
 -- It will only act on files ending with .lua, which it launches
 -- a LuaPlugin for. If the file is modified, it will take down the plugin and
 -- launch a new one with the same file. If files are moved out of the directory
 -- it is consider as if it were deleted. Deleted files are taken down.
-register_plugin(""LuaManagerPlugin"", ""LuaManagerPlugin"")
+register_plugin({plugin_name = ""LuaManagerPlugin""})
 
 -- FileMonitorPlugin monitors the script directory and sends out events
 -- every time a file is created, renamed, modified or deleted
-register_plugin(""FileMonitorPlugin"", ""FileMonitorPlugin"")
+register_plugin({plugin_name = ""FileMonitorPlugin""})
 
 -- Provides save/replay of events. Please be careful if you use this. There is
 -- not much filtering, so RegisterPlugin/Unregister plugins will actually make
 -- slipstream perform these actions
-register_plugin(""PlaybackPlugin"", ""PlaybackPlugin"")
+register_plugin({plugin_name = ""PlaybackPlugin""})
 ");
                 }
 
@@ -91,11 +94,6 @@ register_plugin(""PlaybackPlugin"", ""PlaybackPlugin"")
 
             // Tell Plugins that we're live - this will make eventbus distribute events
             EventBus.Enabled = true;
-        }
-
-        private void OnInternalReconfigured()
-        {
-            PluginManager.RestartReconfigurablePlugins();
         }
 
         private void OnCommandPluginStates(InternalCommandPluginStates _)
@@ -118,7 +116,17 @@ register_plugin(""PlaybackPlugin"", ""PlaybackPlugin"")
 
         private void OnCommandPluginRegister(Shared.Events.Internal.InternalCommandPluginRegister ev)
         {
-            PluginManager.RegisterPlugin(PluginFactory.CreatePlugin(ev.Id, ev.PluginName));
+            JObject a = JObject.Parse(ev.Configuration);
+            Parameters configuration = Parameters.From(a);
+
+            try
+            {
+                PluginManager.RegisterPlugin(PluginFactory.CreatePlugin(ev.Id, ev.PluginName, configuration));
+            }
+            catch(Exception e)
+            {
+                Logger.Error(e, $"Failed creating plugin '{ev.Id}' ('{ev.PluginName}'): {e.Message}");
+            }
         }
 
         protected override void Main()

@@ -1,4 +1,5 @@
-﻿using Slipstream.Shared.Events.Internal;
+﻿using Slipstream.Shared.Helpers.StrongParameters;
+using Slipstream.Shared.Events.Internal;
 
 #nullable enable
 
@@ -12,9 +13,13 @@ namespace Slipstream.Shared.Factories
         }
 
         InternalCommandPluginRegister CreateInternalCommandPluginRegister(string pluginId, string pluginName);
+
+        InternalCommandPluginRegister CreateInternalCommandPluginRegister(string pluginId, string pluginName, Parameters configuration);
+
         InternalCommandPluginStates CreateInternalCommandPluginStates();
+
         InternalCommandPluginUnregister CreateInternalCommandPluginUnregister(string pluginId);
+
         InternalPluginState CreateInternalPluginState(string pluginId, string pluginName, string displayName, PluginStatusEnum pluginStatus);
-        InternalCommandReconfigure CreateInternalCommandReconfigure();
     }
 }

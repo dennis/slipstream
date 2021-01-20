@@ -25,17 +25,15 @@ namespace Slipstream.Frontend
         private readonly BlockingCollection<string> PendingMessages = new BlockingCollection<string>();
         private readonly IDictionary<string, ToolStripMenuItem> MenuPluginItems = new Dictionary<string, ToolStripMenuItem>();
         private readonly IDictionary<string, Button> LuaButtons = new Dictionary<string, Button>();
-        private readonly ApplicationConfiguration ApplicationConfiguration;
         private readonly string CleanTitle;
 
-        public MainWindow(IEventFactory eventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, ApplicationConfiguration applicationConfiguration)
+        public MainWindow(IEventFactory eventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService)
         {
             InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
             UIEventFactory = eventFactory.Get<IUIEventFactory>();
             PlaybackEventFactory = eventFactory.Get<IPlaybackEventFactory>();
 
             EventBus = eventBus;
-            ApplicationConfiguration = applicationConfiguration;
 
             InitializeComponent();
 
@@ -104,7 +102,9 @@ namespace Slipstream.Frontend
         }
 
         #region EventHandlerThread methods
+
         private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
+
         private void EventListenerMain()
         {
             Debug.Assert(EventBusSubscription != null);
@@ -185,11 +185,11 @@ namespace Slipstream.Frontend
                     switch (e.Id)
                     {
                         case "TransmitterPlugin":
-                            ExecuteSecure(() => Text = $"{CleanTitle} <<< transmitting to {ApplicationConfiguration.TxrxIpPort} >>>");
+                            ExecuteSecure(() => Text = $"{CleanTitle} <<< transmitting >>>");
                             break;
 
                         case "ReceiverPlugin":
-                            ExecuteSecure(() => Text = $"{CleanTitle} <<< receiving from {ApplicationConfiguration.TxrxIpPort} >>>");
+                            ExecuteSecure(() => Text = $"{CleanTitle} <<< receiving >>>");
                             break;
 
                         case "PlaybackPlugin":
@@ -201,6 +201,7 @@ namespace Slipstream.Frontend
                             break;
                     }
                     break;
+
                 case "Unregistered":
                     {
                         if (MenuPluginItems.ContainsKey(e.Id))
@@ -222,29 +223,12 @@ namespace Slipstream.Frontend
                     break;
             }
         }
-        #endregion
+
+        #endregion EventHandlerThread methods
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
-        }
-
-        private void OpenScriptsDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Process.Start(ApplicationConfiguration.ScriptPath);
-        }
-
-        private void OpenAudioDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Process.Start(ApplicationConfiguration.AudioPath);
-        }
-
-        private void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if(new SettingsForm().ShowDialog(this) == DialogResult.OK)
-            {
-                EventBus.PublishEvent(InternalEventFactory.CreateInternalCommandReconfigure());
-            }
         }
 
         private void SaveEventsToFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -262,6 +246,11 @@ namespace Slipstream.Frontend
             {
                 EventBus.PublishEvent(PlaybackEventFactory.CreatePlaybackCommandInjectEvents(OpenFileDialog.FileName));
             }
+        }
+
+        private void OpenDataDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start(".");
         }
     }
 }

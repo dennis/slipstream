@@ -2,6 +2,8 @@ using Serilog;
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using Slipstream.Shared.Factories;
+using Slipstream.Shared.Helpers.StrongParameters;
+using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using System;
 using System.Diagnostics;
 using System.Net.Sockets;
@@ -14,6 +16,8 @@ namespace Slipstream.Backend.Plugins
 {
     public class TransmitterPlugin : BasePlugin
     {
+        private static DictionaryValidator ConfigurationValidator { get; }
+
         private readonly ILogger Logger;
         private readonly IEventBus EventBus;
         private readonly IInternalEventFactory EventFactory;
@@ -22,31 +26,25 @@ namespace Slipstream.Backend.Plugins
         private TcpClient? Client = null;
         private readonly ITxrxService TxrxService;
 
-        public TransmitterPlugin(string id, ILogger logger, IInternalEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, ITxrxConfiguration txrxConfiguration) : base(id, "TransmitterPlugin", "TransmitterPlugin", "TransmitterPlugin", true)
+        static TransmitterPlugin()
+        {
+            ConfigurationValidator = new DictionaryValidator()
+                .RequireString("ip")
+                .RequireLong("port")
+                ;
+        }
+
+        public TransmitterPlugin(string id, ILogger logger, IInternalEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, Parameters configuration) : base(id, "TransmitterPlugin", id, "TransmitterPlugin", true)
         {
             Logger = logger;
             EventBus = eventBus;
             EventFactory = eventFactory;
             TxrxService = txrxService;
 
-            var input = txrxConfiguration.TxrxIpPort.Split(':');
+            ConfigurationValidator.Validate(configuration);
 
-            if (input.Length == 2)
-            {
-                Ip = input[0];
-                if (!Int32.TryParse(input[1], out Port))
-                {
-                    Logger.Error("TransmitterPlugin: Invalid port in TxrxIpPort provided: {TxrxIpPort}", txrxConfiguration.TxrxIpPort);
-                }
-                else
-                {
-                    Reset();
-                }
-            }
-            else
-            {
-                Logger.Error("TransmitterPlugin: Invalid TxrxIpPort provided: {TxrxIpPort}", txrxConfiguration.TxrxIpPort);
-            }
+            Ip = configuration.Extract<string>("ip");
+            Port = (int)configuration.Extract<long>("port");
 
             EventHandler.OnDefault += (_, e) => OnEvent(e.Event);
 

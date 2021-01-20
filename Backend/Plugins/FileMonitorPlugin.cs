@@ -1,8 +1,11 @@
 using Slipstream.Shared;
 using Slipstream.Shared.Events.FileMonitor;
 using Slipstream.Shared.Factories;
+using Slipstream.Shared.Helpers.StrongParameters;
+using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 #nullable enable
 
@@ -10,11 +13,18 @@ namespace Slipstream.Backend.Plugins
 {
     internal class FileMonitorPlugin : BasePlugin
     {
+        private static readonly DictionaryValidator ConfigurationValidator;
         private readonly IFileMonitorEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly IList<FileSystemWatcher> fileSystemWatchers = new List<FileSystemWatcher>();
 
-        public FileMonitorPlugin(string id, IFileMonitorEventFactory eventFactory, IEventBus eventBus, IFileMonitorConfiguration fileMonitorConfiguration) : base(id, "FileMonitorPlugin", "FileMonitorPlugin", "Core", true)
+        static FileMonitorPlugin()
+        {
+            ConfigurationValidator = new DictionaryValidator()
+                .PermitArray("paths", (a) => a.RequireString());
+        }
+
+        public FileMonitorPlugin(string id, IFileMonitorEventFactory eventFactory, IEventBus eventBus, Parameters configuration) : base(id, "FileMonitorPlugin", id, "Core", true)
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
@@ -22,7 +32,16 @@ namespace Slipstream.Backend.Plugins
             var FileMonitor = EventHandler.Get<Slipstream.Shared.EventHandlers.FileMonitor>();
             FileMonitor.OnFileMonitorCommandScan += (s, e) => ScanExistingFiles();
 
-            StartMonitoring(fileMonitorConfiguration.FileMonitorPaths);
+            ConfigurationValidator.Validate(configuration);
+
+            string[] paths = new string[] { "Scripts" };
+
+            if (configuration.ContainsKey("paths"))
+            {
+                paths = (configuration.Extract<Dictionary<dynamic, dynamic>>("paths").Values.Cast<string>()!).ToArray();
+            }
+
+            StartMonitoring(paths);
 
             ScanExistingFiles();
         }

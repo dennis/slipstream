@@ -231,6 +231,7 @@ Request a plugin to be consumed
 | ExcludeFromTxrx | boolean | true (constant)                            |
 | Id              | string  | Id of the Plugin                           |
 | PluginName      | string  | Name of the Plugin                         |
+| Configuration   | string  | JSON-encoded configuration                 |
 
 **JSON Example:**  
 `{ "EventType": "InternalCommandPluginRegister", "ExcludeFromTxrx": true, "Uptime":1742, "Id": "AudioPlugin", "PluginName": "AudioPlugin"}`
@@ -259,19 +260,6 @@ Request a plugin to be removed
 
 **JSON Example:**
 `{"EventType": "InternalCommandPluginUnregister", "ExcludeFromTxrx": true, "Uptime":1742, "Id": "AudioPlugin" }`
-</details>
-
-<details><summary>InternalCommandReconfigure</summary><br />
-
-Will be published if settings were changed, allowing Slipstream to restart plugins that might need to.
-
-| Name            | Type    | Description                             |
-|:----------------|:-------:|:----------------------------------------|
-| EventType       | string  | `InternalCommandReconfigure` (constant) |
-| ExcludeFromTxrx | boolean | true (constant)                         |
-
-**JSON Example:**
-`{ "EventType": "InternalCommandReconfigure", "ExcludeFromTxrx": true}, "Uptime":1742`
 </details>
 
 <details><summary>InternalPluginState</summary><br />

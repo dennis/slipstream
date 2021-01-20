@@ -34,12 +34,10 @@
             this.FileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LoadEventsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SaveEventsToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.SettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.OpenAudioDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.OpenScriptsDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.OpenDataDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ButtonFlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.LogAreaTextBox = new System.Windows.Forms.TextBox();
             this.LogMessageUpdateTimer = new System.Windows.Forms.Timer(this.components);
@@ -77,7 +75,6 @@
             this.FileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.LoadEventsToolStripMenuItem,
             this.SaveEventsToFileToolStripMenuItem,
-            this.SettingsToolStripMenuItem,
             this.ExitToolStripMenuItem});
             this.FileToolStripMenuItem.Name = "FileToolStripMenuItem";
             this.FileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -101,13 +98,6 @@
             this.SaveEventsToFileToolStripMenuItem.Visible = false;
             this.SaveEventsToFileToolStripMenuItem.Click += new System.EventHandler(this.SaveEventsToFileToolStripMenuItem_Click);
             // 
-            // SettingsToolStripMenuItem
-            // 
-            this.SettingsToolStripMenuItem.Name = "SettingsToolStripMenuItem";
-            this.SettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.SettingsToolStripMenuItem.Text = "Settings";
-            this.SettingsToolStripMenuItem.Click += new System.EventHandler(this.SettingsToolStripMenuItem_Click);
-            // 
             // ExitToolStripMenuItem
             // 
             this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
@@ -125,25 +115,17 @@
             // HelpToolStripMenuItem
             // 
             this.HelpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.OpenAudioDirectoryToolStripMenuItem,
-            this.OpenScriptsDirectoryToolStripMenuItem});
+            this.OpenDataDirectoryToolStripMenuItem});
             this.HelpToolStripMenuItem.Name = "HelpToolStripMenuItem";
             this.HelpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.HelpToolStripMenuItem.Text = "Help";
             // 
-            // OpenAudioDirectoryToolStripMenuItem
+            // OpenDataDirectoryToolStripMenuItem
             // 
-            this.OpenAudioDirectoryToolStripMenuItem.Name = "OpenAudioDirectoryToolStripMenuItem";
-            this.OpenAudioDirectoryToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.OpenAudioDirectoryToolStripMenuItem.Text = "Open Audio Directory";
-            this.OpenAudioDirectoryToolStripMenuItem.Click += new System.EventHandler(this.OpenAudioDirectoryToolStripMenuItem_Click);
-            // 
-            // OpenScriptsDirectoryToolStripMenuItem
-            // 
-            this.OpenScriptsDirectoryToolStripMenuItem.Name = "OpenScriptsDirectoryToolStripMenuItem";
-            this.OpenScriptsDirectoryToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.OpenScriptsDirectoryToolStripMenuItem.Text = "Open Scripts Directory";
-            this.OpenScriptsDirectoryToolStripMenuItem.Click += new System.EventHandler(this.OpenScriptsDirectoryToolStripMenuItem_Click);
+            this.OpenDataDirectoryToolStripMenuItem.Name = "OpenDataDirectoryToolStripMenuItem";
+            this.OpenDataDirectoryToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.OpenDataDirectoryToolStripMenuItem.Text = "Open Data Directory";
+            this.OpenDataDirectoryToolStripMenuItem.Click += new System.EventHandler(this.OpenDataDirectoryToolStripMenuItem_Click);
             // 
             // ButtonFlowLayoutPanel
             // 
@@ -212,9 +194,7 @@
         private System.Windows.Forms.ToolStripMenuItem PluginsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ExitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem HelpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem OpenScriptsDirectoryToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem OpenAudioDirectoryToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem SettingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem OpenDataDirectoryToolStripMenuItem;
         private System.Windows.Forms.FlowLayoutPanel ButtonFlowLayoutPanel;
         private System.Windows.Forms.TextBox LogAreaTextBox;
         private System.Windows.Forms.ToolStripMenuItem SaveEventsToFileToolStripMenuItem;

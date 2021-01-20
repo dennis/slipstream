@@ -1,6 +1,8 @@
 using Serilog;
 using Slipstream.Shared;
 using Slipstream.Shared.Factories;
+using Slipstream.Shared.Helpers.StrongParameters;
+using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using System;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
@@ -16,6 +18,8 @@ namespace Slipstream.Backend.Plugins
 {
     internal class TwitchPlugin : BasePlugin
     {
+        public static DictionaryValidator ConfigurationValidator { get; }
+
         private TwitchClient? Client;
         private readonly ILogger Logger;
         private readonly ITwitchEventFactory EventFactory;
@@ -28,11 +32,23 @@ namespace Slipstream.Backend.Plugins
         private bool RequestReconnect = true;
         private bool AnnouncedConnected = false;
 
-        public TwitchPlugin(string id, ILogger logger, ITwitchEventFactory eventFactory, IEventBus eventBus, ITwitchConfiguration twitchConfiguration) : base(id, "TwitchPlugin", "TwitchPlugin", "TwitchPlugin", true)
+        static TwitchPlugin()
+        {
+            ConfigurationValidator = new DictionaryValidator()
+                .RequireString("twitch_username")
+                .RequireString("twitch_channel")
+                .RequireString("twitch_token")
+                .PermitBool("twitch_log")
+                ;
+        }
+
+        public TwitchPlugin(string id, ILogger logger, ITwitchEventFactory eventFactory, IEventBus eventBus, Parameters configuration) : base(id, "TwitchPlugin", id, "TwitchPlugin", true)
         {
             Logger = logger;
             EventFactory = eventFactory;
             EventBus = eventBus;
+
+            ConfigurationValidator.Validate(configuration);
 
             var twitchEventHandler = EventHandler.Get<Shared.EventHandlers.Twitch>();
 
@@ -45,12 +61,10 @@ namespace Slipstream.Backend.Plugins
             };
             twitchEventHandler.OnTwitchCommandSendWhisper += (_, e) => Client?.SendWhisper(e.Event.To, e.Event.Message);
 
-            TwitchUsername = twitchConfiguration.TwitchUsername;
-            TwitchChannel = twitchConfiguration.TwitchChannel;
-            TwitchToken = twitchConfiguration.TwitchToken;
-            TwitchLog = twitchConfiguration.TwitchLog;
-            if (String.IsNullOrEmpty(TwitchChannel))
-                TwitchChannel = TwitchUsername;
+            TwitchUsername = configuration.Extract<string>("twitch_username");
+            TwitchChannel = configuration.Extract<string>("twitch_channel");
+            TwitchToken = configuration.Extract<string>("twitch_token");
+            TwitchLog = configuration.ExtractOrDefault("twitch_log", false);
         }
 
         private void Disconnect()

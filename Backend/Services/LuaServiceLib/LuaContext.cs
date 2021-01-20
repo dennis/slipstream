@@ -9,7 +9,7 @@ using System.IO;
 
 namespace Slipstream.Backend.Services.LuaServiceLib
 {
-    public partial class LuaContext : ILuaContext
+    public class LuaContext : ILuaContext
     {
         private readonly CoreMethodCollection CoreMethodCollection_;
         private readonly LuaFunction? HandleFunc;
@@ -61,7 +61,7 @@ namespace Slipstream.Backend.Services.LuaServiceLib
             }
             catch (NLua.Exceptions.LuaScriptException e)
             {
-                throw new LuaException($"Error initializing Lua: {e}", e);
+                throw new LuaException($"Lua: Error initializing {filePath}: {e}", e);
             }
         }
 

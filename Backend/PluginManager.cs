@@ -5,9 +5,9 @@ using Slipstream.Backend.Plugins;
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using Slipstream.Shared.Factories;
+using Slipstream.Shared.Helpers.StrongParameters;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using static Slipstream.Shared.Factories.IInternalEventFactory;
 
 namespace Slipstream.Backend
@@ -24,7 +24,6 @@ namespace Slipstream.Backend
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, IPlugin> Plugins = new Dictionary<string, IPlugin>();
         private readonly IDictionary<string, PluginWorker> PluginWorkers = new Dictionary<string, PluginWorker>();
-        private readonly IApplicationConfiguration ApplicationConfiguration;
         private readonly IStateService StateService;
         private readonly ITxrxService TxrxService;
         private readonly IEventSerdeService EventSerdeService;
@@ -33,7 +32,6 @@ namespace Slipstream.Backend
         public PluginManager(
             IEventFactory eventFactory,
             IEventBus eventBus,
-            IApplicationConfiguration applicationConfiguration,
             IStateService stateService,
             ITxrxService txrxService,
             IEventSerdeService eventSerdeService,
@@ -47,7 +45,6 @@ namespace Slipstream.Backend
             TwitchEventFactory = eventFactory.Get<ITwitchEventFactory>();
             AudioEventFactory = eventFactory.Get<IAudioEventFactory>();
             EventBus = eventBus;
-            ApplicationConfiguration = applicationConfiguration;
             StateService = stateService;
             TxrxService = txrxService;
             EventSerdeService = eventSerdeService;
@@ -65,7 +62,7 @@ namespace Slipstream.Backend
 
         public void UnregisterPlugin(IPlugin p)
         {
-            lock(Plugins)
+            lock (Plugins)
             {
                 UnregisterPluginWithoutLock(p);
             }
@@ -94,7 +91,7 @@ namespace Slipstream.Backend
 
         private void RegisterPluginWithoutLock(IPlugin plugin)
         {
-            if(Plugins.ContainsKey(plugin.Id))
+            if (Plugins.ContainsKey(plugin.Id))
             {
                 Plugins.Remove(plugin.Id);
             }
@@ -167,80 +164,39 @@ namespace Slipstream.Backend
             }
         }
 
-        public void RestartReconfigurablePlugins()
-        {
-            lock(Plugins)
-            {
-                var restartList = new List<IPlugin>();
-
-                foreach(var oldPlugin in Plugins)
-                {
-                    if(oldPlugin.Value.Reconfigurable)
-                    {
-                        restartList.Add(oldPlugin.Value);
-                    }
-                }
-
-                foreach(var plugin in restartList)
-                {
-                    UnregisterPluginWithoutLock(plugin);
-                    Plugins.Remove(plugin.Id);
-
-                    IPlugin newPlugin = CreatePlugin(plugin.Id, plugin.Name);
-
-                    RegisterPluginWithoutLock(newPlugin);
-                }
-            }
-        }
-
-        public IPlugin CreatePlugin(string id, string name)
-        {
-            return CreatePlugin(id, name, EventBus);
-        }
-
-        public IPlugin CreatePlugin(string id, string name, IEventBus eventBus)
-        {
-            return name switch
-            {
-                "FileMonitorPlugin" => new FileMonitorPlugin(id, FileMonitorEventFactory, eventBus, ApplicationConfiguration),
-                "LuaManagerPlugin" => new LuaManagerPlugin(id, FileMonitorEventFactory, eventBus, this, this, EventSerdeService),
-                "AudioPlugin" => new AudioPlugin(id, Logger.ForContext(typeof(AudioPlugin)), eventBus, AudioEventFactory, ApplicationConfiguration),
-                "IRacingPlugin" => new IRacingPlugin(id, IRacingEventFactory, eventBus),
-                "TwitchPlugin" => new TwitchPlugin(id, Logger.ForContext(typeof(TwitchPlugin)), TwitchEventFactory, eventBus, ApplicationConfiguration),
-                "TransmitterPlugin" => new TransmitterPlugin(id, Logger.ForContext(typeof(TransmitterPlugin)), InternalEventFactory, eventBus, TxrxService, ApplicationConfiguration),
-                "ReceiverPlugin" => new ReceiverPlugin(id, Logger.ForContext(typeof(ReceiverPlugin)), InternalEventFactory, eventBus, TxrxService, ApplicationConfiguration),
-                "PlaybackPlugin" => new PlaybackPlugin(id, Logger.ForContext(typeof(PlaybackPlugin)), eventBus, EventSerdeService),
-                _ => throw new Exception($"Unknown plugin '{name}'"),
-            };
-        }
-
-        public IPlugin CreatePlugin<T>(string pluginId, string name, T configuration)
+        public IPlugin CreatePlugin(string pluginId, string name, Parameters configuration)
         {
             return CreatePlugin(pluginId, name, EventBus, configuration);
         }
 
-        public IPlugin CreatePlugin<T>(string pluginId, string name, IEventBus eventBus, T configuration)
+        public IPlugin CreatePlugin(string pluginId, string name, IEventBus eventBus, Parameters configuration)
         {
             return name switch
             {
-#pragma warning disable CS8604 // Possible null reference argument.
-                "LuaPlugin" when configuration is ILuaConfiguration => new LuaPlugin(
+                "LuaPlugin" => new LuaPlugin(
                     pluginId,
                     Logger.ForContext(typeof(LuaPlugin)),
                     EventFactory,
-                    EventBus,
+                    eventBus,
                     StateService,
                     EventSerdeService,
-                    configuration as ILuaConfiguration
+                    configuration
                 ),
-#pragma warning restore CS8604 // Possible null reference argument.
+                "FileMonitorPlugin" => new FileMonitorPlugin(pluginId, FileMonitorEventFactory, eventBus, configuration),
+                "LuaManagerPlugin" => new LuaManagerPlugin(pluginId, Logger.ForContext(typeof(LuaPlugin)), FileMonitorEventFactory, eventBus, this, this, EventSerdeService),
+                "AudioPlugin" => new AudioPlugin(pluginId, Logger.ForContext(typeof(AudioPlugin)), eventBus, AudioEventFactory, configuration),
+                "IRacingPlugin" => new IRacingPlugin(pluginId, IRacingEventFactory, eventBus),
+                "TwitchPlugin" => new TwitchPlugin(pluginId, Logger.ForContext(typeof(TwitchPlugin)), TwitchEventFactory, eventBus, configuration),
+                "TransmitterPlugin" => new TransmitterPlugin(pluginId, Logger.ForContext(typeof(TransmitterPlugin)), InternalEventFactory, eventBus, TxrxService, configuration),
+                "ReceiverPlugin" => new ReceiverPlugin(pluginId, Logger.ForContext(typeof(ReceiverPlugin)), InternalEventFactory, eventBus, TxrxService, configuration),
+                "PlaybackPlugin" => new PlaybackPlugin(pluginId, Logger.ForContext(typeof(PlaybackPlugin)), eventBus, EventSerdeService),
                 _ => throw new Exception($"Unknown configurable plugin '{name}'"),
             };
         }
 
         public void Dispose()
         {
-            lock(Plugins)
+            lock (Plugins)
             {
                 UnregisterPluginsWithoutLock();
                 Plugins.Clear();

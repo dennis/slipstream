@@ -46,8 +46,6 @@ namespace Slipstream
         private static void ConfigureServices(ServiceCollection services)
         {
             services.AddScoped<Frontend.MainWindow>();
-            services.AddScoped<Frontend.ApplicationConfiguration>();
-            services.AddScoped<Shared.IApplicationConfiguration, Frontend.ApplicationConfiguration>();
             services.AddScoped<Shared.IEventBus, Backend.EventBus>();
             services.AddScoped<Shared.IEventProducer>(x => x.GetService<Backend.EventBus>());
             services.AddScoped<Backend.IEngine, Backend.Engine>();

@@ -1,4 +1,6 @@
-﻿using Slipstream.Shared.Events.Internal;
+﻿using Newtonsoft.Json;
+using Slipstream.Shared.Helpers.StrongParameters;
+using Slipstream.Shared.Events.Internal;
 
 #nullable enable
 
@@ -8,7 +10,14 @@ namespace Slipstream.Shared.Factories
     {
         public InternalCommandPluginRegister CreateInternalCommandPluginRegister(string pluginId, string pluginName)
         {
-            return new InternalCommandPluginRegister { Id = pluginId, PluginName = pluginName };
+            return new InternalCommandPluginRegister { Id = pluginId, PluginName = pluginName, Configuration = "{}" };
+        }
+
+        public InternalCommandPluginRegister CreateInternalCommandPluginRegister(string pluginId, string pluginName, Parameters configuration)
+        {
+            var jsonConfig = JsonConvert.SerializeObject(configuration);
+
+            return new InternalCommandPluginRegister { Id = pluginId, PluginName = pluginName, Configuration = jsonConfig };
         }
 
         public InternalCommandPluginStates CreateInternalCommandPluginStates()
@@ -24,11 +33,6 @@ namespace Slipstream.Shared.Factories
         public InternalPluginState CreateInternalPluginState(string pluginId, string pluginName, string displayName, IInternalEventFactory.PluginStatusEnum pluginStatus)
         {
             return new InternalPluginState { Id = pluginId, PluginName = pluginName, DisplayName = displayName, PluginStatus = pluginStatus.ToString() };
-        }
-
-        public InternalCommandReconfigure CreateInternalCommandReconfigure()
-        {
-            return new InternalCommandReconfigure();
         }
     }
 }

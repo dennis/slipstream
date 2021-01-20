@@ -3,6 +3,7 @@ using Slipstream.Backend.Services;
 using Slipstream.Backend.Services.LuaServiceLib;
 using Slipstream.Shared;
 using Slipstream.Shared.Factories;
+using System.Collections.Generic;
 using System.IO;
 using EventHandler = Slipstream.Shared.EventHandler;
 
@@ -27,8 +28,8 @@ namespace Slipstream.Backend.Plugins
             IEventBus eventBus,
             IStateService stateService,
             IEventSerdeService eventSerdeService,
-            ILuaConfiguration configuration
-        ) : base(id, "LuaPlugin", "LuaPlugin", "Lua")
+            Dictionary<dynamic, dynamic> configuration
+        ) : base(id, "LuaPlugin", id, "Lua")
         {
             Logger = logger;
             LuaEventFactory = eventFactory.Get<ILuaEventFactory>();
@@ -42,7 +43,7 @@ namespace Slipstream.Backend.Plugins
             EventHandler.Get<Shared.EventHandlers.UI>().OnUICommandWriteToConsole += (s, e) => { };
             EventHandler.OnDefault += (s, e) => LuaContext?.HandleEvent(e.Event);
 
-            FilePath = configuration.FilePath;
+            FilePath = configuration["filepath"];
             Prefix = Path.GetFileName(FilePath);
 
             StartLua();

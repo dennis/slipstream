@@ -31,30 +31,30 @@ to real world actions like:
 
 Example script
 ```Lua
-local whitelist = {}
+local authorised = {}
+local defaultAudioPlugin = "AudioPlugin"
 
-whitelist["sassy_mcsassypants"] = true
-whitelist["larryrabbets"] = true
-
-say_name = {}
-say_name["sassy_mcsassypants"] = "Sassy"
-say_name["larryrabbets"] = "Larry"
+authorised["sassy_mcsassypants"] = "Sassy"
+authorised["larryrabbets"] = "Larry"
 
 function string.starts(String,Start)
    return string.sub(String,1,string.len(Start))==Start
 end
 
+function say_it(event)
+	local prefered_name = authorised[string.lower(event.From)] -- get the preffered name from the authorised list of Twitch users
+	if prefered_name then -- if the user has a preffered name set in the authorised list they can use this command
+		local text = string.lower(string.sub(event.Message, 6))
+		audio:say(defaultAudioPlugin, prefered_name .. " said ... " .. text, 1)
+	else
+		twitch:send_channel_message(event.From .. ": You are not whitelisted to use !say")
+	end
+end
+
 function handle(event)
-    if(event.EventType == "TwitchReceivedMessage") then
-        if string.starts(event.Message, "!say ") then
-            if whitelist[string.lower(event.From)] then
-                local text = string.lower(string.sub(event.Message, 6))
-                audio:say(say_name[event.From:lower()] .. " said ... " .. text, 1)
-            else
-                twitch:send_channel_message(event.From .. ": You are not whitelisted to use !say")
-            end
-        end
-    end
+    if(event.EventType == "TwitchReceivedMessage") and string.starts(event.Message, "!say ") then
+		say_it(event)
+	end
 end
 ```
 

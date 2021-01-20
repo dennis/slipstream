@@ -289,6 +289,7 @@
     <None Include="CHANGELOG.md" />
     <None Include="CODE_OF_CONDUCT.md" />
     <None Include="docs\events.md" />
+    <None Include="docs\init.lua.md" />
     <None Include="docs\lua.md" />
     <None Include="docs\release-checklist.md" />
     <None Include="README.md" />

@@ -337,18 +337,6 @@ Request IRacingPlugin to send Car Info.
 `{"EventType":"IRacingCommandSendCarInfo","ExcludeFromTxrx":false, "Uptime":1742}`
 </details>
 
-<details><summary>IRacingCommandSendCurrentSession</summary><br />
-Request IRacingPlugin to send Current Session.
-
-| Name            | Type    | Description                                   |
-|:----------------|:-------:|:----------------------------------------------|
-| EventType       | string  | `IRacingCommandSendCurrentSession` (constant) |
-| ExcludeFromTxrx | boolean | false (constant)                              |
-
-**JSON Example:**
-`{"EventType":"IRacingCommandSendCurrentSession","ExcludeFromTxrx":false, "Uptime":1742}`
-</details>
-
 <details><summary>IRacingCommandSendRaceFlags</summary><br />
 Request IRacingPlugin to send Race Flags.
 
@@ -409,21 +397,104 @@ Sent when connected to IRacing
 `{"EventType":"IRacingConnected","ExcludeFromTxrx":false, "Uptime":1742}`
 </details>
 
-<details><summary>IRacingCurrentSession</summary><br />
+<details><summary>IRacingPractice</summary><br />
 
-| Name             | Type    | Description                                                                  |
-|:-----------------|:-------:|:-----------------------------------------------------------------------------|
-| EventType        | string  | `IRacingCurrentSession` (constant)                                           |
-| ExcludeFromTxrx  | boolean | false (constant)                                                             |
-| Category         | string  | `Road`, `Oval`, `DirtOval` or `DirtRoad`                                     |
-| SessionType      | string  | `Practice`, `OpenQualify`, `LoneQualify`, `OfflineTesting`, `Race`, `Warmup` |
-| TimeLimited      | bool    | Is this session time-limited                                                 |
-| LapsLimited      | bool    | Is this session laps limited                                                 |
-| TotalSessionLaps | int     | Total session laps                                                           |
-| TotalSessionTime | double  | Total session time                                                           |
+| Name             | Type    | Description                                                        |
+|:-----------------|:-------:|:-------------------------------------------------------------------|
+| EventType        | string  | `IRacingPractice` (constant)                                       |
+| ExcludeFromTxrx  | boolean | false (constant)                                                   |
+| Category         | string  | `Road`, `Oval`, `DirtOval` or `DirtRoad`                           |
+| SessionTime      | float   | Time of event (seconds into the session)                           |
+| TimeLimited      | bool    | Is this session time-limited                                       |
+| LapsLimited      | bool    | Is this session laps limited                                       |
+| TotalSessionLaps | int     | Total session laps                                                 |
+| TotalSessionTime | double  | Total session time                                                 |
+| State            | string  | Checkered, CoolDown, GetInCar, Invalid, ParadeLaps, Racing, Warmup |
+| Category         | string  | Road, Oval, DirtOval, DirtRoad                                     |
+
 
 **JSON Example:**
-`{"EventType":"IRacingCurrentSession","ExcludeFromTxrx":false, "Uptime":1742,"Category":"Road","SessionType":"Practice","TimeLimited":true,"LapsLimited":false,"TotalSessionLaps":0,"TotalSessionTime":3600}`
+`{"EventType":"IRacingPractice","ExcludeFromTxrx":false,"Uptime":1112,"SessionTime":2763.6131673177088,"LapsLimited":false,"TimeLimited":true,"TotalSessionTime":3600.0,"TotalSessionLaps":0,"State":"Racing","Category":"Road"}`
+....
+</details>
+
+<details><summary>IRacingQualify</summary><br />
+| Name             | Type    | Description                                                        |
+|:-----------------|:-------:|:-------------------------------------------------------------------|
+| EventType        | string  | `IRacingQualify` (constant)                                        |
+| ExcludeFromTxrx  | boolean | false (constant)                                                   |
+| Category         | string  | `Road`, `Oval`, `DirtOval` or `DirtRoad`                           |
+| SessionTime      | float   | Time of event (seconds into the session)                           |
+| TimeLimited      | bool    | Is this session time-limited                                       |
+| LapsLimited      | bool    | Is this session laps limited                                       |
+| TotalSessionLaps | int     | Total session laps                                                 |
+| TotalSessionTime | double  | Total session time                                                 |
+| State            | string  | Checkered, CoolDown, GetInCar, Invalid, ParadeLaps, Racing, Warmup |
+| Category         | string  | Road, Oval, DirtOval, DirtRoad                                     |
+
+
+**JSON Example:**
+`{"EventType":"IRacingQualify","ExcludeFromTxrx":false,"Uptime":1112,"SessionTime":2763.6131673177088,"LapsLimited":false,"TimeLimited":true,"TotalSessionTime":3600.0,"TotalSessionLaps":0,"State":"Racing","Category":"Road"}`
+</details>
+
+<details><summary>IRacingRace</summary><br />
+| Name             | Type    | Description                                                        |
+|:-----------------|:-------:|:-------------------------------------------------------------------|
+| EventType        | string  | `IRacingRace` (constant)                                           |
+| ExcludeFromTxrx  | boolean | false (constant)                                                   |
+| Category         | string  | `Road`, `Oval`, `DirtOval` or `DirtRoad`                           |
+| SessionTime      | float   | Time of event (seconds into the session)                           |
+| TimeLimited      | bool    | Is this session time-limited                                       |
+| LapsLimited      | bool    | Is this session laps limited                                       |
+| TotalSessionLaps | int     | Total session laps                                                 |
+| TotalSessionTime | double  | Total session time                                                 |
+| State            | string  | Checkered, CoolDown, GetInCar, Invalid, ParadeLaps, Racing, Warmup |
+| Category         | string  | Road, Oval, DirtOval, DirtRoad                                     |
+
+
+**JSON Example:**
+`{"EventType":"IRacingRace","ExcludeFromTxrx":false,"Uptime":1112,"SessionTime":2763.6131673177088,"LapsLimited":false,"TimeLimited":true,"TotalSessionTime":3600.0,"TotalSessionLaps":0,"State":"Racing","Category":"Road"}`
+</details>
+
+<details><summary>IRacingTesting</summary><br />
+
+
+| Name             | Type    | Description                                                        |
+|:-----------------|:-------:|:-------------------------------------------------------------------|
+| EventType        | string  | `IRacingTesting` (constant)                                        |
+| ExcludeFromTxrx  | boolean | false (constant)                                                   |
+| Category         | string  | `Road`, `Oval`, `DirtOval` or `DirtRoad`                           |
+| SessionTime      | float   | Time of event (seconds into the session)                           |
+| TimeLimited      | bool    | Is this session time-limited                                       |
+| LapsLimited      | bool    | Is this session laps limited                                       |
+| TotalSessionLaps | int     | Total session laps                                                 |
+| TotalSessionTime | double  | Total session time                                                 |
+| State            | string  | Checkered, CoolDown, GetInCar, Invalid, ParadeLaps, Racing, Warmup |
+| Category         | string  | Road, Oval, DirtOval, DirtRoad                                     |
+
+
+**JSON Example:**
+`{"EventType":"IRacingTesting","ExcludeFromTxrx":false,"Uptime":1112,"SessionTime":2763.6131673177088,"LapsLimited":false,"TimeLimited":true,"TotalSessionTime":3600.0,"TotalSessionLaps":0,"State":"Racing","Category":"Road"}`
+
+</details>
+
+<details><summary>IRacingWarmup</summary><br />
+| Name             | Type    | Description                                                        |
+|:-----------------|:-------:|:-------------------------------------------------------------------|
+| EventType        | string  | `IRacingWarmup` (constant)                                         |
+| ExcludeFromTxrx  | boolean | false (constant)                                                   |
+| Category         | string  | `Road`, `Oval`, `DirtOval` or `DirtRoad`                           |
+| SessionTime      | float   | Time of event (seconds into the session)                           |
+| TimeLimited      | bool    | Is this session time-limited                                       |
+| LapsLimited      | bool    | Is this session laps limited                                       |
+| TotalSessionLaps | int     | Total session laps                                                 |
+| TotalSessionTime | double  | Total session time                                                 |
+| State            | string  | Checkered, CoolDown, GetInCar, Invalid, ParadeLaps, Racing, Warmup |
+| Category         | string  | Road, Oval, DirtOval, DirtRoad                                     |
+
+
+**JSON Example:**
+`{"EventType":"IRacingWarmup","ExcludeFromTxrx":false,"Uptime":1112,"SessionTime":2763.6131673177088,"LapsLimited":false,"TimeLimited":true,"TotalSessionTime":3600.0,"TotalSessionLaps":0,"State":"Racing","Category":"Road"}`
 </details>
 
 <details><summary>IRacingDisconnected</summary><br />
@@ -558,19 +629,6 @@ For user, this is sent after a pitshop, showing some data about the pitstop.
 
 **JSON Example:**
 `{"EventType":"IRacingRaceFlags","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":1058.3000081380189,"Black":false,"Blue":false,"Caution":false,"CautionWaving":false,"Checkered":false,"Crossed":false,"Debris":false,"Disqualify":false,"FiveToGo":false,"Furled":false,"Green":false,"GreenHeld":false,"OneLapToGreen":false,"RandomWaving":false,"Red":false,"Repair":false,"Servicible":false,"StartGo":false,"StartHidden":true,"StartReady":false,"StartSet":false,"TenToGo":false,"White":false,"Yellow":false,"YellowWaving":false}`
-</details>
-
-<details><summary>IRacingSessionState</summary><br />
-
-| Name            | Type    | Description                                                                      |
-|:----------------|:-------:|:---------------------------------------------------------------------------------|
-| EventType       | string  | `IRacingSessionState` (constant)                                                 |
-| ExcludeFromTxrx | boolean | false (constant)                                                                 |
-| SessionTime     | float   | Time of event (seconds into the session)                                         |
-| State           | string  | `Checkered`, `CoolDown`, `GetInCar`, `Invalid`, `ParadeLaps`, `Racing`, `Warmup` |
-
-**JSON Example:**
-`{"EventType":"IRacingSessionState","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":1058.3000081380189,"State":"Racing"}`
 </details>
 
 <details><summary>IRacingTrackInfo</summary><br />

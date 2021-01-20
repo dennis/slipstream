@@ -20,8 +20,6 @@ namespace Slipstream.Shared.EventHandlers
 
         public delegate void OnIRacingCommandSendCarInfoHandler(EventHandler source, EventHandlerArgs<IRacingCommandSendCarInfo> e);
 
-        public delegate void OnIRacingCommandSendCurrentSessionHandler(EventHandler source, EventHandlerArgs<IRacingCommandSendCurrentSession> e);
-
         public delegate void OnIRacingCommandSendRaceFlagsHandler(EventHandler source, EventHandlerArgs<IRacingCommandSendRaceFlags> e);
 
         public delegate void OnIRacingCommandSendSessionStateHandler(EventHandler source, EventHandlerArgs<IRacingCommandSendSessionState> e);
@@ -31,8 +29,6 @@ namespace Slipstream.Shared.EventHandlers
         public delegate void OnIRacingCommandSendWeatherInfoHandler(EventHandler source, EventHandlerArgs<IRacingCommandSendWeatherInfo> e);
 
         public delegate void OnIRacingConnectedHandler(EventHandler source, EventHandlerArgs<IRacingConnected> e);
-
-        public delegate void OnIRacingCurrentSessionHandler(EventHandler source, EventHandlerArgs<IRacingCurrentSession> e);
 
         public delegate void OnIRacingDisconnectedHandler(EventHandler source, EventHandlerArgs<IRacingDisconnected> e);
 
@@ -46,19 +42,25 @@ namespace Slipstream.Shared.EventHandlers
 
         public delegate void OnIRacingRaceFlagsHandler(EventHandler source, EventHandlerArgs<IRacingRaceFlags> e);
 
-        public delegate void OnIRacingSessionStateHandler(EventHandler source, EventHandlerArgs<IRacingSessionState> e);
-
         public delegate void OnIRacingTrackInfoHandler(EventHandler source, EventHandlerArgs<IRacingTrackInfo> e);
 
         public delegate void OnIRacingWeatherInfoHandler(EventHandler source, EventHandlerArgs<IRacingWeatherInfo> e);
+
+        public delegate void OnIRacingPracticeHandler(EventHandler source, EventHandlerArgs<IRacingPractice> e);
+
+        public delegate void OnIRacingQualifyHandler(EventHandler source, EventHandlerArgs<IRacingQualify> e);
+
+        public delegate void OnIRacingRaceHandler(EventHandler source, EventHandlerArgs<IRacingRace> e);
+
+        public delegate void OnIRacingTestingHandler(EventHandler source, EventHandlerArgs<IRacingTesting> e);
+
+        public delegate void OnIRacingWarmupHandler(EventHandler source, EventHandlerArgs<IRacingWarmup> e);
 
         public event OnIRacingCarCompletedLapHandler? OnIRacingCarCompletedLap;
 
         public event OnIRacingCarInfoHandler? OnIRacingCarInfo;
 
         public event OnIRacingCommandSendCarInfoHandler? OnIRacingCommandSendCarInfo;
-
-        public event OnIRacingCommandSendCurrentSessionHandler? OnIRacingCommandSendCurrentSession;
 
         public event OnIRacingCommandSendRaceFlagsHandler? OnIRacingCommandSendRaceFlags;
 
@@ -69,8 +71,6 @@ namespace Slipstream.Shared.EventHandlers
         public event OnIRacingCommandSendWeatherInfoHandler? OnIRacingCommandSendWeatherInfo;
 
         public event OnIRacingConnectedHandler? OnIRacingConnected;
-
-        public event OnIRacingCurrentSessionHandler? OnIRacingCurrentSession;
 
         public event OnIRacingDisconnectedHandler? OnIRacingDisconnected;
 
@@ -84,11 +84,19 @@ namespace Slipstream.Shared.EventHandlers
 
         public event OnIRacingRaceFlagsHandler? OnIRacingRaceFlags;
 
-        public event OnIRacingSessionStateHandler? OnIRacingSessionState;
-
         public event OnIRacingTrackInfoHandler? OnIRacingTrackInfo;
 
         public event OnIRacingWeatherInfoHandler? OnIRacingWeatherInfo;
+
+        public event OnIRacingPracticeHandler? OnIRacingPractice;
+
+        public event OnIRacingQualifyHandler? OnIRacingQualify;
+
+        public event OnIRacingRaceHandler? OnIRacingRace;
+
+        public event OnIRacingTestingHandler? OnIRacingTesting;
+
+        public event OnIRacingWarmupHandler? OnIRacingWarmup;
 
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)
         {
@@ -134,16 +142,6 @@ namespace Slipstream.Shared.EventHandlers
                     {
                         return IEventHandler.HandledStatus.UseDefault;
                     }
-                case IRacingCurrentSession tev:
-                    if (OnIRacingCurrentSession != null)
-                    {
-                        OnIRacingCurrentSession.Invoke(Parent, new EventHandlerArgs<IRacingCurrentSession>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
                 case IRacingCarInfo tev:
                     if (OnIRacingCarInfo != null)
                     {
@@ -158,16 +156,6 @@ namespace Slipstream.Shared.EventHandlers
                     if (OnIRacingRaceFlags != null)
                     {
                         OnIRacingRaceFlags.Invoke(Parent, new EventHandlerArgs<IRacingRaceFlags>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case IRacingSessionState tev:
-                    if (OnIRacingSessionState != null)
-                    {
-                        OnIRacingSessionState.Invoke(Parent, new EventHandlerArgs<IRacingSessionState>(tev));
                         return IEventHandler.HandledStatus.Handled;
                     }
                     else
@@ -244,16 +232,6 @@ namespace Slipstream.Shared.EventHandlers
                     {
                         return IEventHandler.HandledStatus.UseDefault;
                     }
-                case IRacingCommandSendCurrentSession tev:
-                    if (OnIRacingCommandSendCurrentSession != null)
-                    {
-                        OnIRacingCommandSendCurrentSession.Invoke(Parent, new EventHandlerArgs<IRacingCommandSendCurrentSession>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
                 case IRacingCommandSendSessionState tev:
                     if (OnIRacingCommandSendSessionState != null)
                     {
@@ -278,6 +256,56 @@ namespace Slipstream.Shared.EventHandlers
                     if (OnIRacingDriverIncident != null)
                     {
                         OnIRacingDriverIncident(Parent, new EventHandlerArgs<IRacingDriverIncident>(tev));
+                        return IEventHandler.HandledStatus.Handled;
+                    }
+                    else
+                    {
+                        return IEventHandler.HandledStatus.UseDefault;
+                    }
+                case IRacingPractice tev:
+                    if (OnIRacingPractice != null)
+                    {
+                        OnIRacingPractice(Parent, new EventHandlerArgs<IRacingPractice>(tev));
+                        return IEventHandler.HandledStatus.Handled;
+                    }
+                    else
+                    {
+                        return IEventHandler.HandledStatus.UseDefault;
+                    }
+                case IRacingQualify tev:
+                    if (OnIRacingQualify != null)
+                    {
+                        OnIRacingQualify(Parent, new EventHandlerArgs<IRacingQualify>(tev));
+                        return IEventHandler.HandledStatus.Handled;
+                    }
+                    else
+                    {
+                        return IEventHandler.HandledStatus.UseDefault;
+                    }
+                case IRacingRace tev:
+                    if (OnIRacingRace != null)
+                    {
+                        OnIRacingRace(Parent, new EventHandlerArgs<IRacingRace>(tev));
+                        return IEventHandler.HandledStatus.Handled;
+                    }
+                    else
+                    {
+                        return IEventHandler.HandledStatus.UseDefault;
+                    }
+                case IRacingTesting tev:
+                    if (OnIRacingTesting != null)
+                    {
+                        OnIRacingTesting(Parent, new EventHandlerArgs<IRacingTesting>(tev));
+                        return IEventHandler.HandledStatus.Handled;
+                    }
+                    else
+                    {
+                        return IEventHandler.HandledStatus.UseDefault;
+                    }
+                case IRacingWarmup tev:
+                    if (OnIRacingWarmup != null)
+                    {
+                        OnIRacingWarmup(Parent, new EventHandlerArgs<IRacingWarmup>(tev));
                         return IEventHandler.HandledStatus.Handled;
                     }
                     else

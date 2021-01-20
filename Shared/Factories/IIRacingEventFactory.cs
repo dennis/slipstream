@@ -20,7 +20,9 @@ namespace Slipstream.Shared.Factories
         {
             Road, Oval, DirtOval, DirtRoad
         }
+
         IRacingCarCompletedLap CreateIRacingCarCompletedLap(double sessionTime, long carIdx, double time, int lapsCompleted, float? fuelDiff, bool localUser);
+
         IRacingCarInfo CreateIRacingCarInfo(
             double sessionTime,
             long carIdx,
@@ -35,11 +37,15 @@ namespace Slipstream.Shared.Factories
             string currentDriverLicense,
             bool localUser,
             bool spectator);
+
         IRacingConnected CreateIRacingConnected();
-        IRacingCurrentSession CreateIRacingCurrentSession(IRacingCategoryEnum category, IRacingSessionTypeEnum sessionType, bool timeLimited, bool lapsLimited, int totalSessionLaps, double totalSessionTime);
+
         IRacingDisconnected CreateIRacingDisconnected();
+
         IRacingPitEnter CreateIRacingPitEnter(double sessionTime, long carIdx, bool localUser);
+
         IRacingPitExit CreateIRacingPitExit(double sessionTime, long carIdx, bool localUser, double? duration);
+
         IRacingPitstopReport CreateIRacingPitstopReport(
             double sessionTime,
             long carIdx,
@@ -70,6 +76,7 @@ namespace Slipstream.Shared.Factories
             long laps,
             float fuelDiff,
             double duration);
+
         IRacingRaceFlags CreateIRacingRaceFlags(
             double sessionTime,
             bool black,
@@ -98,7 +105,7 @@ namespace Slipstream.Shared.Factories
             bool yellow,
             bool yellowWaving
         );
-        IRacingSessionState CreateIRacingSessionState(double sessionTime, IRacingSessionStateEnum state);
+
         IRacingTrackInfo CreateIRacingTrackInfo
         (
             long trackId,
@@ -109,6 +116,7 @@ namespace Slipstream.Shared.Factories
             string trackDisplayShortName,
             string trackConfigName,
             string trackType);
+
         IRacingWeatherInfo CreateIRacingWeatherInfo(
             double sessionTime,
             string skies,
@@ -119,11 +127,25 @@ namespace Slipstream.Shared.Factories
             string fogLevel);
 
         IRacingCommandSendCarInfo CreateIRacingCommandSendCarInfo();
+
         IRacingCommandSendTrackInfo CreateIRacingCommandSendTrackInfo();
+
         IRacingCommandSendWeatherInfo CreateIRacingCommandSendWeatherInfo();
-        IRacingCommandSendCurrentSession CreateIRacingCommandSendCurrentSession();
+
         IRacingCommandSendSessionState CreateIRacingCommandSendSessionState();
+
         IRacingCommandSendRaceFlags CreateIRacingCommandSendRaceFlags();
+
         IRacingDriverIncident CreateIRacingDriverIncident(int totalIncidents, int incidentDelta);
+
+        IRacingPractice CreateIRacingPractice(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category);
+
+        IRacingQualify CreateIRacingQualify(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category);
+
+        IRacingRace CreateIRacingRace(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category);
+
+        IRacingTesting CreateIRacingTesting(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category);
+
+        IRacingWarmup CreateIRacingWarmup(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category);
     }
 }

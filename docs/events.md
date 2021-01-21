@@ -791,6 +791,21 @@ A whisper received.
 `{"EventType":"TwitchReceivedMessage","ExcludeFromTxrx":false, "Uptime":1742,"From":"TNTion","Message":"!hello"}`
 </details>
 
+<details><summary>TwitchUserSubscribed</summary><br />
+
+A user subscribed or resubscribed to the stream
+
+| Name             | Type    | Description                                 |
+|:-----------------|:-------:|:--------------------------------------------|
+| EventType        | string  | `TwitchUserSubscribed` (constant)           |
+| ExcludeFromTxrx  | boolean | false (constant)                            |
+| Name             | string  | User (re)subscriping                        |
+| Message          | string  | User own message                            |
+| SystemMessage    | string  | Twitch's  message                           |
+| SubscriptionPlan | string  | One of `Prime`, `Tier1`, `Tier2` or `Tier3` |
+| Months           | long    | Subscription length in months               |
+</details>
+
 ## UI
 
 <details><summary>UIButtonTriggered</summary><br />

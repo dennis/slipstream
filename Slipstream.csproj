@@ -160,6 +160,7 @@
     <Compile Include="Shared\Events\IRacing\IRacingTesting.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingQualify.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingPractice.cs" />
+    <Compile Include="Shared\Events\Twitch\TwitchUserSubscribed.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Validators\ArrayValidator.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Validators\BooleanValidator.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Validators\FloatValidator.cs" />

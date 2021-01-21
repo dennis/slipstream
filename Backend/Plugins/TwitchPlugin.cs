@@ -1,5 +1,6 @@
 using Serilog;
 using Slipstream.Shared;
+using Slipstream.Shared.Events.Twitch;
 using Slipstream.Shared.Factories;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
@@ -127,12 +128,39 @@ namespace Slipstream.Backend.Plugins
             Client.OnIncorrectLogin += OnIncorrectLogin;
             Client.OnJoinedChannel += OnJoinedChannel;
             Client.OnMessageReceived += OnMessageReceived;
+            Client.OnNewSubscriber += OnNewSubscriber;
+            Client.OnReSubscriber += OnReSubscriber;
             Client.OnWhisperReceived += OnWhisperReceived;
 
             if (TwitchLog)
                 Client.OnLog += OnLog;
 
             Client.Connect();
+        }
+
+        private void OnReSubscriber(object sender, OnReSubscriberArgs e)
+        {
+            var @event = EventFactory.CreateTwitchUserSubscribed(
+                name: e.ReSubscriber.DisplayName,
+                message: e.ReSubscriber.ResubMessage,
+                subscriptionPlan: e.ReSubscriber.SubscriptionPlan.ToString(),
+                months: e.ReSubscriber.Months,
+                systemMessage: e.ReSubscriber.SystemMessageParsed);
+
+            EventBus.PublishEvent(@event);
+        }
+
+        private void OnNewSubscriber(object sender, OnNewSubscriberArgs e)
+        {
+            var @event = EventFactory.CreateTwitchUserSubscribed(
+                name: e.Subscriber.DisplayName,
+                message: e.Subscriber.ResubMessage,
+                subscriptionPlan: e.Subscriber.SubscriptionPlan.ToString(),
+                months: 1,
+                systemMessage: e.Subscriber.SystemMessageParsed
+            );
+
+            EventBus.PublishEvent(@event);
         }
 
         private void Disconnect()

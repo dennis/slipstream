@@ -820,6 +820,18 @@ A user subscribed or resubscribed to the stream
 | Recipient        | string  | Gift recipient                              |
 </details>
 
+<details><summary>TwitchRaided</summary><br />
+
+A user subscribed or resubscribed to the stream
+
+| Name            | Type    | Description                          |
+|:----------------|:-------:|:-------------------------------------|
+| EventType       | string  | `TwitchRaided` (constant)            |
+| ExcludeFromTxrx | boolean | false (constant)                     |
+| Name            | string  | Who is raiding                       |
+| ViewerCount     | int     | How many viewers does the raid bring |
+</details>
+
 ## UI
 
 <details><summary>UIButtonTriggered</summary><br />

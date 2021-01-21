@@ -21,5 +21,7 @@ namespace Slipstream.Shared.Factories
         TwitchUserSubscribed CreateTwitchUserSubscribed(string name, string message, string subscriptionPlan, long months, string systemMessage);
 
         TwitchGiftedSubscription CreateTwitchGiftedSubscription(string gifter, string subscriptionPlan, string recipient, string systemMessage);
+
+        TwitchRaided CreateTwitchRaided(string name, int viewerCount);
     }
 }

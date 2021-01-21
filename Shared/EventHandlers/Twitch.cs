@@ -30,6 +30,8 @@ namespace Slipstream.Shared.EventHandlers
 
         public delegate void OnTwitchGiftedSubscriptionHandler(EventHandler source, EventHandlerArgs<TwitchGiftedSubscription> e);
 
+        public delegate void OnTwitchRaidedHandler(EventHandler source, EventHandlerArgs<TwitchRaided> e);
+
         public event OnTwitchCommandSendMessageHandler? OnTwitchCommandSendMessage;
 
         public event OnTwitchCommandSendWhisperHandler? OnTwitchCommandSendWhisper;
@@ -45,6 +47,8 @@ namespace Slipstream.Shared.EventHandlers
         public event OnTwitchUserSubscribedHandler? OnTwitchUserSubscribed;
 
         public event OnTwitchGiftedSubscriptionHandler? OnTwitchGiftedSubscription;
+
+        public event OnTwitchRaidedHandler? OnTwitchRaided;
 
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)
         {
@@ -124,6 +128,16 @@ namespace Slipstream.Shared.EventHandlers
                     if (OnTwitchGiftedSubscription != null)
                     {
                         OnTwitchGiftedSubscription.Invoke(Parent, new EventHandlerArgs<TwitchGiftedSubscription>(tev));
+                        return IEventHandler.HandledStatus.Handled;
+                    }
+                    else
+                    {
+                        return IEventHandler.HandledStatus.UseDefault;
+                    }
+                case TwitchRaided tev:
+                    if (OnTwitchRaided != null)
+                    {
+                        OnTwitchRaided.Invoke(Parent, new EventHandlerArgs<TwitchRaided>(tev));
                         return IEventHandler.HandledStatus.Handled;
                     }
                     else

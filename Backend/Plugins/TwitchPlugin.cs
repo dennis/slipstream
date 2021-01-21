@@ -130,6 +130,7 @@ namespace Slipstream.Backend.Plugins
             Client.OnJoinedChannel += OnJoinedChannel;
             Client.OnMessageReceived += OnMessageReceived;
             Client.OnNewSubscriber += OnNewSubscriber;
+            Client.OnRaidNotification += OnRaidNotification;
             Client.OnReSubscriber += OnReSubscriber;
             Client.OnWhisperReceived += OnWhisperReceived;
 
@@ -137,6 +138,13 @@ namespace Slipstream.Backend.Plugins
                 Client.OnLog += OnLog;
 
             Client.Connect();
+        }
+
+        private void OnRaidNotification(object sender, OnRaidNotificationArgs e)
+        {
+            var @event = EventFactory.CreateTwitchRaided(e.RaidNotification.DisplayName, int.Parse(e.RaidNotification.MsgParamViewerCount));
+
+            EventBus.PublishEvent(@event);
         }
 
         private void OnReSubscriber(object sender, OnReSubscriberArgs e)

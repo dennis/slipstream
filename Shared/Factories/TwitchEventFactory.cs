@@ -77,5 +77,14 @@ namespace Slipstream.Shared.Factories
                 SystemMessage = systemMessage,
             };
         }
+
+        public TwitchRaided CreateTwitchRaided(string name, int viewerCount)
+        {
+            return new TwitchRaided
+            {
+                Name = name,
+                ViewerCount = viewerCount,
+            };
+        }
     }
 }

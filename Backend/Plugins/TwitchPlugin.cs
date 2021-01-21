@@ -18,19 +18,16 @@ namespace Slipstream.Backend.Plugins
 {
     internal class TwitchPlugin : BasePlugin
     {
-        public static DictionaryValidator ConfigurationValidator { get; }
-
-        private TwitchClient? Client;
-        private readonly ILogger Logger;
-        private readonly ITwitchEventFactory EventFactory;
         private readonly IEventBus EventBus;
-
-        private readonly string TwitchUsername;
+        private readonly ITwitchEventFactory EventFactory;
+        private readonly ILogger Logger;
         private readonly string TwitchChannel;
-        private readonly string TwitchToken;
         private readonly bool TwitchLog;
-        private bool RequestReconnect = true;
+        private readonly string TwitchToken;
+        private readonly string TwitchUsername;
         private bool AnnouncedConnected = false;
+        private TwitchClient? Client;
+        private bool RequestReconnect = true;
 
         static TwitchPlugin()
         {
@@ -67,11 +64,11 @@ namespace Slipstream.Backend.Plugins
             TwitchLog = configuration.ExtractOrDefault("twitch_log", false);
         }
 
-        private void Disconnect()
+        public static DictionaryValidator ConfigurationValidator { get; }
+
+        public override void Dispose()
         {
-            AnnounceDisconnected();
-            Client?.Disconnect();
-            Client = null;
+            Disconnect();
         }
 
         public override void Loop()
@@ -125,16 +122,45 @@ namespace Slipstream.Backend.Plugins
             Client.Initialize(credentials, TwitchChannel);
 
             Client.OnConnected += OnConnected;
-            Client.OnMessageReceived += OnMessageReceived;
-            Client.OnWhisperReceived += OnWhisperReceived;
             Client.OnDisconnected += OnDisconnect;
             Client.OnError += OnError;
             Client.OnIncorrectLogin += OnIncorrectLogin;
             Client.OnJoinedChannel += OnJoinedChannel;
+            Client.OnMessageReceived += OnMessageReceived;
+            Client.OnWhisperReceived += OnWhisperReceived;
+
             if (TwitchLog)
                 Client.OnLog += OnLog;
 
             Client.Connect();
+        }
+
+        private void Disconnect()
+        {
+            AnnounceDisconnected();
+            Client?.Disconnect();
+            Client = null;
+        }
+
+        private void OnConnected(object sender, OnConnectedArgs e)
+        {
+            Logger.Information("Twitch connected as {TwitchUsername} to channel {TwitchChannel}", TwitchUsername, TwitchChannel);
+        }
+
+        private void OnDisconnect(object sender, OnDisconnectedEventArgs e)
+        {
+            AnnounceDisconnected();
+            RequestReconnect = true;
+        }
+
+        private void OnError(object sender, OnErrorEventArgs e)
+        {
+            Logger.Error("Twitch Error: {Message}}", e.Exception.Message);
+        }
+
+        private void OnIncorrectLogin(object sender, OnIncorrectLoginArgs e)
+        {
+            Logger.Error("Twitch Error: {Message}}", e.Exception.Message);
         }
 
         private void OnJoinedChannel(object sender, OnJoinedChannelArgs e)
@@ -145,22 +171,6 @@ namespace Slipstream.Backend.Plugins
         private void OnLog(object sender, OnLogArgs e)
         {
             Logger.Verbose("Twitch log: {Data}", e.Data);
-        }
-
-        private void OnIncorrectLogin(object sender, OnIncorrectLoginArgs e)
-        {
-            Logger.Error("Twitch Error: {Message}}", e.Exception.Message);
-        }
-
-        private void OnError(object sender, OnErrorEventArgs e)
-        {
-            Logger.Error("Twitch Error: {Message}}", e.Exception.Message);
-        }
-
-        private void OnDisconnect(object sender, OnDisconnectedEventArgs e)
-        {
-            AnnounceDisconnected();
-            RequestReconnect = true;
         }
 
         private void OnMessageReceived(object sender, OnMessageReceivedArgs e)
@@ -189,16 +199,6 @@ namespace Slipstream.Backend.Plugins
             EventBus.PublishEvent(
                 EventFactory.CreateTwitchReceivedWhisper(message.DisplayName, message.Message)
             );
-        }
-
-        private void OnConnected(object sender, OnConnectedArgs e)
-        {
-            Logger.Information("Twitch connected as {TwitchUsername} to channel {TwitchChannel}", TwitchUsername, TwitchChannel);
-        }
-
-        public override void Dispose()
-        {
-            Disconnect();
         }
     }
 }

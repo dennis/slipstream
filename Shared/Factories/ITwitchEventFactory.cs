@@ -19,5 +19,7 @@ namespace Slipstream.Shared.Factories
         TwitchCommandSendWhisper CreateTwitchCommandSendWhisper(string to, string message);
 
         TwitchUserSubscribed CreateTwitchUserSubscribed(string name, string message, string subscriptionPlan, long months, string systemMessage);
+
+        TwitchGiftedSubscription CreateTwitchGiftedSubscription(string gifter, string subscriptionPlan, string recipient, string systemMessage);
     }
 }

@@ -125,6 +125,7 @@ namespace Slipstream.Backend.Plugins
             Client.OnConnected += OnConnected;
             Client.OnDisconnected += OnDisconnect;
             Client.OnError += OnError;
+            Client.OnGiftedSubscription += OnGiftedSubscription;
             Client.OnIncorrectLogin += OnIncorrectLogin;
             Client.OnJoinedChannel += OnJoinedChannel;
             Client.OnMessageReceived += OnMessageReceived;
@@ -184,6 +185,24 @@ namespace Slipstream.Backend.Plugins
         private void OnError(object sender, OnErrorEventArgs e)
         {
             Logger.Error("Twitch Error: {Message}}", e.Exception.Message);
+        }
+
+        private void OnGiftedSubscription(object sender, OnGiftedSubscriptionArgs e)
+        {
+            var gifter = e.GiftedSubscription.DisplayName;
+            if (e.GiftedSubscription.IsAnonymous)
+            {
+                gifter = "Anonymous";
+            }
+
+            var @event = EventFactory.CreateTwitchGiftedSubscription(
+                gifter: gifter,
+                subscriptionPlan: e.GiftedSubscription.MsgParamSubPlan.ToString(),
+                recipient: e.GiftedSubscription.MsgParamRecipientDisplayName,
+                systemMessage: e.GiftedSubscription.SystemMsgParsed
+            );
+
+            EventBus.PublishEvent(@event);
         }
 
         private void OnIncorrectLogin(object sender, OnIncorrectLoginArgs e)

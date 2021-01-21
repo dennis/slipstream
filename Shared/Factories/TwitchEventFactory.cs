@@ -66,5 +66,16 @@ namespace Slipstream.Shared.Factories
                 Months = months,
             };
         }
+
+        public TwitchGiftedSubscription CreateTwitchGiftedSubscription(string gifter, string subscriptionPlan, string recipient, string systemMessage)
+        {
+            return new TwitchGiftedSubscription
+            {
+                Gifter = gifter,
+                SubscriptionPlan = subscriptionPlan,
+                Recipient = recipient,
+                SystemMessage = systemMessage,
+            };
+        }
     }
 }

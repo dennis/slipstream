@@ -806,6 +806,20 @@ A user subscribed or resubscribed to the stream
 | Months           | long    | Subscription length in months               |
 </details>
 
+<details><summary>TwitchGiftedSubscription</summary><br />
+
+A user subscribed or resubscribed to the stream
+
+| Name             | Type    | Description                                 |
+|:-----------------|:-------:|:--------------------------------------------|
+| EventType        | string  | `TwitchGiftedSubscription` (constant)       |
+| ExcludeFromTxrx  | boolean | false (constant)                            |
+| Gifter           | string  | User gifting sub (might be Anonymous)       |
+| SubscriptionPlan | string  | One of `Prime`, `Tier1`, `Tier2` or `Tier3` |
+| SystemMessage    | string  | Twitch's  message                           |
+| Recipient        | string  | Gift recipient                              |
+</details>
+
 ## UI
 
 <details><summary>UIButtonTriggered</summary><br />

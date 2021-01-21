@@ -85,8 +85,8 @@ namespace Slipstream.Backend.Plugins
             { "DirtOval", IRacingCategoryEnum.DirtOval },
         };
 
-        private IRacingCurrentSession? LastSessionInfo;
-        private IRacingSessionState? LastSessionState;
+        private IRacingSessionTypeEnum LastSessionType;
+        private SessionState LastSessionState;
         private IRacingRaceFlags? LastRaceFlags;
         private IRacingWeatherInfo? LastWeatherInfo;
         private readonly DriverState driverState = new DriverState();
@@ -95,7 +95,6 @@ namespace Slipstream.Backend.Plugins
         private bool SendTrackInfo = false;
         private bool SendCarInfo = false;
         private bool SendWeatherInfo = false;
-        private bool SendCurrentSession = false;
         private bool SendSessionState = false;
         private bool SendRaceFlags = false;
 
@@ -109,7 +108,6 @@ namespace Slipstream.Backend.Plugins
             IRacingEventHandler.OnIRacingCommandSendCarInfo += (s, e) => SendCarInfo = true;
             IRacingEventHandler.OnIRacingCommandSendTrackInfo += (s, e) => SendTrackInfo = true;
             IRacingEventHandler.OnIRacingCommandSendWeatherInfo += (s, e) => SendWeatherInfo = true;
-            IRacingEventHandler.OnIRacingCommandSendCurrentSession += (s, e) => SendCurrentSession = true;
             IRacingEventHandler.OnIRacingCommandSendSessionState += (s, e) => SendSessionState = true;
             IRacingEventHandler.OnIRacingCommandSendRaceFlags += (s, e) => SendRaceFlags = true;
         }
@@ -121,7 +119,7 @@ namespace Slipstream.Backend.Plugins
                 foreach (var data in Connection.GetDataFeed().WithCorrectedDistances().WithCorrectedPercentages())
                 {
                     HandleSample(data);
-                    break; // give control back to Worker
+                    break; // give control back to PluginWorker
                 }
             }
             catch (Exception e)
@@ -145,13 +143,57 @@ namespace Slipstream.Backend.Plugins
         {
             HandleConnect(data);
             HandleWeatherInfo(data);
-            HandleCurrentSession(data);
             HandleCarInfo(data);
             HandleFlags(data);
-            HandleState(data);
             HandleLapsCompleted(data);
             HandlePitUsage(data);
             HandleIncident(data);
+            HandleIRacingSessionState(data);
+        }
+
+        private void HandleIRacingSessionState(DataSample data)
+        {
+            var sessionData = data.SessionData.SessionInfo.Sessions[data.Telemetry.SessionNum];
+            var sessionType = IRacingSessionTypes[sessionData.SessionType];
+            var sessionTime = data.Telemetry.SessionTime;
+
+            var category = IRacingCategoryTypes[data.SessionData.WeekendInfo.Category];
+            var sessionState = data.Telemetry.SessionState;
+            var sessionStateMapped = SessionStateMapping[data.Telemetry.SessionState];
+            var lapsLimited = sessionData.IsLimitedSessionLaps;
+            var timeLimited = sessionData.IsLimitedTime;
+            var totalSessionTime = sessionData._SessionTime / 10_000;
+            var totalSessionLaps = sessionData._SessionLaps;
+
+            if (sessionType != LastSessionType || sessionState != LastSessionState || SendSessionState)
+            {
+                IIRacingSessionState @event =
+                   sessionType switch
+                   {
+                       IRacingSessionTypeEnum.Practice => EventFactory.CreateIRacingPractice(sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionStateMapped, category: category),
+                       IRacingSessionTypeEnum.OpenQualify => EventFactory.CreateIRacingQualify(sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionStateMapped, category: category),
+                       IRacingSessionTypeEnum.LoneQualify => EventFactory.CreateIRacingQualify(sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionStateMapped, category: category),
+                       IRacingSessionTypeEnum.OfflineTesting => EventFactory.CreateIRacingTesting(sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionStateMapped, category: category),
+                       IRacingSessionTypeEnum.Race => EventFactory.CreateIRacingRace(sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionStateMapped, category: category),
+                       IRacingSessionTypeEnum.Warmup => EventFactory.CreateIRacingWarmup(sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionStateMapped, category: category),
+                       _ => throw new NotImplementedException(),
+                   };
+
+                EventBus.PublishEvent(@event);
+
+                // If we change from practice to qualify, we need to reset car info
+                if (sessionType != LastSessionType)
+                {
+                    foreach (var carState in CarsTracked)
+                    {
+                        carState.Value.ClearState();
+                    }
+                }
+
+                LastSessionType = sessionType;
+                LastSessionState = sessionState;
+                SendSessionState = false;
+            }
         }
 
         private void HandleIncident(DataSample data)
@@ -322,28 +364,6 @@ namespace Slipstream.Backend.Plugins
             }
         }
 
-        private void HandleState(DataSample data)
-        {
-            var @event = EventFactory.CreateIRacingSessionState
-            (
-                sessionTime: data.Telemetry.SessionTime,
-                state: SessionStateMapping[data.Telemetry.SessionState]
-            );
-
-            if (LastSessionState?.DifferentTo(@event) != true || SendSessionState)
-            {
-                EventBus.PublishEvent(@event);
-                LastSessionState = @event;
-
-                foreach (var carState in CarsTracked)
-                {
-                    carState.Value.ClearState();
-                }
-
-                SendSessionState = false;
-            }
-        }
-
         private void HandleFlags(DataSample data)
         {
             var sessionFlags = data.Telemetry.SessionFlags;
@@ -435,28 +455,6 @@ namespace Slipstream.Backend.Plugins
             SendCarInfo = false;
         }
 
-        private void HandleCurrentSession(DataSample data)
-        {
-            var sessionData = data.SessionData.SessionInfo.Sessions[data.Telemetry.SessionNum];
-            var sessionInfo = EventFactory.CreateIRacingCurrentSession
-            (
-                category: IRacingCategoryTypes[data.SessionData.WeekendInfo.Category],
-                sessionType: IRacingSessionTypes[sessionData.SessionType],
-                timeLimited: sessionData.IsLimitedTime,
-                lapsLimited: sessionData.IsLimitedSessionLaps,
-                totalSessionLaps: sessionData._SessionLaps,
-                totalSessionTime: sessionData._SessionTime / 10_000
-            );
-
-            if (LastSessionInfo == null || !sessionInfo.Equals(LastSessionInfo) || SendCurrentSession)
-            {
-                EventBus.PublishEvent(sessionInfo);
-
-                LastSessionInfo = sessionInfo;
-                SendCurrentSession = false;
-            }
-        }
-
         private void HandleWeatherInfo(DataSample data)
         {
             var weatherInfo = EventFactory.CreateIRacingWeatherInfo
@@ -513,10 +511,9 @@ namespace Slipstream.Backend.Plugins
         {
             CarsTracked.Clear();
             driverState.ClearState();
-            LastSessionInfo = null;
-            LastSessionState = null;
             LastRaceFlags = null;
             LastWeatherInfo = null;
+            LastSessionState = SessionState.Invalid;
             Connected = false;
         }
     }

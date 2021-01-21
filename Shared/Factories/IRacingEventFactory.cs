@@ -59,9 +59,36 @@ namespace Slipstream.Shared.Factories
             return new IRacingConnected();
         }
 
-        public IRacingCurrentSession CreateIRacingCurrentSession(IRacingCategoryEnum category, IRacingSessionTypeEnum sessionType, bool timeLimited, bool lapsLimited, int totalSessionLaps, double totalSessionTime)
+        private static string SessionCategoryToString(IRacingCategoryEnum category)
         {
-            string sessionTypeStr = sessionType switch
+            return category switch
+            {
+                IRacingCategoryEnum.Road => "Road",
+                IRacingCategoryEnum.Oval => "Oval",
+                IRacingCategoryEnum.DirtOval => "DirtOval",
+                IRacingCategoryEnum.DirtRoad => "DirtRoad",
+                _ => throw new Exception($"Unexpected IRacingCategoryEnum '{category}"),
+            };
+        }
+
+        private string SessionStateToString(IRacingSessionStateEnum state)
+        {
+            return state switch
+            {
+                IRacingSessionStateEnum.Checkered => "Checkered",
+                IRacingSessionStateEnum.CoolDown => "CoolDown",
+                IRacingSessionStateEnum.GetInCar => "GetInCar",
+                IRacingSessionStateEnum.Invalid => "Invalid",
+                IRacingSessionStateEnum.ParadeLaps => "ParadeLaps",
+                IRacingSessionStateEnum.Racing => "Racing",
+                IRacingSessionStateEnum.Warmup => "Warmup",
+                _ => throw new Exception($"Unexpected IRacingSessionStateEnum '{state}"),
+            };
+        }
+
+        private static string SessionTypeToString(IRacingSessionTypeEnum sessionType)
+        {
+            return sessionType switch
             {
                 IRacingSessionTypeEnum.Practice => "Practice",
                 IRacingSessionTypeEnum.OpenQualify => "OpenQualify",
@@ -70,25 +97,6 @@ namespace Slipstream.Shared.Factories
                 IRacingSessionTypeEnum.Race => "Race",
                 IRacingSessionTypeEnum.Warmup => "Warmup",
                 _ => throw new Exception($"Unexpected IRacingSessionTypeEnum '{sessionType}"),
-            };
-
-            string categoryStr = category switch
-            {
-                IRacingCategoryEnum.Road => "Road",
-                IRacingCategoryEnum.Oval => "Oval",
-                IRacingCategoryEnum.DirtOval => "DirtOval",
-                IRacingCategoryEnum.DirtRoad => "DirtRoad",
-                _ => throw new Exception($"Unexpected IRacingCategoryEnum '{category}"),
-            };
-
-            return new IRacingCurrentSession
-            {
-                Category = categoryStr,
-                SessionType = sessionTypeStr,
-                TimeLimited = timeLimited,
-                LapsLimited = lapsLimited,
-                TotalSessionLaps = totalSessionLaps,
-                TotalSessionTime = totalSessionTime,
             };
         }
 
@@ -252,15 +260,6 @@ namespace Slipstream.Shared.Factories
             };
         }
 
-        public IRacingSessionState CreateIRacingSessionState(double sessionTime, IRacingSessionStateEnum state)
-        {
-            return new IRacingSessionState
-            {
-                SessionTime = sessionTime,
-                State = state.ToString(),
-            };
-        }
-
         public IRacingTrackInfo CreateIRacingTrackInfo
         (
             long trackId,
@@ -321,11 +320,6 @@ namespace Slipstream.Shared.Factories
             return new IRacingCommandSendWeatherInfo();
         }
 
-        public IRacingCommandSendCurrentSession CreateIRacingCommandSendCurrentSession()
-        {
-            return new IRacingCommandSendCurrentSession();
-        }
-
         public IRacingCommandSendSessionState CreateIRacingCommandSendSessionState()
         {
             return new IRacingCommandSendSessionState();
@@ -342,6 +336,76 @@ namespace Slipstream.Shared.Factories
             {
                 IncidentCount = totalIncidents,
                 IncidentDelta = incidentDelta
+            };
+        }
+
+        public IRacingPractice CreateIRacingPractice(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category)
+        {
+            return new IRacingPractice
+            {
+                SessionTime = sessionTime,
+                LapsLimited = lapsLimited,
+                TimeLimited = timeLimited,
+                TotalSessionLaps = totalSessionLaps,
+                TotalSessionTime = totalSessionTime,
+                State = SessionStateToString(state),
+                Category = SessionCategoryToString(category)
+            };
+        }
+
+        public IRacingQualify CreateIRacingQualify(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category)
+        {
+            return new IRacingQualify
+            {
+                SessionTime = sessionTime,
+                LapsLimited = lapsLimited,
+                TimeLimited = timeLimited,
+                TotalSessionLaps = totalSessionLaps,
+                TotalSessionTime = totalSessionTime,
+                State = SessionStateToString(state),
+                Category = SessionCategoryToString(category)
+            };
+        }
+
+        public IRacingRace CreateIRacingRace(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category)
+        {
+            return new IRacingRace
+            {
+                SessionTime = sessionTime,
+                LapsLimited = lapsLimited,
+                TimeLimited = timeLimited,
+                TotalSessionLaps = totalSessionLaps,
+                TotalSessionTime = totalSessionTime,
+                State = SessionStateToString(state),
+                Category = SessionCategoryToString(category)
+            };
+        }
+
+        public IRacingTesting CreateIRacingTesting(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category)
+        {
+            return new IRacingTesting
+            {
+                SessionTime = sessionTime,
+                LapsLimited = lapsLimited,
+                TimeLimited = timeLimited,
+                TotalSessionLaps = totalSessionLaps,
+                TotalSessionTime = totalSessionTime,
+                State = SessionStateToString(state),
+                Category = SessionCategoryToString(category)
+            };
+        }
+
+        public IRacingWarmup CreateIRacingWarmup(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category)
+        {
+            return new IRacingWarmup
+            {
+                SessionTime = sessionTime,
+                LapsLimited = lapsLimited,
+                TimeLimited = timeLimited,
+                TotalSessionLaps = totalSessionLaps,
+                TotalSessionTime = totalSessionTime,
+                State = SessionStateToString(state),
+                Category = SessionCategoryToString(category)
             };
         }
     }

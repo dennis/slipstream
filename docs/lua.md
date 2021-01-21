@@ -260,20 +260,6 @@ This function publishes `IRacingCommandSendWeatherInfo` event, that is handled b
 This function is aliased as ``iracing_send_weather_info`` (deprecated)
 </details>
 
-<details><summary>iracing:send_current_session()</summary><br />
-Request IRacingPlugin to send current session.
-
-No arguments
-
-```lua
-iracing:send_current_session()
-```
-
-This function publishes `IRacingCommandSendCurrentSession` event, that is handled by IRacingPlugin.
-
-This function is aliased as ``iracing_send_current_session`` (deprecated)
-</details>
-
 <details><summary>iracing:send_session_state()</summary><br />
 Request IRacingPlugin to send session state
 

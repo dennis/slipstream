@@ -54,5 +54,37 @@ namespace Slipstream.Shared.Factories
                 Message = message
             };
         }
+
+        public TwitchUserSubscribed CreateTwitchUserSubscribed(string name, string message, string subscriptionPlan, long months, string systemMessage)
+        {
+            return new TwitchUserSubscribed
+            {
+                Name = name,
+                Message = message,
+                SystemMessage = systemMessage,
+                SubscriptionPlan = subscriptionPlan,
+                Months = months,
+            };
+        }
+
+        public TwitchGiftedSubscription CreateTwitchGiftedSubscription(string gifter, string subscriptionPlan, string recipient, string systemMessage)
+        {
+            return new TwitchGiftedSubscription
+            {
+                Gifter = gifter,
+                SubscriptionPlan = subscriptionPlan,
+                Recipient = recipient,
+                SystemMessage = systemMessage,
+            };
+        }
+
+        public TwitchRaided CreateTwitchRaided(string name, int viewerCount)
+        {
+            return new TwitchRaided
+            {
+                Name = name,
+                ViewerCount = viewerCount,
+            };
+        }
     }
 }

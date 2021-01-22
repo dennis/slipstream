@@ -1,0 +1,32 @@
+﻿using System.Collections.Generic;
+
+namespace Slipstream.Shared.Events.Twitch
+{
+    public class TwitchRaided : IEvent
+    {
+        public string EventType => "TwitchRaided";
+        public bool ExcludeFromTxrx => false;
+        public ulong Uptime { get; set; }
+        public string Name { get; set; }
+        public int ViewerCount { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is TwitchRaided raided &&
+                   EventType == raided.EventType &&
+                   ExcludeFromTxrx == raided.ExcludeFromTxrx &&
+                   Name == raided.Name &&
+                   ViewerCount == raided.ViewerCount;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = -1039997614;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
+            hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
+            hashCode = hashCode * -1521134295 + ViewerCount.GetHashCode();
+            return hashCode;
+        }
+    }
+}

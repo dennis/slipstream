@@ -29,7 +29,8 @@ namespace Slipstream.Backend.Plugins
         static AudioPlugin()
         {
             ConfigurationValidator = new DictionaryValidator()
-                .PermitString("path");
+                .PermitString("path")
+                .PermitLong("output");
         }
 
         public AudioPlugin(string id, ILogger logger, IEventBus eventBus, IAudioEventFactory eventFactory, Parameters configuration) : base(id, "AudioPlugin", id, id, true)
@@ -43,7 +44,16 @@ namespace Slipstream.Backend.Plugins
             Path = configuration.ExtractOrDefault("path", "Audio");
 
             Synthesizer = new SpeechSynthesizer();
-            Synthesizer.SetOutputToDefaultAudioDevice();
+            var outputDeviceIdx = configuration.ExtractOrDefault("output", -1);
+
+            if (outputDeviceIdx == -1)
+            {
+                Synthesizer.SetOutputToDefaultAudioDevice();
+            }
+            else
+            {
+                OutputDevice = new WaveOutEvent() { DeviceNumber = outputDeviceIdx };
+            }
 
             var Audio = EventHandler.Get<Shared.EventHandlers.Audio>();
 

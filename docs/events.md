@@ -431,10 +431,11 @@ Sent when connected to IRacing
 | TotalSessionTime | double  | Total session time                                                 |
 | State            | string  | Checkered, CoolDown, GetInCar, Invalid, ParadeLaps, Racing, Warmup |
 | Category         | string  | Road, Oval, DirtOval, DirtRoad                                     |
+| OpenQualify      | bool    | Open or Lone qualify                                               |
 
 
 **JSON Example:**
-`{"EventType":"IRacingQualify","ExcludeFromTxrx":false,"Uptime":1112,"SessionTime":2763.6131673177088,"LapsLimited":false,"TimeLimited":true,"TotalSessionTime":3600.0,"TotalSessionLaps":0,"State":"Racing","Category":"Road"}`
+`{"EventType":"IRacingQualify","ExcludeFromTxrx":false,"Uptime":1112,"SessionTime":2763.6131673177088,"LapsLimited":false,"TimeLimited":true,"TotalSessionTime":3600.0,"TotalSessionLaps":0,"State":"Racing","Category":"Road",OpenQualify:false}`
 </details>
 
 <details><summary>IRacingRace</summary><br />

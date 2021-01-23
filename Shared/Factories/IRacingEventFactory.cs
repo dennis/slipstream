@@ -353,7 +353,7 @@ namespace Slipstream.Shared.Factories
             };
         }
 
-        public IRacingQualify CreateIRacingQualify(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category)
+        public IRacingQualify CreateIRacingQualify(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category, bool openQualify)
         {
             return new IRacingQualify
             {
@@ -363,7 +363,8 @@ namespace Slipstream.Shared.Factories
                 TotalSessionLaps = totalSessionLaps,
                 TotalSessionTime = totalSessionTime,
                 State = SessionStateToString(state),
-                Category = SessionCategoryToString(category)
+                Category = SessionCategoryToString(category),
+                OpenQualify = openQualify,
             };
         }
 

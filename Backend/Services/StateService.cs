@@ -16,7 +16,7 @@ namespace Slipstream.Backend.Services
         private readonly string FilePath;
         private DateTime? NextKeyExpiresAt;
 
-        class StateValue
+        private class StateValue
         {
             public string Value = "";
             public DateTime? ExpiresAt;
@@ -59,7 +59,6 @@ namespace Slipstream.Backend.Services
                     if (KeyValues.ContainsKey(key))
                     {
                         KeyValues.Remove(key);
-
                     }
 
                     if (value.Length > 0)

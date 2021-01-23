@@ -22,12 +22,12 @@ namespace Slipstream.Backend.Plugins
         private readonly string Prefix = "<UNKNOWN>";
         private readonly string FilePath;
 
-        public LuaPlugin(string id,
+        public LuaPlugin(
+            string id,
             ILogger logger,
             IEventFactory eventFactory,
             IEventBus eventBus,
-            IStateService stateService,
-            IEventSerdeService eventSerdeService,
+            IServiceLocator serviceLocator,
             Dictionary<dynamic, dynamic> configuration
         ) : base(id, "LuaPlugin", id, "Lua")
         {
@@ -36,7 +36,7 @@ namespace Slipstream.Backend.Plugins
             InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
             EventBus = new CapturingEventBus(eventBus);
 
-            LuaService = new LuaService(logger, eventFactory, EventBus, stateService, eventSerdeService);
+            LuaService = new LuaService(logger, eventFactory, EventBus, serviceLocator.Get<IStateService>(), serviceLocator.Get<IEventSerdeService>());
 
             // Avoid that WriteToConsole is evaluated by Lua, that in turn will
             // add more WriteToConsole events, making a endless loop

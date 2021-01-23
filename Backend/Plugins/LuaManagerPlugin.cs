@@ -34,14 +34,14 @@ namespace Slipstream.Backend.Plugins
         private DateTime? BootupEventsDeadline;
         private readonly List<IEvent> CapturedBootupEvents = new List<IEvent>();
 
-        public LuaManagerPlugin(string id, ILogger logger, IFileMonitorEventFactory eventFactory, IEventBus eventBus, IPluginManager pluginManager, IPluginFactory pluginFactory, IEventSerdeService eventSerdeService) : base(id, "LuaManagerPlugin", id, "Core")
+        public LuaManagerPlugin(string id, ILogger logger, IFileMonitorEventFactory eventFactory, IEventBus eventBus, IPluginManager pluginManager, IPluginFactory pluginFactory, IServiceLocator serviceLocator) : base(id, "LuaManagerPlugin", id, "Core")
         {
             Logger = logger;
             EventFactory = eventFactory;
             EventBus = eventBus;
             PluginManager = pluginManager;
             PluginFactory = pluginFactory;
-            EventSerdeService = eventSerdeService;
+            EventSerdeService = serviceLocator.Get<IEventSerdeService>();
 
             var fileMonitor = EventHandler.Get<Shared.EventHandlers.FileMonitor>();
             var @internal = EventHandler.Get<Shared.EventHandlers.Internal>();

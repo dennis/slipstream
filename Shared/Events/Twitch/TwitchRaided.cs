@@ -7,7 +7,7 @@ namespace Slipstream.Shared.Events.Twitch
         public string EventType => "TwitchRaided";
         public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public int ViewerCount { get; set; }
 
         public override bool Equals(object obj)

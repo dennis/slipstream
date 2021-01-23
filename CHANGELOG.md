@@ -21,6 +21,7 @@
     - Replaced with: IRacingPractice, IRacingQualify, IRacingRace, IRacingTesting, IRacingWarmup
     - If your script needs to get the current state, it can still use the lua function: iracing:send_session_state()
   - TwitchPlugin: Add events TwitchUserSubscribed (both sub and resub), TwitchGiftedSubscription and TwitchRaided
+  - TwitchPlugin: Made it Throttle-aware, hopefully avoiding getting locked out of chat for 30mins
 
 ## [0.4.0](https://github.com/dennis/slipstream/releases/tag/v0.3.0) (2020-01-10)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.3.0...v0.4.0)

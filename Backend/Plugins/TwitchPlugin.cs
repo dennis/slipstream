@@ -1,10 +1,12 @@
 using Serilog;
 using Slipstream.Shared;
-using Slipstream.Shared.Events.Twitch;
 using Slipstream.Shared.Factories;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
@@ -29,6 +31,17 @@ namespace Slipstream.Backend.Plugins
         private bool AnnouncedConnected = false;
         private TwitchClient? Client;
         private bool RequestReconnect = true;
+        private readonly List<string> PendingMessages = new List<string>();
+
+        // According to https://dev.twitch.tv/docs/irc/guide we are allowed to send 20
+        // commands per 30s to avoid being ignored for 30 mins. These values are for regular
+        // users. Moderator got a bit more room.
+        private const int CommandsReserved = 5;
+
+        private TimeSpan ThrottleDuration = TimeSpan.FromSeconds(30);
+        private int MaximumCommandsWithinThottleDuration = 20 - CommandsReserved; // As API  might send more commands (in addition to message) - we decrease it a bit
+        private DateTime ThrottleDurationStart = DateTime.UtcNow;
+        private int CommandCountWithinThrottleDuration = 0;
 
         static TwitchPlugin()
         {
@@ -50,19 +63,57 @@ namespace Slipstream.Backend.Plugins
 
             var twitchEventHandler = EventHandler.Get<Shared.EventHandlers.Twitch>();
 
-            twitchEventHandler.OnTwitchCommandSendMessage += (_, e) =>
-            {
-                if (Client?.JoinedChannels.Count > 0)
-                {
-                    Client.SendMessage(TwitchChannel, e.Event.Message);
-                }
-            };
-            twitchEventHandler.OnTwitchCommandSendWhisper += (_, e) => Client?.SendWhisper(e.Event.To, e.Event.Message);
+            twitchEventHandler.OnTwitchCommandSendMessage += (_, e) => SendMessage(e.Event.Message);
+            twitchEventHandler.OnTwitchCommandSendWhisper += (_, e) => SendWhisper(e.Event.To, e.Event.Message);
 
             TwitchUsername = configuration.Extract<string>("twitch_username");
             TwitchChannel = configuration.Extract<string>("twitch_channel");
             TwitchToken = configuration.Extract<string>("twitch_token");
             TwitchLog = configuration.ExtractOrDefault("twitch_log", false);
+        }
+
+        private void ThrottleSafe(Action action)
+        {
+            var now = DateTime.UtcNow;
+            if ((ThrottleDurationStart + ThrottleDuration) < now)
+            {
+                ThrottleDurationStart = DateTime.UtcNow;
+                CommandCountWithinThrottleDuration = 0;
+            }
+            else
+            {
+                CommandCountWithinThrottleDuration++;
+
+                if (CommandCountWithinThrottleDuration > MaximumCommandsWithinThottleDuration)
+                {
+                    // We need to sleep until next ThrottleDuration
+                    var sleepUntil = ThrottleDurationStart + ThrottleDuration;
+                    Thread.Sleep(sleepUntil - now);
+
+                    ThrottleDurationStart = DateTime.UtcNow;
+                    CommandCountWithinThrottleDuration = 0;
+                }
+
+                action.Invoke();
+                Thread.Sleep(250); // Just sleep a bit, so we dont use it all right away
+            }
+        }
+
+        private void SendMessage(string message)
+        {
+            if (Client?.JoinedChannels.Count > 0)
+            {
+                ThrottleSafe(() => Client.SendMessage(TwitchChannel, message));
+            }
+            else
+            {
+                PendingMessages.Add(message);
+            }
+        }
+
+        private void SendWhisper(string to, string message)
+        {
+            ThrottleSafe(() => Client?.SendWhisper(to, message));
         }
 
         public static DictionaryValidator ConfigurationValidator { get; }
@@ -87,10 +138,21 @@ namespace Slipstream.Backend.Plugins
 
         private void AnnounceConnected()
         {
+            Debug.Assert(Client != null);
+
             if (!AnnouncedConnected)
             {
                 EventBus.PublishEvent(EventFactory.CreateTwitchConnected());
                 AnnouncedConnected = true;
+            }
+
+            if (PendingMessages.Count > 0)
+            {
+                foreach (var message in PendingMessages)
+                {
+                    SendMessage(message);
+                }
+                PendingMessages.Clear();
             }
         }
 
@@ -133,11 +195,25 @@ namespace Slipstream.Backend.Plugins
             Client.OnRaidNotification += OnRaidNotification;
             Client.OnReSubscriber += OnReSubscriber;
             Client.OnWhisperReceived += OnWhisperReceived;
+            Client.OnUserStateChanged += Client_OnUserStateChanged;
 
             if (TwitchLog)
                 Client.OnLog += OnLog;
 
             Client.Connect();
+
+            ThrottleDurationStart = DateTime.UtcNow;
+            CommandCountWithinThrottleDuration = 5; // just wildly guessing that we'll use up to 5 commands to connect
+        }
+
+        private void Client_OnUserStateChanged(object sender, OnUserStateChangedArgs e)
+        {
+            if (e.UserState.IsModerator)
+            {
+                Logger.Information("I got moderator status. Increasing throttle limits");
+
+                MaximumCommandsWithinThottleDuration = 100 - CommandsReserved;
+            }
         }
 
         private void OnRaidNotification(object sender, OnRaidNotificationArgs e)

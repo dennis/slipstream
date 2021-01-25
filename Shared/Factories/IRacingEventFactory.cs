@@ -409,5 +409,17 @@ namespace Slipstream.Shared.Factories
                 Category = SessionCategoryToString(category)
             };
         }
+
+        public IRacingCarPosition CreateIRacingCarPosition(double sessionTime, int carIdx, bool localUser, int positionInClass, int positionInRace)
+        {
+            return new IRacingCarPosition
+            {
+                SessionTime = sessionTime,
+                CarIdx = carIdx,
+                LocalUser = localUser,
+                PositionInClass = positionInClass,
+                PositionInRace = positionInRace
+            };
+        }
     }
 }

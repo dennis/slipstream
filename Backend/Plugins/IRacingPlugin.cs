@@ -16,6 +16,7 @@ namespace Slipstream.Backend.Plugins
 {
     internal class IRacingPlugin : BasePlugin
     {
+        private const int MAX_CARS = 64;
         private readonly iRacingConnection Connection = new iRacingConnection();
         private readonly IIRacingEventFactory EventFactory;
         private readonly IEventBus EventBus;
@@ -85,6 +86,8 @@ namespace Slipstream.Backend.Plugins
             { "DirtOval", IRacingCategoryEnum.DirtOval },
         };
 
+        private readonly int[] LastPositionInClass = new int[MAX_CARS];
+        private readonly int[] LastPositionInRace = new int[MAX_CARS];
         private IRacingSessionTypeEnum LastSessionType;
         private SessionState LastSessionState;
         private IRacingRaceFlags? LastRaceFlags;
@@ -149,6 +152,36 @@ namespace Slipstream.Backend.Plugins
             HandlePitUsage(data);
             HandleIncident(data);
             HandleIRacingSessionState(data);
+            HandlePosition(data);
+        }
+
+        private void HandlePosition(DataSample data)
+        {
+            for (int i = 0; i < data.Telemetry.Cars.Count(); i++)
+            {
+                int positionInRace = (int)data.Telemetry.CarIdxClassPosition[i];
+                int positionInClass = (int)data.Telemetry.CarIdxPosition[i];
+
+                if (positionInRace > 0 && positionInClass > 0)
+                {
+                    if (positionInRace != LastPositionInRace[i] || positionInClass != LastPositionInClass[i])
+                    {
+                        var localUser = data.SessionData.DriverInfo.DriverCarIdx == i;
+
+                        var @event = EventFactory.CreateIRacingCarPosition(
+                            sessionTime: data.Telemetry.SessionTime,
+                            carIdx: i,
+                            localUser: localUser,
+                            positionInClass: positionInClass,
+                            positionInRace: positionInRace);
+
+                        EventBus.PublishEvent(@event);
+                    }
+                }
+
+                LastPositionInClass[i] = positionInClass;
+                LastPositionInRace[i] = positionInRace;
+            }
         }
 
         private void HandleIRacingSessionState(DataSample data)
@@ -188,6 +221,12 @@ namespace Slipstream.Backend.Plugins
                     {
                         carState.Value.ClearState();
                     }
+                }
+
+                for (int i = 0; i < MAX_CARS; i++)
+                {
+                    LastPositionInClass[i] = 0;
+                    LastPositionInRace[i] = 0;
                 }
 
                 LastSessionType = sessionType;

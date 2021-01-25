@@ -155,6 +155,7 @@
     <Compile Include="Backend\Services\LuaService.cs" />
     <Compile Include="Backend\Services\ILuaContext.cs" />
     <Compile Include="Shared\Events\IRacing\IIRacingSessionState.cs" />
+    <Compile Include="Shared\Events\IRacing\IRacingCarPosition.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingWarmup.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingRace.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingTesting.cs" />

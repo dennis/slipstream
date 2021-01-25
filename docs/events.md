@@ -669,6 +669,24 @@ For user, this is sent after a pitshop, showing some data about the pitstop.
 `{"EventType":"IRacingWeatherInfo","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":1058.3000081380189,"Skies":"Partly Cloudy","SurfaceTemp":"39.76 C","AirTemp":"25.51 C","AirPressure":"29.25 Hg","RelativeHumidity":"55 %","FogLevel":"0 %"}`
 </details>
 
+<details><summary>IRacingCarPosition</summary><br />
+
+Published every time car changes positions.
+
+| Name            | Type    | Description                     |
+|:----------------|:-------:|:--------------------------------|
+| EventType       | string  | `IRacingCarPosition` (constant) |
+| ExcludeFromTxrx | boolean | false (constant)                |
+| SessionTime     | string  |                                 |
+| CarIdx          | int     | Car Index                       |
+| LocalUser       | bool    | Is it our car?                  |
+| PositionInClass | int     | Position in class               |
+| PositionInRace  | int     | Overall position in race        |
+
+**JSON Example:**
+`{"EventType":"IRacingCarPosition","ExcludeFromTxrx":false,"Uptime":2528216,"SessionTime":2711.7666666666669,"CarIdx":28,"LocalUser":true,"PositionInClass":15,"PositionInRace":15}`
+</details>
+
 ## Playback
 
 Enables saving and replaying of events. Slipstream stores up-to 10.000 

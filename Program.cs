@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Serilog;
 using Slipstream.Shared;
 using Slipstream.Shared.Factories;
+using System.Diagnostics;
 
 #nullable enable
 
@@ -55,6 +56,7 @@ namespace Slipstream
             services.AddScoped<Backend.Services.IEventSerdeService, Backend.Services.EventSerdeService>();
             services.AddScoped<Backend.IPluginManager, Backend.PluginManager>();
             services.AddScoped<Backend.IPluginFactory, Backend.PluginManager>();
+            services.AddScoped<EventHandlerControllerBuilder>();
             services.AddScoped<IEventFactory, EventFactory>();
             services.AddScoped<Backend.Services.ILuaSevice, Backend.Services.LuaService>();
             services.AddSingleton<Shared.IApplicationVersionService, Shared.ApplicationVersionService>();

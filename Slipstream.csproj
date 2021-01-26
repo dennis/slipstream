@@ -154,6 +154,8 @@
     <Compile Include="Backend\Services\ITxrxService.cs" />
     <Compile Include="Backend\Services\LuaService.cs" />
     <Compile Include="Backend\Services\ILuaContext.cs" />
+    <Compile Include="Shared\EventHandlerArgs.cs" />
+    <Compile Include="Shared\EventHandlerControllerBuilder.cs" />
     <Compile Include="Shared\Events\IRacing\IIRacingSessionState.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingCarPosition.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingWarmup.cs" />
@@ -242,7 +244,7 @@
     <Compile Include="Backend\Plugins\FileMonitorPlugin.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingTrackInfo.cs" />
     <Compile Include="Backend\PluginWorker.cs" />
-    <Compile Include="Shared\EventHandler.cs" />
+    <Compile Include="Shared\EventHandlerController.cs" />
     <Compile Include="Shared\Events\FileMonitor\FileMonitorFileChanged.cs" />
     <Compile Include="Shared\Events\FileMonitor\FileMonitorFileDeleted.cs" />
     <Compile Include="Shared\Events\FileMonitor\FileMonitorFileRenamed.cs" />
@@ -265,6 +267,8 @@
     <Compile Include="Backend\IPlugin.cs" />
     <Compile Include="Shared\IEvent.cs" />
     <Compile Include="Shared\IEventFactory.cs" />
+    <Compile Include="Shared\IEventHandler.cs" />
+    <Compile Include="Shared\IEventHandlerController.cs" />
     <Compile Include="Shared\IEventProducer.cs" />
     <Compile Include="Backend\Worker.cs" />
     <Compile Include="Frontend\MainWindow.cs">

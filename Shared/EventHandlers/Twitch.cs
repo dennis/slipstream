@@ -1,36 +1,36 @@
 ﻿#nullable enable
 
 using Slipstream.Shared.Events.Twitch;
-using static Slipstream.Shared.EventHandler;
+using static Slipstream.Shared.EventHandlerController;
 
 namespace Slipstream.Shared.EventHandlers
 {
     internal class Twitch : IEventHandler
     {
-        private readonly EventHandler Parent;
+        private readonly EventHandlerController Parent;
 
-        public Twitch(EventHandler eventHandler)
+        public Twitch(EventHandlerController eventHandler)
         {
             Parent = eventHandler;
         }
 
-        public delegate void OnTwitchCommandSendMessageHandler(EventHandler source, EventHandlerArgs<TwitchCommandSendMessage> e);
+        public delegate void OnTwitchCommandSendMessageHandler(EventHandlerController source, EventHandlerArgs<TwitchCommandSendMessage> e);
 
-        public delegate void OnTwitchCommandSendWhisperHandler(EventHandler source, EventHandlerArgs<TwitchCommandSendWhisper> e);
+        public delegate void OnTwitchCommandSendWhisperHandler(EventHandlerController source, EventHandlerArgs<TwitchCommandSendWhisper> e);
 
-        public delegate void OnTwitchConnectedHandler(EventHandler source, EventHandlerArgs<TwitchConnected> e);
+        public delegate void OnTwitchConnectedHandler(EventHandlerController source, EventHandlerArgs<TwitchConnected> e);
 
-        public delegate void OnTwitchDisconnectedHandler(EventHandler source, EventHandlerArgs<TwitchDisconnected> e);
+        public delegate void OnTwitchDisconnectedHandler(EventHandlerController source, EventHandlerArgs<TwitchDisconnected> e);
 
-        public delegate void OnTwitchReceivedMessageHandler(EventHandler source, EventHandlerArgs<TwitchReceivedMessage> e);
+        public delegate void OnTwitchReceivedMessageHandler(EventHandlerController source, EventHandlerArgs<TwitchReceivedMessage> e);
 
-        public delegate void OnTwitchReceivedWhisperHandler(EventHandler source, EventHandlerArgs<TwitchReceivedWhisper> e);
+        public delegate void OnTwitchReceivedWhisperHandler(EventHandlerController source, EventHandlerArgs<TwitchReceivedWhisper> e);
 
-        public delegate void OnTwitchUserSubscribedHandler(EventHandler source, EventHandlerArgs<TwitchUserSubscribed> e);
+        public delegate void OnTwitchUserSubscribedHandler(EventHandlerController source, EventHandlerArgs<TwitchUserSubscribed> e);
 
-        public delegate void OnTwitchGiftedSubscriptionHandler(EventHandler source, EventHandlerArgs<TwitchGiftedSubscription> e);
+        public delegate void OnTwitchGiftedSubscriptionHandler(EventHandlerController source, EventHandlerArgs<TwitchGiftedSubscription> e);
 
-        public delegate void OnTwitchRaidedHandler(EventHandler source, EventHandlerArgs<TwitchRaided> e);
+        public delegate void OnTwitchRaidedHandler(EventHandlerController source, EventHandlerArgs<TwitchRaided> e);
 
         public event OnTwitchCommandSendMessageHandler? OnTwitchCommandSendMessage;
 

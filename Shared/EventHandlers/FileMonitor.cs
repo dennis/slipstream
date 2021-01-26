@@ -1,30 +1,29 @@
 ﻿#nullable enable
 
 using Slipstream.Shared.Events.FileMonitor;
-using static Slipstream.Shared.EventHandler;
 
 namespace Slipstream.Shared.EventHandlers
 {
     internal class FileMonitor : IEventHandler
     {
-        private readonly EventHandler Parent;
+        private readonly IEventHandlerController Parent;
 
-        public FileMonitor(EventHandler eventHandler)
+        public FileMonitor(IEventHandlerController eventHandler)
         {
             Parent = eventHandler;
         }
 
-        public delegate void OnFileMonitorCommandScanHandler(EventHandler source, EventHandlerArgs<FileMonitorCommandScan> e);
+        public delegate void OnFileMonitorCommandScanHandler(IEventHandlerController source, EventHandlerArgs<FileMonitorCommandScan> e);
 
-        public delegate void OnFileMonitorFileChangedHandler(EventHandler source, EventHandlerArgs<FileMonitorFileChanged> e);
+        public delegate void OnFileMonitorFileChangedHandler(IEventHandlerController source, EventHandlerArgs<FileMonitorFileChanged> e);
 
-        public delegate void OnFileMonitorFileCreatedHandler(EventHandler source, EventHandlerArgs<FileMonitorFileCreated> e);
+        public delegate void OnFileMonitorFileCreatedHandler(IEventHandlerController source, EventHandlerArgs<FileMonitorFileCreated> e);
 
-        public delegate void OnFileMonitorFileDeletedHandler(EventHandler source, EventHandlerArgs<FileMonitorFileDeleted> e);
+        public delegate void OnFileMonitorFileDeletedHandler(IEventHandlerController source, EventHandlerArgs<FileMonitorFileDeleted> e);
 
-        public delegate void OnFileMonitorFileRenamedHandler(EventHandler source, EventHandlerArgs<FileMonitorFileRenamed> e);
+        public delegate void OnFileMonitorFileRenamedHandler(IEventHandlerController source, EventHandlerArgs<FileMonitorFileRenamed> e);
 
-        public delegate void OnFileMonitorScanCompletedHandler(EventHandler source, EventHandlerArgs<FileMonitorScanCompleted> e);
+        public delegate void OnFileMonitorScanCompletedHandler(IEventHandlerController source, EventHandlerArgs<FileMonitorScanCompleted> e);
 
         public event OnFileMonitorCommandScanHandler? OnFileMonitorCommandScan;
 

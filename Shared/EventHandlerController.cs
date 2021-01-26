@@ -1,57 +1,28 @@
 ﻿#nullable enable
 
-using Slipstream.Shared.EventHandlers;
 using System;
 using System.Collections.Generic;
+using static Slipstream.Shared.IEventHandlerController;
 
 namespace Slipstream.Shared
 {
-    internal interface IEventHandler
+    public class EventHandlerController : IEventHandlerController
     {
-        internal enum HandledStatus
-        {
-            NotMine, Handled, UseDefault
-        }
-
-        HandledStatus HandleEvent(IEvent @event);
-    }
-
-    public class EventHandler
-    {
-        public class EventHandlerArgs<T> : EventArgs
-        {
-            public T Event { get; }
-
-            public EventHandlerArgs(T e)
-            {
-                Event = e;
-            }
-        }
-
         internal readonly IDictionary<dynamic, IEventHandler> Handlers = new Dictionary<dynamic, IEventHandler>();
 
         private volatile bool enabled = true;
         public bool Enabled { get { return enabled; } set { enabled = value; } }
-
-        public EventHandler()
-        {
-            Handlers.Add(typeof(Internal), new Internal(this));
-            Handlers.Add(typeof(Lua), new Lua(this));
-            Handlers.Add(typeof(UI), new UI(this));
-            Handlers.Add(typeof(Audio), new Audio(this));
-            Handlers.Add(typeof(IRacing), new IRacing(this));
-            Handlers.Add(typeof(Twitch), new Twitch(this));
-            Handlers.Add(typeof(FileMonitor), new FileMonitor(this));
-            Handlers.Add(typeof(Playback), new Playback(this));
-        }
-
-        public delegate void OnDefaultHandler(EventHandler source, EventHandlerArgs<IEvent> e);
 
         public event OnDefaultHandler? OnDefault;
 
         public T Get<T>()
         {
             return (T)Handlers[typeof(T)];
+        }
+
+        internal void Add(IEventHandler eventHandler)
+        {
+            Handlers.Add(eventHandler.GetType(), eventHandler);
         }
 
         public void HandleEvent(IEvent? ev)

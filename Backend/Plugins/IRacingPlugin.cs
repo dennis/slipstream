@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using static Slipstream.Shared.Factories.IIRacingEventFactory;
-using EventHandler = Slipstream.Shared.EventHandler;
 
 #nullable enable
 
@@ -101,12 +100,12 @@ namespace Slipstream.Backend.Plugins
         private bool SendSessionState = false;
         private bool SendRaceFlags = false;
 
-        public IRacingPlugin(string id, IIRacingEventFactory eventFactory, IEventBus eventBus) : base(id, "IRacingPlugin", id, "IRacingPlugin")
+        public IRacingPlugin(IEventHandlerController eventHandlerController, string id, IIRacingEventFactory eventFactory, IEventBus eventBus) : base(eventHandlerController, id, "IRacingPlugin", id, "IRacingPlugin")
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
 
-            var IRacingEventHandler = EventHandler.Get<Slipstream.Shared.EventHandlers.IRacing>();
+            var IRacingEventHandler = EventHandlerController.Get<Slipstream.Shared.EventHandlers.IRacing>();
 
             IRacingEventHandler.OnIRacingCommandSendCarInfo += (s, e) => SendCarInfo = true;
             IRacingEventHandler.OnIRacingCommandSendTrackInfo += (s, e) => SendTrackInfo = true;

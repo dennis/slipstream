@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
-using EventHandler = Slipstream.Shared.EventHandler;
+using EventHandler = Slipstream.Shared.EventHandlerController;
 
 namespace Slipstream.Frontend
 {
@@ -26,12 +26,15 @@ namespace Slipstream.Frontend
         private readonly IDictionary<string, ToolStripMenuItem> MenuPluginItems = new Dictionary<string, ToolStripMenuItem>();
         private readonly IDictionary<string, Button> LuaButtons = new Dictionary<string, Button>();
         private readonly string CleanTitle;
+        private readonly IEventHandlerController EventHandler;
 
-        public MainWindow(IEventFactory eventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService)
+        public MainWindow(IEventFactory eventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, EventHandlerControllerBuilder eventHandlerControllerBuilder)
         {
             InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
             UIEventFactory = eventFactory.Get<IUIEventFactory>();
             PlaybackEventFactory = eventFactory.Get<IPlaybackEventFactory>();
+
+            EventHandler = eventHandlerControllerBuilder.CreateEventHandlerController();
 
             EventBus = eventBus;
 
@@ -102,8 +105,6 @@ namespace Slipstream.Frontend
         }
 
         #region EventHandlerThread methods
-
-        private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
 
         private void EventListenerMain()
         {

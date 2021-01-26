@@ -5,7 +5,6 @@ using Slipstream.Shared;
 using Slipstream.Shared.Factories;
 using System.Collections.Generic;
 using System.IO;
-using EventHandler = Slipstream.Shared.EventHandler;
 
 #nullable enable
 
@@ -23,13 +22,14 @@ namespace Slipstream.Backend.Plugins
         private readonly string FilePath;
 
         public LuaPlugin(
+            IEventHandlerController eventHandlerController,
             string id,
             ILogger logger,
             IEventFactory eventFactory,
             IEventBus eventBus,
             IServiceLocator serviceLocator,
             Dictionary<dynamic, dynamic> configuration
-        ) : base(id, "LuaPlugin", id, "Lua")
+        ) : base(eventHandlerController, id, "LuaPlugin", id, "Lua")
         {
             Logger = logger;
             LuaEventFactory = eventFactory.Get<ILuaEventFactory>();
@@ -40,8 +40,8 @@ namespace Slipstream.Backend.Plugins
 
             // Avoid that WriteToConsole is evaluated by Lua, that in turn will
             // add more WriteToConsole events, making a endless loop
-            EventHandler.Get<Shared.EventHandlers.UI>().OnUICommandWriteToConsole += (s, e) => { };
-            EventHandler.OnDefault += (s, e) => LuaContext?.HandleEvent(e.Event);
+            EventHandlerController.Get<Shared.EventHandlers.UI>().OnUICommandWriteToConsole += (s, e) => { };
+            EventHandlerController.OnDefault += (s, e) => LuaContext?.HandleEvent(e.Event);
 
             FilePath = configuration["filepath"];
             Prefix = Path.GetFileName(FilePath);

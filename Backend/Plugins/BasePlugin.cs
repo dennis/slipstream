@@ -1,5 +1,7 @@
 ﻿#nullable enable
 
+using Slipstream.Shared;
+
 namespace Slipstream.Backend.Plugins
 {
     public class BasePlugin : IPlugin
@@ -33,10 +35,11 @@ namespace Slipstream.Backend.Plugins
             set { workerName = value; OnStateChanged?.Invoke(this, new IPlugin.EventHandlerArgs<IPlugin>(this)); }
         }
 
-        public Shared.EventHandler EventHandler { get; } = new Shared.EventHandler();
+        public IEventHandlerController EventHandlerController { get; }
 
-        public BasePlugin(string id, string name, string displayName, string workerName, bool reconfigurable = false)
+        public BasePlugin(IEventHandlerController eventHandlerController, string id, string name, string displayName, string workerName, bool reconfigurable = false)
         {
+            EventHandlerController = eventHandlerController;
             Id = id;
             Name = name;
             DisplayName = displayName;

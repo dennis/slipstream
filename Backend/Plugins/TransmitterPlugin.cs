@@ -8,7 +8,6 @@ using System;
 using System.Diagnostics;
 using System.Net.Sockets;
 using System.Threading;
-using EventHandler = Slipstream.Shared.EventHandler;
 
 #nullable enable
 
@@ -34,7 +33,7 @@ namespace Slipstream.Backend.Plugins
                 ;
         }
 
-        public TransmitterPlugin(string id, ILogger logger, IInternalEventFactory eventFactory, IEventBus eventBus, IServiceLocator serviceLocator, Parameters configuration) : base(id, "TransmitterPlugin", id, "TransmitterPlugin", true)
+        public TransmitterPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, IInternalEventFactory eventFactory, IEventBus eventBus, IServiceLocator serviceLocator, Parameters configuration) : base(eventHandlerController, id, "TransmitterPlugin", id, "TransmitterPlugin", true)
         {
             Logger = logger;
             EventBus = eventBus;
@@ -46,7 +45,7 @@ namespace Slipstream.Backend.Plugins
             Ip = configuration.Extract<string>("ip");
             Port = (int)configuration.Extract<long>("port");
 
-            EventHandler.OnDefault += (_, e) => OnEvent(e.Event);
+            EventHandlerController.OnDefault += (_, e) => OnEvent(e.Event);
 
             // To avoid that we get an endless loop, we will Unregister the "other" end in this instance
             EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginUnregister("ReceiverPlugin"));

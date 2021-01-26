@@ -1,5 +1,4 @@
 ﻿using Serilog;
-using Slipstream.Shared;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -110,7 +109,7 @@ namespace Slipstream.Backend.Services
                 KeyValues.Remove(key);
             }
 
-            if (value != null && value.Length > 0)
+            if (!string.IsNullOrEmpty(value))
             {
                 if (lifetimSeconds > 0)
                     expiresAt = DateTime.Now.AddSeconds(lifetimSeconds);

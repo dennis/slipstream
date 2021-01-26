@@ -24,12 +24,12 @@ namespace Slipstream.Backend.Plugins
                 .PermitArray("paths", (a) => a.RequireString());
         }
 
-        public FileMonitorPlugin(string id, IFileMonitorEventFactory eventFactory, IEventBus eventBus, Parameters configuration) : base(id, "FileMonitorPlugin", id, "Core", true)
+        public FileMonitorPlugin(IEventHandlerController eventHandlerController, string id, IFileMonitorEventFactory eventFactory, IEventBus eventBus, Parameters configuration) : base(eventHandlerController, id, "FileMonitorPlugin", id, "Core", true)
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
 
-            var FileMonitor = EventHandler.Get<Slipstream.Shared.EventHandlers.FileMonitor>();
+            var FileMonitor = EventHandlerController.Get<Slipstream.Shared.EventHandlers.FileMonitor>();
             FileMonitor.OnFileMonitorCommandScan += (s, e) => ScanExistingFiles();
 
             ConfigurationValidator.Validate(configuration);

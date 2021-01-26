@@ -1,20 +1,20 @@
 ﻿#nullable enable
 
 using Slipstream.Shared.Events.Lua;
-using static Slipstream.Shared.EventHandler;
+using static Slipstream.Shared.EventHandlerController;
 
 namespace Slipstream.Shared.EventHandlers
 {
     internal class Lua : IEventHandler
     {
-        private readonly EventHandler Parent;
+        private readonly EventHandlerController Parent;
 
-        public Lua(EventHandler parent)
+        public Lua(EventHandlerController parent)
         {
             Parent = parent;
         }
 
-        public delegate void OnLuaDeduplicateEventsHandler(EventHandler source, EventHandlerArgs<LuaCommandDeduplicateEvents> e);
+        public delegate void OnLuaDeduplicateEventsHandler(EventHandlerController source, EventHandlerArgs<LuaCommandDeduplicateEvents> e);
 
         public event OnLuaDeduplicateEventsHandler? OnLuaCommandDeduplicateEvents;
 

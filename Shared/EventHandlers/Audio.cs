@@ -1,28 +1,28 @@
 ﻿#nullable enable
 
 using Slipstream.Shared.Events.Audio;
-using static Slipstream.Shared.EventHandler;
+using static Slipstream.Shared.EventHandlerController;
 
 namespace Slipstream.Shared.EventHandlers
 {
     internal class Audio : IEventHandler
     {
-        private readonly EventHandler Parent;
+        private readonly EventHandlerController Parent;
 
-        public Audio(EventHandler eventHandler)
+        public Audio(EventHandlerController eventHandler)
         {
             Parent = eventHandler;
         }
 
-        public delegate void OnAudioCommandPlayHandler(EventHandler source, EventHandlerArgs<AudioCommandPlay> e);
+        public delegate void OnAudioCommandPlayHandler(EventHandlerController source, EventHandlerArgs<AudioCommandPlay> e);
 
-        public delegate void OnAudioCommandSayHandler(EventHandler source, EventHandlerArgs<AudioCommandSay> e);
+        public delegate void OnAudioCommandSayHandler(EventHandlerController source, EventHandlerArgs<AudioCommandSay> e);
 
-        public delegate void OnAudioCommandSendDevicesHandler(EventHandler source, EventHandlerArgs<AudioCommandSendDevices> e);
+        public delegate void OnAudioCommandSendDevicesHandler(EventHandlerController source, EventHandlerArgs<AudioCommandSendDevices> e);
 
-        public delegate void OnAudioCommandSetOutputDeviceHandler(EventHandler source, EventHandlerArgs<AudioCommandSetOutputDevice> e);
+        public delegate void OnAudioCommandSetOutputDeviceHandler(EventHandlerController source, EventHandlerArgs<AudioCommandSetOutputDevice> e);
 
-        public delegate void OnAudioOutputDeviceHandler(EventHandler source, EventHandlerArgs<AudioOutputDevice> e);
+        public delegate void OnAudioOutputDeviceHandler(EventHandlerController source, EventHandlerArgs<AudioOutputDevice> e);
 
         public event OnAudioCommandPlayHandler? OnAudioCommandPlay;
 

@@ -1,26 +1,26 @@
 ﻿#nullable enable
 
 using Slipstream.Shared.Events.UI;
-using static Slipstream.Shared.EventHandler;
+using static Slipstream.Shared.EventHandlerController;
 
 namespace Slipstream.Shared.EventHandlers
 {
     internal class UI : IEventHandler
     {
-        private readonly EventHandler Parent;
+        private readonly EventHandlerController Parent;
 
-        public UI(EventHandler eventHandler)
+        public UI(EventHandlerController eventHandler)
         {
             Parent = eventHandler;
         }
 
-        public delegate void OnUIButtonTriggeredHandler(EventHandler source, EventHandlerArgs<UIButtonTriggered> e);
+        public delegate void OnUIButtonTriggeredHandler(EventHandlerController source, EventHandlerArgs<UIButtonTriggered> e);
 
-        public delegate void OnUICommandCreateButtonHandler(EventHandler source, EventHandlerArgs<UICommandCreateButton> e);
+        public delegate void OnUICommandCreateButtonHandler(EventHandlerController source, EventHandlerArgs<UICommandCreateButton> e);
 
-        public delegate void OnUICommandDeleteButtonHandler(EventHandler source, EventHandlerArgs<UICommandDeleteButton> e);
+        public delegate void OnUICommandDeleteButtonHandler(EventHandlerController source, EventHandlerArgs<UICommandDeleteButton> e);
 
-        public delegate void OnUICommandWriteToConsoleHandler(EventHandler source, EventHandlerArgs<UICommandWriteToConsole> e);
+        public delegate void OnUICommandWriteToConsoleHandler(EventHandlerController source, EventHandlerArgs<UICommandWriteToConsole> e);
 
         public event OnUIButtonTriggeredHandler? OnUIButtonTriggered;
 

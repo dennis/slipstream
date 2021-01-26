@@ -280,6 +280,7 @@
     <Compile Include="Shared\EventHandlers\Lua.cs" />
     <Compile Include="Shared\EventHandlers\Twitch.cs" />
     <Compile Include="Shared\EventHandlers\UI.cs" />
+    <Compile Include="Shared\ServiceLocator.cs" />
     <Compile Include="SlipstreamConsoleSink.cs" />
     <EmbeddedResource Include="Frontend\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>

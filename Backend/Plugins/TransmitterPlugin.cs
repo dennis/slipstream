@@ -34,12 +34,12 @@ namespace Slipstream.Backend.Plugins
                 ;
         }
 
-        public TransmitterPlugin(string id, ILogger logger, IInternalEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, Parameters configuration) : base(id, "TransmitterPlugin", id, "TransmitterPlugin", true)
+        public TransmitterPlugin(string id, ILogger logger, IInternalEventFactory eventFactory, IEventBus eventBus, IServiceLocator serviceLocator, Parameters configuration) : base(id, "TransmitterPlugin", id, "TransmitterPlugin", true)
         {
             Logger = logger;
             EventBus = eventBus;
             EventFactory = eventFactory;
-            TxrxService = txrxService;
+            TxrxService = serviceLocator.Get<ITxrxService>(); ;
 
             ConfigurationValidator.Validate(configuration);
 

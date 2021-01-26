@@ -48,6 +48,7 @@ namespace Slipstream
             services.AddScoped<Frontend.MainWindow>();
             services.AddScoped<Shared.IEventBus, Backend.EventBus>();
             services.AddScoped<Shared.IEventProducer>(x => x.GetService<Backend.EventBus>());
+            services.AddScoped<IServiceLocator, ServiceLocator>();
             services.AddScoped<Backend.IEngine, Backend.Engine>();
             services.AddScoped<Backend.Services.IStateService>(x => new Backend.Services.StateService(x.GetService<ILogger>(), Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Slipstream\state.txt"));
             services.AddScoped<Backend.Services.ITxrxService, Backend.Services.TxrxService>();

@@ -100,7 +100,7 @@ namespace Slipstream.Backend.Plugins
         private bool SendSessionState = false;
         private bool SendRaceFlags = false;
 
-        public IRacingPlugin(IEventHandlerController eventHandlerController, string id, IIRacingEventFactory eventFactory, IEventBus eventBus) : base(eventHandlerController, id, "IRacingPlugin", id, "IRacingPlugin")
+        public IRacingPlugin(IEventHandlerController eventHandlerController, string id, IIRacingEventFactory eventFactory, IEventBus eventBus) : base(eventHandlerController, id, "IRacingPlugin", id)
         {
             EventFactory = eventFactory;
             EventBus = eventBus;

@@ -24,7 +24,7 @@ namespace Slipstream.Backend.Plugins
                 .PermitArray("paths", (a) => a.RequireString());
         }
 
-        public FileMonitorPlugin(IEventHandlerController eventHandlerController, string id, IFileMonitorEventFactory eventFactory, IEventBus eventBus, Parameters configuration) : base(eventHandlerController, id, "FileMonitorPlugin", id, "Core", true)
+        public FileMonitorPlugin(IEventHandlerController eventHandlerController, string id, IFileMonitorEventFactory eventFactory, IEventBus eventBus, Parameters configuration) : base(eventHandlerController, id, "FileMonitorPlugin", id, true)
         {
             EventFactory = eventFactory;
             EventBus = eventBus;

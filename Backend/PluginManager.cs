@@ -2,7 +2,6 @@
 
 using Serilog;
 using Slipstream.Backend.Plugins;
-using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using Slipstream.Shared.Factories;
 using Slipstream.Shared.Helpers.StrongParameters;
@@ -23,7 +22,6 @@ namespace Slipstream.Backend
         private readonly IServiceLocator ServiceLocator;
 
         private readonly IEventBus EventBus;
-        private readonly IDictionary<string, IPlugin> Plugins = new Dictionary<string, IPlugin>();
         private readonly IDictionary<string, PluginWorker> PluginWorkers = new Dictionary<string, PluginWorker>();
         private readonly ILogger Logger;
         private readonly EventHandlerControllerBuilder EventHandlerControllerBuilder;
@@ -47,29 +45,12 @@ namespace Slipstream.Backend
             EventHandlerControllerBuilder = eventHandlerControllerBuilder;
         }
 
-        private void UnregisterPluginsWithoutLock()
-        {
-            foreach (var p in Plugins)
-            {
-                UnregisterPlugin(p.Value);
-            }
-            Plugins.Clear();
-        }
-
         public void UnregisterPlugin(IPlugin p)
         {
-            lock (Plugins)
+            lock (PluginWorkers)
             {
-                UnregisterPluginWithoutLock(p);
+                UnregisterPluginWithoutLock(p.Id);
             }
-        }
-
-        private void UnregisterPluginWithoutLock(IPlugin p)
-        {
-            PluginWorkers[p.WorkerName].RemovePlugin(p);
-            EmitPluginStateChanged(p, PluginStatusEnum.Unregistered);
-            p.Dispose();
-            Logger.Verbose("Removed plugin: {pluginId}", p.Id);
         }
 
         private void EmitPluginStateChanged(IPlugin plugin, PluginStatusEnum pluginStatus)
@@ -79,40 +60,17 @@ namespace Slipstream.Backend
 
         public void RegisterPlugin(IPlugin plugin)
         {
-            lock (Plugins)
-            {
-                RegisterPluginWithoutLock(plugin);
-            }
-        }
+            var worker = new PluginWorker(plugin, EventBus.RegisterListener(), InternalEventFactory, EventBus);
 
-        private void RegisterPluginWithoutLock(IPlugin plugin)
-        {
-            if (Plugins.ContainsKey(plugin.Id))
+            lock (PluginWorkers)
             {
-                Plugins.Remove(plugin.Id);
-            }
+                PluginWorkers.Add(plugin.Id, worker);
 
-            PluginWorker? worker;
-
-            if (PluginWorkers.ContainsKey(plugin.WorkerName))
-            {
-                Logger.Verbose("Assigning plugin {PluginId} to worker {WorkerName}", plugin.Id, plugin.WorkerName);
-
-                worker = PluginWorkers[plugin.WorkerName];
-            }
-            else
-            {
-                Logger.Verbose("Creating worker {workerName} for {PluginId}", plugin.WorkerName, plugin.Id);
-                worker = new PluginWorker(plugin.WorkerName, EventBus.RegisterListener(), InternalEventFactory, EventBus);
                 worker.Start();
-                PluginWorkers.Add(worker.Name, worker);
             }
-
-            worker.AddPlugin(plugin);
-
-            Plugins.Add(plugin.Id, plugin);
 
             EmitPluginStateChanged(plugin, PluginStatusEnum.Registered);
+            Logger.Verbose("Started for {PluginId}", plugin.Id);
         }
 
         private void EmitEvent(IEvent e)
@@ -122,30 +80,33 @@ namespace Slipstream.Backend
 
         public void FindPluginAndExecute(string pluginId, Action<IPlugin> a)
         {
-            if (Plugins.TryGetValue(pluginId, out IPlugin plugin))
+            lock (PluginWorkers)
             {
-                a(plugin);
-            }
-            else
-            {
-                Logger.Error("Can't find plugin {pluginId}", plugin);
+                if (PluginWorkers.TryGetValue(pluginId, out PluginWorker worker))
+                {
+                    a(worker.Plugin);
+                }
+                else
+                {
+                    Logger.Error("Can't find plugin {pluginId}", pluginId);
+                }
             }
         }
 
         public void ForAllPluginsExecute(Action<IPlugin> a)
         {
-            lock (Plugins)
+            lock (PluginWorkers)
             {
-                foreach (var p in Plugins)
+                foreach (var p in PluginWorkers)
                 {
-                    a(p.Value);
+                    a(p.Value.Plugin);
                 }
             }
         }
 
         public void UnregisterPlugin(string id)
         {
-            lock (Plugins)
+            lock (PluginWorkers)
             {
                 UnregisterPluginWithoutLock(id);
             }
@@ -153,10 +114,16 @@ namespace Slipstream.Backend
 
         private void UnregisterPluginWithoutLock(string id)
         {
-            if (Plugins.ContainsKey(id))
+            lock (PluginWorkers)
             {
-                UnregisterPlugin(Plugins[id]);
-                Plugins.Remove(id);
+                if (PluginWorkers.ContainsKey(id))
+                {
+                    PluginWorkers[id].Stop();
+                    EmitPluginStateChanged(PluginWorkers[id].Plugin, PluginStatusEnum.Unregistered);
+
+                    PluginWorkers.Remove(id);
+                    Logger.Verbose("Removed plugin: {pluginId}", id);
+                }
             }
         }
 
@@ -192,12 +159,11 @@ namespace Slipstream.Backend
 
         public void Dispose()
         {
-            lock (Plugins)
+            lock (PluginWorkers)
             {
-                UnregisterPluginsWithoutLock();
-                Plugins.Clear();
                 foreach (var worker in PluginWorkers)
                 {
+                    worker.Value.Stop();
                     worker.Value.Dispose();
                 }
             }

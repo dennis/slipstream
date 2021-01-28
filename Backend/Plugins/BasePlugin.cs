@@ -23,27 +23,18 @@ namespace Slipstream.Backend.Plugins
             set { displayName = value; OnStateChanged?.Invoke(this, new IPlugin.EventHandlerArgs<IPlugin>(this)); }
         }
 
-        private string workerName = "INVALID-WORKER-NAME";
-
         public event IPlugin.OnStateChangedHandler? OnStateChanged;
 
         public bool Reconfigurable { get; }
 
-        public string WorkerName
-        {
-            get { return workerName; }
-            set { workerName = value; OnStateChanged?.Invoke(this, new IPlugin.EventHandlerArgs<IPlugin>(this)); }
-        }
-
         public IEventHandlerController EventHandlerController { get; }
 
-        public BasePlugin(IEventHandlerController eventHandlerController, string id, string name, string displayName, string workerName, bool reconfigurable = false)
+        public BasePlugin(IEventHandlerController eventHandlerController, string id, string name, string displayName, bool reconfigurable = false)
         {
             EventHandlerController = eventHandlerController;
             Id = id;
             Name = name;
             DisplayName = displayName;
-            WorkerName = workerName;
             Reconfigurable = reconfigurable;
         }
 

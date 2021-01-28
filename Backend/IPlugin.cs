@@ -24,7 +24,6 @@ namespace Slipstream.Backend
         public string Id { get; }
         public string Name { get; }
         public string DisplayName { get; }
-        public string WorkerName { get; }
         public IEventHandlerController EventHandlerController { get; }
         public bool Reconfigurable { get; }
 

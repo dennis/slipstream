@@ -33,7 +33,7 @@ namespace Slipstream.Backend.Plugins
                 ;
         }
 
-        public TransmitterPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, IInternalEventFactory eventFactory, IEventBus eventBus, IServiceLocator serviceLocator, Parameters configuration) : base(eventHandlerController, id, "TransmitterPlugin", id, "TransmitterPlugin", true)
+        public TransmitterPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, IInternalEventFactory eventFactory, IEventBus eventBus, IServiceLocator serviceLocator, Parameters configuration) : base(eventHandlerController, id, "TransmitterPlugin", id, true)
         {
             Logger = logger;
             EventBus = eventBus;

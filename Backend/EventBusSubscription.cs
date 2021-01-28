@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 
 namespace Slipstream.Backend
 {
-    class EventBusSubscription : IEventBusSubscription
+    internal class EventBusSubscription : IEventBusSubscription
     {
         private readonly BlockingCollection<IEvent> Events = new BlockingCollection<IEvent>();
         private readonly IEventBus EventBus;

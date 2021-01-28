@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using Slipstream.Shared;
+using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.Audio
+namespace Slipstream.Components.Audio.Events
 {
     public class AudioCommandSendDevices : IEvent
     {
         public string EventType => "AudioCommandSendDevices";
         public bool ExcludeFromTxrx => false;
         public string PluginId { get; set; } = "INVALID-PLUGIN-ID";
-        public ulong Uptime { get ; set ; }
+        public ulong Uptime { get; set; }
 
         public override bool Equals(object obj)
         {

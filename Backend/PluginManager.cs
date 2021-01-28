@@ -2,11 +2,14 @@
 
 using Serilog;
 using Slipstream.Backend.Plugins;
+using Slipstream.Backend.Services;
+using Slipstream.Components;
 using Slipstream.Shared;
 using Slipstream.Shared.Factories;
 using Slipstream.Shared.Helpers.StrongParameters;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using static Slipstream.Shared.Factories.IInternalEventFactory;
 
 namespace Slipstream.Backend
@@ -18,13 +21,15 @@ namespace Slipstream.Backend
         private readonly IFileMonitorEventFactory FileMonitorEventFactory;
         private readonly IIRacingEventFactory IRacingEventFactory;
         private readonly ITwitchEventFactory TwitchEventFactory;
-        private readonly IAudioEventFactory AudioEventFactory;
         private readonly IServiceLocator ServiceLocator;
 
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, PluginWorker> PluginWorkers = new Dictionary<string, PluginWorker>();
         private readonly ILogger Logger;
         private readonly EventHandlerControllerBuilder EventHandlerControllerBuilder;
+        private readonly ComponentRegistrator Registrator;
+        private readonly List<ILuaGlue> LuaGlues = new List<ILuaGlue>();
+        private readonly Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>> ComponentPlugins = new Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>>();
 
         public PluginManager(
             IEventFactory eventFactory,
@@ -33,12 +38,19 @@ namespace Slipstream.Backend
             ILogger logger,
             EventHandlerControllerBuilder eventHandlerControllerBuilder)
         {
+            Registrator = new ComponentRegistrator(ComponentPlugins, LuaGlues, eventFactory, logger, eventBus, eventHandlerControllerBuilder, serviceLocator);
+
+            foreach (var type in typeof(PluginManager).Assembly.GetTypes().Where(t => typeof(IComponent).IsAssignableFrom(t) && !t.IsAbstract && t.IsClass))
+            {
+                logger.Information("Initializing component {pluginName}", type.Name);
+                ((IComponent)Activator.CreateInstance(type)).Register(Registrator);
+            }
+
             EventFactory = eventFactory;
             InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
             FileMonitorEventFactory = eventFactory.Get<IFileMonitorEventFactory>();
             IRacingEventFactory = eventFactory.Get<IIRacingEventFactory>();
             TwitchEventFactory = eventFactory.Get<ITwitchEventFactory>();
-            AudioEventFactory = eventFactory.Get<IAudioEventFactory>();
             EventBus = eventBus;
             ServiceLocator = serviceLocator;
             Logger = logger;
@@ -136,25 +148,45 @@ namespace Slipstream.Backend
         {
             return name switch
             {
-                "LuaPlugin" => new LuaPlugin(
-                    EventHandlerControllerBuilder.CreateEventHandlerController(),
-                    pluginId,
-                    Logger.ForContext(typeof(LuaPlugin)),
-                    EventFactory,
-                    eventBus,
-                    ServiceLocator,
-                    configuration
-                ),
+                "LuaPlugin" => CreateLuaPlugin(pluginId, configuration),
                 "FileMonitorPlugin" => new FileMonitorPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, FileMonitorEventFactory, eventBus, configuration),
                 "LuaManagerPlugin" => new LuaManagerPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(LuaPlugin)), FileMonitorEventFactory, eventBus, this, this, ServiceLocator),
-                "AudioPlugin" => new AudioPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(AudioPlugin)), eventBus, AudioEventFactory, configuration),
                 "IRacingPlugin" => new IRacingPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, IRacingEventFactory, eventBus),
                 "TwitchPlugin" => new TwitchPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(TwitchPlugin)), TwitchEventFactory, eventBus, configuration),
                 "TransmitterPlugin" => new TransmitterPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(TransmitterPlugin)), InternalEventFactory, eventBus, ServiceLocator, configuration),
                 "ReceiverPlugin" => new ReceiverPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(ReceiverPlugin)), InternalEventFactory, eventBus, ServiceLocator, configuration),
                 "PlaybackPlugin" => new PlaybackPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(PlaybackPlugin)), eventBus, ServiceLocator),
-                _ => throw new Exception($"Unknown configurable plugin '{name}'"),
+                _ => CreateViaComponents(pluginId, name, configuration)
             };
+        }
+
+        private IPlugin CreateLuaPlugin(string pluginId, Parameters configuration)
+        {
+            var luaService = new LuaService(
+                Logger.ForContext(typeof(LuaPlugin)),
+                EventFactory,
+                EventBus,
+                ServiceLocator.Get<IStateService>(),
+                ServiceLocator.Get<IEventSerdeService>(),
+                LuaGlues
+            );
+
+            return new LuaPlugin(
+                EventHandlerControllerBuilder.CreateEventHandlerController(),
+                pluginId,
+                Logger.ForContext(typeof(LuaPlugin)),
+                EventFactory,
+                EventBus,
+                ServiceLocator,
+                luaService,
+                configuration
+            );
+        }
+
+        private IPlugin CreateViaComponents(string pluginId, string pluginName, Parameters configuration)
+        {
+            ComponentPluginCreationContext reg = new ComponentPluginCreationContext(Registrator, pluginId, pluginName, configuration);
+            return ComponentPlugins[pluginName].Invoke(reg);
         }
 
         public void Dispose()

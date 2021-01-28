@@ -1,8 +1,8 @@
-﻿using Slipstream.Shared.Events.Audio;
+﻿#nullable enable
 
-#nullable enable
+using Slipstream.Components.Audio.Events;
 
-namespace Slipstream.Shared.Factories
+namespace Slipstream.Components.Audio
 {
     public interface IAudioEventFactory
     {

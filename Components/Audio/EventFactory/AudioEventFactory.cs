@@ -1,8 +1,8 @@
-﻿using Slipstream.Shared.Events.Audio;
+﻿#nullable enable
 
-#nullable enable
+using Slipstream.Components.Audio.Events;
 
-namespace Slipstream.Shared.Factories
+namespace Slipstream.Components.Audio.EventFactory
 {
     public class AudioEventFactory : IAudioEventFactory
     {
@@ -18,7 +18,7 @@ namespace Slipstream.Shared.Factories
 
         public AudioCommandSendDevices CreateAudioCommandSendDevices(string pluginId)
         {
-            return new AudioCommandSendDevices{ PluginId = pluginId };
+            return new AudioCommandSendDevices { PluginId = pluginId };
         }
 
         public AudioOutputDevice CreateAudioOutputDevice(string pluginId, string product, int deviceIdx)

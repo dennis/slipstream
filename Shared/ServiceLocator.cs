@@ -3,23 +3,15 @@ using System.Collections.Generic;
 
 namespace Slipstream.Shared
 {
-    public interface IServiceLocator
-    {
-        T Get<T>();
-
-        void Add<T>(T service);
-    }
-
     public class ServiceLocator : IServiceLocator
     {
         internal readonly IDictionary<dynamic, dynamic> Factories = new Dictionary<dynamic, dynamic>();
 
-        public ServiceLocator(IEventSerdeService eventSerdeService, IStateService stateService, ITxrxService txrxService, ILuaSevice luaSevice)
+        public ServiceLocator(IEventSerdeService eventSerdeService, IStateService stateService, ITxrxService txrxService)
         {
             Add<IEventSerdeService>(eventSerdeService);
             Add<IStateService>(stateService);
             Add<ITxrxService>(txrxService);
-            Add<ILuaSevice>(luaSevice);
         }
 
         public T Get<T>()

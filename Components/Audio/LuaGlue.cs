@@ -1,36 +1,25 @@
 ﻿using NLua;
 using Slipstream.Shared;
-using Slipstream.Shared.Factories;
 
-#nullable enable
-
-namespace Slipstream.Backend.Services.LuaServiceLib
+namespace Slipstream.Components.Audio
 {
-    public class AudioMethodCollection
+    internal class LuaGlue : ILuaGlue
     {
         private readonly IEventBus EventBus;
         private readonly IAudioEventFactory EventFactory;
 
-        public static AudioMethodCollection Register(IEventBus eventBus, IAudioEventFactory eventFactory, Lua lua)
-        {
-            var m = new AudioMethodCollection(eventBus, eventFactory);
-            m.Register(lua);
-            return m;
-        }
-
-        public AudioMethodCollection(IEventBus eventBus, IAudioEventFactory eventFactory)
+        public LuaGlue(IEventBus eventBus, IAudioEventFactory eventFactory)
         {
             EventBus = eventBus;
             EventFactory = eventFactory;
         }
 
-        public void Register(Lua lua)
+        public void SetupLua(Lua lua)
         {
             lua["audio"] = this;
             lua.DoString(@"
 function say(plugin_id, message, volume); audio:say(plugin_id,message, volume); end
 function play(plugin_id, filename, volume); audio:play(plugin_id, filename, volume); end
-
 ");
         }
 

@@ -1,8 +1,9 @@
-﻿#nullable enable
-
+﻿using Slipstream.Shared.EventHandlers;
 using System;
 using System.Collections.Generic;
 using static Slipstream.Shared.IEventHandlerController;
+
+#nullable enable
 
 namespace Slipstream.Shared
 {
@@ -14,6 +15,11 @@ namespace Slipstream.Shared
         public bool Enabled { get { return enabled; } set { enabled = value; } }
 
         public event OnDefaultHandler? OnDefault;
+
+        internal void Add(Type handlerInterface, IEventHandler implementation)
+        {
+            Handlers.Add(handlerInterface, implementation);
+        }
 
         public T Get<T>()
         {

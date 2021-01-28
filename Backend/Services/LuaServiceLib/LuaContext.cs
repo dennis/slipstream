@@ -1,8 +1,8 @@
 ﻿using NLua;
 using Serilog;
+using Slipstream.Components.Audio;
 using Slipstream.Shared;
 using Slipstream.Shared.Factories;
-using System.Collections.Generic;
 using System.IO;
 
 #nullable enable
@@ -22,12 +22,13 @@ namespace Slipstream.Backend.Services.LuaServiceLib
             IStateService stateService,
             IEventSerdeService eventSerdeService,
             string filePath,
-            string logPrefix
+            string logPrefix,
+            Lua lua
         )
         {
             try
             {
-                Lua = new Lua();
+                Lua = lua;
 
                 var audioEventFactory = eventFactory.Get<IAudioEventFactory>();
                 var twitchEventFactory = eventFactory.Get<ITwitchEventFactory>();
@@ -37,7 +38,6 @@ namespace Slipstream.Backend.Services.LuaServiceLib
                 var playbackEventFactory = eventFactory.Get<IPlaybackEventFactory>();
 
                 CoreMethodCollection_ = CoreMethodCollection.Register(eventSerdeService, Lua);
-                AudioMethodCollection.Register(eventBus, audioEventFactory, Lua);
                 TwitchMethodCollection.Register(eventBus, twitchEventFactory, Lua);
                 StateMethodCollection.Register(stateService, Lua);
                 UIMethodCollection.Register(logger, eventBus, uiEventFactory, logPrefix, Lua);

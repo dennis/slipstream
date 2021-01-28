@@ -54,8 +54,9 @@ namespace Slipstream
             services.AddScoped<Backend.Services.IStateService>(x => new Backend.Services.StateService(x.GetService<ILogger>(), Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Slipstream\state.txt"));
             services.AddScoped<Backend.Services.ITxrxService, Backend.Services.TxrxService>();
             services.AddScoped<Backend.Services.IEventSerdeService, Backend.Services.EventSerdeService>();
-            services.AddScoped<Backend.IPluginManager, Backend.PluginManager>();
-            services.AddScoped<Backend.IPluginFactory, Backend.PluginManager>();
+            services.AddScoped<Backend.PluginManager>();
+            services.AddScoped<Backend.IPluginManager>(x => x.GetService<Backend.PluginManager>());
+            services.AddScoped<Backend.IPluginFactory>(x => x.GetService<Backend.PluginManager>());
             services.AddScoped<EventHandlerControllerBuilder>();
             services.AddScoped<IEventFactory, EventFactory>();
             services.AddScoped<Backend.Services.ILuaSevice, Backend.Services.LuaService>();

@@ -1,7 +1,8 @@
 using NAudio.Wave;
 using Serilog;
+using Slipstream.Backend.Plugins;
+using Slipstream.Components.Audio.Events;
 using Slipstream.Shared;
-using Slipstream.Shared.Events.Audio;
 using Slipstream.Shared.Factories;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
@@ -12,7 +13,7 @@ using System.Threading;
 
 #nullable enable
 
-namespace Slipstream.Backend.Plugins
+namespace Slipstream.Components.Audio.Plugins
 {
     internal class AudioPlugin : BasePlugin
     {
@@ -54,7 +55,7 @@ namespace Slipstream.Backend.Plugins
                 OutputDevice = new WaveOutEvent() { DeviceNumber = outputDeviceIdx };
             }
 
-            var Audio = EventHandlerController.Get<Shared.EventHandlers.Audio>();
+            var Audio = EventHandlerController.Get<Components.Audio.EventHandler.AudioEventHandler>();
 
             Audio.OnAudioCommandSay += (_, e) => OnAudioCommandSay(e.Event);
             Audio.OnAudioCommandPlay += (_, e) => OnAudioCommandPlay(e.Event);
@@ -83,7 +84,7 @@ namespace Slipstream.Backend.Plugins
             }
         }
 
-        private void OnAudioCommandPlay(Shared.Events.Audio.AudioCommandPlay @event)
+        private void OnAudioCommandPlay(AudioCommandPlay @event)
         {
             if (@event.PluginId != Id)
                 return;
@@ -104,7 +105,7 @@ namespace Slipstream.Backend.Plugins
             }
         }
 
-        private void OnAudioCommandSay(Shared.Events.Audio.AudioCommandSay @event)
+        private void OnAudioCommandSay(AudioCommandSay @event)
         {
             if (@event.PluginId != Id)
                 return;

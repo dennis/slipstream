@@ -141,10 +141,12 @@
     <Compile Include="Backend\IPluginFactory.cs" />
     <Compile Include="Backend\IPluginManager.cs" />
     <Compile Include="Backend\PluginManager.cs" />
-    <Compile Include="Backend\Plugins\AudioPlugin.cs" />
     <Compile Include="Backend\Plugins\PlaybackPlugin.cs" />
     <Compile Include="Backend\Plugins\ReceiverPlugin.cs" />
     <Compile Include="Backend\Plugins\TransmitterPlugin.cs" />
+    <Compile Include="Components\Audio\LuaGlue.cs" />
+    <Compile Include="Components\ILuaGlue.cs" />
+    <Compile Include="Components\Audio\Plugins\AudioPlugin.cs" />
     <Compile Include="Backend\Plugins\BasePlugin.cs" />
     <Compile Include="Backend\Plugins\TwitchPlugin.cs" />
     <Compile Include="Backend\Services\IEventSerdeService.cs" />
@@ -154,15 +156,14 @@
     <Compile Include="Backend\Services\ITxrxService.cs" />
     <Compile Include="Backend\Services\LuaService.cs" />
     <Compile Include="Backend\Services\ILuaContext.cs" />
-    <Compile Include="Backend\Services\LuaServiceLib\AudioMethodCollection.cs" />
+    <Compile Include="Components\ComponentPluginCreationContext.cs" />
     <Compile Include="Shared\EventHandlerArgs.cs" />
     <Compile Include="Shared\EventHandlerControllerBuilder.cs" />
-    <Compile Include="Shared\EventHandlers\Audio.cs" />
-    <Compile Include="Shared\Events\Audio\AudioCommandPlay.cs" />
-    <Compile Include="Shared\Events\Audio\AudioCommandSay.cs" />
-    <Compile Include="Shared\Events\Audio\AudioCommandSendDevices.cs" />
-    <Compile Include="Shared\Events\Audio\AudioCommandSetOutputDevice.cs" />
-    <Compile Include="Shared\Events\Audio\AudioOutputDevice.cs" />
+    <Compile Include="Components\ComponentRegistrator.cs" />
+    <Compile Include="Components\IComponent.cs" />
+    <Compile Include="Components\IComponentPluginCreationContext.cs" />
+    <Compile Include="Components\IComponentPluginDependencies.cs" />
+    <Compile Include="Components\IComponentRegistrationContext.cs" />
     <Compile Include="Shared\Events\IRacing\IIRacingSessionState.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingCarPosition.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingWarmup.cs" />
@@ -173,8 +174,6 @@
     <Compile Include="Shared\Events\Twitch\TwitchRaided.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchGiftedSubscription.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchUserSubscribed.cs" />
-    <Compile Include="Shared\Factories\AudioEventFactory.cs" />
-    <Compile Include="Shared\Factories\IAudioEventFactory.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Validators\ArrayValidator.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Validators\BooleanValidator.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Validators\FloatValidator.cs" />
@@ -197,10 +196,16 @@
     <Compile Include="Backend\Services\StateService.cs" />
     <Compile Include="Backend\Services\TxrxService.cs" />
     <Compile Include="GlobalSuppressions2.cs" />
+    <Compile Include="Components\Audio\Audio.cs" />
     <Compile Include="Shared\EventFactory.cs" />
+    <Compile Include="Components\Audio\EventHandler\AudioEventHandler.cs" />
     <Compile Include="Shared\EventHandlers\Playback.cs" />
     <Compile Include="Shared\Events\Playback\PlaybackCommandInjectEvents.cs" />
     <Compile Include="Shared\Events\Playback\PlaybackCommandSaveEvents.cs" />
+    <Compile Include="Components\Audio\Events\AudioCommandSetOutputDevice.cs" />
+    <Compile Include="Components\Audio\Events\AudioCommandSendDevices.cs" />
+    <Compile Include="Components\Audio\Events\AudioOutputDevice.cs" />
+    <Compile Include="Components\Audio\EventFactory\AudioEventFactory.cs" />
     <Compile Include="Shared\Factories\IInternalEventFactory.cs" />
     <Compile Include="Shared\Factories\IPlaybackEventFactory.cs" />
     <Compile Include="Shared\Factories\PlaybackEventFactory.cs" />
@@ -222,6 +227,7 @@
     <Compile Include="Shared\Events\UI\UICommandDeleteButton.cs" />
     <Compile Include="Shared\Events\UI\UICommandCreateButton.cs" />
     <Compile Include="Shared\Factories\FileMonitorEventFactory.cs" />
+    <Compile Include="Components\Audio\IAudioEventFactory.cs" />
     <Compile Include="Shared\Factories\IFileMonitorEventFactory.cs" />
     <Compile Include="Shared\Factories\IIRacingEventFactory.cs" />
     <Compile Include="Shared\Factories\ILuaEventFactory.cs" />
@@ -258,6 +264,8 @@
     <Compile Include="Shared\Events\Twitch\TwitchCommandSendMessage.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchDisconnected.cs" />
     <Compile Include="Shared\Events\Twitch\TwitchConnected.cs" />
+    <Compile Include="Components\Audio\Events\AudioCommandPlay.cs" />
+    <Compile Include="Components\Audio\Events\AudioCommandSay.cs" />
     <Compile Include="Shared\Events\UI\UICommandWriteToConsole.cs" />
     <Compile Include="Shared\IApplicationVersionService.cs" />
     <Compile Include="Shared\IEventBus.cs" />
@@ -284,6 +292,7 @@
     <Compile Include="Shared\EventHandlers\Lua.cs" />
     <Compile Include="Shared\EventHandlers\Twitch.cs" />
     <Compile Include="Shared\EventHandlers\UI.cs" />
+    <Compile Include="Shared\IServiceLocator.cs" />
     <Compile Include="Shared\ServiceLocator.cs" />
     <Compile Include="SlipstreamConsoleSink.cs" />
     <EmbeddedResource Include="Frontend\MainWindow.resx">
@@ -300,6 +309,7 @@
     </Compile>
     <None Include="CHANGELOG.md" />
     <None Include="CODE_OF_CONDUCT.md" />
+    <None Include="docs\component_audio.md" />
     <None Include="docs\events.md" />
     <None Include="docs\init.lua.md" />
     <None Include="docs\lua.md" />

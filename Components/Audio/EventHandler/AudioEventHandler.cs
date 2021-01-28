@@ -1,15 +1,15 @@
 ﻿#nullable enable
 
-using Slipstream.Shared.Events.Audio;
-using static Slipstream.Shared.EventHandlerController;
+using Slipstream.Components.Audio.Events;
+using Slipstream.Shared;
 
-namespace Slipstream.Shared.EventHandlers
+namespace Slipstream.Components.Audio.EventHandler
 {
-    internal class Audio : IEventHandler
+    internal class AudioEventHandler : IEventHandler
     {
         private readonly EventHandlerController Parent;
 
-        public Audio(EventHandlerController eventHandler)
+        public AudioEventHandler(EventHandlerController eventHandler)
         {
             Parent = eventHandler;
         }

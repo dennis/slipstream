@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using NLua;
 using Serilog;
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
@@ -23,7 +24,7 @@ namespace Slipstream.Backend
         private readonly ILogger Logger;
         private readonly IEventHandlerController EventHandlerController;
 
-        public Engine(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, ILuaSevice luaService, IApplicationVersionService applicationVersionService, EventHandlerControllerBuilder eventHandlerControllerBuilder) : base("engine")
+        public Engine(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, IApplicationVersionService applicationVersionService, EventHandlerControllerBuilder eventHandlerControllerBuilder, IStateService stateService, IEventSerdeService eventSerdeService) : base("engine")
         {
             EventFactory = eventFactory.Get<IInternalEventFactory>();
             EventBus = eventBus;
@@ -92,6 +93,8 @@ register_plugin({ plugin_name = ""PlaybackPlugin""})
                 }
 
                 Logger.Information("Loading {initcfg}", initFilename);
+
+                var luaService = new LuaService(Logger, eventFactory, eventBus, stateService, eventSerdeService);
                 luaService.Parse(filename: initFilename, logPrefix: "INIT");
             }
 

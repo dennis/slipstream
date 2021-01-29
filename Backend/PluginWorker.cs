@@ -60,7 +60,7 @@ namespace Slipstream.Backend
                     {
                         foreach (var plugin in Plugins)
                         {
-                            plugin.EventHandler.HandleEvent(e);
+                            plugin.EventHandlerController.HandleEvent(e);
                         }
                     }
                 }

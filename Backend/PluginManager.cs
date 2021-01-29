@@ -25,20 +25,15 @@ namespace Slipstream.Backend
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, IPlugin> Plugins = new Dictionary<string, IPlugin>();
         private readonly IDictionary<string, PluginWorker> PluginWorkers = new Dictionary<string, PluginWorker>();
-        private readonly IStateService StateService;
-        private readonly ITxrxService TxrxService;
-        private readonly IEventSerdeService EventSerdeService;
         private readonly ILogger Logger;
+        private readonly EventHandlerControllerBuilder EventHandlerControllerBuilder;
 
         public PluginManager(
             IEventFactory eventFactory,
             IEventBus eventBus,
-            IStateService stateService,
-            ITxrxService txrxService,
-            IEventSerdeService eventSerdeService,
             IServiceLocator serviceLocator,
-            ILogger logger
-        )
+            ILogger logger,
+            EventHandlerControllerBuilder eventHandlerControllerBuilder)
         {
             EventFactory = eventFactory;
             InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
@@ -47,11 +42,9 @@ namespace Slipstream.Backend
             TwitchEventFactory = eventFactory.Get<ITwitchEventFactory>();
             AudioEventFactory = eventFactory.Get<IAudioEventFactory>();
             EventBus = eventBus;
-            StateService = stateService;
-            TxrxService = txrxService;
-            EventSerdeService = eventSerdeService;
             ServiceLocator = serviceLocator;
             Logger = logger;
+            EventHandlerControllerBuilder = eventHandlerControllerBuilder;
         }
 
         private void UnregisterPluginsWithoutLock()
@@ -177,6 +170,7 @@ namespace Slipstream.Backend
             return name switch
             {
                 "LuaPlugin" => new LuaPlugin(
+                    EventHandlerControllerBuilder.CreateEventHandlerController(),
                     pluginId,
                     Logger.ForContext(typeof(LuaPlugin)),
                     EventFactory,
@@ -184,14 +178,14 @@ namespace Slipstream.Backend
                     ServiceLocator,
                     configuration
                 ),
-                "FileMonitorPlugin" => new FileMonitorPlugin(pluginId, FileMonitorEventFactory, eventBus, configuration),
-                "LuaManagerPlugin" => new LuaManagerPlugin(pluginId, Logger.ForContext(typeof(LuaPlugin)), FileMonitorEventFactory, eventBus, this, this, ServiceLocator),
-                "AudioPlugin" => new AudioPlugin(pluginId, Logger.ForContext(typeof(AudioPlugin)), eventBus, AudioEventFactory, configuration),
-                "IRacingPlugin" => new IRacingPlugin(pluginId, IRacingEventFactory, eventBus),
-                "TwitchPlugin" => new TwitchPlugin(pluginId, Logger.ForContext(typeof(TwitchPlugin)), TwitchEventFactory, eventBus, configuration),
-                "TransmitterPlugin" => new TransmitterPlugin(pluginId, Logger.ForContext(typeof(TransmitterPlugin)), InternalEventFactory, eventBus, ServiceLocator, configuration),
-                "ReceiverPlugin" => new ReceiverPlugin(pluginId, Logger.ForContext(typeof(ReceiverPlugin)), InternalEventFactory, eventBus, ServiceLocator, configuration),
-                "PlaybackPlugin" => new PlaybackPlugin(pluginId, Logger.ForContext(typeof(PlaybackPlugin)), eventBus, ServiceLocator),
+                "FileMonitorPlugin" => new FileMonitorPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, FileMonitorEventFactory, eventBus, configuration),
+                "LuaManagerPlugin" => new LuaManagerPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(LuaPlugin)), FileMonitorEventFactory, eventBus, this, this, ServiceLocator),
+                "AudioPlugin" => new AudioPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(AudioPlugin)), eventBus, AudioEventFactory, configuration),
+                "IRacingPlugin" => new IRacingPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, IRacingEventFactory, eventBus),
+                "TwitchPlugin" => new TwitchPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(TwitchPlugin)), TwitchEventFactory, eventBus, configuration),
+                "TransmitterPlugin" => new TransmitterPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(TransmitterPlugin)), InternalEventFactory, eventBus, ServiceLocator, configuration),
+                "ReceiverPlugin" => new ReceiverPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(ReceiverPlugin)), InternalEventFactory, eventBus, ServiceLocator, configuration),
+                "PlaybackPlugin" => new PlaybackPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(PlaybackPlugin)), eventBus, ServiceLocator),
                 _ => throw new Exception($"Unknown configurable plugin '{name}'"),
             };
         }

@@ -1,13 +1,12 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using Serilog;
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
+using Slipstream.Shared.EventHandlers;
 using Slipstream.Shared.Events.Internal;
 using Slipstream.Shared.Factories;
 using Slipstream.Shared.Helpers.StrongParameters;
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 #nullable enable
@@ -22,19 +21,20 @@ namespace Slipstream.Backend
         private readonly IEventBusSubscription Subscription;
         private readonly IPluginFactory PluginFactory;
         private readonly ILogger Logger;
-        private readonly Shared.EventHandler EventHandler = new Shared.EventHandler();
+        private readonly IEventHandlerController EventHandlerController;
 
-        public Engine(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, ILuaSevice luaService, IApplicationVersionService applicationVersionService) : base("engine")
+        public Engine(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, ILuaSevice luaService, IApplicationVersionService applicationVersionService, EventHandlerControllerBuilder eventHandlerControllerBuilder) : base("engine")
         {
             EventFactory = eventFactory.Get<IInternalEventFactory>();
             EventBus = eventBus;
             PluginFactory = pluginFactory;
             PluginManager = pluginManager;
             Logger = logger;
+            EventHandlerController = eventHandlerControllerBuilder.CreateEventHandlerController();
 
             Subscription = EventBus.RegisterListener();
 
-            var internalEventHandler = EventHandler.Get<Slipstream.Shared.EventHandlers.Internal>();
+            var internalEventHandler = EventHandlerController.Get<Internal>();
 
             internalEventHandler.OnInternalCommandPluginRegister += (s, e) => OnCommandPluginRegister(e.Event);
             internalEventHandler.OnInternalCommandPluginUnregister += (s, e) => OnCommandPluginUnregister(e.Event);
@@ -136,7 +136,7 @@ register_plugin({ plugin_name = ""PlaybackPlugin""})
         {
             while (!Stopped)
             {
-                EventHandler.HandleEvent(Subscription.NextEvent(10));
+                EventHandlerController.HandleEvent(Subscription.NextEvent(10));
             }
         }
 

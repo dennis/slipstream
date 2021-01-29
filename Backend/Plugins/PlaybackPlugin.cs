@@ -16,11 +16,11 @@ namespace Slipstream.Backend.Plugins
         private readonly IEventBus EventBus;
         private readonly IEventSerdeService EventSerdeService;
 
-        public PlaybackPlugin(string id, ILogger logger, IEventBus eventBus, IServiceLocator serviceLocator) : base(id, "AudioPlugin", id, "Audio", true)
+        public PlaybackPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, IEventBus eventBus, IServiceLocator serviceLocator) : base(eventHandlerController, id, "AudioPlugin", id, "Audio", true)
         {
             EventBus = eventBus;
             EventSerdeService = serviceLocator.Get<IEventSerdeService>();
-            var playback = EventHandler.Get<Playback>();
+            var playback = EventHandlerController.Get<Playback>();
 
             playback.OnPlaybackCommandInjectEvents += (s, e) => OnPlaybackCommandInjectEvents(e.Event);
             playback.OnPlaybackCommandSaveEvents += (s, e) => OnPlaybackCommandSaveEvents(e.Event);

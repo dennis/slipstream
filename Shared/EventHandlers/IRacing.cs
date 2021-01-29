@@ -1,62 +1,62 @@
 ﻿#nullable enable
 
 using Slipstream.Shared.Events.IRacing;
-using static Slipstream.Shared.EventHandler;
+using static Slipstream.Shared.EventHandlerController;
 
 namespace Slipstream.Shared.EventHandlers
 {
     internal class IRacing : IEventHandler
     {
-        private readonly EventHandler Parent;
+        private readonly EventHandlerController Parent;
 
-        public IRacing(EventHandler eventHandler)
+        public IRacing(EventHandlerController eventHandler)
         {
             Parent = eventHandler;
         }
 
-        public delegate void OnIRacingCarCompletedLapHandler(EventHandler source, EventHandlerArgs<IRacingCarCompletedLap> e);
+        public delegate void OnIRacingCarCompletedLapHandler(EventHandlerController source, EventHandlerArgs<IRacingCarCompletedLap> e);
 
-        public delegate void OnIRacingCarInfoHandler(EventHandler source, EventHandlerArgs<IRacingCarInfo> e);
+        public delegate void OnIRacingCarInfoHandler(EventHandlerController source, EventHandlerArgs<IRacingCarInfo> e);
 
-        public delegate void OnIRacingCommandSendCarInfoHandler(EventHandler source, EventHandlerArgs<IRacingCommandSendCarInfo> e);
+        public delegate void OnIRacingCommandSendCarInfoHandler(EventHandlerController source, EventHandlerArgs<IRacingCommandSendCarInfo> e);
 
-        public delegate void OnIRacingCommandSendRaceFlagsHandler(EventHandler source, EventHandlerArgs<IRacingCommandSendRaceFlags> e);
+        public delegate void OnIRacingCommandSendRaceFlagsHandler(EventHandlerController source, EventHandlerArgs<IRacingCommandSendRaceFlags> e);
 
-        public delegate void OnIRacingCommandSendSessionStateHandler(EventHandler source, EventHandlerArgs<IRacingCommandSendSessionState> e);
+        public delegate void OnIRacingCommandSendSessionStateHandler(EventHandlerController source, EventHandlerArgs<IRacingCommandSendSessionState> e);
 
-        public delegate void OnIRacingCommandSendTrackInfoHandler(EventHandler source, EventHandlerArgs<IRacingCommandSendTrackInfo> e);
+        public delegate void OnIRacingCommandSendTrackInfoHandler(EventHandlerController source, EventHandlerArgs<IRacingCommandSendTrackInfo> e);
 
-        public delegate void OnIRacingCommandSendWeatherInfoHandler(EventHandler source, EventHandlerArgs<IRacingCommandSendWeatherInfo> e);
+        public delegate void OnIRacingCommandSendWeatherInfoHandler(EventHandlerController source, EventHandlerArgs<IRacingCommandSendWeatherInfo> e);
 
-        public delegate void OnIRacingConnectedHandler(EventHandler source, EventHandlerArgs<IRacingConnected> e);
+        public delegate void OnIRacingConnectedHandler(EventHandlerController source, EventHandlerArgs<IRacingConnected> e);
 
-        public delegate void OnIRacingDisconnectedHandler(EventHandler source, EventHandlerArgs<IRacingDisconnected> e);
+        public delegate void OnIRacingDisconnectedHandler(EventHandlerController source, EventHandlerArgs<IRacingDisconnected> e);
 
-        public delegate void OnIRacingDriverIncidentHandler(EventHandler source, EventHandlerArgs<IRacingDriverIncident> e);
+        public delegate void OnIRacingDriverIncidentHandler(EventHandlerController source, EventHandlerArgs<IRacingDriverIncident> e);
 
-        public delegate void OnIRacingPitEnterHandler(EventHandler source, EventHandlerArgs<IRacingPitEnter> e);
+        public delegate void OnIRacingPitEnterHandler(EventHandlerController source, EventHandlerArgs<IRacingPitEnter> e);
 
-        public delegate void OnIRacingPitExitHandler(EventHandler source, EventHandlerArgs<IRacingPitExit> e);
+        public delegate void OnIRacingPitExitHandler(EventHandlerController source, EventHandlerArgs<IRacingPitExit> e);
 
-        public delegate void OnIRacingPitstopReportHandler(EventHandler source, EventHandlerArgs<IRacingPitstopReport> e);
+        public delegate void OnIRacingPitstopReportHandler(EventHandlerController source, EventHandlerArgs<IRacingPitstopReport> e);
 
-        public delegate void OnIRacingRaceFlagsHandler(EventHandler source, EventHandlerArgs<IRacingRaceFlags> e);
+        public delegate void OnIRacingRaceFlagsHandler(EventHandlerController source, EventHandlerArgs<IRacingRaceFlags> e);
 
-        public delegate void OnIRacingTrackInfoHandler(EventHandler source, EventHandlerArgs<IRacingTrackInfo> e);
+        public delegate void OnIRacingTrackInfoHandler(EventHandlerController source, EventHandlerArgs<IRacingTrackInfo> e);
 
-        public delegate void OnIRacingWeatherInfoHandler(EventHandler source, EventHandlerArgs<IRacingWeatherInfo> e);
+        public delegate void OnIRacingWeatherInfoHandler(EventHandlerController source, EventHandlerArgs<IRacingWeatherInfo> e);
 
-        public delegate void OnIRacingPracticeHandler(EventHandler source, EventHandlerArgs<IRacingPractice> e);
+        public delegate void OnIRacingPracticeHandler(EventHandlerController source, EventHandlerArgs<IRacingPractice> e);
 
-        public delegate void OnIRacingQualifyHandler(EventHandler source, EventHandlerArgs<IRacingQualify> e);
+        public delegate void OnIRacingQualifyHandler(EventHandlerController source, EventHandlerArgs<IRacingQualify> e);
 
-        public delegate void OnIRacingRaceHandler(EventHandler source, EventHandlerArgs<IRacingRace> e);
+        public delegate void OnIRacingRaceHandler(EventHandlerController source, EventHandlerArgs<IRacingRace> e);
 
-        public delegate void OnIRacingTestingHandler(EventHandler source, EventHandlerArgs<IRacingTesting> e);
+        public delegate void OnIRacingTestingHandler(EventHandlerController source, EventHandlerArgs<IRacingTesting> e);
 
-        public delegate void OnIRacingWarmupHandler(EventHandler source, EventHandlerArgs<IRacingWarmup> e);
+        public delegate void OnIRacingWarmupHandler(EventHandlerController source, EventHandlerArgs<IRacingWarmup> e);
 
-        public delegate void OnIRacingCarPositionHandler(EventHandler source, EventHandlerArgs<IRacingCarPosition> e);
+        public delegate void OnIRacingCarPositionHandler(EventHandlerController source, EventHandlerArgs<IRacingCarPosition> e);
 
         public event OnIRacingCarCompletedLapHandler? OnIRacingCarCompletedLap;
 
@@ -99,6 +99,7 @@ namespace Slipstream.Shared.EventHandlers
         public event OnIRacingTestingHandler? OnIRacingTesting;
 
         public event OnIRacingWarmupHandler? OnIRacingWarmup;
+
         public event OnIRacingCarPositionHandler? OnIRacingCarPosition;
 
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)

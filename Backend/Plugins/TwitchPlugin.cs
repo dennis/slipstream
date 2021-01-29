@@ -13,7 +13,6 @@ using TwitchLib.Client.Models;
 using TwitchLib.Communication.Clients;
 using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Models;
-using EventHandler = Slipstream.Shared.EventHandler;
 
 #nullable enable
 
@@ -53,7 +52,7 @@ namespace Slipstream.Backend.Plugins
                 ;
         }
 
-        public TwitchPlugin(string id, ILogger logger, ITwitchEventFactory eventFactory, IEventBus eventBus, Parameters configuration) : base(id, "TwitchPlugin", id, "TwitchPlugin", true)
+        public TwitchPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, ITwitchEventFactory eventFactory, IEventBus eventBus, Parameters configuration) : base(eventHandlerController, id, "TwitchPlugin", id, "TwitchPlugin", true)
         {
             Logger = logger;
             EventFactory = eventFactory;
@@ -61,7 +60,7 @@ namespace Slipstream.Backend.Plugins
 
             ConfigurationValidator.Validate(configuration);
 
-            var twitchEventHandler = EventHandler.Get<Shared.EventHandlers.Twitch>();
+            var twitchEventHandler = EventHandlerController.Get<Shared.EventHandlers.Twitch>();
 
             twitchEventHandler.OnTwitchCommandSendMessage += (_, e) => SendMessage(e.Event.Message);
             twitchEventHandler.OnTwitchCommandSendWhisper += (_, e) => SendWhisper(e.Event.To, e.Event.Message);

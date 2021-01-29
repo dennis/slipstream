@@ -9,7 +9,6 @@ using System;
 using System.IO;
 using System.Speech.Synthesis;
 using System.Threading;
-using EventHandler = Slipstream.Shared.EventHandler;
 
 #nullable enable
 
@@ -33,7 +32,7 @@ namespace Slipstream.Backend.Plugins
                 .PermitLong("output");
         }
 
-        public AudioPlugin(string id, ILogger logger, IEventBus eventBus, IAudioEventFactory eventFactory, Parameters configuration) : base(id, "AudioPlugin", id, id, true)
+        public AudioPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, IEventBus eventBus, IAudioEventFactory eventFactory, Parameters configuration) : base(eventHandlerController, id, "AudioPlugin", id, id, true)
         {
             Logger = logger;
             EventBus = eventBus;
@@ -55,7 +54,7 @@ namespace Slipstream.Backend.Plugins
                 OutputDevice = new WaveOutEvent() { DeviceNumber = outputDeviceIdx };
             }
 
-            var Audio = EventHandler.Get<Shared.EventHandlers.Audio>();
+            var Audio = EventHandlerController.Get<Shared.EventHandlers.Audio>();
 
             Audio.OnAudioCommandSay += (_, e) => OnAudioCommandSay(e.Event);
             Audio.OnAudioCommandPlay += (_, e) => OnAudioCommandPlay(e.Event);

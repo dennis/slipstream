@@ -1,26 +1,25 @@
 ﻿#nullable enable
 
 using Slipstream.Shared.Events.Internal;
-using static Slipstream.Shared.EventHandler;
 
 namespace Slipstream.Shared.EventHandlers
 {
     internal class Internal : IEventHandler
     {
-        private readonly EventHandler Parent;
+        private readonly IEventHandlerController Parent;
 
-        public Internal(EventHandler parent)
+        public Internal(IEventHandlerController parent)
         {
             Parent = parent;
         }
 
-        public delegate void OnInternalCommandPluginRegisterHandler(EventHandler source, EventHandlerArgs<InternalCommandPluginRegister> e);
+        public delegate void OnInternalCommandPluginRegisterHandler(IEventHandlerController source, EventHandlerArgs<InternalCommandPluginRegister> e);
 
-        public delegate void OnInternalCommandPluginStatesHandler(EventHandler source, EventHandlerArgs<InternalCommandPluginStates> e);
+        public delegate void OnInternalCommandPluginStatesHandler(IEventHandlerController source, EventHandlerArgs<InternalCommandPluginStates> e);
 
-        public delegate void OnInternalCommandPluginUnregisterHandler(EventHandler source, EventHandlerArgs<InternalCommandPluginUnregister> e);
+        public delegate void OnInternalCommandPluginUnregisterHandler(IEventHandlerController source, EventHandlerArgs<InternalCommandPluginUnregister> e);
 
-        public delegate void OnInternalPluginStateHandler(EventHandler source, EventHandlerArgs<InternalPluginState> e);
+        public delegate void OnInternalPluginStateHandler(IEventHandlerController source, EventHandlerArgs<InternalPluginState> e);
 
         public event OnInternalCommandPluginRegisterHandler? OnInternalCommandPluginRegister;
 

@@ -36,7 +36,7 @@ namespace Slipstream.Backend.Plugins
                 ;
         }
 
-        public ReceiverPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, IInternalEventFactory eventFactory, IEventBus eventBus, IServiceLocator serviceLocator, Parameters configuration) : base(eventHandlerController, id, "ReceiverPlugin", id, "ReceiverPlugin", true)
+        public ReceiverPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, IInternalEventFactory eventFactory, IEventBus eventBus, IServiceLocator serviceLocator, Parameters configuration) : base(eventHandlerController, id, "ReceiverPlugin", id, true)
         {
             Logger = logger;
             EventFactory = eventFactory;

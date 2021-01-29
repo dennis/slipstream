@@ -32,7 +32,7 @@ namespace Slipstream.Backend.Plugins
                 .PermitLong("output");
         }
 
-        public AudioPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, IEventBus eventBus, IAudioEventFactory eventFactory, Parameters configuration) : base(eventHandlerController, id, "AudioPlugin", id, id, true)
+        public AudioPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, IEventBus eventBus, IAudioEventFactory eventFactory, Parameters configuration) : base(eventHandlerController, id, "AudioPlugin", id, true)
         {
             Logger = logger;
             EventBus = eventBus;

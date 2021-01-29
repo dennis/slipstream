@@ -3,13 +3,14 @@ using System.Threading;
 
 namespace Slipstream.Backend
 {
-    abstract class Worker : IDisposable
+    internal abstract class Worker : IDisposable
     {
         public string Name { get; }
         private readonly Thread WorkerThread;
         private readonly object StopLock = new object();
         private bool stop;
         private bool started;
+
         protected bool Stopped
         {
             get

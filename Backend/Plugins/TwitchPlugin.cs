@@ -52,7 +52,7 @@ namespace Slipstream.Backend.Plugins
                 ;
         }
 
-        public TwitchPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, ITwitchEventFactory eventFactory, IEventBus eventBus, Parameters configuration) : base(eventHandlerController, id, "TwitchPlugin", id, "TwitchPlugin", true)
+        public TwitchPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, ITwitchEventFactory eventFactory, IEventBus eventBus, Parameters configuration) : base(eventHandlerController, id, "TwitchPlugin", id, true)
         {
             Logger = logger;
             EventFactory = eventFactory;

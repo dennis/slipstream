@@ -1,7 +1,8 @@
-﻿using NLua;
-using Serilog;
+﻿using Serilog;
+using Slipstream.Backend;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
+using System.Collections.Generic;
 
 namespace Slipstream.Components
 {
@@ -40,15 +41,31 @@ namespace Slipstream.Components
 
         public Parameters PluginParameters { get; }
 
-        public Lua Lua { get; }
+        public NLua.Lua Lua { get; }
 
-        public ComponentPluginCreationContext(ComponentRegistrator componentRegistration, string pluginId, string pluginName, Parameters pluginParameters)
+        public List<ILuaGlue> LuaGlues { get; }
+
+        public IPluginManager PluginManager { get; }
+
+        public IPluginFactory PluginFactory { get; }
+
+        public ComponentPluginCreationContext(
+            ComponentRegistrator componentRegistration,
+            IPluginManager pluginManager,
+            IPluginFactory pluginFactory,
+            List<ILuaGlue> luaGlues,
+            string pluginId,
+            string pluginName,
+            Parameters pluginParameters)
         {
             ComponentRegistration = componentRegistration;
+            PluginManager = pluginManager;
+            PluginFactory = pluginFactory;
+            LuaGlues = luaGlues;
             PluginId = pluginId;
             PluginName = pluginName;
             PluginParameters = pluginParameters;
-            Lua = new Lua();
+            Lua = new NLua.Lua();
         }
     }
 }

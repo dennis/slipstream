@@ -13,7 +13,6 @@ namespace Slipstream.Shared
         public EventHandlerControllerBuilder()
         {
             Add(typeof(Internal));
-            Add(typeof(Lua));
             Add(typeof(UI));
             Add(typeof(Twitch));
             Add(typeof(Playback));

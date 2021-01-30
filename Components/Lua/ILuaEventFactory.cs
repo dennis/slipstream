@@ -1,8 +1,9 @@
-﻿using Slipstream.Shared.Events.Lua;
+﻿using Slipstream.Components.Lua.Events;
+using Slipstream.Shared;
 
 #nullable enable
 
-namespace Slipstream.Shared.Factories
+namespace Slipstream.Components.Lua
 {
     public interface ILuaEventFactory
     {

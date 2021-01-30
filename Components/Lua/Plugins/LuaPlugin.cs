@@ -1,6 +1,9 @@
 ﻿using Serilog;
+using Slipstream.Backend;
+using Slipstream.Backend.Plugins;
 using Slipstream.Backend.Services;
 using Slipstream.Backend.Services.LuaServiceLib;
+using Slipstream.Components.Lua.EventFactory;
 using Slipstream.Shared;
 using Slipstream.Shared.Factories;
 using System.Collections.Generic;
@@ -8,7 +11,7 @@ using System.IO;
 
 #nullable enable
 
-namespace Slipstream.Backend.Plugins
+namespace Slipstream.Components.Lua.Plugins
 {
     public class LuaPlugin : BasePlugin
     {
@@ -27,7 +30,6 @@ namespace Slipstream.Backend.Plugins
             ILogger logger,
             IEventFactory eventFactory,
             IEventBus eventBus,
-            IServiceLocator serviceLocator,
             ILuaSevice luaService,
             Dictionary<dynamic, dynamic> configuration
         ) : base(eventHandlerController, id, "LuaPlugin", id)

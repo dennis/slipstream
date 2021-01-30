@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Slipstream.Shared;
+using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.Lua
+namespace Slipstream.Components.Lua.Events
 {
     public class LuaCommandDeduplicateEvents : IEvent
     {

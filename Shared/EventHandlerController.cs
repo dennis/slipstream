@@ -23,6 +23,9 @@ namespace Slipstream.Shared
 
         public T Get<T>()
         {
+            if (!Handlers.ContainsKey(typeof(T)))
+                throw new KeyNotFoundException($"No EventHandler'{typeof(T)} found");
+
             return (T)Handlers[typeof(T)];
         }
 

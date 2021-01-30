@@ -1,5 +1,4 @@
-﻿using NLua;
-using Slipstream.Shared;
+﻿using Slipstream.Shared;
 
 namespace Slipstream.Components.Audio
 {
@@ -14,7 +13,7 @@ namespace Slipstream.Components.Audio
             EventFactory = eventFactory;
         }
 
-        public void SetupLua(Lua lua)
+        public void SetupLua(NLua.Lua lua)
         {
             lua["audio"] = this;
             lua.DoString(@"

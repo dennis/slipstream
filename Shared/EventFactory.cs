@@ -1,5 +1,4 @@
-﻿using Slipstream.Backend.Services;
-using Slipstream.Shared.Factories;
+﻿using Slipstream.Shared.Factories;
 using System;
 using System.Collections.Generic;
 
@@ -9,10 +8,9 @@ namespace Slipstream.Shared
     {
         private readonly IDictionary<dynamic, dynamic> Factories = new Dictionary<dynamic, dynamic>();
 
-        public EventFactory(IEventSerdeService eventSerdeService)
+        public EventFactory()
         {
             Factories.Add(typeof(IInternalEventFactory), new InternalEventFactory());
-            Factories.Add(typeof(ILuaEventFactory), new LuaEventFactory(eventSerdeService));
             Factories.Add(typeof(ITwitchEventFactory), new TwitchEventFactory());
             Factories.Add(typeof(IUIEventFactory), new UIEventFactory());
             Factories.Add(typeof(IPlaybackEventFactory), new PlaybackEventFactory());
@@ -25,6 +23,8 @@ namespace Slipstream.Shared
 
         public T Get<T>()
         {
+            if (!Factories.ContainsKey(typeof(T)))
+                throw new KeyNotFoundException($"No EventFactory '{typeof(T)} found");
             return (T)Factories[typeof(T)];
         }
     }

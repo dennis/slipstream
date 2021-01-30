@@ -2,7 +2,6 @@
 
 using Serilog;
 using Slipstream.Backend.Plugins;
-using Slipstream.Backend.Services;
 using Slipstream.Components;
 using Slipstream.Components.FileMonitor;
 using Slipstream.Shared;
@@ -17,9 +16,7 @@ namespace Slipstream.Backend
 {
     public class PluginManager : IPluginManager, IPluginFactory
     {
-        private readonly IEventFactory EventFactory;
         private readonly IInternalEventFactory InternalEventFactory;
-        private readonly IFileMonitorEventFactory FileMonitorEventFactory;
         private readonly ITwitchEventFactory TwitchEventFactory;
         private readonly IServiceLocator ServiceLocator;
 
@@ -46,9 +43,7 @@ namespace Slipstream.Backend
                 ((IComponent)Activator.CreateInstance(type)).Register(Registrator);
             }
 
-            EventFactory = eventFactory;
             InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
-            FileMonitorEventFactory = eventFactory.Get<IFileMonitorEventFactory>();
             TwitchEventFactory = eventFactory.Get<ITwitchEventFactory>();
             EventBus = eventBus;
             ServiceLocator = serviceLocator;
@@ -147,8 +142,6 @@ namespace Slipstream.Backend
         {
             return name switch
             {
-                "LuaPlugin" => CreateLuaPlugin(pluginId, configuration),
-                "LuaManagerPlugin" => new LuaManagerPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(LuaPlugin)), FileMonitorEventFactory, eventBus, this, this, ServiceLocator),
                 "TwitchPlugin" => new TwitchPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(TwitchPlugin)), TwitchEventFactory, eventBus, configuration),
                 "TransmitterPlugin" => new TransmitterPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(TransmitterPlugin)), InternalEventFactory, eventBus, ServiceLocator, configuration),
                 "ReceiverPlugin" => new ReceiverPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(ReceiverPlugin)), InternalEventFactory, eventBus, ServiceLocator, configuration),
@@ -157,32 +150,9 @@ namespace Slipstream.Backend
             };
         }
 
-        private IPlugin CreateLuaPlugin(string pluginId, Parameters configuration)
-        {
-            var luaService = new LuaService(
-                Logger.ForContext(typeof(LuaPlugin)),
-                EventFactory,
-                EventBus,
-                ServiceLocator.Get<IStateService>(),
-                ServiceLocator.Get<IEventSerdeService>(),
-                LuaGlues
-            );
-
-            return new LuaPlugin(
-                EventHandlerControllerBuilder.CreateEventHandlerController(),
-                pluginId,
-                Logger.ForContext(typeof(LuaPlugin)),
-                EventFactory,
-                EventBus,
-                ServiceLocator,
-                luaService,
-                configuration
-            );
-        }
-
         private IPlugin CreateViaComponents(string pluginId, string pluginName, Parameters configuration)
         {
-            ComponentPluginCreationContext reg = new ComponentPluginCreationContext(Registrator, pluginId, pluginName, configuration);
+            ComponentPluginCreationContext reg = new ComponentPluginCreationContext(Registrator, this, this, LuaGlues, pluginId, pluginName, configuration);
             return ComponentPlugins[pluginName].Invoke(reg);
         }
 

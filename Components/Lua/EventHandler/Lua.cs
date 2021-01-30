@@ -1,9 +1,9 @@
 ﻿#nullable enable
 
-using Slipstream.Shared.Events.Lua;
-using static Slipstream.Shared.EventHandlerController;
+using Slipstream.Components.Lua.Events;
+using Slipstream.Shared;
 
-namespace Slipstream.Shared.EventHandlers
+namespace Slipstream.Components.Lua.EventHandler
 {
     internal class Lua : IEventHandler
     {

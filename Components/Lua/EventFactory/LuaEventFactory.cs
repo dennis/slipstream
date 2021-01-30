@@ -1,13 +1,15 @@
 ﻿using Slipstream.Backend.Services;
-using Slipstream.Shared.Events.Lua;
+using Slipstream.Components.Lua.Events;
+using Slipstream.Shared;
 
 #nullable enable
 
-namespace Slipstream.Shared.Factories
+namespace Slipstream.Components.Lua.EventFactory
 {
     public class LuaEventFactory : ILuaEventFactory
     {
         private readonly IEventSerdeService EventSerdeService;
+
         public LuaEventFactory(IEventSerdeService eventSerdeService)
         {
             EventSerdeService = eventSerdeService;

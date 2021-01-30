@@ -1,9 +1,7 @@
-﻿using NLua;
-
-namespace Slipstream.Components
+﻿namespace Slipstream.Components
 {
     internal interface ILuaGlue
     {
-        void SetupLua(Lua lua);
+        void SetupLua(NLua.Lua lua);
     }
 }

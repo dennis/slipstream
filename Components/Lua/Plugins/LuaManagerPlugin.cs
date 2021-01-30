@@ -1,10 +1,11 @@
 ﻿using Serilog;
+using Slipstream.Backend;
+using Slipstream.Backend.Plugins;
 using Slipstream.Backend.Services;
 using Slipstream.Components.FileMonitor;
-using Slipstream.Components.FileMonitor.EventHandler;
 using Slipstream.Components.FileMonitor.Events;
+using Slipstream.Components.Lua.Events;
 using Slipstream.Shared;
-using Slipstream.Shared.Events.Lua;
 using Slipstream.Shared.Helpers.StrongParameters;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ using System.Linq;
 
 #nullable enable
 
-namespace Slipstream.Backend.Plugins
+namespace Slipstream.Components.Lua.Plugins
 {
     internal class LuaManagerPlugin : BasePlugin
     {
@@ -35,7 +36,16 @@ namespace Slipstream.Backend.Plugins
         private DateTime? BootupEventsDeadline;
         private readonly List<IEvent> CapturedBootupEvents = new List<IEvent>();
 
-        public LuaManagerPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, IFileMonitorEventFactory eventFactory, IEventBus eventBus, IPluginManager pluginManager, IPluginFactory pluginFactory, IServiceLocator serviceLocator) : base(eventHandlerController, id, "LuaManagerPlugin", id)
+        public LuaManagerPlugin(
+            IEventHandlerController eventHandlerController,
+            string id,
+            ILogger logger,
+            IFileMonitorEventFactory eventFactory,
+            IEventBus eventBus,
+            IPluginManager pluginManager,
+            IPluginFactory pluginFactory,
+            IServiceLocator serviceLocator
+        ) : base(eventHandlerController, id, "LuaManagerPlugin", id)
         {
             Logger = logger;
             EventFactory = eventFactory;
@@ -46,7 +56,7 @@ namespace Slipstream.Backend.Plugins
 
             var fileMonitor = EventHandlerController.Get<Components.FileMonitor.EventHandler.FileMonitor>();
             var @internal = EventHandlerController.Get<Shared.EventHandlers.Internal>();
-            var lua = EventHandlerController.Get<Shared.EventHandlers.Lua>();
+            var lua = EventHandlerController.Get<EventHandler.Lua>();
 
             fileMonitor.OnFileMonitorFileCreated += EventHandler_OnFileMonitorFileCreated;
             fileMonitor.OnFileMonitorFileDeleted += EventHandler_OnFileMonitorFileDeleted;

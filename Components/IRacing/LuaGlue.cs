@@ -1,5 +1,4 @@
-﻿using NLua;
-using Slipstream.Shared;
+﻿using Slipstream.Shared;
 
 namespace Slipstream.Components.IRacing
 {
@@ -14,7 +13,7 @@ namespace Slipstream.Components.IRacing
             EventFactory = eventFactory;
         }
 
-        public void SetupLua(Lua lua)
+        public void SetupLua(NLua.Lua lua)
         {
             lua["iracing"] = this;
             lua.DoString(@"

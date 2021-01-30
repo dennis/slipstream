@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json.Linq;
 using Serilog;
-using Slipstream.Backend.Services;
 using Slipstream.Components.Internal;
 using Slipstream.Components.Internal.Events;
+using Slipstream.Components.Internal.Services;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using System;
@@ -22,7 +22,7 @@ namespace Slipstream.Backend
         private readonly ILogger Logger;
         private readonly IEventHandlerController EventHandlerController;
 
-        public Engine(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, IApplicationVersionService applicationVersionService, EventHandlerControllerBuilder eventHandlerControllerBuilder, IStateService stateService) : base("engine")
+        public Engine(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, IApplicationVersionService applicationVersionService, EventHandlerControllerBuilder eventHandlerControllerBuilder) : base("engine")
         {
             EventFactory = eventFactory.Get<IInternalEventFactory>();
             EventBus = eventBus;
@@ -92,8 +92,9 @@ register_plugin({ plugin_name = ""PlaybackPlugin""})
 
                 Logger.Information("Loading {initcfg}", initFilename);
 
-                var luaService = new LuaService(Logger, eventFactory, eventBus, stateService);
-                luaService.Parse(filename: initFilename, logPrefix: "INIT");
+                // FIXME: This needs to be reimplemented
+                var luaService = new LuaService(new System.Collections.Generic.List<Components.ILuaGlue> { new Slipstream.Components.Internal.LuaGlues.InternalLuaGlue(eventBus, EventFactory) });
+                luaService.Parse(initFilename);
             }
 
             // Tell Plugins that we're live - this will make eventbus distribute events

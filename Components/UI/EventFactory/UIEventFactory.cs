@@ -1,8 +1,8 @@
-﻿using Slipstream.Shared.Events.UI;
+﻿using Slipstream.Components.UI.Events;
 
 #nullable enable
 
-namespace Slipstream.Shared.Factories
+namespace Slipstream.Components.UI.EventFactory
 {
     public class UIEventFactory : IUIEventFactory
     {

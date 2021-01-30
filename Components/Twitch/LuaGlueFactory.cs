@@ -1,13 +1,13 @@
 ﻿using Slipstream.Shared;
 
-namespace Slipstream.Components.Audio
+namespace Slipstream.Components.Twitch
 {
     internal class LuaGlueFactory : ILuaGlueFactory
     {
         private readonly IEventBus EventBus;
-        private readonly IAudioEventFactory EventFactory;
+        private readonly ITwitchEventFactory EventFactory;
 
-        public LuaGlueFactory(IEventBus eventBus, IAudioEventFactory eventFactory)
+        public LuaGlueFactory(IEventBus eventBus, ITwitchEventFactory eventFactory)
         {
             EventBus = eventBus;
             EventFactory = eventFactory;

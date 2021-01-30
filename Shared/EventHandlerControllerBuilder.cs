@@ -1,6 +1,5 @@
 ﻿#nullable enable
 
-using Slipstream.Shared.EventHandlers;
 using System;
 using System.Collections.Generic;
 
@@ -9,11 +8,6 @@ namespace Slipstream.Shared
     public class EventHandlerControllerBuilder
     {
         private readonly List<Type> EventHandlers = new List<Type>();
-
-        public EventHandlerControllerBuilder()
-        {
-            Add(typeof(UI));
-        }
 
         public void Add(Type t)
         {

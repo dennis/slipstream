@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
-using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Components.Internal.Events;
+using Slipstream.Shared.Helpers.StrongParameters;
 
 #nullable enable
 

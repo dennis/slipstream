@@ -1,21 +1,20 @@
 ﻿using NLua;
-using Slipstream.Components.Internal;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
 
 #nullable enable
 
-namespace Slipstream.Backend.Services.LuaServiceLib
+namespace Slipstream.Components.Internal.LuaGlues
 {
-    public class InternalMethodCollection
+    public class InternalLuaGlue : ILuaGlue
     {
         private readonly IEventBus EventBus;
         private readonly IInternalEventFactory EventFactory;
 
         private static readonly DictionaryValidator RegisterPluginValidator;
 
-        static InternalMethodCollection()
+        static InternalLuaGlue()
         {
             RegisterPluginValidator = new DictionaryValidator()
                 .PermitString("plugin_id")
@@ -23,28 +22,23 @@ namespace Slipstream.Backend.Services.LuaServiceLib
                 .AllowAnythingElse(); // open int op for configuration
         }
 
-        public static InternalMethodCollection Register(IEventBus eventBus, IInternalEventFactory eventFactory, Lua lua)
-        {
-            var m = new InternalMethodCollection(eventBus, eventFactory);
-
-            m.Register(lua);
-
-            return m;
-        }
-
-        public InternalMethodCollection(IEventBus eventBus, IInternalEventFactory eventFactory)
+        public InternalLuaGlue(IEventBus eventBus, IInternalEventFactory eventFactory)
         {
             EventBus = eventBus;
             EventFactory = eventFactory;
         }
 
-        public void Register(Lua lua)
+        public void SetupLua(NLua.Lua lua)
         {
             lua["internal"] = this;
             lua.DoString(@"
 function register_plugin(args); internal:register_plugin(args); end
 function unregister_plugin(id); internal:unregister_plugin(id); end
 ");
+        }
+
+        public void Loop()
+        {
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]

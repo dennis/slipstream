@@ -1,5 +1,4 @@
 ﻿using iRacingSDK;
-using Slipstream.Backend.Plugins;
 using Slipstream.Components.IRacing.Events;
 using Slipstream.Shared;
 using System;

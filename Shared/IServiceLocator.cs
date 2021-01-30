@@ -1,4 +1,4 @@
-﻿namespace Slipstream.Shared
+﻿namespace Slipstream.Components.Internal
 {
     public interface IServiceLocator
     {

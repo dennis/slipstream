@@ -1,4 +1,5 @@
 ﻿using Slipstream.Backend;
+using Slipstream.Components.Internal;
 using Slipstream.Components.Playback.Plugins;
 
 namespace Slipstream.Components.Playback
@@ -22,7 +23,7 @@ namespace Slipstream.Components.Playback
                 ctx.PluginId,
                 ctx.Logger,
                 ctx.EventBus,
-                ctx.ServiceLocator
+                ctx.ServiceLocator.Get<IEventSerdeService>()
             );
         }
     }

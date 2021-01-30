@@ -1,26 +1,17 @@
-﻿using NLua;
+﻿#nullable enable
 
-#nullable enable
-
-namespace Slipstream.Backend.Services.LuaServiceLib
+namespace Slipstream.Components.Internal.Services
 {
-    public class StateMethodCollection
+    public class StateLuaGlue : ILuaGlue
     {
         private readonly IStateService StateService;
 
-        public static StateMethodCollection Register(IStateService stateService, Lua lua)
-        {
-            var m = new StateMethodCollection(stateService);
-            m.Register(lua);
-            return m;
-        }
-
-        public StateMethodCollection(IStateService stateService)
+        public StateLuaGlue(IStateService stateService)
         {
             StateService = stateService;
         }
 
-        public void Register(Lua lua)
+        public void SetupLua(NLua.Lua lua)
         {
             lua["state"] = this;
             lua.DoString(@"
@@ -28,6 +19,10 @@ function get_state(a); return state:get(a); end
 function set_state(a,b); return state:set(a, b); end
 function set_temp_state(a,b,c); return state:set_temp(a,b,c); end
 ");
+        }
+
+        public void Loop()
+        {
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]

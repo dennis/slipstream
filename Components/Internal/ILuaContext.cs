@@ -3,7 +3,7 @@ using System;
 
 #nullable enable
 
-namespace Slipstream.Backend.Services
+namespace Slipstream.Components.Internal
 {
     public interface ILuaContext : IDisposable
     {

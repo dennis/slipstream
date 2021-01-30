@@ -1,7 +1,7 @@
 ﻿using Slipstream.Shared;
 using System.Collections.Generic;
 
-namespace Slipstream.Backend
+namespace Slipstream.Components.Lua.Plugins
 {
     public class CapturingEventBus : IEventBus
     {
@@ -10,7 +10,7 @@ namespace Slipstream.Backend
         private readonly List<IEvent> CapturedEventsList = new List<IEvent>();
         private IEventBus ActiveEventBus; // What we use currently
 
-        class Captor : IEventBus
+        private class Captor : IEventBus
         {
             private readonly IEventBus EventBus;
             private readonly List<IEvent> CapturedEvents;
@@ -44,7 +44,7 @@ namespace Slipstream.Backend
 
         public CapturingEventBus(IEventBus eventBus)
         {
-            RealEventBus   = eventBus;
+            RealEventBus = eventBus;
             CaptorEventBus = new Captor(eventBus, CapturedEventsList);
             ActiveEventBus = CaptorEventBus;
         }

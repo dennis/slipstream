@@ -1,9 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Serilog;
+using Slipstream.Components.Internal;
+using Slipstream.Components.Internal.Services;
+using Slipstream.Components.UI;
+using Slipstream.Components.UI.EventFactory;
+using Slipstream.Shared;
 using System;
 using System.Windows.Forms;
-using Serilog;
-using Slipstream.Shared;
-using Slipstream.Shared.Factories;
 
 #nullable enable
 
@@ -50,14 +53,14 @@ namespace Slipstream
             services.AddScoped<Shared.IEventProducer>(x => x.GetService<Backend.EventBus>());
             services.AddScoped<IServiceLocator, ServiceLocator>();
             services.AddScoped<Backend.IEngine, Backend.Engine>();
-            services.AddScoped<Backend.Services.IStateService>(x => new Backend.Services.StateService(x.GetService<ILogger>(), Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Slipstream\state.txt"));
-            services.AddScoped<Backend.Services.IEventSerdeService, Backend.Services.EventSerdeService>();
+            services.AddScoped<IStateService>(x => new StateService(x.GetService<ILogger>(), Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Slipstream\state.txt"));
+            services.AddScoped<IEventSerdeService, EventSerdeService>();
             services.AddScoped<Backend.PluginManager>();
             services.AddScoped<Backend.IPluginManager>(x => x.GetService<Backend.PluginManager>());
             services.AddScoped<Backend.IPluginFactory>(x => x.GetService<Backend.PluginManager>());
             services.AddScoped<EventHandlerControllerBuilder>();
             services.AddScoped<IEventFactory, EventFactory>();
-            services.AddScoped<Backend.Services.ILuaSevice, Backend.Services.LuaService>();
+            services.AddScoped<ILuaSevice, LuaService>();
             services.AddSingleton<Shared.IApplicationVersionService, Shared.ApplicationVersionService>();
 
             var logger = new LoggerConfiguration()
@@ -76,7 +79,7 @@ namespace Slipstream
             public PopulateSink(SlipstreamConsoleSink sink, IEventBus eventBus, IEventFactory eventFactory)
             {
                 sink.EventBus = eventBus;
-                sink.EventFactory = eventFactory.Get<IUIEventFactory>();
+                sink.EventFactory = new UIEventFactory();
             }
         }
     }

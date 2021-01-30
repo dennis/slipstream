@@ -1,8 +1,9 @@
 ﻿#nullable enable
 
+using Slipstream.Backend;
 using Slipstream.Shared;
 
-namespace Slipstream.Backend.Plugins
+namespace Slipstream.Components
 {
     public class BasePlugin : IPlugin
     {

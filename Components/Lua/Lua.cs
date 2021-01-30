@@ -1,6 +1,6 @@
 ﻿using Slipstream.Backend;
-using Slipstream.Backend.Services;
 using Slipstream.Components.FileMonitor;
+using Slipstream.Components.Internal.Services;
 using Slipstream.Components.Lua.Plugins;
 using System.Collections.Generic;
 
@@ -10,7 +10,7 @@ namespace Slipstream.Components.Lua
     {
         public void Register(IComponentRegistrationContext ctx)
         {
-            var eventFactory = new EventFactory.LuaEventFactory(new EventSerdeService()); // FIXME
+            var eventFactory = new EventFactory.LuaEventFactory(new EventSerdeService());
 
             ctx.RegisterPlugin("LuaPlugin", CreateLuaPlugin);
             ctx.RegisterPlugin("LuaManagerPlugin", CreateLuaManagerPlugin);
@@ -37,14 +37,10 @@ namespace Slipstream.Components.Lua
 
             foreach (var factories in ctx.LuaGlueFactories)
             {
-                states.Add(factories.CreateLuaGlue());
+                states.Add(factories.CreateLuaGlue(ctx));
             }
 
             var luaService = new LuaService(
-                ctx.Logger.ForContext(typeof(LuaPlugin)),
-                ctx.EventFactory,
-                ctx.EventBus,
-                ctx.ServiceLocator.Get<IStateService>(),
                 states
             );
 

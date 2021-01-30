@@ -1,29 +1,18 @@
-﻿using NLua;
-using Serilog;
+﻿using Serilog;
 using Slipstream.Shared;
-using Slipstream.Shared.Factories;
 
 #nullable enable
 
-namespace Slipstream.Backend.Services.LuaServiceLib
+namespace Slipstream.Components.UI
 {
-    public class UIMethodCollection
+    public class LuaGlue : ILuaGlue
     {
         private readonly ILogger Logger;
         private readonly IEventBus EventBus;
         private readonly IUIEventFactory EventFactory;
         private readonly string Prefix;
 
-        public static UIMethodCollection Register(ILogger logger, IEventBus eventBus, IUIEventFactory eventFactory, string logPrefix, Lua lua)
-        {
-            var m = new UIMethodCollection(logger, eventBus, eventFactory, logPrefix);
-
-            m.Register(lua);
-
-            return m;
-        }
-
-        public UIMethodCollection(ILogger logger, IEventBus eventBus, IUIEventFactory eventFactory, string logPrefix)
+        public LuaGlue(ILogger logger, IEventBus eventBus, IUIEventFactory eventFactory, string logPrefix)
         {
             Logger = logger;
             EventBus = eventBus;
@@ -31,7 +20,7 @@ namespace Slipstream.Backend.Services.LuaServiceLib
             Prefix = logPrefix;
         }
 
-        public void Register(Lua lua)
+        public void SetupLua(NLua.Lua lua)
         {
             lua["ui"] = this;
             lua.DoString(@"
@@ -39,6 +28,10 @@ function print(s); ui:print(s); end
 function create_button(a); ui:create_button(a); end
 function delete_button(a); ui:delete_button(a); end
 ");
+        }
+
+        public void Loop()
+        {
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]

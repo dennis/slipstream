@@ -1,6 +1,5 @@
-﻿using NLua;
+﻿using Serilog;
 using Slipstream.Backend;
-using Slipstream.Components.Audio;
 using Slipstream.Shared;
 using System;
 
@@ -8,6 +7,7 @@ namespace Slipstream.Components
 {
     internal interface IComponentRegistrationContext
     {
+        public ILogger Logger { get; }
         public IEventBus EventBus { get; }
 
         public EventHandlerControllerBuilder EventHandlerControllerBuilder { get; }

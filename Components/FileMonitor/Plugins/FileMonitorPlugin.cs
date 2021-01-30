@@ -1,4 +1,3 @@
-using Slipstream.Backend.Plugins;
 using Slipstream.Components.FileMonitor.Events;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;

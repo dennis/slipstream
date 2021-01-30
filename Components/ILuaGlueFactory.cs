@@ -2,6 +2,6 @@
 {
     internal interface ILuaGlueFactory
     {
-        ILuaGlue CreateLuaGlue();
+        ILuaGlue CreateLuaGlue(IComponentPluginCreationContext ctx);
     }
 }

@@ -1,5 +1,4 @@
 using Serilog;
-using Slipstream.Backend.Plugins;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;

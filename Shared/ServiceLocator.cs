@@ -1,7 +1,6 @@
-﻿using Slipstream.Backend.Services;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Slipstream.Shared
+namespace Slipstream.Components.Internal.Services
 {
     public class ServiceLocator : IServiceLocator
     {

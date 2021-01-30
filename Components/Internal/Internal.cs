@@ -1,4 +1,4 @@
-﻿using Slipstream.Backend.Services;
+﻿using Slipstream.Components.Internal.Services;
 
 namespace Slipstream.Components.Internal
 {
@@ -11,6 +11,9 @@ namespace Slipstream.Components.Internal
             ctx.RegisterEventFactory(typeof(IInternalEventFactory), eventFactory);
             ctx.RegisterEventHandler(typeof(EventHandler.Internal));
             ctx.RegisterLuaGlue(new LuaGlues.CoreLuaGlueFactory(new EventSerdeService()));
+            ctx.RegisterLuaGlue(new LuaGlues.HttpLuaGlueFactory(ctx.Logger));
+            ctx.RegisterLuaGlue(new LuaGlues.InternalLuaGlueFactory(ctx.EventBus, eventFactory));
+            ctx.RegisterLuaGlue(new LuaGlues.StateLuaGlueFactory(new StateService(ctx.Logger, "state.txt")));
         }
     }
 }

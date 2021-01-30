@@ -67,7 +67,7 @@ namespace Slipstream.Backend
             }
 
             EmitPluginStateChanged(plugin, PluginStatusEnum.Registered);
-            Logger.Verbose("Started for {PluginId}", plugin.Id);
+            Logger.Verbose("Started plugin: {PluginName}: {PluginId}", plugin.Name, plugin.Id);
         }
 
         private void EmitEvent(IEvent e)
@@ -132,6 +132,8 @@ namespace Slipstream.Backend
         public IPlugin CreatePlugin(string pluginId, string pluginName, IEventBus eventBus, Parameters configuration)
         {
             ComponentPluginCreationContext reg = new ComponentPluginCreationContext(Registrator, this, this, LuaGluesFactories, pluginId, pluginName, configuration);
+            if (!ComponentPlugins.ContainsKey(pluginName))
+                throw new KeyNotFoundException($"Plugin name '{pluginName}' not found");
             return ComponentPlugins[pluginName].Invoke(reg);
         }
 

@@ -6,7 +6,7 @@ using System.Linq;
 
 #nullable enable
 
-namespace Slipstream.Backend.Services
+namespace Slipstream.Components.Internal.Services
 {
     public class EventSerdeService : IEventSerdeService
     {

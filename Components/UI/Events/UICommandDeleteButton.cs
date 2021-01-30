@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Slipstream.Shared;
+using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.UI
+namespace Slipstream.Components.UI.Events
 {
     public class UICommandDeleteButton : IEvent
     {

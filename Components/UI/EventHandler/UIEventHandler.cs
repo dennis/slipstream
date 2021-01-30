@@ -1,15 +1,15 @@
 ﻿#nullable enable
 
-using Slipstream.Shared.Events.UI;
-using static Slipstream.Shared.EventHandlerController;
+using Slipstream.Components.UI.Events;
+using Slipstream.Shared;
 
-namespace Slipstream.Shared.EventHandlers
+namespace Slipstream.Components.UI.EventHandler
 {
-    internal class UI : IEventHandler
+    internal class UIEventHandler : IEventHandler
     {
         private readonly EventHandlerController Parent;
 
-        public UI(EventHandlerController eventHandler)
+        public UIEventHandler(EventHandlerController eventHandler)
         {
             Parent = eventHandler;
         }

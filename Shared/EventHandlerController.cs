@@ -1,5 +1,4 @@
-﻿using Slipstream.Shared.EventHandlers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using static Slipstream.Shared.IEventHandlerController;
 

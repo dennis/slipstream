@@ -1,7 +1,7 @@
 ﻿using NLua.Exceptions;
 using System;
 
-namespace Slipstream.Backend.Services.LuaServiceLib
+namespace Slipstream.Components.Internal.Services
 {
     public class LuaException : Exception
     {

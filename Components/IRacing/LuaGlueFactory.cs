@@ -13,7 +13,7 @@ namespace Slipstream.Components.IRacing
             EventFactory = eventFactory;
         }
 
-        public ILuaGlue CreateLuaGlue()
+        public ILuaGlue CreateLuaGlue(IComponentPluginCreationContext ctx)
         {
             return new LuaGlue(EventBus, EventFactory);
         }

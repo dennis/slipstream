@@ -1,4 +1,4 @@
-﻿using Slipstream.Backend.Services;
+﻿using Slipstream.Components.Internal;
 using Slipstream.Components.Lua.Events;
 using Slipstream.Shared;
 

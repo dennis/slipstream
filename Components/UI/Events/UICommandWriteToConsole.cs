@@ -1,8 +1,9 @@
 ﻿#nullable enable
 
+using Slipstream.Shared;
 using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.UI
+namespace Slipstream.Components.UI.Events
 {
     public class UICommandWriteToConsole : IEvent
     {

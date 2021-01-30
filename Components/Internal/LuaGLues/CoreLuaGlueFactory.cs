@@ -1,6 +1,4 @@
-﻿using Slipstream.Backend.Services;
-
-namespace Slipstream.Components.Internal.LuaGlues
+﻿namespace Slipstream.Components.Internal.LuaGlues
 {
     internal class CoreLuaGlueFactory : ILuaGlueFactory
     {
@@ -11,9 +9,9 @@ namespace Slipstream.Components.Internal.LuaGlues
             EventSerdeService = eventSerdeService;
         }
 
-        public ILuaGlue CreateLuaGlue()
+        public ILuaGlue CreateLuaGlue(IComponentPluginCreationContext ctx)
         {
-            return new LuaGlues.CoreLuaGlue(EventSerdeService);
+            return new CoreLuaGlue(EventSerdeService);
         }
     }
 }

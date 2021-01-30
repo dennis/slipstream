@@ -1,5 +1,4 @@
-﻿using Slipstream.Shared.Factories;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Slipstream.Shared
@@ -7,11 +6,6 @@ namespace Slipstream.Shared
     public class EventFactory : IEventFactory
     {
         private readonly IDictionary<dynamic, dynamic> Factories = new Dictionary<dynamic, dynamic>();
-
-        public EventFactory()
-        {
-            Factories.Add(typeof(IUIEventFactory), new UIEventFactory());
-        }
 
         public void Add<T>(Type factoryInterface, T factoryImplementation)
         {

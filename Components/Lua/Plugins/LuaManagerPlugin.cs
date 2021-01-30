@@ -1,9 +1,8 @@
 ﻿using Serilog;
 using Slipstream.Backend;
-using Slipstream.Backend.Plugins;
-using Slipstream.Backend.Services;
 using Slipstream.Components.FileMonitor;
 using Slipstream.Components.FileMonitor.Events;
+using Slipstream.Components.Internal;
 using Slipstream.Components.Internal.Events;
 using Slipstream.Components.Lua.Events;
 using Slipstream.Shared;
@@ -118,7 +117,8 @@ namespace Slipstream.Components.Lua.Plugins
 
             try
             {
-                var plugin = PluginFactory.CreatePlugin(pluginId, "LuaPlugin", new Parameters { { "filepath", filePath } });
+                var parameters = new Parameters(new Dictionary<dynamic, dynamic>() { { "filepath", filePath } });
+                var plugin = PluginFactory.CreatePlugin(pluginId, "LuaPlugin", parameters);
 
                 PluginManager.RegisterPlugin(plugin);
 

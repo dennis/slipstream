@@ -1,5 +1,6 @@
 ﻿using Serilog;
 using Slipstream.Backend;
+using Slipstream.Components.Internal;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using System.Collections.Generic;
@@ -50,13 +51,13 @@ namespace Slipstream.Components
         public IPluginFactory PluginFactory { get; }
 
         public ComponentPluginCreationContext(
-            ComponentRegistrator componentRegistration,
-            IPluginManager pluginManager,
-            IPluginFactory pluginFactory,
-            List<ILuaGlueFactory> luaGlueFactories,
-            string pluginId,
-            string pluginName,
-            Parameters pluginParameters)
+                ComponentRegistrator componentRegistration,
+                IPluginManager pluginManager,
+                IPluginFactory pluginFactory,
+                List<ILuaGlueFactory> luaGlueFactories,
+                string pluginId,
+                string pluginName,
+                Parameters pluginParameters)
         {
             ComponentRegistration = componentRegistration;
             PluginManager = pluginManager;

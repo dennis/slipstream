@@ -3,10 +3,10 @@
 using Slipstream.Components.Internal;
 using Slipstream.Components.Internal.Events;
 using Slipstream.Components.Playback;
+using Slipstream.Components.UI;
+using Slipstream.Components.UI.Events;
 using Slipstream.Properties;
 using Slipstream.Shared;
-using Slipstream.Shared.Events.UI;
-using Slipstream.Shared.Factories;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -114,7 +114,7 @@ namespace Slipstream.Frontend
             Debug.Assert(EventBusSubscription != null);
 
             var internalEventHandler = EventHandler.Get<Components.Internal.EventHandler.Internal>();
-            var uiEventHandler = EventHandler.Get<Shared.EventHandlers.UI>();
+            var uiEventHandler = EventHandler.Get<Components.UI.EventHandler.UIEventHandler>();
 
             internalEventHandler.OnInternalPluginState += (s, e) => EventHandler_OnInternalPluginState(e.Event);
             uiEventHandler.OnUICommandWriteToConsole += (s, e) => PendingMessages.Add($"{DateTime.Now:s} {e.Event.Message}");

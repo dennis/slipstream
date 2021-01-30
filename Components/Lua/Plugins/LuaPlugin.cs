@@ -1,11 +1,9 @@
-﻿using Serilog;
-using Slipstream.Backend;
-using Slipstream.Backend.Plugins;
-using Slipstream.Backend.Services;
-using Slipstream.Backend.Services.LuaServiceLib;
+﻿using NLua.Exceptions;
+using Serilog;
 using Slipstream.Components.Internal;
+using Slipstream.Components.UI.EventHandler;
 using Slipstream.Shared;
-using System.Collections.Generic;
+using Slipstream.Shared.Helpers.StrongParameters;
 using System.IO;
 
 #nullable enable
@@ -30,7 +28,7 @@ namespace Slipstream.Components.Lua.Plugins
             IEventFactory eventFactory,
             IEventBus eventBus,
             ILuaSevice luaService,
-            Dictionary<dynamic, dynamic> configuration
+            Parameters configuration
         ) : base(eventHandlerController, id, "LuaPlugin", id)
         {
             Logger = logger;
@@ -41,11 +39,10 @@ namespace Slipstream.Components.Lua.Plugins
 
             // Avoid that WriteToConsole is evaluated by Lua, that in turn will
             // add more WriteToConsole events, making a endless loop
-            EventHandlerController.Get<Shared.EventHandlers.UI>().OnUICommandWriteToConsole += (s, e) => { };
+            EventHandlerController.Get<UIEventHandler>().OnUICommandWriteToConsole += (s, e) => { };
             EventHandlerController.OnDefault += (s, e) => LuaContext?.HandleEvent(e.Event);
 
-            FilePath = configuration["filepath"];
-            Prefix = Path.GetFileName(FilePath);
+            FilePath = configuration.Extract<string>("filepath");
 
             StartLua();
         }
@@ -56,7 +53,7 @@ namespace Slipstream.Components.Lua.Plugins
 
             try
             {
-                LuaContext = LuaService.Parse(FilePath, Prefix);
+                LuaContext = LuaService.Parse(FilePath);
             }
             catch (LuaException e)
             {

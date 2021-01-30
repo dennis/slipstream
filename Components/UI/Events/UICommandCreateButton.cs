@@ -1,20 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using Slipstream.Shared;
+using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.UI
+namespace Slipstream.Components.UI.Events
 {
-    public class UIButtonTriggered : IEvent
+    public class UICommandCreateButton : IEvent
     {
-        public string EventType => "UIButtonTriggered";
-        public bool ExcludeFromTxrx => false;
+        public string EventType => "UICommandCreateButton";
+        public bool ExcludeFromTxrx => true;
         public ulong Uptime { get; set; }
-        public string Text { get; set; } = "INVALID-NAME";
+        public string Text { get; set; } = "";
 
         public override bool Equals(object obj)
         {
-            return obj is UIButtonTriggered triggered &&
-                   EventType == triggered.EventType &&
-                   ExcludeFromTxrx == triggered.ExcludeFromTxrx &&
-                   Text == triggered.Text;
+            return obj is UICommandCreateButton button &&
+                   EventType == button.EventType &&
+                   ExcludeFromTxrx == button.ExcludeFromTxrx &&
+                   Text == button.Text;
         }
 
         public override int GetHashCode()

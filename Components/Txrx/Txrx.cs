@@ -1,6 +1,6 @@
 ﻿using Slipstream.Backend;
-using Slipstream.Backend.Services;
 using Slipstream.Components.Internal;
+using Slipstream.Components.Internal.Services;
 using Slipstream.Components.Txrx.Plugins;
 using Slipstream.Components.Txrx.Services;
 

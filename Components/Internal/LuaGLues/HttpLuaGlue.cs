@@ -1,34 +1,30 @@
-﻿using NLua;
-using Serilog;
+﻿using Serilog;
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace Slipstream.Backend.Services.LuaServiceLib
+namespace Slipstream.Components.Internal.LuaGlues
 {
-    public class HttpMethodCollection
+    public class HttpLuaGlue : ILuaGlue
     {
         private readonly ILogger Logger;
 
-        public static HttpMethodCollection Register(ILogger logger, Lua lua)
-        {
-            var m = new HttpMethodCollection(logger);
-            m.Register(lua);
-            return m;
-        }
-
-        public HttpMethodCollection(ILogger logger)
+        public HttpLuaGlue(ILogger logger)
         {
             Logger = logger;
         }
 
-        public void Register(Lua lua)
+        public void SetupLua(NLua.Lua lua)
         {
             lua["http"] = this;
             lua.DoString(@"
 function post_as_json(u, b); http:post_as_json(u, b); end
 ");
+        }
+
+        public void Loop()
+        {
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]

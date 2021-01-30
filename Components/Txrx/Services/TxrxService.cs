@@ -1,9 +1,10 @@
-﻿using Slipstream.Shared;
+﻿using Slipstream.Backend.Services;
+using Slipstream.Shared;
 using System;
 
 #nullable enable
 
-namespace Slipstream.Backend.Services
+namespace Slipstream.Components.Txrx.Services
 {
     public class TxrxService : ITxrxService
     {

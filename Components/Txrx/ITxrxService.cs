@@ -3,11 +3,12 @@ using System;
 
 #nullable enable
 
-namespace Slipstream.Backend.Services
+namespace Slipstream.Components.Txrx
 {
     public interface ITxrxService
     {
         string Serialize(IEvent e);
+
         void Parse(string data, Action<IEvent> processLine);
     }
 }

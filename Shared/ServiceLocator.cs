@@ -7,11 +7,10 @@ namespace Slipstream.Shared
     {
         internal readonly IDictionary<dynamic, dynamic> Factories = new Dictionary<dynamic, dynamic>();
 
-        public ServiceLocator(IEventSerdeService eventSerdeService, IStateService stateService, ITxrxService txrxService)
+        public ServiceLocator(IEventSerdeService eventSerdeService, IStateService stateService)
         {
             Add<IEventSerdeService>(eventSerdeService);
             Add<IStateService>(stateService);
-            Add<ITxrxService>(txrxService);
         }
 
         public T Get<T>()

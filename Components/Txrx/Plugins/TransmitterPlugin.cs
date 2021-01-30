@@ -1,4 +1,5 @@
 using Serilog;
+using Slipstream.Backend.Plugins;
 using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using Slipstream.Shared.Factories;
@@ -11,7 +12,7 @@ using System.Threading;
 
 #nullable enable
 
-namespace Slipstream.Backend.Plugins
+namespace Slipstream.Components.Txrx.Plugins
 {
     public class TransmitterPlugin : BasePlugin
     {
@@ -33,12 +34,12 @@ namespace Slipstream.Backend.Plugins
                 ;
         }
 
-        public TransmitterPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, IInternalEventFactory eventFactory, IEventBus eventBus, IServiceLocator serviceLocator, Parameters configuration) : base(eventHandlerController, id, "TransmitterPlugin", id, true)
+        public TransmitterPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, IInternalEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, Parameters configuration) : base(eventHandlerController, id, "TransmitterPlugin", id, true)
         {
             Logger = logger;
             EventBus = eventBus;
             EventFactory = eventFactory;
-            TxrxService = serviceLocator.Get<ITxrxService>(); ;
+            TxrxService = txrxService;
 
             ConfigurationValidator.Validate(configuration);
 

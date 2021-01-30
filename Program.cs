@@ -4,7 +4,6 @@ using System.Windows.Forms;
 using Serilog;
 using Slipstream.Shared;
 using Slipstream.Shared.Factories;
-using System.Diagnostics;
 
 #nullable enable
 
@@ -52,7 +51,6 @@ namespace Slipstream
             services.AddScoped<IServiceLocator, ServiceLocator>();
             services.AddScoped<Backend.IEngine, Backend.Engine>();
             services.AddScoped<Backend.Services.IStateService>(x => new Backend.Services.StateService(x.GetService<ILogger>(), Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Slipstream\state.txt"));
-            services.AddScoped<Backend.Services.ITxrxService, Backend.Services.TxrxService>();
             services.AddScoped<Backend.Services.IEventSerdeService, Backend.Services.EventSerdeService>();
             services.AddScoped<Backend.PluginManager>();
             services.AddScoped<Backend.IPluginManager>(x => x.GetService<Backend.PluginManager>());

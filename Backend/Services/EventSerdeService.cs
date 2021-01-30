@@ -14,7 +14,7 @@ namespace Slipstream.Backend.Services
 
         static EventSerdeService()
         {
-            foreach (var type in typeof(TxrxService).Assembly
+            foreach (var type in typeof(IEvent).Assembly
                 .GetTypes()
                 .Where(t => typeof(IEvent).IsAssignableFrom(t) && !t.IsAbstract && t.IsClass))
             {
@@ -51,13 +51,13 @@ namespace Slipstream.Backend.Services
         {
             var result = new List<IEvent>();
 
-            foreach(var line in json.Split('\n'))
+            foreach (var line in json.Split('\n'))
             {
-                if(line.Length > 0)
+                if (line.Length > 0)
                 {
                     var @event = Deserialize(line);
 
-                    if(@event != null)
+                    if (@event != null)
                     {
                         result.Add(@event);
                     }
@@ -75,7 +75,7 @@ namespace Slipstream.Backend.Services
         public string SerializeMultiple(IEvent[] events)
         {
             string result = "";
-            foreach(var @event in events)
+            foreach (var @event in events)
             {
                 result += Serialize(@event);
             }

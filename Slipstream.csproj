@@ -142,8 +142,9 @@
     <Compile Include="Backend\IPluginManager.cs" />
     <Compile Include="Backend\PluginManager.cs" />
     <Compile Include="Components\Playback\Plugins\PlaybackPlugin.cs" />
-    <Compile Include="Backend\Plugins\ReceiverPlugin.cs" />
-    <Compile Include="Backend\Plugins\TransmitterPlugin.cs" />
+    <Compile Include="Components\Txrx\Txrx.cs" />
+    <Compile Include="Components\Txrx\Plugins\ReceiverPlugin.cs" />
+    <Compile Include="Components\Txrx\Plugins\TransmitterPlugin.cs" />
     <Compile Include="Components\Audio\LuaGlue.cs" />
     <Compile Include="Components\FileMonitor\FileMonitor.cs" />
     <Compile Include="Components\ILuaGlue.cs" />
@@ -154,7 +155,7 @@
     <Compile Include="Backend\Services\ILuaSevice.cs" />
     <Compile Include="Backend\Services\IStateService.cs" />
     <Compile Include="Backend\Services\EventSerdeService.cs" />
-    <Compile Include="Backend\Services\ITxrxService.cs" />
+    <Compile Include="Components\Txrx\ITxrxService.cs" />
     <Compile Include="Backend\Services\LuaService.cs" />
     <Compile Include="Backend\Services\ILuaContext.cs" />
     <Compile Include="Components\ComponentPluginCreationContext.cs" />
@@ -198,7 +199,7 @@
     <Compile Include="Backend\Services\LuaServiceLib\InternalMethodCollection.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\UIMethodCollection.cs" />
     <Compile Include="Backend\Services\StateService.cs" />
-    <Compile Include="Backend\Services\TxrxService.cs" />
+    <Compile Include="Components\Txrx\Services\TxrxService.cs" />
     <Compile Include="GlobalSuppressions2.cs" />
     <Compile Include="Components\Audio\Audio.cs" />
     <Compile Include="Shared\EventFactory.cs" />
@@ -318,6 +319,7 @@
     <None Include="Components\IRacing\README.md" />
     <None Include="Components\Playback\README.md" />
     <None Include="Components\README.md" />
+    <None Include="Components\Txrx\README.md" />
     <None Include="docs\components.md" />
     <None Include="docs\events.md" />
     <None Include="docs\init.lua.md" />

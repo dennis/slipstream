@@ -17,7 +17,6 @@ namespace Slipstream.Backend
     {
         private readonly IInternalEventFactory InternalEventFactory;
         private readonly ITwitchEventFactory TwitchEventFactory;
-        private readonly IServiceLocator ServiceLocator;
 
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, PluginWorker> PluginWorkers = new Dictionary<string, PluginWorker>();
@@ -45,7 +44,6 @@ namespace Slipstream.Backend
             InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
             TwitchEventFactory = eventFactory.Get<ITwitchEventFactory>();
             EventBus = eventBus;
-            ServiceLocator = serviceLocator;
             Logger = logger;
             EventHandlerControllerBuilder = eventHandlerControllerBuilder;
         }
@@ -142,8 +140,6 @@ namespace Slipstream.Backend
             return name switch
             {
                 "TwitchPlugin" => new TwitchPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(TwitchPlugin)), TwitchEventFactory, eventBus, configuration),
-                "TransmitterPlugin" => new TransmitterPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(TransmitterPlugin)), InternalEventFactory, eventBus, ServiceLocator, configuration),
-                "ReceiverPlugin" => new ReceiverPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(ReceiverPlugin)), InternalEventFactory, eventBus, ServiceLocator, configuration),
                 _ => CreateViaComponents(pluginId, name, configuration)
             };
         }

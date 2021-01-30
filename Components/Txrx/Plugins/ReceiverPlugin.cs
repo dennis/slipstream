@@ -1,5 +1,7 @@
 using Serilog;
+using Slipstream.Backend.Plugins;
 using Slipstream.Backend.Services;
+using Slipstream.Components.Txrx.Services;
 using Slipstream.Shared;
 using Slipstream.Shared.Factories;
 using Slipstream.Shared.Helpers.StrongParameters;
@@ -11,7 +13,7 @@ using System.Net.Sockets;
 
 #nullable enable
 
-namespace Slipstream.Backend.Plugins
+namespace Slipstream.Components.Txrx.Plugins
 {
     public class ReceiverPlugin : BasePlugin
     {
@@ -36,12 +38,12 @@ namespace Slipstream.Backend.Plugins
                 ;
         }
 
-        public ReceiverPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, IInternalEventFactory eventFactory, IEventBus eventBus, IServiceLocator serviceLocator, Parameters configuration) : base(eventHandlerController, id, "ReceiverPlugin", id, true)
+        public ReceiverPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, IInternalEventFactory eventFactory, IEventBus eventBus, ITxrxService txrxService, Parameters configuration) : base(eventHandlerController, id, "ReceiverPlugin", id, true)
         {
             Logger = logger;
             EventFactory = eventFactory;
             EventBus = eventBus;
-            TxrxService = serviceLocator.Get<ITxrxService>();
+            TxrxService = txrxService;
 
             ConfigurationValidator.Validate(configuration);
 

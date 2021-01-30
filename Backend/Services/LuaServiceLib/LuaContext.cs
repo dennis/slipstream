@@ -31,12 +31,10 @@ namespace Slipstream.Backend.Services.LuaServiceLib
                 Lua = lua;
 
                 var audioEventFactory = eventFactory.Get<IAudioEventFactory>();
-                var twitchEventFactory = eventFactory.Get<ITwitchEventFactory>();
                 var uiEventFactory = eventFactory.Get<IUIEventFactory>();
                 var internalEventFactory = eventFactory.Get<IInternalEventFactory>();
 
                 CoreMethodCollection_ = CoreMethodCollection.Register(eventSerdeService, Lua);
-                TwitchMethodCollection.Register(eventBus, twitchEventFactory, Lua);
                 StateMethodCollection.Register(stateService, Lua);
                 UIMethodCollection.Register(logger, eventBus, uiEventFactory, logPrefix, Lua);
                 InternalMethodCollection.Register(eventBus, internalEventFactory, Lua);

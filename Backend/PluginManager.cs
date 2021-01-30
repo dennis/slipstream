@@ -1,8 +1,8 @@
 ﻿#nullable enable
 
 using Serilog;
-using Slipstream.Backend.Plugins;
 using Slipstream.Components;
+using Slipstream.Components.Twitch;
 using Slipstream.Shared;
 using Slipstream.Shared.Factories;
 using Slipstream.Shared.Helpers.StrongParameters;
@@ -16,12 +16,9 @@ namespace Slipstream.Backend
     public class PluginManager : IPluginManager, IPluginFactory
     {
         private readonly IInternalEventFactory InternalEventFactory;
-        private readonly ITwitchEventFactory TwitchEventFactory;
-
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, PluginWorker> PluginWorkers = new Dictionary<string, PluginWorker>();
         private readonly ILogger Logger;
-        private readonly EventHandlerControllerBuilder EventHandlerControllerBuilder;
         private readonly ComponentRegistrator Registrator;
         private readonly List<ILuaGlue> LuaGlues = new List<ILuaGlue>();
         private readonly Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>> ComponentPlugins = new Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>>();
@@ -42,10 +39,8 @@ namespace Slipstream.Backend
             }
 
             InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
-            TwitchEventFactory = eventFactory.Get<ITwitchEventFactory>();
             EventBus = eventBus;
             Logger = logger;
-            EventHandlerControllerBuilder = eventHandlerControllerBuilder;
         }
 
         public void UnregisterPlugin(IPlugin p)
@@ -135,16 +130,7 @@ namespace Slipstream.Backend
             return CreatePlugin(pluginId, name, EventBus, configuration);
         }
 
-        public IPlugin CreatePlugin(string pluginId, string name, IEventBus eventBus, Parameters configuration)
-        {
-            return name switch
-            {
-                "TwitchPlugin" => new TwitchPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(TwitchPlugin)), TwitchEventFactory, eventBus, configuration),
-                _ => CreateViaComponents(pluginId, name, configuration)
-            };
-        }
-
-        private IPlugin CreateViaComponents(string pluginId, string pluginName, Parameters configuration)
+        public IPlugin CreatePlugin(string pluginId, string pluginName, IEventBus eventBus, Parameters configuration)
         {
             ComponentPluginCreationContext reg = new ComponentPluginCreationContext(Registrator, this, this, LuaGlues, pluginId, pluginName, configuration);
             return ComponentPlugins[pluginName].Invoke(reg);

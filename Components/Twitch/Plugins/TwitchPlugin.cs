@@ -1,6 +1,6 @@
 using Serilog;
+using Slipstream.Backend.Plugins;
 using Slipstream.Shared;
-using Slipstream.Shared.Factories;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using System;
@@ -16,7 +16,7 @@ using TwitchLib.Communication.Models;
 
 #nullable enable
 
-namespace Slipstream.Backend.Plugins
+namespace Slipstream.Components.Twitch.Plugins
 {
     internal class TwitchPlugin : BasePlugin
     {
@@ -60,7 +60,7 @@ namespace Slipstream.Backend.Plugins
 
             ConfigurationValidator.Validate(configuration);
 
-            var twitchEventHandler = EventHandlerController.Get<Shared.EventHandlers.Twitch>();
+            var twitchEventHandler = EventHandlerController.Get<EventHandler.Twitch>();
 
             twitchEventHandler.OnTwitchCommandSendMessage += (_, e) => SendMessage(e.Event.Message);
             twitchEventHandler.OnTwitchCommandSendWhisper += (_, e) => SendWhisper(e.Event.To, e.Event.Message);

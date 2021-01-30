@@ -1,8 +1,9 @@
 ﻿#nullable enable
 
+using Slipstream.Shared;
 using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.Twitch
+namespace Slipstream.Components.Twitch.Events
 {
     public class TwitchReceivedMessage : IEvent
     {

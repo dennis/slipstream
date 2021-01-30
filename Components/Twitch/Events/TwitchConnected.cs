@@ -1,18 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using Slipstream.Shared;
+using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.Twitch
+namespace Slipstream.Components.Twitch.Events
 {
-    public class TwitchDisconnected : IEvent
+    public class TwitchConnected : IEvent
     {
-        public string EventType => "TwitchDisconnected";
+        public string EventType => "TwitchConnected";
         public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
 
         public override bool Equals(object obj)
         {
-            return obj is TwitchDisconnected disconnected &&
-                   EventType == disconnected.EventType &&
-                   ExcludeFromTxrx == disconnected.ExcludeFromTxrx;
+            return obj is TwitchConnected connected &&
+                   EventType == connected.EventType &&
+                   ExcludeFromTxrx == connected.ExcludeFromTxrx;
         }
 
         public override int GetHashCode()

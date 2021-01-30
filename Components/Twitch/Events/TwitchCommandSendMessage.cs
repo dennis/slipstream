@@ -1,32 +1,30 @@
 ﻿#nullable enable
 
+using Slipstream.Shared;
 using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.Twitch
+namespace Slipstream.Components.Twitch.Events
 {
-    public class TwitchReceivedWhisper : IEvent
+    public class TwitchCommandSendMessage : IEvent
     {
-        public string EventType => "TwitchReceivedWhisper";
+        public string EventType => "TwitchCommandSendMessage";
         public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
-        public string From { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
 
         public override bool Equals(object? obj)
         {
-            return obj is TwitchReceivedWhisper whisper &&
-                   EventType == whisper.EventType &&
-                   ExcludeFromTxrx == whisper.ExcludeFromTxrx &&
-                   From == whisper.From &&
-                   Message == whisper.Message;
+            return obj is TwitchCommandSendMessage message &&
+                   EventType == message.EventType &&
+                   ExcludeFromTxrx == message.ExcludeFromTxrx &&
+                   Message == message.Message;
         }
 
         public override int GetHashCode()
         {
-            int hashCode = -370540573;
+            int hashCode = 1904577466;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
             hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(From);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Message);
             return hashCode;
         }

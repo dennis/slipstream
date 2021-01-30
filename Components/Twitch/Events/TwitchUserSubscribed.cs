@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Slipstream.Shared;
+using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.Twitch
+namespace Slipstream.Components.Twitch.Events
 {
     public class TwitchUserSubscribed : IEvent
     {

@@ -142,6 +142,7 @@
     <Compile Include="Backend\IPluginManager.cs" />
     <Compile Include="Backend\PluginManager.cs" />
     <Compile Include="Components\Playback\Plugins\PlaybackPlugin.cs" />
+    <Compile Include="Components\Twitch\Twitch.cs" />
     <Compile Include="Components\Txrx\Txrx.cs" />
     <Compile Include="Components\Txrx\Plugins\ReceiverPlugin.cs" />
     <Compile Include="Components\Txrx\Plugins\TransmitterPlugin.cs" />
@@ -150,7 +151,7 @@
     <Compile Include="Components\ILuaGlue.cs" />
     <Compile Include="Components\Audio\Plugins\AudioPlugin.cs" />
     <Compile Include="Backend\Plugins\BasePlugin.cs" />
-    <Compile Include="Backend\Plugins\TwitchPlugin.cs" />
+    <Compile Include="Components\Twitch\Plugins\TwitchPlugin.cs" />
     <Compile Include="Backend\Services\IEventSerdeService.cs" />
     <Compile Include="Backend\Services\ILuaSevice.cs" />
     <Compile Include="Backend\Services\IStateService.cs" />
@@ -176,9 +177,9 @@
     <Compile Include="Components\IRacing\Events\IRacingTesting.cs" />
     <Compile Include="Components\IRacing\Events\IRacingQualify.cs" />
     <Compile Include="Components\IRacing\Events\IRacingPractice.cs" />
-    <Compile Include="Shared\Events\Twitch\TwitchRaided.cs" />
-    <Compile Include="Shared\Events\Twitch\TwitchGiftedSubscription.cs" />
-    <Compile Include="Shared\Events\Twitch\TwitchUserSubscribed.cs" />
+    <Compile Include="Components\Twitch\Events\TwitchRaided.cs" />
+    <Compile Include="Components\Twitch\Events\TwitchGiftedSubscription.cs" />
+    <Compile Include="Components\Twitch\Events\TwitchUserSubscribed.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Validators\ArrayValidator.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Validators\BooleanValidator.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Validators\FloatValidator.cs" />
@@ -195,7 +196,7 @@
     <Compile Include="Backend\Services\LuaServiceLib\LuaException.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\StateMethodCollection.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Validators\StringValidator.cs" />
-    <Compile Include="Backend\Services\LuaServiceLib\TwitchMethodCollection.cs" />
+    <Compile Include="Components\Twitch\LuaGlue.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\InternalMethodCollection.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\UIMethodCollection.cs" />
     <Compile Include="Backend\Services\StateService.cs" />
@@ -225,9 +226,9 @@
     <Compile Include="Components\IRacing\Events\IRacingCommandSendWeatherInfo.cs" />
     <Compile Include="Components\IRacing\Events\IRacingDriverIncident.cs" />
     <Compile Include="Components\IRacing\Events\IRacingCommandSendCarInfo.cs" />
-    <Compile Include="Shared\Events\Twitch\TwitchCommandSendWhisper.cs" />
-    <Compile Include="Shared\Events\Twitch\TwitchReceivedWhisper.cs" />
-    <Compile Include="Shared\Events\Twitch\TwitchReceivedMessage.cs" />
+    <Compile Include="Components\Twitch\Events\TwitchCommandSendWhisper.cs" />
+    <Compile Include="Components\Twitch\Events\TwitchReceivedWhisper.cs" />
+    <Compile Include="Components\Twitch\Events\TwitchReceivedMessage.cs" />
     <Compile Include="Shared\Events\UI\UIButtonTriggered.cs" />
     <Compile Include="Shared\Events\UI\UICommandDeleteButton.cs" />
     <Compile Include="Shared\Events\UI\UICommandCreateButton.cs" />
@@ -238,10 +239,10 @@
     <Compile Include="Components\Lua\ILuaEventFactory.cs" />
     <Compile Include="Shared\Factories\InternalEventFactory.cs" />
     <Compile Include="Components\IRacing\EventFactory\IRacingEventFactory.cs" />
-    <Compile Include="Shared\Factories\ITwitchEventFactory.cs" />
+    <Compile Include="Components\Twitch\ITwitchEventFactory.cs" />
     <Compile Include="Shared\Factories\IUIEventFactory.cs" />
     <Compile Include="Components\Lua\EventFactory\LuaEventFactory.cs" />
-    <Compile Include="Shared\Factories\TwitchEventFactory.cs" />
+    <Compile Include="Components\Twitch\EventFactory\TwitchEventFactory.cs" />
     <Compile Include="Components\FileMonitor\EventHandler\FileMonitor.cs" />
     <Compile Include="Shared\ApplicationVersionService.cs" />
     <Compile Include="Components\IRacing\Events\IRacingPitstopReport.cs" />
@@ -266,9 +267,9 @@
     <Compile Include="Components\IRacing\Events\IRacingConnected.cs" />
     <Compile Include="Shared\Events\Internal\InternalCommandPluginUnregister.cs" />
     <Compile Include="Shared\Events\Internal\InternalCommandPluginRegister.cs" />
-    <Compile Include="Shared\Events\Twitch\TwitchCommandSendMessage.cs" />
-    <Compile Include="Shared\Events\Twitch\TwitchDisconnected.cs" />
-    <Compile Include="Shared\Events\Twitch\TwitchConnected.cs" />
+    <Compile Include="Components\Twitch\Events\TwitchCommandSendMessage.cs" />
+    <Compile Include="Components\Twitch\Events\TwitchDisconnected.cs" />
+    <Compile Include="Components\Twitch\Events\TwitchConnected.cs" />
     <Compile Include="Components\Audio\Events\AudioCommandPlay.cs" />
     <Compile Include="Components\Audio\Events\AudioCommandSay.cs" />
     <Compile Include="Shared\Events\UI\UICommandWriteToConsole.cs" />
@@ -295,7 +296,7 @@
     <Compile Include="Shared\EventHandlers\Internal.cs" />
     <Compile Include="Components\IRacing\EventHandler\IRacing.cs" />
     <Compile Include="Components\Lua\EventHandler\Lua.cs" />
-    <Compile Include="Shared\EventHandlers\Twitch.cs" />
+    <Compile Include="Components\Twitch\EventHandler\Twitch.cs" />
     <Compile Include="Shared\EventHandlers\UI.cs" />
     <Compile Include="Shared\IServiceLocator.cs" />
     <Compile Include="Shared\ServiceLocator.cs" />

@@ -1,9 +1,9 @@
 ﻿#nullable enable
 
-using Slipstream.Shared.Events.Twitch;
-using static Slipstream.Shared.EventHandlerController;
+using Slipstream.Components.Twitch.Events;
+using Slipstream.Shared;
 
-namespace Slipstream.Shared.EventHandlers
+namespace Slipstream.Components.Twitch.EventHandler
 {
     internal class Twitch : IEventHandler
     {

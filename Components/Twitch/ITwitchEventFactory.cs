@@ -1,8 +1,8 @@
-﻿using Slipstream.Shared.Events.Twitch;
+﻿#nullable enable
 
-#nullable enable
+using Slipstream.Components.Twitch.Events;
 
-namespace Slipstream.Shared.Factories
+namespace Slipstream.Components.Twitch
 {
     public interface ITwitchEventFactory
     {

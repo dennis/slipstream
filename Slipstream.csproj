@@ -158,6 +158,7 @@
     <Compile Include="Backend\Services\LuaService.cs" />
     <Compile Include="Backend\Services\ILuaContext.cs" />
     <Compile Include="Components\ComponentPluginCreationContext.cs" />
+    <Compile Include="Components\IRacing\IRacing.cs" />
     <Compile Include="Shared\EventHandlerArgs.cs" />
     <Compile Include="Shared\EventHandlerControllerBuilder.cs" />
     <Compile Include="Components\ComponentRegistrator.cs" />
@@ -185,7 +186,7 @@
     <Compile Include="Shared\Helpers\StrongParameters\Parameters.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\PlaybackMethodCollection.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\CoreMethodCollection.cs" />
-    <Compile Include="Backend\Services\LuaServiceLib\IRacingMethodCollection.cs" />
+    <Compile Include="Components\IRacing\LuaGlue.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\HttpMethodCollection.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\LuaContext.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\LuaException.cs" />
@@ -230,10 +231,10 @@
     <Compile Include="Components\FileMonitor\EventFactory\FileMonitorEventFactory.cs" />
     <Compile Include="Components\Audio\IAudioEventFactory.cs" />
     <Compile Include="Components\FileMonitor\IFileMonitorEventFactory.cs" />
-    <Compile Include="Shared\Factories\IIRacingEventFactory.cs" />
+    <Compile Include="Components\IRacing\IIRacingEventFactory.cs" />
     <Compile Include="Shared\Factories\ILuaEventFactory.cs" />
     <Compile Include="Shared\Factories\InternalEventFactory.cs" />
-    <Compile Include="Shared\Factories\IRacingEventFactory.cs" />
+    <Compile Include="Components\IRacing\EventFactory\IRacingEventFactory.cs" />
     <Compile Include="Shared\Factories\ITwitchEventFactory.cs" />
     <Compile Include="Shared\Factories\IUIEventFactory.cs" />
     <Compile Include="Shared\Factories\LuaEventFactory.cs" />
@@ -246,7 +247,7 @@
     <Compile Include="Shared\Events\IRacing\IRacingCarCompletedLap.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingRaceFlags.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingCarInfo.cs" />
-    <Compile Include="Backend\Plugins\IRacingPlugin.cs" />
+    <Compile Include="Components\IRacing\Plugins\IRacingPlugin.cs" />
     <Compile Include="Shared\Events\IRacing\IRacingWeatherInfo.cs" />
     <Compile Include="Backend\Plugins\LuaPlugin.cs" />
     <Compile Include="Backend\Plugins\LuaManagerPlugin.cs" />
@@ -289,7 +290,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shared\EventHandlers\Internal.cs" />
-    <Compile Include="Shared\EventHandlers\IRacing.cs" />
+    <Compile Include="Components\IRacing\EventHandler\IRacing.cs" />
     <Compile Include="Shared\EventHandlers\Lua.cs" />
     <Compile Include="Shared\EventHandlers\Twitch.cs" />
     <Compile Include="Shared\EventHandlers\UI.cs" />
@@ -312,6 +313,7 @@
     <None Include="CODE_OF_CONDUCT.md" />
     <None Include="Components\Audio\README.md" />
     <None Include="Components\FileMonitor\README.md" />
+    <None Include="Components\IRacing\README.md" />
     <None Include="Components\README.md" />
     <None Include="docs\components.md" />
     <None Include="docs\events.md" />

@@ -2,7 +2,7 @@
 
 #nullable enable
 
-namespace Slipstream.Shared.Factories
+namespace Slipstream.Components.IRacing
 {
     public interface IIRacingEventFactory
     {

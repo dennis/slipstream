@@ -1,10 +1,10 @@
 ﻿using Slipstream.Shared.Events.IRacing;
 using System;
-using static Slipstream.Shared.Factories.IIRacingEventFactory;
+using static Slipstream.Components.IRacing.IIRacingEventFactory;
 
 #nullable enable
 
-namespace Slipstream.Shared.Factories
+namespace Slipstream.Components.IRacing.EventFactory
 {
     public class IRacingEventFactory : IIRacingEventFactory
     {
@@ -83,20 +83,6 @@ namespace Slipstream.Shared.Factories
                 IRacingSessionStateEnum.Racing => "Racing",
                 IRacingSessionStateEnum.Warmup => "Warmup",
                 _ => throw new Exception($"Unexpected IRacingSessionStateEnum '{state}"),
-            };
-        }
-
-        private static string SessionTypeToString(IRacingSessionTypeEnum sessionType)
-        {
-            return sessionType switch
-            {
-                IRacingSessionTypeEnum.Practice => "Practice",
-                IRacingSessionTypeEnum.OpenQualify => "OpenQualify",
-                IRacingSessionTypeEnum.LoneQualify => "LoneQualify",
-                IRacingSessionTypeEnum.OfflineTesting => "OfflineTesting",
-                IRacingSessionTypeEnum.Race => "Race",
-                IRacingSessionTypeEnum.Warmup => "Warmup",
-                _ => throw new Exception($"Unexpected IRacingSessionTypeEnum '{sessionType}"),
             };
         }
 

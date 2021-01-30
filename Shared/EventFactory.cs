@@ -12,7 +12,6 @@ namespace Slipstream.Shared
         public EventFactory(IEventSerdeService eventSerdeService)
         {
             Factories.Add(typeof(IInternalEventFactory), new InternalEventFactory());
-            Factories.Add(typeof(IIRacingEventFactory), new IRacingEventFactory());
             Factories.Add(typeof(ILuaEventFactory), new LuaEventFactory(eventSerdeService));
             Factories.Add(typeof(ITwitchEventFactory), new TwitchEventFactory());
             Factories.Add(typeof(IUIEventFactory), new UIEventFactory());

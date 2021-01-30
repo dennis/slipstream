@@ -1,28 +1,20 @@
 ﻿using NLua;
 using Slipstream.Shared;
-using Slipstream.Shared.Factories;
 
-namespace Slipstream.Backend.Services.LuaServiceLib
+namespace Slipstream.Components.IRacing
 {
-    public class IRacingMethodCollection
+    public class LuaGlue : ILuaGlue
     {
         private readonly IEventBus EventBus;
         private readonly IIRacingEventFactory EventFactory;
 
-        public static IRacingMethodCollection Register(IEventBus eventBus, IIRacingEventFactory eventFactory, Lua lua)
-        {
-            var m = new IRacingMethodCollection(eventBus, eventFactory);
-            m.Register(lua);
-            return m;
-        }
-
-        public IRacingMethodCollection(IEventBus eventBus, IIRacingEventFactory eventFactory)
+        public LuaGlue(IEventBus eventBus, IIRacingEventFactory eventFactory)
         {
             EventBus = eventBus;
             EventFactory = eventFactory;
         }
 
-        public void Register(Lua lua)
+        public void SetupLua(Lua lua)
         {
             lua["iracing"] = this;
             lua.DoString(@"

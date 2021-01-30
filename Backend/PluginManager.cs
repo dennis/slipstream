@@ -20,7 +20,6 @@ namespace Slipstream.Backend
         private readonly IEventFactory EventFactory;
         private readonly IInternalEventFactory InternalEventFactory;
         private readonly IFileMonitorEventFactory FileMonitorEventFactory;
-        private readonly IIRacingEventFactory IRacingEventFactory;
         private readonly ITwitchEventFactory TwitchEventFactory;
         private readonly IServiceLocator ServiceLocator;
 
@@ -50,7 +49,6 @@ namespace Slipstream.Backend
             EventFactory = eventFactory;
             InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
             FileMonitorEventFactory = eventFactory.Get<IFileMonitorEventFactory>();
-            IRacingEventFactory = eventFactory.Get<IIRacingEventFactory>();
             TwitchEventFactory = eventFactory.Get<ITwitchEventFactory>();
             EventBus = eventBus;
             ServiceLocator = serviceLocator;
@@ -151,7 +149,6 @@ namespace Slipstream.Backend
             {
                 "LuaPlugin" => CreateLuaPlugin(pluginId, configuration),
                 "LuaManagerPlugin" => new LuaManagerPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(LuaPlugin)), FileMonitorEventFactory, eventBus, this, this, ServiceLocator),
-                "IRacingPlugin" => new IRacingPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, IRacingEventFactory, eventBus),
                 "TwitchPlugin" => new TwitchPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(TwitchPlugin)), TwitchEventFactory, eventBus, configuration),
                 "TransmitterPlugin" => new TransmitterPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(TransmitterPlugin)), InternalEventFactory, eventBus, ServiceLocator, configuration),
                 "ReceiverPlugin" => new ReceiverPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(ReceiverPlugin)), InternalEventFactory, eventBus, ServiceLocator, configuration),

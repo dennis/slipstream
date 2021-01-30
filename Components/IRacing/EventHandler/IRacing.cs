@@ -1,9 +1,9 @@
 ﻿#nullable enable
 
+using Slipstream.Shared;
 using Slipstream.Shared.Events.IRacing;
-using static Slipstream.Shared.EventHandlerController;
 
-namespace Slipstream.Shared.EventHandlers
+namespace Slipstream.Components.IRacing.EventHandler
 {
     internal class IRacing : IEventHandler
     {

@@ -15,7 +15,6 @@ namespace Slipstream.Shared
             Add(typeof(Internal));
             Add(typeof(Lua));
             Add(typeof(UI));
-            Add(typeof(IRacing));
             Add(typeof(Twitch));
             Add(typeof(Playback));
         }

@@ -1,17 +1,17 @@
 ﻿using iRacingSDK;
+using Slipstream.Backend.Plugins;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.IRacing;
-using Slipstream.Shared.Factories;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using static Slipstream.Shared.Factories.IIRacingEventFactory;
+using static Slipstream.Components.IRacing.IIRacingEventFactory;
 
 #nullable enable
 
-namespace Slipstream.Backend.Plugins
+namespace Slipstream.Components.IRacing.Plugins
 {
     internal class IRacingPlugin : BasePlugin
     {
@@ -105,7 +105,7 @@ namespace Slipstream.Backend.Plugins
             EventFactory = eventFactory;
             EventBus = eventBus;
 
-            var IRacingEventHandler = EventHandlerController.Get<Slipstream.Shared.EventHandlers.IRacing>();
+            var IRacingEventHandler = EventHandlerController.Get<EventHandler.IRacing>();
 
             IRacingEventHandler.OnIRacingCommandSendCarInfo += (s, e) => SendCarInfo = true;
             IRacingEventHandler.OnIRacingCommandSendTrackInfo += (s, e) => SendTrackInfo = true;

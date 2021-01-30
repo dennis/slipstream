@@ -312,6 +312,7 @@
     <None Include="CODE_OF_CONDUCT.md" />
     <None Include="Components\Audio\README.md" />
     <None Include="Components\FileMonitor\README.md" />
+    <None Include="Components\README.md" />
     <None Include="docs\components.md" />
     <None Include="docs\events.md" />
     <None Include="docs\init.lua.md" />

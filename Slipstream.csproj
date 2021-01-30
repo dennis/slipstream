@@ -141,7 +141,12 @@
     <Compile Include="Backend\IPluginFactory.cs" />
     <Compile Include="Backend\IPluginManager.cs" />
     <Compile Include="Backend\PluginManager.cs" />
+    <Compile Include="Components\Audio\LuaGlueFactory.cs" />
+    <Compile Include="Components\ILuaGlueFactory.cs" />
+    <Compile Include="Components\Internal\LuaGLues\CoreLuaGlueFactory.cs" />
     <Compile Include="Components\Internal\Internal.cs" />
+    <Compile Include="Components\IRacing\LuaGlueFactory.cs" />
+    <Compile Include="Components\Playback\LuaGlueFactory.cs" />
     <Compile Include="Components\Playback\Plugins\PlaybackPlugin.cs" />
     <Compile Include="Components\Twitch\Twitch.cs" />
     <Compile Include="Components\Txrx\Txrx.cs" />

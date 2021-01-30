@@ -1,7 +1,4 @@
-﻿using NLua;
-using Slipstream.Components;
-using Slipstream.Components.Twitch;
-using Slipstream.Shared;
+﻿using Slipstream.Shared;
 
 #nullable enable
 
@@ -25,6 +22,10 @@ namespace Slipstream.Components.Twitch
 function send_twitch_message(msg); twitch:send_channel_message(msg); end
 function send_twitch_whisper(to, msg); twitch:send_whisper_message(to, msg); end
 ");
+        }
+
+        public void Loop()
+        {
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]

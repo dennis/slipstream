@@ -22,6 +22,10 @@ function play(plugin_id, filename, volume); audio:play(plugin_id, filename, volu
 ");
         }
 
+        public void Loop()
+        {
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
         public void say(string pluginId, string message, float volume)
         {

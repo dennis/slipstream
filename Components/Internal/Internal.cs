@@ -10,7 +10,7 @@ namespace Slipstream.Components.Internal
 
             ctx.RegisterEventFactory(typeof(IInternalEventFactory), eventFactory);
             ctx.RegisterEventHandler(typeof(EventHandler.Internal));
-            ctx.RegisterLuaGlue(new LuaGlues.CoreLuaGlue(new EventSerdeService()));
+            ctx.RegisterLuaGlue(new LuaGlues.CoreLuaGlueFactory(new EventSerdeService()));
         }
     }
 }

@@ -12,8 +12,9 @@ namespace Slipstream.Backend.Services.LuaServiceLib
 {
     public class LuaContext : ILuaContext
     {
-        private readonly CoreMethodCollection CoreMethodCollection_;
+        //private readonly CoreMethodCollection CoreMethodCollection_; FIXME
         private readonly LuaFunction? HandleFunc;
+
         private Lua? Lua;
 
         public LuaContext(
@@ -55,18 +56,6 @@ namespace Slipstream.Backend.Services.LuaServiceLib
             catch (NLua.Exceptions.LuaScriptException e)
             {
                 throw new LuaException($"Lua: Error initializing {filePath}: {e}", e);
-            }
-        }
-
-        public void Loop()
-        {
-            try
-            {
-                CoreMethodCollection_.Loop();
-            }
-            catch (NLua.Exceptions.LuaScriptException e)
-            {
-                throw new LuaException($"Lua runtime error: {e}", e);
             }
         }
 

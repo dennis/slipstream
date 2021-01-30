@@ -10,7 +10,7 @@ namespace Slipstream.Components
         string PluginId { get; }
         string PluginName { get; }
         Parameters PluginParameters { get; }
-        List<ILuaGlue> LuaGlues { get; }
+        List<ILuaGlueFactory> LuaGlueFactories { get; }
         IPluginManager PluginManager { get; }
         IPluginFactory PluginFactory { get; }
     }

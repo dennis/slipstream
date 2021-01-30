@@ -1,5 +1,4 @@
 ﻿using Slipstream.Backend;
-using Slipstream.Backend.Plugins;
 using Slipstream.Components.IRacing.Plugins;
 
 namespace Slipstream.Components.IRacing
@@ -15,7 +14,7 @@ namespace Slipstream.Components.IRacing
             ctx.RegisterPlugin(NAME, CreatePlugin);
             ctx.RegisterEventFactory(typeof(IIRacingEventFactory), eventFactory);
             ctx.RegisterEventHandler(typeof(EventHandler.IRacing));
-            ctx.RegisterLuaGlue(new LuaGlue(ctx.EventBus, eventFactory));
+            ctx.RegisterLuaGlue(new LuaGlueFactory(ctx.EventBus, eventFactory));
         }
 
         private IPlugin CreatePlugin(IComponentPluginCreationContext ctx)

@@ -16,7 +16,7 @@ namespace Slipstream.Backend.Services
         private readonly IEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly IStateService StateService;
-        private readonly IEventSerdeService EventSerdeService;
+        private readonly List<ILuaGlue> LuaGlues;
         private readonly Lua Lua;
 
         public LuaService(
@@ -24,17 +24,16 @@ namespace Slipstream.Backend.Services
             IEventFactory eventFactory,
             IEventBus eventBus,
             IStateService stateService,
-            IEventSerdeService eventSerdeService,
             List<ILuaGlue>? luaGlues = null)
         {
             Logger = logger;
             EventFactory = eventFactory;
             EventBus = eventBus;
             StateService = stateService;
-            EventSerdeService = eventSerdeService;
             Lua = new Lua();
 
             luaGlues ??= new List<ILuaGlue>();
+            LuaGlues = luaGlues;
 
             foreach (var glue in luaGlues)
             {
@@ -44,7 +43,15 @@ namespace Slipstream.Backend.Services
 
         public ILuaContext Parse(string filename, string logPrefix)
         {
-            return new LuaContext(Logger, EventFactory, EventBus, StateService, EventSerdeService, filename, logPrefix, Lua);
+            return new LuaContext(Logger, EventFactory, EventBus, StateService, filename, logPrefix, Lua);
+        }
+
+        public void Loop()
+        {
+            foreach (var glue in LuaGlues)
+            {
+                glue.Loop();
+            }
         }
     }
 }

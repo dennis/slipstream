@@ -26,6 +26,10 @@ function iracing_send_race_flags(); iracing:send_race_flags(); end
 ");
         }
 
+        public void Loop()
+        {
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
         public void send_car_info()
         {

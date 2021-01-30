@@ -18,6 +18,6 @@ namespace Slipstream.Components
 
         public void RegisterEventHandler(Type type);
 
-        void RegisterLuaGlue(ILuaGlue luaGlue);
+        void RegisterLuaGlue(ILuaGlueFactory luaGlueFactory);
     }
 }

@@ -2,6 +2,7 @@
 using Slipstream.Backend.Services;
 using Slipstream.Components.FileMonitor;
 using Slipstream.Components.Lua.Plugins;
+using System.Collections.Generic;
 
 namespace Slipstream.Components.Lua
 {
@@ -32,13 +33,19 @@ namespace Slipstream.Components.Lua
 
         private IPlugin CreateLuaPlugin(IComponentPluginCreationContext ctx)
         {
+            List<ILuaGlue> states = new List<ILuaGlue>();
+
+            foreach (var factories in ctx.LuaGlueFactories)
+            {
+                states.Add(factories.CreateLuaGlue());
+            }
+
             var luaService = new LuaService(
                 ctx.Logger.ForContext(typeof(LuaPlugin)),
                 ctx.EventFactory,
                 ctx.EventBus,
                 ctx.ServiceLocator.Get<IStateService>(),
-                ctx.ServiceLocator.Get<IEventSerdeService>(),
-                ctx.LuaGlues
+                states
             );
 
             return new LuaPlugin(

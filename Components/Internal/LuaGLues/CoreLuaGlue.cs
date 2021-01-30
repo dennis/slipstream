@@ -23,7 +23,6 @@ namespace Slipstream.Components.Internal.LuaGlues
         }
 
         private readonly IEventSerdeService EventSerdeService;
-
         private readonly IDictionary<string, DelayedExecution> DebounceDelayedFunctions = new Dictionary<string, DelayedExecution>();
         private readonly IDictionary<string, DelayedExecution> WaitDelayedFunctions = new Dictionary<string, DelayedExecution>();
 

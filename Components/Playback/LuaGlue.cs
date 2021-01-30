@@ -23,6 +23,10 @@ namespace Slipstream.Components.Playback
             lua["playback"] = this;
         }
 
+        public void Loop()
+        {
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
         public void save(string filename)
         {

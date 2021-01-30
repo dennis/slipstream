@@ -1,10 +1,9 @@
 ﻿using Slipstream.Backend;
-using Slipstream.Backend.Plugins;
 using Slipstream.Components.Playback.Plugins;
 
 namespace Slipstream.Components.Playback
 {
-    internal class Playback : IComponent
+    internal partial class Playback : IComponent
     {
         public void Register(IComponentRegistrationContext ctx)
         {
@@ -13,7 +12,7 @@ namespace Slipstream.Components.Playback
             ctx.RegisterPlugin("PlaybackPlugin", CreatePlugin);
             ctx.RegisterEventFactory(typeof(IPlaybackEventFactory), eventFactory);
             ctx.RegisterEventHandler(typeof(EventHandler.Playback));
-            ctx.RegisterLuaGlue(new LuaGlue(ctx.EventBus, eventFactory));
+            ctx.RegisterLuaGlue(new LuaGlueFactory(ctx.EventBus, eventFactory));
         }
 
         private IPlugin CreatePlugin(IComponentPluginCreationContext ctx)

@@ -43,7 +43,7 @@ namespace Slipstream.Components
 
         public NLua.Lua Lua { get; }
 
-        public List<ILuaGlue> LuaGlues { get; }
+        public List<ILuaGlueFactory> LuaGlueFactories { get; }
 
         public IPluginManager PluginManager { get; }
 
@@ -53,7 +53,7 @@ namespace Slipstream.Components
             ComponentRegistrator componentRegistration,
             IPluginManager pluginManager,
             IPluginFactory pluginFactory,
-            List<ILuaGlue> luaGlues,
+            List<ILuaGlueFactory> luaGlueFactories,
             string pluginId,
             string pluginName,
             Parameters pluginParameters)
@@ -61,7 +61,7 @@ namespace Slipstream.Components
             ComponentRegistration = componentRegistration;
             PluginManager = pluginManager;
             PluginFactory = pluginFactory;
-            LuaGlues = luaGlues;
+            LuaGlueFactories = luaGlueFactories;
             PluginId = pluginId;
             PluginName = pluginName;
             PluginParameters = pluginParameters;

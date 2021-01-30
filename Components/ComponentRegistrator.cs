@@ -8,7 +8,7 @@ namespace Slipstream.Components
 {
     internal class ComponentRegistrator : IComponentRegistrationContext
     {
-        private readonly List<ILuaGlue> LuaGlues;
+        private readonly List<ILuaGlueFactory> LuaGlueFactories;
         private readonly Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>> Plugins;
 
         public ILogger Logger { get; internal set; }
@@ -23,7 +23,7 @@ namespace Slipstream.Components
 
         public ComponentRegistrator(
             Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>> plugins,
-            List<ILuaGlue> luaGlues,
+            List<ILuaGlueFactory> luaGlueFactories,
             IEventFactory eventFactory,
             ILogger logger,
             IEventBus eventBus,
@@ -32,7 +32,7 @@ namespace Slipstream.Components
         )
         {
             Plugins = plugins;
-            LuaGlues = luaGlues;
+            LuaGlueFactories = luaGlueFactories;
             EventHandlerControllerBuilder = eventHandlerControllerBuilder;
             EventFactory = eventFactory;
             Logger = logger;
@@ -55,9 +55,9 @@ namespace Slipstream.Components
             Plugins.Add(name, plugin);
         }
 
-        public void RegisterLuaGlue(ILuaGlue luaGlue)
+        public void RegisterLuaGlue(ILuaGlueFactory luaGlueFactory)
         {
-            LuaGlues.Add(luaGlue);
+            LuaGlueFactories.Add(luaGlueFactory);
         }
     }
 }

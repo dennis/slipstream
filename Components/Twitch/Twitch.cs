@@ -1,8 +1,26 @@
 ﻿using Slipstream.Backend;
 using Slipstream.Components.Twitch.Plugins;
+using Slipstream.Shared;
 
 namespace Slipstream.Components.Twitch
 {
+    internal class LuaGlueFactory : ILuaGlueFactory
+    {
+        private readonly IEventBus EventBus;
+        private readonly ITwitchEventFactory EventFactory;
+
+        public LuaGlueFactory(IEventBus eventBus, ITwitchEventFactory eventFactory)
+        {
+            EventBus = eventBus;
+            EventFactory = eventFactory;
+        }
+
+        public ILuaGlue CreateLuaGlue()
+        {
+            return new LuaGlue(EventBus, EventFactory);
+        }
+    }
+
     internal class Twitch : IComponent
     {
         private const string NAME = "TwitchPlugin";
@@ -14,7 +32,7 @@ namespace Slipstream.Components.Twitch
             ctx.RegisterPlugin(NAME, CreateAudioPlugin);
             ctx.RegisterEventFactory(typeof(ITwitchEventFactory), eventFactory);
             ctx.RegisterEventHandler(typeof(EventHandler.Twitch));
-            ctx.RegisterLuaGlue(new LuaGlue(ctx.EventBus, eventFactory));
+            ctx.RegisterLuaGlue(new LuaGlueFactory(ctx.EventBus, eventFactory));
         }
 
         private IPlugin CreateAudioPlugin(IComponentPluginCreationContext ctx)

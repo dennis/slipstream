@@ -19,7 +19,7 @@ namespace Slipstream.Backend
         private readonly IDictionary<string, PluginWorker> PluginWorkers = new Dictionary<string, PluginWorker>();
         private readonly ILogger Logger;
         private readonly ComponentRegistrator Registrator;
-        private readonly List<ILuaGlue> LuaGlues = new List<ILuaGlue>();
+        private readonly List<ILuaGlueFactory> LuaGluesFactories = new List<ILuaGlueFactory>();
         private readonly Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>> ComponentPlugins = new Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>>();
 
         public PluginManager(
@@ -29,7 +29,7 @@ namespace Slipstream.Backend
             ILogger logger,
             EventHandlerControllerBuilder eventHandlerControllerBuilder)
         {
-            Registrator = new ComponentRegistrator(ComponentPlugins, LuaGlues, eventFactory, logger, eventBus, eventHandlerControllerBuilder, serviceLocator);
+            Registrator = new ComponentRegistrator(ComponentPlugins, LuaGluesFactories, eventFactory, logger, eventBus, eventHandlerControllerBuilder, serviceLocator);
 
             foreach (var type in typeof(PluginManager).Assembly.GetTypes().Where(t => typeof(IComponent).IsAssignableFrom(t) && !t.IsAbstract && t.IsClass))
             {
@@ -131,7 +131,7 @@ namespace Slipstream.Backend
 
         public IPlugin CreatePlugin(string pluginId, string pluginName, IEventBus eventBus, Parameters configuration)
         {
-            ComponentPluginCreationContext reg = new ComponentPluginCreationContext(Registrator, this, this, LuaGlues, pluginId, pluginName, configuration);
+            ComponentPluginCreationContext reg = new ComponentPluginCreationContext(Registrator, this, this, LuaGluesFactories, pluginId, pluginName, configuration);
             return ComponentPlugins[pluginName].Invoke(reg);
         }
 

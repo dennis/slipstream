@@ -79,7 +79,7 @@ namespace Slipstream.Components.Lua.Plugins
         {
             try
             {
-                LuaContext?.Loop();
+                LuaService.Loop();
             }
             catch (LuaException e)
             {

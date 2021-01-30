@@ -1,30 +1,24 @@
 ﻿using NLua;
+using Slipstream.Components;
+using Slipstream.Components.Playback;
 using Slipstream.Shared;
-using Slipstream.Shared.Factories;
 
 #nullable enable
 
-namespace Slipstream.Backend.Services.LuaServiceLib
+namespace Slipstream.Components.Playback
 {
-    public class PlaybackMethodCollection
+    public class LuaGlue : ILuaGlue
     {
         private readonly IEventBus EventBus;
         private readonly IPlaybackEventFactory EventFactory;
 
-        public static PlaybackMethodCollection Register(IEventBus eventBus, IPlaybackEventFactory eventFactory, Lua lua)
-        {
-            var m = new PlaybackMethodCollection(eventBus, eventFactory);
-            m.Register(lua);
-            return m;
-        }
-
-        public PlaybackMethodCollection(IEventBus eventBus, IPlaybackEventFactory eventFactory)
+        public LuaGlue(IEventBus eventBus, IPlaybackEventFactory eventFactory)
         {
             EventBus = eventBus;
             EventFactory = eventFactory;
         }
 
-        public void Register(Lua lua)
+        public void SetupLua(NLua.Lua lua)
         {
             lua["playback"] = this;
         }

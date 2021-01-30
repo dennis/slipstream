@@ -1,9 +1,9 @@
 ﻿#nullable enable
 
-using Slipstream.Shared.Events.Playback;
-using static Slipstream.Shared.EventHandlerController;
+using Slipstream.Components.Playback.Events;
+using Slipstream.Shared;
 
-namespace Slipstream.Shared.EventHandlers
+namespace Slipstream.Components.Playback.EventHandler
 {
     internal class Playback : IEventHandler
     {
@@ -15,8 +15,11 @@ namespace Slipstream.Shared.EventHandlers
         }
 
         public delegate void OnPlaybackCommandInjectEventsHandler(EventHandlerController source, EventHandlerArgs<PlaybackCommandInjectEvents> e);
+
         public event OnPlaybackCommandInjectEventsHandler? OnPlaybackCommandInjectEvents;
+
         public delegate void OnPlaybackCommandSaveEventsHandler(EventHandlerController source, EventHandlerArgs<PlaybackCommandSaveEvents> e);
+
         public event OnPlaybackCommandSaveEventsHandler? OnPlaybackCommandSaveEvents;
 
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)

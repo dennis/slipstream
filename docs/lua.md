@@ -125,40 +125,6 @@ This function publishes `InternalCommandPluginUnregister` event, that is handled
 This function is aliased as ``unregister_plugin`` (deprecated)
 </details>
 
-## Playback
-
-Allows you to save and load events to/from a file. This is for debugging purposes.
-
-<details><summary>playback:load(filename)</summary><br />
-
-Loads events from a file. Please note, that the events are not filtered, 
-so if there are events that disables or enables plugins, this will 
-be performed.
-
-| Parameter | Type   | Description              |
-|:----------|:------:|:-------------------------|
-| filename  | string | file to load events from |
-
-
-```lua
-playback:load("test.mjson")
-```
-
-</details>
-<details><summary>playback:save(filename)</summary><br />
-
-Saves events to a file. This file can be edited as its a line-feed delimited 
-json file. Each line is a event, so you can remove whatever you don't need. 
-
-| Parameter | Type   | Description     |
-|:----------|:------:|:----------------|
-| filename  | string | store events as |
-
-```lua
-playback:save("test.mjson")
-```
-</details>
-
 ## State
 
 State is a persistent key/value store. Both key and values most be strings. 

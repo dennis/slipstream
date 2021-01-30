@@ -141,7 +141,7 @@
     <Compile Include="Backend\IPluginFactory.cs" />
     <Compile Include="Backend\IPluginManager.cs" />
     <Compile Include="Backend\PluginManager.cs" />
-    <Compile Include="Backend\Plugins\PlaybackPlugin.cs" />
+    <Compile Include="Components\Playback\Plugins\PlaybackPlugin.cs" />
     <Compile Include="Backend\Plugins\ReceiverPlugin.cs" />
     <Compile Include="Backend\Plugins\TransmitterPlugin.cs" />
     <Compile Include="Components\Audio\LuaGlue.cs" />
@@ -160,6 +160,7 @@
     <Compile Include="Components\ComponentPluginCreationContext.cs" />
     <Compile Include="Components\IRacing\IRacing.cs" />
     <Compile Include="Components\Lua\Lua.cs" />
+    <Compile Include="Components\Playback\Playback.cs" />
     <Compile Include="Shared\EventHandlerArgs.cs" />
     <Compile Include="Shared\EventHandlerControllerBuilder.cs" />
     <Compile Include="Components\ComponentRegistrator.cs" />
@@ -185,7 +186,7 @@
     <Compile Include="Shared\Helpers\StrongParameters\StrongParametersException.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Validators\DictionaryValidator.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Parameters.cs" />
-    <Compile Include="Backend\Services\LuaServiceLib\PlaybackMethodCollection.cs" />
+    <Compile Include="Components\Playback\LuaGlue.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\CoreMethodCollection.cs" />
     <Compile Include="Components\IRacing\LuaGlue.cs" />
     <Compile Include="Backend\Services\LuaServiceLib\HttpMethodCollection.cs" />
@@ -202,16 +203,16 @@
     <Compile Include="Components\Audio\Audio.cs" />
     <Compile Include="Shared\EventFactory.cs" />
     <Compile Include="Components\Audio\EventHandler\AudioEventHandler.cs" />
-    <Compile Include="Shared\EventHandlers\Playback.cs" />
-    <Compile Include="Shared\Events\Playback\PlaybackCommandInjectEvents.cs" />
-    <Compile Include="Shared\Events\Playback\PlaybackCommandSaveEvents.cs" />
+    <Compile Include="Components\Playback\EventHandler\Playback.cs" />
+    <Compile Include="Components\Playback\Events\PlaybackCommandInjectEvents.cs" />
+    <Compile Include="Components\Playback\Events\PlaybackCommandSaveEvents.cs" />
     <Compile Include="Components\Audio\Events\AudioCommandSetOutputDevice.cs" />
     <Compile Include="Components\Audio\Events\AudioCommandSendDevices.cs" />
     <Compile Include="Components\Audio\Events\AudioOutputDevice.cs" />
     <Compile Include="Components\Audio\EventFactory\AudioEventFactory.cs" />
     <Compile Include="Shared\Factories\IInternalEventFactory.cs" />
-    <Compile Include="Shared\Factories\IPlaybackEventFactory.cs" />
-    <Compile Include="Shared\Factories\PlaybackEventFactory.cs" />
+    <Compile Include="Components\Playback\IPlaybackEventFactory.cs" />
+    <Compile Include="Components\Playback\EventFactory\PlaybackEventFactory.cs" />
     <Compile Include="Shared\Factories\UIEventFactory.cs" />
     <Compile Include="Components\FileMonitor\Events\FileMonitorCommandScan.cs" />
     <Compile Include="Components\FileMonitor\Events\FileMonitorScanCompleted.cs" />
@@ -315,6 +316,7 @@
     <None Include="Components\Audio\README.md" />
     <None Include="Components\FileMonitor\README.md" />
     <None Include="Components\IRacing\README.md" />
+    <None Include="Components\Playback\README.md" />
     <None Include="Components\README.md" />
     <None Include="docs\components.md" />
     <None Include="docs\events.md" />

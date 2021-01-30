@@ -15,7 +15,6 @@ namespace Slipstream.Shared
             Add(typeof(Internal));
             Add(typeof(UI));
             Add(typeof(Twitch));
-            Add(typeof(Playback));
         }
 
         public void Add(Type t)

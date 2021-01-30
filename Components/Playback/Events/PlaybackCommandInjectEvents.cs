@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Slipstream.Shared;
+using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.Playback
+namespace Slipstream.Components.Playback.Events
 {
     public class PlaybackCommandInjectEvents : IEvent
     {

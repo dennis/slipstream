@@ -1,14 +1,14 @@
 using Serilog;
+using Slipstream.Backend.Plugins;
 using Slipstream.Backend.Services;
+using Slipstream.Components.Playback.Events;
 using Slipstream.Shared;
-using Slipstream.Shared.EventHandlers;
-using Slipstream.Shared.Events.Playback;
 using System.IO;
 using System.Threading;
 
 #nullable enable
 
-namespace Slipstream.Backend.Plugins
+namespace Slipstream.Components.Playback.Plugins
 {
     internal class PlaybackPlugin : BasePlugin
     {
@@ -20,7 +20,7 @@ namespace Slipstream.Backend.Plugins
         {
             EventBus = eventBus;
             EventSerdeService = serviceLocator.Get<IEventSerdeService>();
-            var playback = EventHandlerController.Get<Playback>();
+            var playback = EventHandlerController.Get<EventHandler.Playback>();
 
             playback.OnPlaybackCommandInjectEvents += (s, e) => OnPlaybackCommandInjectEvents(e.Event);
             playback.OnPlaybackCommandSaveEvents += (s, e) => OnPlaybackCommandSaveEvents(e.Event);

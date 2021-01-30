@@ -34,7 +34,6 @@ namespace Slipstream.Backend.Services.LuaServiceLib
                 var twitchEventFactory = eventFactory.Get<ITwitchEventFactory>();
                 var uiEventFactory = eventFactory.Get<IUIEventFactory>();
                 var internalEventFactory = eventFactory.Get<IInternalEventFactory>();
-                var playbackEventFactory = eventFactory.Get<IPlaybackEventFactory>();
 
                 CoreMethodCollection_ = CoreMethodCollection.Register(eventSerdeService, Lua);
                 TwitchMethodCollection.Register(eventBus, twitchEventFactory, Lua);
@@ -42,7 +41,6 @@ namespace Slipstream.Backend.Services.LuaServiceLib
                 UIMethodCollection.Register(logger, eventBus, uiEventFactory, logPrefix, Lua);
                 InternalMethodCollection.Register(eventBus, internalEventFactory, Lua);
                 HttpMethodCollection.Register(logger, Lua);
-                PlaybackMethodCollection.Register(eventBus, playbackEventFactory, Lua);
 
                 // Fix paths, so we can require() files relative to where the script is located
                 var ScriptPath = Path.GetDirectoryName(filePath).Replace("\\", "\\\\");

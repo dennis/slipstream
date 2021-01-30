@@ -3,7 +3,6 @@
 using Serilog;
 using Slipstream.Backend.Plugins;
 using Slipstream.Components;
-using Slipstream.Components.FileMonitor;
 using Slipstream.Shared;
 using Slipstream.Shared.Factories;
 using Slipstream.Shared.Helpers.StrongParameters;
@@ -145,7 +144,6 @@ namespace Slipstream.Backend
                 "TwitchPlugin" => new TwitchPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(TwitchPlugin)), TwitchEventFactory, eventBus, configuration),
                 "TransmitterPlugin" => new TransmitterPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(TransmitterPlugin)), InternalEventFactory, eventBus, ServiceLocator, configuration),
                 "ReceiverPlugin" => new ReceiverPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(ReceiverPlugin)), InternalEventFactory, eventBus, ServiceLocator, configuration),
-                "PlaybackPlugin" => new PlaybackPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(PlaybackPlugin)), eventBus, ServiceLocator),
                 _ => CreateViaComponents(pluginId, name, configuration)
             };
         }

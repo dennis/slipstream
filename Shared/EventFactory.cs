@@ -13,7 +13,6 @@ namespace Slipstream.Shared
             Factories.Add(typeof(IInternalEventFactory), new InternalEventFactory());
             Factories.Add(typeof(ITwitchEventFactory), new TwitchEventFactory());
             Factories.Add(typeof(IUIEventFactory), new UIEventFactory());
-            Factories.Add(typeof(IPlaybackEventFactory), new PlaybackEventFactory());
         }
 
         public void Add<T>(Type factoryInterface, T factoryImplementation)

@@ -1,8 +1,9 @@
-﻿using Slipstream.Shared.Events.Playback;
+﻿using Slipstream.Components.Playback.Events;
+using Slipstream.Shared.Factories;
 
 #nullable enable
 
-namespace Slipstream.Shared.Factories
+namespace Slipstream.Components.Playback.EventFactory
 {
     public class PlaybackEventFactory : IPlaybackEventFactory
     {

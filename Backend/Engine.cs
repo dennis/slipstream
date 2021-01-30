@@ -1,11 +1,9 @@
 ﻿using Newtonsoft.Json.Linq;
-using NLua;
 using Serilog;
 using Slipstream.Backend.Services;
+using Slipstream.Components.Internal;
+using Slipstream.Components.Internal.Events;
 using Slipstream.Shared;
-using Slipstream.Shared.EventHandlers;
-using Slipstream.Shared.Events.Internal;
-using Slipstream.Shared.Factories;
 using Slipstream.Shared.Helpers.StrongParameters;
 using System;
 using System.IO;
@@ -35,7 +33,7 @@ namespace Slipstream.Backend
 
             Subscription = EventBus.RegisterListener();
 
-            var internalEventHandler = EventHandlerController.Get<Internal>();
+            var internalEventHandler = EventHandlerController.Get<Slipstream.Components.Internal.EventHandler.Internal>();
 
             internalEventHandler.OnInternalCommandPluginRegister += (s, e) => OnCommandPluginRegister(e.Event);
             internalEventHandler.OnInternalCommandPluginUnregister += (s, e) => OnCommandPluginUnregister(e.Event);
@@ -120,7 +118,7 @@ register_plugin({ plugin_name = ""PlaybackPlugin""})
             EventBus.UnregisterSubscription(subscription);
         }
 
-        private void OnCommandPluginRegister(Shared.Events.Internal.InternalCommandPluginRegister ev)
+        private void OnCommandPluginRegister(InternalCommandPluginRegister ev)
         {
             JObject a = JObject.Parse(ev.Configuration);
             Parameters configuration = Parameters.From(a);

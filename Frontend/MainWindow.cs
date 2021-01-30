@@ -1,5 +1,7 @@
 ﻿#nullable enable
 
+using Slipstream.Components.Internal;
+using Slipstream.Components.Internal.Events;
 using Slipstream.Components.Playback;
 using Slipstream.Properties;
 using Slipstream.Shared;
@@ -111,7 +113,7 @@ namespace Slipstream.Frontend
         {
             Debug.Assert(EventBusSubscription != null);
 
-            var internalEventHandler = EventHandler.Get<Shared.EventHandlers.Internal>();
+            var internalEventHandler = EventHandler.Get<Components.Internal.EventHandler.Internal>();
             var uiEventHandler = EventHandler.Get<Shared.EventHandlers.UI>();
 
             internalEventHandler.OnInternalPluginState += (s, e) => EventHandler_OnInternalPluginState(e.Event);
@@ -164,7 +166,7 @@ namespace Slipstream.Frontend
             });
         }
 
-        private void EventHandler_OnInternalPluginState(Shared.Events.Internal.InternalPluginState e)
+        private void EventHandler_OnInternalPluginState(InternalPluginState e)
         {
             if (e.PluginStatus != "Unregistered" && !MenuPluginItems.ContainsKey(e.Id))
             {

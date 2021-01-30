@@ -2,14 +2,13 @@
 
 using Serilog;
 using Slipstream.Components;
-using Slipstream.Components.Twitch;
+using Slipstream.Components.Internal;
 using Slipstream.Shared;
-using Slipstream.Shared.Factories;
 using Slipstream.Shared.Helpers.StrongParameters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Slipstream.Shared.Factories.IInternalEventFactory;
+using static Slipstream.Components.Internal.IInternalEventFactory;
 
 namespace Slipstream.Backend
 {

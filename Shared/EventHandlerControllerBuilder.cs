@@ -12,7 +12,6 @@ namespace Slipstream.Shared
 
         public EventHandlerControllerBuilder()
         {
-            Add(typeof(Internal));
             Add(typeof(UI));
         }
 

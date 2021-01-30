@@ -1,9 +1,9 @@
-﻿using Slipstream.Shared.Helpers.StrongParameters;
-using Slipstream.Shared.Events.Internal;
+﻿using Slipstream.Components.Internal.Events;
+using Slipstream.Shared.Helpers.StrongParameters;
 
 #nullable enable
 
-namespace Slipstream.Shared.Factories
+namespace Slipstream.Components.Internal
 {
     public interface IInternalEventFactory
     {

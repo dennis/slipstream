@@ -1,13 +1,14 @@
 ﻿using NLua;
+using Slipstream.Backend.Services;
 using Slipstream.Shared;
 using System;
 using System.Collections.Generic;
 
 #nullable enable
 
-namespace Slipstream.Backend.Services.LuaServiceLib
+namespace Slipstream.Components.Internal.LuaGlues
 {
-    public class CoreMethodCollection
+    public class CoreLuaGlue : ILuaGlue
     {
         private class DelayedExecution
         {
@@ -26,21 +27,12 @@ namespace Slipstream.Backend.Services.LuaServiceLib
         private readonly IDictionary<string, DelayedExecution> DebounceDelayedFunctions = new Dictionary<string, DelayedExecution>();
         private readonly IDictionary<string, DelayedExecution> WaitDelayedFunctions = new Dictionary<string, DelayedExecution>();
 
-        public static CoreMethodCollection Register(IEventSerdeService eventSerdeService, Lua lua)
-        {
-            var m = new CoreMethodCollection(eventSerdeService);
-
-            m.Register(lua);
-
-            return m;
-        }
-
-        public CoreMethodCollection(IEventSerdeService eventSerdeService)
+        public CoreLuaGlue(IEventSerdeService eventSerdeService)
         {
             EventSerdeService = eventSerdeService;
         }
 
-        public void Register(Lua lua)
+        public void SetupLua(NLua.Lua lua)
         {
             lua["core"] = this;
 

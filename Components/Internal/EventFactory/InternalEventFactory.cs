@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json;
 using Slipstream.Shared.Helpers.StrongParameters;
-using Slipstream.Shared.Events.Internal;
+using Slipstream.Components.Internal.Events;
 
 #nullable enable
 
-namespace Slipstream.Shared.Factories
+namespace Slipstream.Components.Internal.EventFactory
 {
     public class InternalEventFactory : IInternalEventFactory
     {

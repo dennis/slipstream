@@ -1,8 +1,8 @@
 ﻿using Slipstream.Backend;
 using Slipstream.Backend.Services;
+using Slipstream.Components.Internal;
 using Slipstream.Components.Txrx.Plugins;
 using Slipstream.Components.Txrx.Services;
-using Slipstream.Shared.Factories;
 
 namespace Slipstream.Components.Audio
 {

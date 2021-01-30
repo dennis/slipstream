@@ -10,7 +10,6 @@ namespace Slipstream.Shared
 
         public EventFactory()
         {
-            Factories.Add(typeof(IInternalEventFactory), new InternalEventFactory());
             Factories.Add(typeof(IUIEventFactory), new UIEventFactory());
         }
 

@@ -1,7 +1,7 @@
-﻿using Slipstream.Shared;
-using Slipstream.Shared.Factories;
+﻿using Slipstream.Components.Internal;
+using Slipstream.Shared;
 using System.Diagnostics;
-using static Slipstream.Shared.Factories.IInternalEventFactory;
+using static Slipstream.Components.Internal.IInternalEventFactory;
 
 #nullable enable
 

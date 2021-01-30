@@ -3,9 +3,8 @@ using Slipstream.Backend;
 using Slipstream.Backend.Plugins;
 using Slipstream.Backend.Services;
 using Slipstream.Backend.Services.LuaServiceLib;
-using Slipstream.Components.Lua.EventFactory;
+using Slipstream.Components.Internal;
 using Slipstream.Shared;
-using Slipstream.Shared.Factories;
 using System.Collections.Generic;
 using System.IO;
 

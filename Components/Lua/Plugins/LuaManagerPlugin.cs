@@ -4,6 +4,7 @@ using Slipstream.Backend.Plugins;
 using Slipstream.Backend.Services;
 using Slipstream.Components.FileMonitor;
 using Slipstream.Components.FileMonitor.Events;
+using Slipstream.Components.Internal.Events;
 using Slipstream.Components.Lua.Events;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
@@ -55,7 +56,7 @@ namespace Slipstream.Components.Lua.Plugins
             EventSerdeService = serviceLocator.Get<IEventSerdeService>();
 
             var fileMonitor = EventHandlerController.Get<Components.FileMonitor.EventHandler.FileMonitor>();
-            var @internal = EventHandlerController.Get<Shared.EventHandlers.Internal>();
+            var @internal = EventHandlerController.Get<Components.Internal.EventHandler.Internal>();
             var lua = EventHandlerController.Get<EventHandler.Lua>();
 
             fileMonitor.OnFileMonitorFileCreated += EventHandler_OnFileMonitorFileCreated;
@@ -82,7 +83,7 @@ namespace Slipstream.Components.Lua.Plugins
             BootupEventsDeadline = DateTime.Now.AddMilliseconds(500);
         }
 
-        private void EventHandler_OnInternalPluginState(IEventHandlerController source, EventHandlerArgs<Shared.Events.Internal.InternalPluginState> e)
+        private void EventHandler_OnInternalPluginState(IEventHandlerController source, EventHandlerArgs<InternalPluginState> e)
         {
             if (e.Event.PluginStatus == "Registered" && e.Event.PluginName == "LuaPlugin")
             {
@@ -91,7 +92,7 @@ namespace Slipstream.Components.Lua.Plugins
                 if (WaitingForLuaScripts.Count == 0)
                 {
                     // We're done
-                    EventHandlerController.Get<Shared.EventHandlers.Internal>().OnInternalPluginState -= EventHandler_OnInternalPluginState;
+                    EventHandlerController.Get<Slipstream.Components.Internal.EventHandler.Internal>().OnInternalPluginState -= EventHandler_OnInternalPluginState;
                 }
             }
         }

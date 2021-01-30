@@ -1,8 +1,9 @@
 ﻿#nullable enable
 
+using Slipstream.Shared;
 using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.Internal
+namespace Slipstream.Components.Internal.Events
 {
     public class InternalCommandPluginUnregister : IEvent
     {

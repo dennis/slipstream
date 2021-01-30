@@ -1,6 +1,7 @@
 ﻿using NLua;
 using Serilog;
 using Slipstream.Components.Audio;
+using Slipstream.Components.Internal;
 using Slipstream.Shared;
 using Slipstream.Shared.Factories;
 using System.IO;
@@ -20,7 +21,6 @@ namespace Slipstream.Backend.Services.LuaServiceLib
             IEventFactory eventFactory,
             IEventBus eventBus,
             IStateService stateService,
-            IEventSerdeService eventSerdeService,
             string filePath,
             string logPrefix,
             Lua lua
@@ -34,7 +34,6 @@ namespace Slipstream.Backend.Services.LuaServiceLib
                 var uiEventFactory = eventFactory.Get<IUIEventFactory>();
                 var internalEventFactory = eventFactory.Get<IInternalEventFactory>();
 
-                CoreMethodCollection_ = CoreMethodCollection.Register(eventSerdeService, Lua);
                 StateMethodCollection.Register(stateService, Lua);
                 UIMethodCollection.Register(logger, eventBus, uiEventFactory, logPrefix, Lua);
                 InternalMethodCollection.Register(eventBus, internalEventFactory, Lua);

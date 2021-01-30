@@ -1,8 +1,9 @@
 ﻿#nullable enable
 
-using Slipstream.Shared.Events.Internal;
+using Slipstream.Components.Internal.Events;
+using Slipstream.Shared;
 
-namespace Slipstream.Shared.EventHandlers
+namespace Slipstream.Components.Internal.EventHandler
 {
     internal class Internal : IEventHandler
     {

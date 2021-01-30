@@ -1,6 +1,6 @@
+using Slipstream.Backend.Plugins;
+using Slipstream.Components.FileMonitor.Events;
 using Slipstream.Shared;
-using Slipstream.Shared.Events.FileMonitor;
-using Slipstream.Shared.Factories;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Linq;
 
 #nullable enable
 
-namespace Slipstream.Backend.Plugins
+namespace Slipstream.Components.FileMonitor.Plugins
 {
     internal class FileMonitorPlugin : BasePlugin
     {
@@ -29,7 +29,7 @@ namespace Slipstream.Backend.Plugins
             EventFactory = eventFactory;
             EventBus = eventBus;
 
-            var FileMonitor = EventHandlerController.Get<Slipstream.Shared.EventHandlers.FileMonitor>();
+            var FileMonitor = EventHandlerController.Get<EventHandler.FileMonitor>();
             FileMonitor.OnFileMonitorCommandScan += (s, e) => ScanExistingFiles();
 
             ConfigurationValidator.Validate(configuration);

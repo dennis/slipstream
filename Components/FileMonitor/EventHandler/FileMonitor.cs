@@ -1,8 +1,9 @@
 ﻿#nullable enable
 
-using Slipstream.Shared.Events.FileMonitor;
+using Slipstream.Components.FileMonitor.Events;
+using Slipstream.Shared;
 
-namespace Slipstream.Shared.EventHandlers
+namespace Slipstream.Components.FileMonitor.EventHandler
 {
     internal class FileMonitor : IEventHandler
     {

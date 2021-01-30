@@ -1,8 +1,10 @@
 ﻿using Serilog;
 using Slipstream.Backend.Services;
+using Slipstream.Components.FileMonitor;
+using Slipstream.Components.FileMonitor.EventHandler;
+using Slipstream.Components.FileMonitor.Events;
 using Slipstream.Shared;
 using Slipstream.Shared.Events.Lua;
-using Slipstream.Shared.Factories;
 using Slipstream.Shared.Helpers.StrongParameters;
 using System;
 using System.Collections.Generic;
@@ -42,7 +44,7 @@ namespace Slipstream.Backend.Plugins
             PluginFactory = pluginFactory;
             EventSerdeService = serviceLocator.Get<IEventSerdeService>();
 
-            var fileMonitor = EventHandlerController.Get<Shared.EventHandlers.FileMonitor>();
+            var fileMonitor = EventHandlerController.Get<Components.FileMonitor.EventHandler.FileMonitor>();
             var @internal = EventHandlerController.Get<Shared.EventHandlers.Internal>();
             var lua = EventHandlerController.Get<Shared.EventHandlers.Lua>();
 
@@ -84,7 +86,7 @@ namespace Slipstream.Backend.Plugins
             }
         }
 
-        private void EventHandler_OnFileMonitorScanCompleted(IEventHandlerController source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorScanCompleted> e)
+        private void EventHandler_OnFileMonitorScanCompleted(IEventHandlerController source, EventHandlerArgs<FileMonitorScanCompleted> e)
         {
             BootUp = false;
         }
@@ -124,7 +126,7 @@ namespace Slipstream.Backend.Plugins
             Scripts.Remove(filePath);
         }
 
-        private void EventHandler_OnFileMonitorFileRenamed(IEventHandlerController source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileRenamed> e)
+        private void EventHandler_OnFileMonitorFileRenamed(IEventHandlerController source, EventHandlerArgs<FileMonitorFileRenamed> e)
         {
             // If we're been unregistered (while app is running) and re-registered,we need to ignore these events
             // until we're ready (received the FileMonitorScanCompleted). We need to revisit this later.
@@ -137,7 +139,7 @@ namespace Slipstream.Backend.Plugins
                 NewFile(e.Event.FilePath);
         }
 
-        private void EventHandler_OnFileMonitorFileChanged(IEventHandlerController source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileChanged> e)
+        private void EventHandler_OnFileMonitorFileChanged(IEventHandlerController source, EventHandlerArgs<FileMonitorFileChanged> e)
         {
             if (e.Event.FilePath == null || !IsApplicable(e.Event.FilePath) || BootUp)
                 return;
@@ -146,7 +148,7 @@ namespace Slipstream.Backend.Plugins
             NewFile(e.Event.FilePath);
         }
 
-        private void EventHandler_OnFileMonitorFileDeleted(IEventHandlerController source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileDeleted> e)
+        private void EventHandler_OnFileMonitorFileDeleted(IEventHandlerController source, EventHandlerArgs<FileMonitorFileDeleted> e)
         {
             if (e.Event.FilePath == null || !IsApplicable(e.Event.FilePath) || BootUp)
                 return;
@@ -154,7 +156,7 @@ namespace Slipstream.Backend.Plugins
             DeletedFile(e.Event.FilePath);
         }
 
-        private void EventHandler_OnFileMonitorFileCreated(IEventHandlerController source, EventHandlerArgs<Shared.Events.FileMonitor.FileMonitorFileCreated> e)
+        private void EventHandler_OnFileMonitorFileCreated(IEventHandlerController source, EventHandlerArgs<FileMonitorFileCreated> e)
         {
             if (e.Event.FilePath == null || !IsApplicable(e.Event.FilePath))
                 return;

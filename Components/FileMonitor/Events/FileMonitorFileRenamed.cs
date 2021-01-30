@@ -1,8 +1,9 @@
 ﻿#nullable enable
 
+using Slipstream.Shared;
 using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.FileMonitor
+namespace Slipstream.Components.FileMonitor.Events
 {
     public class FileMonitorFileRenamed : IEvent
     {

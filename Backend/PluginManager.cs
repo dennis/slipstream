@@ -4,6 +4,7 @@ using Serilog;
 using Slipstream.Backend.Plugins;
 using Slipstream.Backend.Services;
 using Slipstream.Components;
+using Slipstream.Components.FileMonitor;
 using Slipstream.Shared;
 using Slipstream.Shared.Factories;
 using Slipstream.Shared.Helpers.StrongParameters;
@@ -149,7 +150,6 @@ namespace Slipstream.Backend
             return name switch
             {
                 "LuaPlugin" => CreateLuaPlugin(pluginId, configuration),
-                "FileMonitorPlugin" => new FileMonitorPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, FileMonitorEventFactory, eventBus, configuration),
                 "LuaManagerPlugin" => new LuaManagerPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(LuaPlugin)), FileMonitorEventFactory, eventBus, this, this, ServiceLocator),
                 "IRacingPlugin" => new IRacingPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, IRacingEventFactory, eventBus),
                 "TwitchPlugin" => new TwitchPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(TwitchPlugin)), TwitchEventFactory, eventBus, configuration),

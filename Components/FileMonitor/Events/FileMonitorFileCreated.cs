@@ -1,22 +1,23 @@
 ﻿#nullable enable
 
+using Slipstream.Shared;
 using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.FileMonitor
+namespace Slipstream.Components.FileMonitor.Events
 {
-    public class FileMonitorFileChanged : IEvent
+    public class FileMonitorFileCreated : IEvent
     {
-        public string EventType => "FileMonitorFileChanged";
+        public string EventType => "FileMonitorFileCreated";
         public bool ExcludeFromTxrx => true;
         public ulong Uptime { get; set; }
         public string? FilePath { get; set; }
 
         public override bool Equals(object? obj)
         {
-            return obj is FileMonitorFileChanged changed &&
-                   EventType == changed.EventType &&
-                   ExcludeFromTxrx == changed.ExcludeFromTxrx &&
-                   FilePath == changed.FilePath;
+            return obj is FileMonitorFileCreated created &&
+                   EventType == created.EventType &&
+                   ExcludeFromTxrx == created.ExcludeFromTxrx &&
+                   FilePath == created.FilePath;
         }
 
         public override int GetHashCode()

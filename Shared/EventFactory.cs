@@ -1,5 +1,4 @@
 ﻿using Slipstream.Backend.Services;
-using Slipstream.Components.Audio;
 using Slipstream.Shared.Factories;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,6 @@ namespace Slipstream.Shared
 
         public EventFactory(IEventSerdeService eventSerdeService)
         {
-            Factories.Add(typeof(IFileMonitorEventFactory), new FileMonitorEventFactory());
             Factories.Add(typeof(IInternalEventFactory), new InternalEventFactory());
             Factories.Add(typeof(IIRacingEventFactory), new IRacingEventFactory());
             Factories.Add(typeof(ILuaEventFactory), new LuaEventFactory(eventSerdeService));

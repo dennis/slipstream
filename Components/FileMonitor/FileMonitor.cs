@@ -11,12 +11,12 @@ namespace Slipstream.Components.FileMonitor
         {
             var eventFactory = new EventFactory.FileMonitorEventFactory();
 
-            ctx.RegisterPlugin(NAME, CreateAudioPlugin);
+            ctx.RegisterPlugin(NAME, CreatePlugin);
             ctx.RegisterEventFactory(typeof(IFileMonitorEventFactory), eventFactory);
             ctx.RegisterEventHandler(typeof(EventHandler.FileMonitor));
         }
 
-        private IPlugin CreateAudioPlugin(IComponentPluginCreationContext ctx)
+        private IPlugin CreatePlugin(IComponentPluginCreationContext ctx)
         {
             return new FileMonitorPlugin(
                 ctx.EventHandlerController,

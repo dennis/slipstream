@@ -1,4 +1,6 @@
-﻿namespace Slipstream.Shared.Events.IRacing
+﻿using Slipstream.Shared;
+
+namespace Slipstream.Components.IRacing.Events
 {
     public interface IIRacingSessionState : IEvent
     {

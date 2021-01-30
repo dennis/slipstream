@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.IRacing
+namespace Slipstream.Components.IRacing.Events
 {
-    public class IRacingRace : IIRacingSessionState
+    public class IRacingPractice : IIRacingSessionState
     {
-        public string EventType => "IRacingRace";
+        public string EventType => "IRacingPractice";
         public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
         public double SessionTime { get; set; }
@@ -17,16 +17,16 @@ namespace Slipstream.Shared.Events.IRacing
 
         public override bool Equals(object obj)
         {
-            return obj is IRacingRace race &&
-                   EventType == race.EventType &&
-                   ExcludeFromTxrx == race.ExcludeFromTxrx &&
-                   SessionTime == race.SessionTime &&
-                   LapsLimited == race.LapsLimited &&
-                   TimeLimited == race.TimeLimited &&
-                   TotalSessionTime == race.TotalSessionTime &&
-                   TotalSessionLaps == race.TotalSessionLaps &&
-                   State == race.State &&
-                   Category == race.Category;
+            return obj is IRacingPractice practice &&
+                   EventType == practice.EventType &&
+                   ExcludeFromTxrx == practice.ExcludeFromTxrx &&
+                   SessionTime == practice.SessionTime &&
+                   LapsLimited == practice.LapsLimited &&
+                   TimeLimited == practice.TimeLimited &&
+                   TotalSessionTime == practice.TotalSessionTime &&
+                   TotalSessionLaps == practice.TotalSessionLaps &&
+                   State == practice.State &&
+                   Category == practice.Category;
         }
 
         public override int GetHashCode()

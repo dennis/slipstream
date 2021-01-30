@@ -1,8 +1,9 @@
 ﻿#nullable enable
 
+using Slipstream.Shared;
 using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.IRacing
+namespace Slipstream.Components.IRacing.Events
 {
     public class IRacingCarPosition : IEvent
     {

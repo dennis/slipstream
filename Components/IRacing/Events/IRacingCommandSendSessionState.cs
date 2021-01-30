@@ -1,18 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using Slipstream.Shared;
+using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.IRacing
+namespace Slipstream.Components.IRacing.Events
 {
-    public class IRacingCommandSendTrackInfo : IEvent
+    public class IRacingCommandSendSessionState : IEvent
     {
-        public string EventType => "IRacingCommandSendTrackInfo";
+        public string EventType => "IRacingCommandSendSessionState";
         public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
 
         public override bool Equals(object obj)
         {
-            return obj is IRacingCommandSendTrackInfo info &&
-                   EventType == info.EventType &&
-                   ExcludeFromTxrx == info.ExcludeFromTxrx;
+            return obj is IRacingCommandSendSessionState state &&
+                   EventType == state.EventType &&
+                   ExcludeFromTxrx == state.ExcludeFromTxrx;
         }
 
         public override int GetHashCode()

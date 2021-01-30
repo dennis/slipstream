@@ -1,18 +1,19 @@
-﻿using System.Collections.Generic;
+using Slipstream.Shared;
+using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.IRacing
+namespace Slipstream.Components.IRacing.Events
 {
-    public class IRacingCommandSendWeatherInfo : IEvent
+    public class IRacingDisconnected : IEvent
     {
-        public string EventType => "IRacingCommandSendWeatherInfo";
+        public string EventType => "IRacingDisconnected";
         public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
 
         public override bool Equals(object obj)
         {
-            return obj is IRacingCommandSendWeatherInfo info &&
-                   EventType == info.EventType &&
-                   ExcludeFromTxrx == info.ExcludeFromTxrx;
+            return obj is IRacingDisconnected disconnected &&
+                   EventType == disconnected.EventType &&
+                   ExcludeFromTxrx == disconnected.ExcludeFromTxrx;
         }
 
         public override int GetHashCode()

@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 
-namespace Slipstream.Shared.Events.IRacing
+namespace Slipstream.Components.IRacing.Events
 {
-    public class IRacingPractice : IIRacingSessionState
+    public class IRacingQualify : IIRacingSessionState
     {
-        public string EventType => "IRacingPractice";
+        public string EventType => "IRacingQualify";
         public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
         public double SessionTime { get; set; }
@@ -14,19 +14,21 @@ namespace Slipstream.Shared.Events.IRacing
         public int TotalSessionLaps { get; set; }
         public string State { get; set; } = string.Empty; // Checkered, CoolDown, GetInChar, ParadeLaps, Racing, Warmup
         public string Category { get; set; } = string.Empty; // Road, Oval, DirtRoad, DirtOval
+        public bool OpenQualify { get; set; }
 
         public override bool Equals(object obj)
         {
-            return obj is IRacingPractice practice &&
-                   EventType == practice.EventType &&
-                   ExcludeFromTxrx == practice.ExcludeFromTxrx &&
-                   SessionTime == practice.SessionTime &&
-                   LapsLimited == practice.LapsLimited &&
-                   TimeLimited == practice.TimeLimited &&
-                   TotalSessionTime == practice.TotalSessionTime &&
-                   TotalSessionLaps == practice.TotalSessionLaps &&
-                   State == practice.State &&
-                   Category == practice.Category;
+            return obj is IRacingQualify qualify &&
+                   EventType == qualify.EventType &&
+                   ExcludeFromTxrx == qualify.ExcludeFromTxrx &&
+                   SessionTime == qualify.SessionTime &&
+                   LapsLimited == qualify.LapsLimited &&
+                   TimeLimited == qualify.TimeLimited &&
+                   TotalSessionTime == qualify.TotalSessionTime &&
+                   TotalSessionLaps == qualify.TotalSessionLaps &&
+                   State == qualify.State &&
+                   Category == qualify.Category &&
+                   OpenQualify == qualify.OpenQualify;
         }
 
         public override int GetHashCode()
@@ -41,6 +43,7 @@ namespace Slipstream.Shared.Events.IRacing
             hashCode = hashCode * -1521134295 + TotalSessionLaps.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(State);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Category);
+            hashCode = hashCode * -1521134295 + OpenQualify.GetHashCode();
             return hashCode;
         }
     }

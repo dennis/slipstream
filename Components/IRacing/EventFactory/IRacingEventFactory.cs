@@ -1,4 +1,4 @@
-﻿using Slipstream.Shared.Events.IRacing;
+﻿using Slipstream.Components.IRacing.Events;
 using System;
 using static Slipstream.Components.IRacing.IIRacingEventFactory;
 

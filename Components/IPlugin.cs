@@ -3,7 +3,7 @@ using System;
 
 #nullable enable
 
-namespace Slipstream.Backend
+namespace Slipstream.Components
 {
     public interface IPlugin : IDisposable
     {

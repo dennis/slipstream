@@ -1,4 +1,5 @@
-﻿using Slipstream.Components.Internal;
+﻿using Slipstream.Components;
+using Slipstream.Components.Internal;
 using Slipstream.Shared;
 using System.Diagnostics;
 using static Slipstream.Components.Internal.IInternalEventFactory;

@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using Slipstream.Components;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 

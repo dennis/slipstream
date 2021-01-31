@@ -55,6 +55,9 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DSharpPlus, Version=3.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\DSharpPlus.3.2.3\lib\net47\DSharpPlus.dll</HintPath>
+    </Reference>
     <Reference Include="KeraLua, Version=1.2.11.0, Culture=neutral, PublicKeyToken=6a194c04b9c89217, processorArchitecture=MSIL">
       <HintPath>packages\KeraLua.1.2.11\lib\net45\KeraLua.dll</HintPath>
     </Reference>
@@ -141,6 +144,17 @@
     <Compile Include="Backend\IPluginManager.cs" />
     <Compile Include="Backend\PluginManager.cs" />
     <Compile Include="Components\Audio\LuaGlueFactory.cs" />
+    <Compile Include="Components\Discord\Discord.cs" />
+    <Compile Include="Components\Discord\EventFactory\DiscordEventFactory.cs" />
+    <Compile Include="Components\Discord\EventHandler\DiscordEventHandler.cs" />
+    <Compile Include="Components\Discord\Events\DiscordCommandSendMessage.cs" />
+    <Compile Include="Components\Discord\Events\DiscordMessageReceived.cs" />
+    <Compile Include="Components\Discord\Events\DiscordDisconnected.cs" />
+    <Compile Include="Components\Discord\Events\DiscordConnected.cs" />
+    <Compile Include="Components\Discord\IDiscordEventFactory.cs" />
+    <Compile Include="Components\Discord\LuaGlue.cs" />
+    <Compile Include="Components\Discord\LuaGlueFactory.cs" />
+    <Compile Include="Components\Discord\Plugins\DiscordPlugin.cs" />
     <Compile Include="Components\ILuaGlueFactory.cs" />
     <Compile Include="Components\Internal\LuaGLues\StateLuaGlueFactory.cs" />
     <Compile Include="Components\Internal\LuaGLues\InternalLuaGlueFactory.cs" />
@@ -328,6 +342,7 @@
     <None Include="CHANGELOG.md" />
     <None Include="CODE_OF_CONDUCT.md" />
     <None Include="Components\Audio\README.md" />
+    <None Include="Components\Discord\README.md" />
     <None Include="Components\FileMonitor\README.md" />
     <None Include="Components\Internal\README.md" />
     <None Include="Components\IRacing\README.md" />

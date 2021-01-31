@@ -19,7 +19,7 @@ namespace Slipstream.Components.Internal.LuaGlues
             RegisterPluginValidator = new DictionaryValidator()
                 .PermitString("plugin_id")
                 .RequireString("plugin_name")
-                .AllowAnythingElse(); // open int op for configuration
+                .AllowAnythingElse(); // open it op for configuration
         }
 
         public InternalLuaGlue(IEventBus eventBus, IInternalEventFactory eventFactory)

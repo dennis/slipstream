@@ -1,6 +1,6 @@
-﻿# Lua API
+﻿# Internal
 
-## Core
+## Lua: Core
 
 <details><summary>core:debounce(name, func, duration_seconds)</summary><br />
 Debouncing a function ensures that it doesn’t get called too frequently. 
@@ -71,7 +71,7 @@ end
 This function is aliased as ``event_to_json`` (deprecated)
 </details>
 
-## HTTP
+## Lua: HTTP
 
 <details><summary>http:post_as_json(event)</summary><br />
 Performs a HTTP Post with payload and appropiate content-type.
@@ -86,7 +86,7 @@ Result will be written to the log.
 This function is aliased as ``post_as_json`` (deprecated)
 </details>
 
-## Internal
+## Lua: Internal
 
 <details><summary>internal:register_plugin(args)</summary><br />
 Load a plugin. Used primarily in init.lua
@@ -125,7 +125,7 @@ This function publishes `InternalCommandPluginUnregister` event, that is handled
 This function is aliased as ``unregister_plugin`` (deprecated)
 </details>
 
-## State
+## Lua: State
 
 State is a persistent key/value store. Both key and values most be strings. 
 If an empty string is set, it will remove the entry.
@@ -179,94 +179,69 @@ core::print(state:get("hello"))
 This function is aliased as ``set_temp_state`` (deprecated)
 </details>
 
-## Twitch
+## Events
 
-Very basic twitch integration. Provided by TwitchPlugin. It will send a `TwitchConnected` 
-when connected and `TwitchDisconnected` when connection is lost. Messages prefixed with '!' 
-is considered as a command, and will result `TwitchReceivedCommand` event.
+Do not depend on these. They are internal-
 
-<details><summary>twitch:send_channel_message(message)</summary><br />
-Sends a public message to the twitch channel configured in settings.
+These are generated and consumed by Engine.
 
-| Parameter | Type   | Description |
-|:----------|:------:|:------------|
-| message   | string |             |
+<details><summary>InternalCommandPluginRegister</summary><br />
+Request a plugin to be consumed
 
-```lua
-twitch:send_channel_message("Hello people")
-```
+| Name            | Type    | Description                                                       |
+|:----------------|:-------:|:------------------------------------------------------------------|
+| EventType       | string  | `InternalCommandPluginRegister` (constant)                        |
+| ExcludeFromTxrx | boolean | true (constant)                                                   |
+| Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
+| Id              | string  | Id of the Plugin                                                  |
+| PluginName      | string  | Name of the Plugin                                                |
+| Configuration   | string  | JSON-encoded configuration                                        |
 
-This function publishes `TwitchCommandSendMessage` event, that is handled by TwitchPlugin.
-
-This function is aliased as ``send_twitch_message`` (deprecated)
+**JSON Example:**  
+`{ "EventType": "InternalCommandPluginRegister", "ExcludeFromTxrx": true, "Uptime":1742, "Id": "AudioPlugin", "PluginName": "AudioPlugin"}`
 </details>
 
-<details><summary>twitch:send_whisper_message(to, message)</summary><br />
-Sends a public message to a  twitch user.
+<details><summary>InternalCommandPluginStates</summary><br />
+Request Engine to send state of all plugins
 
-| Parameter | Type   | Description |
-|:----------|:------:|:------------|
-| to        | string | Recipient   |
-| message   | string |             |
+| Name            | Type    | Description                                                       |
+|:----------------|:-------:|:------------------------------------------------------------------|
+| EventType       | string  | `InternalCommandPluginStates` (constant)                          |
+| ExcludeFromTxrx | boolean | true (constant)                                                   |
+| Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 
-```lua
-twitch:send_whisper_message("tntion", "Hello people")
-```
-
-This function publishes `TwitchCommandSendWhisper` event, that is handled by TwitchPlugin.
-
-This function is aliased as ``send_twitch_whisper`` (deprecated)
+**JSON Example:**
+`{"EventType": "InternalCommandPluginStates", "ExcludeFromTxrx": true}`
 </details>
 
-## UI
+<details><summary>InternalCommandPluginUnregister</summary><br />
+Request a plugin to be removed
 
-Very crude UI functionality. Adds/Removes buttons in the UI. Show text in console
+| Name            | Type    | Description                                                       |
+|:----------------|:-------:|:------------------------------------------------------------------|
+| EventType       | string  | `InternalCommandPluginUnregister` (constant)                      |
+| ExcludeFromTxrx | boolean | true (constant)                                                   |
+| Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
+| Id              | string  | Id of the Plugin                                                  |
 
-<details><summary>ui:print(message)</summary><br />
-Writes a string to the log shown in the UI.
-
-| Parameter | Type   | Description     |
-|:----------|:------:|:----------------|
-| message   | string | string to write |
-
-```lua
-ui:print("Hello world")
-```
-
-This function publishes `UICommandWriteToConsole` event, that is handled by MainWindow.
-
-This function is aliased as ``print`` (deprecated)
+**JSON Example:**
+`{"EventType": "InternalCommandPluginUnregister", "ExcludeFromTxrx": true, "Uptime":1742, "Id": "AudioPlugin" }`
 </details>
 
-<details><summary>ui:create_button(label)</summary><br />
-Creates a button if it doesn't exist. If it does exist, it is ignored.
+<details><summary>InternalPluginState</summary><br />
+Show the state of a plugin. These are published when plugins are 
+registered or unregistered or upon request.
 
-| Parameter | Type   | Description |
-|:----------|:------:|:------------|
-| label     | string |             |
+| Name            | Type    | Description                                                       |
+|:----------------|:-------:|:------------------------------------------------------------------|
+| EventType       | string  | `InternalPluginState` (constant)                                  |
+| ExcludeFromTxrx | boolean | true (constant)                                                   |
+| Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
+| Id              | string  | Id of plugin                                                      |
+| PluginName      | string  | Name of plugin                                                    |
+| DisplayName     | string  | Friendly name of the plugin (defaults to PluginName)              |
+| PluginStatus    | string  | `Registered` or `Unregistered`                                    |
 
-```lua
-ui:create_button("Hello UI")
-```
-
-This function publishes `UICommandCreateButton` event, that is handled by MainWindow. `UIButtonTriggered` events will be sent, if
-the button is pressed.
-
-This function is aliased as ``create_button`` (deprecated)
-</details>
-
-<details><summary>ui:delete_button(label)</summary><br />
-Deletes a button if it exists.
-
-| Parameter | Type   | Description |
-|:----------|:------:|:------------|
-| label     | string |             |
-
-```lua
-ui:delete_button("Hello UI")
-```
-
-This function publishes `UICommandDeleteButton` event, that is handled by MainWindow.
-
-This function is aliased as ``delete_button`` (deprecated)
+**JSON Example:**
+`{"EventType": "InternalPluginState", "ExcludeFromTxrx": true, "Uptime":1742, "Id": "AudioPlugin", "PluginName": "AudioPlugin", "DisplayName": "AudioPlugin", "PluginStatus": "Registered"}`
 </details>

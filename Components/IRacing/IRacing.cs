@@ -19,8 +19,6 @@ namespace Slipstream.Components.IRacing
 
         private IPlugin CreatePlugin(IComponentPluginCreationContext ctx)
         {
-            //                "IRacingPlugin" => new IRacingPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, IRacingEventFactory, eventBus),
-
             return new IRacingPlugin(
                 ctx.EventHandlerController,
                 ctx.PluginId,

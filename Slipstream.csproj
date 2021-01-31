@@ -329,10 +329,14 @@
     <None Include="CODE_OF_CONDUCT.md" />
     <None Include="Components\Audio\README.md" />
     <None Include="Components\FileMonitor\README.md" />
+    <None Include="Components\Internal\README.md" />
     <None Include="Components\IRacing\README.md" />
+    <None Include="Components\Lua\README.md" />
     <None Include="Components\Playback\README.md" />
     <None Include="Components\README.md" />
+    <None Include="Components\Twitch\README.md" />
     <None Include="Components\Txrx\README.md" />
+    <None Include="Components\UI\README.md" />
     <None Include="docs\components.md" />
     <None Include="docs\events.md" />
     <None Include="docs\init.lua.md" />

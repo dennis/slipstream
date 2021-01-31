@@ -1,6 +1,5 @@
 ﻿using Serilog;
 using Slipstream.Shared;
-using System.Diagnostics;
 using System.IO;
 
 namespace Slipstream.Components.UI
@@ -22,7 +21,6 @@ namespace Slipstream.Components.UI
         {
             string prefix = "";
 
-            Debug.WriteLine($"CREATING UI GLUE: {ctx.PluginName}");
             if (ctx.PluginName == "LuaPlugin")
             {
                 prefix = Path.GetFileName(ctx.PluginParameters.Get<string>("filepath"));

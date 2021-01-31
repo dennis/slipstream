@@ -18,7 +18,6 @@ namespace Slipstream.Components.Lua.Plugins
         private readonly CapturingEventBus EventBus;
         private readonly ILuaSevice LuaService;
         private ILuaContext? LuaContext;
-        private readonly string Prefix = "<UNKNOWN>";
         private readonly string FilePath;
 
         public LuaPlugin(

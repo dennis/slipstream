@@ -1,7 +1,6 @@
 ﻿using Slipstream.Shared;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
 
 namespace Slipstream.Backend
 {
@@ -50,8 +49,6 @@ namespace Slipstream.Backend
             {
                 if (enabled)
                 {
-                    Debug.WriteLine($"**** [{Thread.CurrentThread.ManagedThreadId}] Sending event {e}");
-
                     foreach (var l in Listeners)
                     {
                         l.Add(e);

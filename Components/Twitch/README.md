@@ -154,7 +154,11 @@ A user subscribed or resubscribed to the stream
 | Message          | string  | User own message                                                  |
 | SystemMessage    | string  | Twitch's  message                                                 |
 | SubscriptionPlan | string  | One of `Prime`, `Tier1`, `Tier2` or `Tier3`                       |
-| Months           | long    | Subscription length in months                                     |
+| CumulativeMonths | long    | Subscription length in months                                     |
+| StreakMonths     | long    | How many months are the currect streak                            |
+
+**JSON Example:**
+`{"EventType":"TwitchUserSubscribed","ExcludeFromTxrx":false,"Uptime":5114474,"Name":"tntion","Message":"","SystemMessage":"tntion subscribed with Prime. They've subscribed for 7 months, currently on a 7 month streak!","SubscriptionPlan":"Prime","CumulativeMonths":7,"StreakMonths":7}`
 </details>
 
 <details><summary>TwitchGiftedSubscription</summary><br />
@@ -170,6 +174,9 @@ A user subscribed or resubscribed to the stream
 | SubscriptionPlan | string  | One of `Prime`, `Tier1`, `Tier2` or `Tier3`                       |
 | SystemMessage    | string  | Twitch's  message                                                 |
 | Recipient        | string  | Gift recipient                                                    |
+
+**JSON Example:**
+`{"EventType":"TwitchGiftedSubscription","ExcludeFromTxrx":false,"Uptime":3559925,"Gifter":"skidsmarksbot","SubscriptionPlan":"Tier1","Recipient":"luckyguy","SystemMessage":"skidsmarksbot gifted a Tier 1 sub to luckyguy! They have given 7 Gift Subs in the channel!"}`
 </details>
 
 <details><summary>TwitchRaided</summary><br />
@@ -183,4 +190,7 @@ A user subscribed or resubscribed to the stream
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | Name            | string  | Who is raiding                                                    |
 | ViewerCount     | int     | How many viewers does the raid bring                              |
+
+**JSON Example:**
+`{"EventType":"TwitchRaided","ExcludeFromTxrx":false,"Uptime":1986776,"Name":"Sampsoid","ViewerCount":57}`
 </details>

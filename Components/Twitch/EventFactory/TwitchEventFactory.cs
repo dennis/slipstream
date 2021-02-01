@@ -55,7 +55,7 @@ namespace Slipstream.Components.Twitch.EventFactory
             };
         }
 
-        public TwitchUserSubscribed CreateTwitchUserSubscribed(string name, string message, string subscriptionPlan, long months, string systemMessage)
+        public TwitchUserSubscribed CreateTwitchUserSubscribed(string name, string message, string subscriptionPlan, long cumulativeMonths, long streakMonths, string systemMessage)
         {
             return new TwitchUserSubscribed
             {
@@ -63,7 +63,8 @@ namespace Slipstream.Components.Twitch.EventFactory
                 Message = message,
                 SystemMessage = systemMessage,
                 SubscriptionPlan = subscriptionPlan,
-                Months = months,
+                CumulativeMonths = cumulativeMonths,
+                StreakMonths = streakMonths,
             };
         }
 

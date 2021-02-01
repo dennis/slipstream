@@ -2,8 +2,8 @@
 using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
+using Slipstream.Components.UI;
 using Slipstream.Shared;
-using Slipstream.Shared.Factories;
 
 #nullable enable
 

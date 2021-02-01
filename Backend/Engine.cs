@@ -1,10 +1,9 @@
 ﻿using Newtonsoft.Json.Linq;
 using Serilog;
-using Slipstream.Backend.Services;
+using Slipstream.Components.Internal;
+using Slipstream.Components.Internal.Events;
+using Slipstream.Components.Internal.Services;
 using Slipstream.Shared;
-using Slipstream.Shared.EventHandlers;
-using Slipstream.Shared.Events.Internal;
-using Slipstream.Shared.Factories;
 using Slipstream.Shared.Helpers.StrongParameters;
 using System;
 using System.IO;
@@ -23,7 +22,7 @@ namespace Slipstream.Backend
         private readonly ILogger Logger;
         private readonly IEventHandlerController EventHandlerController;
 
-        public Engine(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, ILuaSevice luaService, IApplicationVersionService applicationVersionService, EventHandlerControllerBuilder eventHandlerControllerBuilder) : base("engine")
+        public Engine(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, IApplicationVersionService applicationVersionService, EventHandlerControllerBuilder eventHandlerControllerBuilder) : base("engine")
         {
             EventFactory = eventFactory.Get<IInternalEventFactory>();
             EventBus = eventBus;
@@ -34,7 +33,7 @@ namespace Slipstream.Backend
 
             Subscription = EventBus.RegisterListener();
 
-            var internalEventHandler = EventHandlerController.Get<Internal>();
+            var internalEventHandler = EventHandlerController.Get<Slipstream.Components.Internal.EventHandler.Internal>();
 
             internalEventHandler.OnInternalCommandPluginRegister += (s, e) => OnCommandPluginRegister(e.Event);
             internalEventHandler.OnInternalCommandPluginUnregister += (s, e) => OnCommandPluginUnregister(e.Event);
@@ -92,7 +91,10 @@ register_plugin({ plugin_name = ""PlaybackPlugin""})
                 }
 
                 Logger.Information("Loading {initcfg}", initFilename);
-                luaService.Parse(filename: initFilename, logPrefix: "INIT");
+
+                // FIXME: This needs to be reimplemented
+                var luaService = new LuaService(new System.Collections.Generic.List<Components.ILuaGlue> { new Slipstream.Components.Internal.LuaGlues.InternalLuaGlue(eventBus, EventFactory) });
+                luaService.Parse(initFilename);
             }
 
             // Tell Plugins that we're live - this will make eventbus distribute events
@@ -117,7 +119,7 @@ register_plugin({ plugin_name = ""PlaybackPlugin""})
             EventBus.UnregisterSubscription(subscription);
         }
 
-        private void OnCommandPluginRegister(Shared.Events.Internal.InternalCommandPluginRegister ev)
+        private void OnCommandPluginRegister(InternalCommandPluginRegister ev)
         {
             JObject a = JObject.Parse(ev.Configuration);
             Parameters configuration = Parameters.From(a);

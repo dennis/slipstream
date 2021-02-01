@@ -97,13 +97,30 @@ namespace Slipstream.Shared.Helpers.StrongParameters
             return result;
         }
 
+        internal T Get<T>(string name)
+        {
+            return (T)this[name];
+        }
+
         internal T Extract<T>(string name)
         {
-            T value = (T)this[name];
+            T value = Get<T>(name);
 
             Remove(name);
 
             return value;
+        }
+
+        internal T GetOrDefault<T>(string name, T defaultValue)
+        {
+            if (TryGetValue(name, out dynamic _))
+            {
+                return Get<T>(name);
+            }
+            else
+            {
+                return defaultValue;
+            }
         }
 
         internal T ExtractOrDefault<T>(string name, T defaultValue)

@@ -1,30 +1,26 @@
 ﻿#nullable enable
 
 using Serilog;
-using Slipstream.Backend.Plugins;
+using Slipstream.Components;
+using Slipstream.Components.Internal;
 using Slipstream.Shared;
-using Slipstream.Shared.Factories;
 using Slipstream.Shared.Helpers.StrongParameters;
 using System;
 using System.Collections.Generic;
-using static Slipstream.Shared.Factories.IInternalEventFactory;
+using System.Linq;
+using static Slipstream.Components.Internal.IInternalEventFactory;
 
 namespace Slipstream.Backend
 {
     public class PluginManager : IPluginManager, IPluginFactory
     {
-        private readonly IEventFactory EventFactory;
         private readonly IInternalEventFactory InternalEventFactory;
-        private readonly IFileMonitorEventFactory FileMonitorEventFactory;
-        private readonly IIRacingEventFactory IRacingEventFactory;
-        private readonly ITwitchEventFactory TwitchEventFactory;
-        private readonly IAudioEventFactory AudioEventFactory;
-        private readonly IServiceLocator ServiceLocator;
-
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, PluginWorker> PluginWorkers = new Dictionary<string, PluginWorker>();
         private readonly ILogger Logger;
-        private readonly EventHandlerControllerBuilder EventHandlerControllerBuilder;
+        private readonly ComponentRegistrator Registrator;
+        private readonly List<ILuaGlueFactory> LuaGluesFactories = new List<ILuaGlueFactory>();
+        private readonly Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>> ComponentPlugins = new Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>>();
 
         public PluginManager(
             IEventFactory eventFactory,
@@ -33,16 +29,17 @@ namespace Slipstream.Backend
             ILogger logger,
             EventHandlerControllerBuilder eventHandlerControllerBuilder)
         {
-            EventFactory = eventFactory;
+            Registrator = new ComponentRegistrator(ComponentPlugins, LuaGluesFactories, eventFactory, logger, eventBus, eventHandlerControllerBuilder, serviceLocator);
+
+            foreach (var type in typeof(PluginManager).Assembly.GetTypes().Where(t => typeof(IComponent).IsAssignableFrom(t) && !t.IsAbstract && t.IsClass))
+            {
+                logger.Information("Initializing component {pluginName}", type.Name);
+                ((IComponent)Activator.CreateInstance(type)).Register(Registrator);
+            }
+
             InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
-            FileMonitorEventFactory = eventFactory.Get<IFileMonitorEventFactory>();
-            IRacingEventFactory = eventFactory.Get<IIRacingEventFactory>();
-            TwitchEventFactory = eventFactory.Get<ITwitchEventFactory>();
-            AudioEventFactory = eventFactory.Get<IAudioEventFactory>();
             EventBus = eventBus;
-            ServiceLocator = serviceLocator;
             Logger = logger;
-            EventHandlerControllerBuilder = eventHandlerControllerBuilder;
         }
 
         public void UnregisterPlugin(IPlugin p)
@@ -70,7 +67,7 @@ namespace Slipstream.Backend
             }
 
             EmitPluginStateChanged(plugin, PluginStatusEnum.Registered);
-            Logger.Verbose("Started for {PluginId}", plugin.Id);
+            Logger.Verbose("Started plugin: {PluginName}: {PluginId}", plugin.Name, plugin.Id);
         }
 
         private void EmitEvent(IEvent e)
@@ -132,29 +129,12 @@ namespace Slipstream.Backend
             return CreatePlugin(pluginId, name, EventBus, configuration);
         }
 
-        public IPlugin CreatePlugin(string pluginId, string name, IEventBus eventBus, Parameters configuration)
+        public IPlugin CreatePlugin(string pluginId, string pluginName, IEventBus eventBus, Parameters configuration)
         {
-            return name switch
-            {
-                "LuaPlugin" => new LuaPlugin(
-                    EventHandlerControllerBuilder.CreateEventHandlerController(),
-                    pluginId,
-                    Logger.ForContext(typeof(LuaPlugin)),
-                    EventFactory,
-                    eventBus,
-                    ServiceLocator,
-                    configuration
-                ),
-                "FileMonitorPlugin" => new FileMonitorPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, FileMonitorEventFactory, eventBus, configuration),
-                "LuaManagerPlugin" => new LuaManagerPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(LuaPlugin)), FileMonitorEventFactory, eventBus, this, this, ServiceLocator),
-                "AudioPlugin" => new AudioPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(AudioPlugin)), eventBus, AudioEventFactory, configuration),
-                "IRacingPlugin" => new IRacingPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, IRacingEventFactory, eventBus),
-                "TwitchPlugin" => new TwitchPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(TwitchPlugin)), TwitchEventFactory, eventBus, configuration),
-                "TransmitterPlugin" => new TransmitterPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(TransmitterPlugin)), InternalEventFactory, eventBus, ServiceLocator, configuration),
-                "ReceiverPlugin" => new ReceiverPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(ReceiverPlugin)), InternalEventFactory, eventBus, ServiceLocator, configuration),
-                "PlaybackPlugin" => new PlaybackPlugin(EventHandlerControllerBuilder.CreateEventHandlerController(), pluginId, Logger.ForContext(typeof(PlaybackPlugin)), eventBus, ServiceLocator),
-                _ => throw new Exception($"Unknown configurable plugin '{name}'"),
-            };
+            ComponentPluginCreationContext reg = new ComponentPluginCreationContext(Registrator, this, this, LuaGluesFactories, pluginId, pluginName, configuration);
+            if (!ComponentPlugins.ContainsKey(pluginName))
+                throw new KeyNotFoundException($"Plugin name '{pluginName}' not found");
+            return ComponentPlugins[pluginName].Invoke(reg);
         }
 
         public void Dispose()

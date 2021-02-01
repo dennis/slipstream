@@ -132,9 +132,12 @@ namespace Slipstream.Components.Lua.Plugins
 
         private void DeletedFile(string filePath)
         {
-            PluginManager.UnregisterPlugin(Scripts[filePath]);
+            if(Scripts.ContainsKey(filePath))
+            {
+                PluginManager.UnregisterPlugin(Scripts[filePath]);
 
-            Scripts.Remove(filePath);
+                Scripts.Remove(filePath);
+            }
         }
 
         private void EventHandler_OnFileMonitorFileRenamed(IEventHandlerController source, EventHandlerArgs<FileMonitorFileRenamed> e)

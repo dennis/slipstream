@@ -1,6 +1,7 @@
 #nullable enable
 
 using Slipstream.Shared;
+using System;
 using System.Collections.Generic;
 
 namespace Slipstream.Components.IRacing.Events
@@ -12,21 +13,22 @@ namespace Slipstream.Components.IRacing.Events
         public ulong Uptime { get; set; }
         public double SessionTime { get; set; }
         public string Skies { get; set; } = string.Empty;
-        public string SurfaceTemp { get; set; } = string.Empty;
-        public string AirTemp { get; set; } = string.Empty;
-        public string AirPressure { get; set; } = string.Empty;
-        public string RelativeHumidity { get; set; } = string.Empty;
-        public string FogLevel { get; set; } = string.Empty;
+        public float SurfaceTemp { get; set; }
+        public float AirTemp { get; set; }
+        public float AirPressure { get; set; }
+        public float RelativeHumidity { get; set; }
+        public float FogLevel { get; set; }
 
         public bool DifferentTo(IRacingWeatherInfo other)
         {
-            return
+            return !(
                 other.Skies.Equals(Skies) &&
-                other.SurfaceTemp.Equals(SurfaceTemp) &&
-                other.AirTemp.Equals(AirTemp) &&
-                other.AirPressure.Equals(AirPressure) &&
-                other.RelativeHumidity.Equals(RelativeHumidity) &&
-                other.FogLevel.Equals(FogLevel);
+                Math.Abs(other.SurfaceTemp - SurfaceTemp) < 0.1 &&
+                Math.Abs(other.AirTemp - AirTemp) < 0.1 &&
+                Math.Abs(other.AirPressure - AirPressure) < 0.1 &&
+                Math.Abs(other.RelativeHumidity - RelativeHumidity) < 0.1 &&
+                Math.Abs(other.FogLevel - FogLevel) < 0.1
+            );
         }
 
         public override bool Equals(object? obj)
@@ -50,11 +52,11 @@ namespace Slipstream.Components.IRacing.Events
             hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
             hashCode = hashCode * -1521134295 + SessionTime.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Skies);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(SurfaceTemp);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(AirTemp);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(AirPressure);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(RelativeHumidity);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(FogLevel);
+            hashCode = hashCode * -1521134295 + SurfaceTemp.GetHashCode();
+            hashCode = hashCode * -1521134295 + AirTemp.GetHashCode();
+            hashCode = hashCode * -1521134295 + AirPressure.GetHashCode();
+            hashCode = hashCode * -1521134295 + RelativeHumidity.GetHashCode();
+            hashCode = hashCode * -1521134295 + FogLevel.GetHashCode();
             return hashCode;
         }
     }

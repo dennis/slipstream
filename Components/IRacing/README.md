@@ -489,16 +489,16 @@ For user, this is sent after a pitshop, showing some data about the pitstop.
 | EventType        | string  | `IRacingWeatherInfo` (constant)                                   |
 | ExcludeFromTxrx  | boolean | false (constant)                                                  |
 | Uptime           | integer | Time of when the message was sent via Eventbus (in milliseconds). |
-| SessionTime      | string  |                                                                   |
-| Skies            | string  |                                                                   |
-| SurfaceTemp      | string  |                                                                   |
-| AirTemp          | string  |                                                                   |
-| AirPressure      | string  |                                                                   |
-| RelativeHumidity | string  |                                                                   |
-| FogLevel         | string  |                                                                   |
+| SessionTime      | float   |                                                                   |
+| Skies            | string  | "Clear", "PartlyCloudy", "MostlyCloudy", "Overcast"               |
+| SurfaceTemp      | float   |                                                                   |
+| AirTemp          | float   |                                                                   |
+| AirPressure      | float   |                                                                   |
+| RelativeHumidity | float   |                                                                   |
+| FogLevel         | float   |                                                                   |
 
 **JSON Example:**
-`{"EventType":"IRacingWeatherInfo","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":1058.3000081380189,"Skies":"Partly Cloudy","SurfaceTemp":"39.76 C","AirTemp":"25.51 C","AirPressure":"29.25 Hg","RelativeHumidity":"55 %","FogLevel":"0 %"}`
+`{"EventType":"IRacingWeatherInfo","ExcludeFromTxrx":false,"Uptime":549,"SessionTime":1911.8300048828126,"Skies":"PartlyCloudy","SurfaceTemp":31.1111145,"AirTemp":25.5555553,"AirPressure":29.92,"RelativeHumidity":0.55,"FogLevel":0.0}`
 </details>
 
 <details><summary>IRacingCarPosition</summary><br />

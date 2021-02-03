@@ -227,7 +227,8 @@ namespace Slipstream.Components.Twitch.Plugins
                 name: e.ReSubscriber.DisplayName,
                 message: e.ReSubscriber.ResubMessage,
                 subscriptionPlan: e.ReSubscriber.SubscriptionPlan.ToString(),
-                months: e.ReSubscriber.Months,
+                cumulativeMonths: long.Parse(e.ReSubscriber.MsgParamCumulativeMonths),
+                streakMonths: long.Parse(e.ReSubscriber.MsgParamStreakMonths),
                 systemMessage: e.ReSubscriber.SystemMessageParsed);
 
             EventBus.PublishEvent(@event);
@@ -239,7 +240,8 @@ namespace Slipstream.Components.Twitch.Plugins
                 name: e.Subscriber.DisplayName,
                 message: e.Subscriber.ResubMessage,
                 subscriptionPlan: e.Subscriber.SubscriptionPlan.ToString(),
-                months: 1,
+                cumulativeMonths: 1,
+                streakMonths: 1,
                 systemMessage: e.Subscriber.SystemMessageParsed
             );
 

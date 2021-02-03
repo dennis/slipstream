@@ -18,7 +18,7 @@ namespace Slipstream.Components.Twitch
 
         TwitchCommandSendWhisper CreateTwitchCommandSendWhisper(string to, string message);
 
-        TwitchUserSubscribed CreateTwitchUserSubscribed(string name, string message, string subscriptionPlan, long months, string systemMessage);
+        TwitchUserSubscribed CreateTwitchUserSubscribed(string name, string message, string subscriptionPlan, long cumulativeMonths, long streakMonths, string systemMessage);
 
         TwitchGiftedSubscription CreateTwitchGiftedSubscription(string gifter, string subscriptionPlan, string recipient, string systemMessage);
 

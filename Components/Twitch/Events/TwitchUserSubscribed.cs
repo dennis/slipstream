@@ -12,7 +12,8 @@ namespace Slipstream.Components.Twitch.Events
         public string Message { get; set; } = string.Empty;
         public string SystemMessage { get; set; } = string.Empty;
         public string SubscriptionPlan { get; set; } = string.Empty;
-        public long Months { get; set; }
+        public long CumulativeMonths { get; set; }
+        public long StreakMonths { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -23,7 +24,8 @@ namespace Slipstream.Components.Twitch.Events
                    Message == subscribed.Message &&
                    SystemMessage == subscribed.SystemMessage &&
                    SubscriptionPlan == subscribed.SubscriptionPlan &&
-                   Months == subscribed.Months;
+                   CumulativeMonths == subscribed.CumulativeMonths &&
+                   StreakMonths == subscribed.StreakMonths;
         }
 
         public override int GetHashCode()
@@ -35,7 +37,8 @@ namespace Slipstream.Components.Twitch.Events
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Message);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(SystemMessage);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(SubscriptionPlan);
-            hashCode = hashCode * -1521134295 + Months.GetHashCode();
+            hashCode = hashCode * -1521134295 + CumulativeMonths.GetHashCode();
+            hashCode = hashCode * -1521134295 + StreakMonths.GetHashCode();
             return hashCode;
         }
     }

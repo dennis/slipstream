@@ -20,6 +20,7 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
         public Trackers(IEventBus eventBus, IIRacingEventFactory eventFactory)
         {
             DataTrackers.Add(new ConnectTracker(eventBus, eventFactory));
+            DataTrackers.Add(new TrackInfoTracker(eventBus, eventFactory));
             DataTrackers.Add(new WeatherTracker(eventBus, eventFactory));
             DataTrackers.Add(new CarInfoTracker(eventBus, eventFactory));
             DataTrackers.Add(new IncidentTracker(eventBus, eventFactory));

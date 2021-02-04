@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
+		.circleci\config.yml = .circleci\config.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Slipstream.UnitTests", "Slipstream.UnitTests\Slipstream.UnitTests.csproj", "{DE5418BD-A517-464B-8753-7987C6E29582}"

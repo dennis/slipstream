@@ -28,7 +28,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
 
         [Theory]
         [ClassData(typeof(CarInfoDataSampleTestData))]
-        public void CanHandleRaisesIRacingCarInfo(DataSample dataSample)
+        public void HandleRaisesIRacingCarInfo(DataSample dataSample)
         {
             // arrange
             var eventBusMock = new Mock<Shared.IEventBus>();

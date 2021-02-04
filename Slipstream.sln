@@ -12,7 +12,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D32AA956-5A23-43F4-97C9-967B68509B48}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.gitignore = .gitignore
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Slipstream.UnitTests", "Slipstream.UnitTests\Slipstream.UnitTests.csproj", "{DE5418BD-A517-464B-8753-7987C6E29582}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,6 +33,10 @@ Global
 		{5422AE20-F220-4BE1-9E61-5296981ABB5C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A05BF89E-99D3-42B3-9AAF-0D6240EC572D}.Debug|Any CPU.ActiveCfg = Debug
 		{A05BF89E-99D3-42B3-9AAF-0D6240EC572D}.Release|Any CPU.ActiveCfg = Release
+		{DE5418BD-A517-464B-8753-7987C6E29582}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE5418BD-A517-464B-8753-7987C6E29582}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE5418BD-A517-464B-8753-7987C6E29582}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE5418BD-A517-464B-8753-7987C6E29582}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -11,4 +11,4 @@
        - checkout
        - run: git submodule update --recursive --init
        - run: msbuild -t:restore
-       - run: dotnet test
+       - run: dotnet test --no-build

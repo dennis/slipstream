@@ -1,5 +1,4 @@
-﻿using iRacingSDK;
-using Slipstream.Components.IRacing.Plugins.Models;
+﻿using Slipstream.Components.IRacing.Plugins.Models;
 using Slipstream.Shared;
 
 #nullable enable
@@ -17,34 +16,31 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(DataSample data, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
         {
-            foreach (var driver in data.SessionData.DriverInfo.Drivers)
+            foreach (var car in currentState.Cars)
             {
-                //if (driver.IsPaceCar) - this doesn't work when doing test sessions. Here we will be flagged as Pace car
-                //    continue;
-
-                if (!state.CarsTracked.TryGetValue(driver.CarIdx, out CarState carState))
+                if (!state.CarsTracked.TryGetValue(car.CarIdx, out CarState carState))
                 {
-                    carState = CarState.Build(driver.CarIdx, data);
-                    state.CarsTracked.Add(driver.CarIdx, carState);
+                    carState = CarState.Build(car.CarIdx, currentState);
+                    state.CarsTracked.Add(car.CarIdx, carState);
                 }
 
                 // TODO: Also add: DriverIncidentCount, TeamIncidentCount
                 var @event = EventFactory.CreateIRacingCarInfo(
-                    sessionTime: data.Telemetry.SessionTime,
-                    carIdx: driver.CarIdx,
-                    carNumber: driver.CarNumber,
-                    currentDriverUserID: driver.UserID,
-                    currentDriverName: driver.UserName,
-                    teamID: driver.TeamID,
-                    teamName: driver.TeamName,
-                    carName: driver.CarScreenName,
-                    carNameShort: driver.CarScreenNameShort,
-                    currentDriverIRating: driver.IRating,
-                    currentDriverLicense: driver.LicString,
-                    localUser: data.SessionData.DriverInfo.DriverCarIdx == driver.CarIdx,
-                    spectator: driver.IsSpectator != 0
+                    sessionTime: currentState.SessionTime,
+                    carIdx: car.CarIdx,
+                    carNumber: car.CarNumber,
+                    currentDriverUserID: car.UserId,
+                    currentDriverName: car.UserName,
+                    teamID: car.TeamId,
+                    teamName: car.TeamName,
+                    carName: car.CarName,
+                    carNameShort: car.CarNameShort,
+                    currentDriverIRating: car.IRating,
+                    currentDriverLicense: car.License,
+                    localUser: currentState.DriverCarIdx == car.CarIdx,
+                    spectator: car.IsSpectator
                 );
 
                 if (!carState.CarInfo.SameAs(@event) || state.SendCarInfo)

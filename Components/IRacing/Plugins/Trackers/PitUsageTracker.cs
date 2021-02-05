@@ -1,5 +1,4 @@
-﻿using iRacingSDK;
-using Slipstream.Components.IRacing.Plugins.Models;
+﻿using Slipstream.Components.IRacing.Plugins.Models;
 using Slipstream.Shared;
 using System;
 
@@ -18,80 +17,80 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(DataSample data, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
         {
-            for (int i = 0; i < data.Telemetry.CarIdxOnPitRoad.Length; i++)
+            foreach (var car in currentState.Cars)
             {
-                var onPitRoad = data.Telemetry.CarIdxOnPitRoad[i];
+                var onPitRoad = car.OnPitRoad;
 
-                if (!state.CarsTracked.TryGetValue(i, out CarState carState))
+                if (!state.CarsTracked.TryGetValue(car.CarIdx, out CarState carState))
                 {
-                    carState = CarState.Build(i, data);
-                    state.CarsTracked.Add(i, carState);
+                    carState = CarState.Build(car.CarIdx, currentState);
+                    state.CarsTracked.Add(car.CarIdx, carState);
                 }
 
                 if (carState.LastOnPitRoad != onPitRoad)
                 {
-                    var localUser = data.SessionData.DriverInfo.DriverCarIdx == i;
-                    var now = data.Telemetry.SessionTime;
+                    var localUser = currentState.DriverCarIdx == car.CarIdx;
+                    var now = currentState.SessionTime;
                     if (onPitRoad)
                     {
-                        EventBus.PublishEvent(EventFactory.CreateIRacingPitEnter(sessionTime: now, carIdx: i, localUser: localUser));
-                        carState.PitEnteredAt = data.Telemetry.SessionTime;
+                        EventBus.PublishEvent(EventFactory.CreateIRacingPitEnter(sessionTime: now, carIdx: car.CarIdx, localUser: localUser));
+                        carState.PitEnteredAt = currentState.SessionTime;
                     }
                     else
                     {
                         double? duration = null;
 
                         if (carState.PitEnteredAt != null)
-                            duration = data.Telemetry.SessionTime - carState.PitEnteredAt;
+                            duration = currentState.SessionTime - carState.PitEnteredAt;
 
                         // If duration is zero, then the pitstop started before we joined
                         if (duration != null)
                         {
-                            EventBus.PublishEvent(EventFactory.CreateIRacingPitExit(sessionTime: now, carIdx: i, localUser: localUser, duration: duration));
+                            EventBus.PublishEvent(EventFactory.CreateIRacingPitExit(sessionTime: now, carIdx: car.CarIdx, localUser: localUser, duration: duration));
                             carState.PitEnteredAt = null;
 
-                            if (localUser && data.Telemetry.CarIdxLapCompleted[i] > 0)
+                            if (localUser && car.LapsCompleted > 0)
                             {
                                 var status = EventFactory.CreateIRacingPitstopReport(
                                     sessionTime: now,
-                                    carIdx: i,
+                                    carIdx: car.CarIdx,
 
-                                    tempLFL: (uint)Math.Round(data.Telemetry.LFtempCL),
-                                    tempLFM: (uint)Math.Round(data.Telemetry.LFtempCM),
-                                    tempLFR: (uint)Math.Round(data.Telemetry.LFtempCR),
+                                    tempLFL: (uint)Math.Round(currentState.LFtempCL * 100),
+                                    tempLFM: (uint)Math.Round(currentState.LFtempCM * 100),
+                                    tempLFR: (uint)Math.Round(currentState.LFtempCR * 100),
 
-                                    tempRFL: (uint)Math.Round(data.Telemetry.RFtempCL),
-                                    tempRFM: (uint)Math.Round(data.Telemetry.RFtempCM),
-                                    tempRFR: (uint)Math.Round(data.Telemetry.RFtempCR),
+                                    tempRFL: (uint)Math.Round(currentState.RFtempCL * 100),
+                                    tempRFM: (uint)Math.Round(currentState.RFtempCM * 100),
+                                    tempRFR: (uint)Math.Round(currentState.RFtempCR * 100),
 
-                                    tempLRL: (uint)Math.Round(data.Telemetry.LRtempCL),
-                                    tempLRM: (uint)Math.Round(data.Telemetry.LRtempCM),
-                                    tempLRR: (uint)Math.Round(data.Telemetry.LRtempCR),
+                                    tempLRL: (uint)Math.Round(currentState.LRtempCL * 100),
+                                    tempLRM: (uint)Math.Round(currentState.LRtempCM * 100),
+                                    tempLRR: (uint)Math.Round(currentState.LRtempCR * 100),
 
-                                    tempRRL: (uint)Math.Round(data.Telemetry.RRtempCL),
-                                    tempRRM: (uint)Math.Round(data.Telemetry.RRtempCM),
-                                    tempRRR: (uint)Math.Round(data.Telemetry.RRtempCR),
+                                    tempRRL: (uint)Math.Round(currentState.RRtempCL * 100),
+                                    tempRRM: (uint)Math.Round(currentState.RRtempCM * 100),
+                                    tempRRR: (uint)Math.Round(currentState.RRtempCR * 100),
 
-                                    wearLFL: (uint)Math.Round(data.Telemetry.LFwearL * 100),
-                                    wearLFM: (uint)Math.Round(data.Telemetry.LFwearM * 100),
-                                    wearLFR: (uint)Math.Round(data.Telemetry.LFwearR * 100),
+                                    wearLFL: (uint)Math.Round(currentState.LFwearL * 100),
+                                    wearLFM: (uint)Math.Round(currentState.LFwearM * 100),
+                                    wearLFR: (uint)Math.Round(currentState.LFwearR * 100),
 
-                                    wearRFL: (uint)Math.Round(data.Telemetry.RFwearL * 100),
-                                    wearRFM: (uint)Math.Round(data.Telemetry.RFwearM * 100),
-                                    wearRFR: (uint)Math.Round(data.Telemetry.RFwearR * 100),
+                                    wearRFL: (uint)Math.Round(currentState.RFwearL * 100),
+                                    wearRFM: (uint)Math.Round(currentState.RFwearM * 100),
+                                    wearRFR: (uint)Math.Round(currentState.RFwearR * 100),
 
-                                    wearLRL: (uint)Math.Round(data.Telemetry.LRwearL * 100),
-                                    wearLRM: (uint)Math.Round(data.Telemetry.LRwearM * 100),
-                                    wearLRR: (uint)Math.Round(data.Telemetry.LRwearR * 100),
+                                    wearLRL: (uint)Math.Round(currentState.LRwearL * 100),
+                                    wearLRM: (uint)Math.Round(currentState.LRwearM * 100),
+                                    wearLRR: (uint)Math.Round(currentState.LRwearR * 100),
 
-                                    wearRRL: (uint)Math.Round(data.Telemetry.RRwearL * 100),
-                                    wearRRM: (uint)Math.Round(data.Telemetry.RRwearM * 100),
-                                    wearRRR: (uint)Math.Round(data.Telemetry.RRwearR * 100),
+                                    wearRRL: (uint)Math.Round(currentState.RRwearL * 100),
+                                    wearRRM: (uint)Math.Round(currentState.RRwearM * 100),
+                                    wearRRR: (uint)Math.Round(currentState.RRwearR * 100),
 
-                                    laps: data.Telemetry.CarIdxLapCompleted[i] - carState.StintStartLap,
-                                    fuelDiff: data.Telemetry.FuelLevel - carState.StintFuelLevel,
+                                    laps: car.LapsCompleted - carState.StintStartLap,
+                                    fuelDiff: currentState.FuelLevel - carState.StintFuelLevel,
                                     duration: now - carState.StintStartTime
                                 );
 
@@ -99,8 +98,8 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
                             }
                         }
 
-                        carState.StintStartLap = data.Telemetry.CarIdxLapCompleted[i];
-                        carState.StintFuelLevel = data.Telemetry.FuelLevel;
+                        carState.StintStartLap = car.LapsCompleted;
+                        carState.StintFuelLevel = currentState.FuelLevel;
                         carState.StintStartTime = now;
                     }
 

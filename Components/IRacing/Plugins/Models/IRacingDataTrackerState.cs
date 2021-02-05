@@ -1,6 +1,5 @@
 ﻿#nullable enable
 
-using iRacingSDK;
 using Slipstream.Components.IRacing.Events;
 using System.Collections.Generic;
 using static Slipstream.Components.IRacing.IIRacingEventFactory;
@@ -20,9 +19,9 @@ namespace Slipstream.Components.IRacing.Plugins.Models
         public DriverState DriverState_ { get; set; } = new DriverState();
         public IRacingRaceFlags? LastRaceFlags { get; set; }
         public IRacingSessionTypeEnum LastSessionType { get; set; }
-        public SessionState LastSessionState { get; set; }
         public int[] LastPositionInClass { get; set; } = new int[IRacingPlugin.MAX_CARS];
         public int[] LastPositionInRace { get; set; } = new int[IRacingPlugin.MAX_CARS];
+        public IRacingSessionStateEnum LastSessionState { get; set; }
 
         public void FullReset()
         {

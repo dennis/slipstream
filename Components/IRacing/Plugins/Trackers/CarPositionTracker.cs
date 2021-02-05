@@ -1,7 +1,5 @@
-﻿using iRacingSDK;
-using Slipstream.Components.IRacing.Plugins.Models;
+﻿using Slipstream.Components.IRacing.Plugins.Models;
 using Slipstream.Shared;
-using System.Linq;
 
 #nullable enable
 
@@ -18,22 +16,22 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(DataSample data, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
         {
-            for (int i = 0; i < data.Telemetry.Cars.Count(); i++)
+            foreach (var car in currentState.Cars)
             {
-                int positionInRace = (int)data.Telemetry.CarIdxClassPosition[i];
-                int positionInClass = (int)data.Telemetry.CarIdxPosition[i];
+                int positionInRace = car.ClassPosition;
+                int positionInClass = car.Position;
 
                 if (positionInRace > 0 && positionInClass > 0)
                 {
-                    if (positionInRace != state.LastPositionInRace[i] || positionInClass != state.LastPositionInClass[i])
+                    if (positionInRace != state.LastPositionInRace[car.CarIdx] || positionInClass != state.LastPositionInClass[car.CarIdx])
                     {
-                        var localUser = data.SessionData.DriverInfo.DriverCarIdx == i;
+                        var localUser = currentState.DriverCarIdx == car.CarIdx;
 
                         var @event = EventFactory.CreateIRacingCarPosition(
-                            sessionTime: data.Telemetry.SessionTime,
-                            carIdx: i,
+                            sessionTime: currentState.SessionTime,
+                            carIdx: car.CarIdx,
                             localUser: localUser,
                             positionInClass: positionInClass,
                             positionInRace: positionInRace);
@@ -42,8 +40,8 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
                     }
                 }
 
-                state.LastPositionInClass[i] = positionInClass;
-                state.LastPositionInRace[i] = positionInRace;
+                state.LastPositionInClass[car.CarIdx] = positionInClass;
+                state.LastPositionInRace[car.CarIdx] = positionInRace;
             }
         }
     }

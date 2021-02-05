@@ -175,6 +175,7 @@
     <Compile Include="Components\IRacing\Plugins\Trackers\ConnectTracker.cs" />
     <Compile Include="Components\IRacing\Plugins\Models\IRacingDataTrackerState.cs" />
     <Compile Include="Components\IRacing\Plugins\Trackers\Trackers.cs" />
+    <Compile Include="Components\IRacing\Plugins\Trackers\TrackInfoTracker.cs" />
     <Compile Include="Components\IRacing\Plugins\Trackers\WeatherTracker.cs" />
     <Compile Include="Components\Lua\CapturingEventBus.cs" />
     <Compile Include="Components\Playback\LuaGlueFactory.cs" />

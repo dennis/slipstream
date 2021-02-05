@@ -10,4 +10,5 @@
      steps:
        - checkout
        - run: git submodule update --recursive --init
-       - run: msbuild -t:restore
+       - run: msbuild -t:restore -verbosity:diag
+       - run: dotnet test --no-restore

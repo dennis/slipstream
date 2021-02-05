@@ -10,5 +10,6 @@
      steps:
        - checkout
        - run: git submodule update --recursive --init
-       - run: msbuild -t:restore -t:build
+       - run: tools/nuget.exe restore
+       - run: msbuild -restore
        - run: dotnet test --no-build

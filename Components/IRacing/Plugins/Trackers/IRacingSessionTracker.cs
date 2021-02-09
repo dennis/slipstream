@@ -1,5 +1,4 @@
-﻿using iRacingSDK;
-using Slipstream.Components.IRacing.Events;
+﻿using Slipstream.Components.IRacing.Events;
 using Slipstream.Components.IRacing.Plugins.Models;
 using Slipstream.Shared;
 using System;
@@ -15,65 +14,36 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
         private readonly IIRacingEventFactory EventFactory;
         private readonly IEventBus EventBus;
 
-        private static readonly Dictionary<iRacingSDK.SessionState, IRacingSessionStateEnum> SessionStateMapping = new Dictionary<iRacingSDK.SessionState, IRacingSessionStateEnum>() {
-            { iRacingSDK.SessionState.Checkered, IRacingSessionStateEnum.Checkered },
-            { iRacingSDK.SessionState.CoolDown, IRacingSessionStateEnum.CoolDown },
-            { iRacingSDK.SessionState.GetInCar, IRacingSessionStateEnum.GetInCar },
-            { iRacingSDK.SessionState.Invalid, IRacingSessionStateEnum.Invalid },
-            { iRacingSDK.SessionState.ParadeLaps, IRacingSessionStateEnum.ParadeLaps },
-            { iRacingSDK.SessionState.Racing, IRacingSessionStateEnum.Racing },
-            { iRacingSDK.SessionState.Warmup, IRacingSessionStateEnum.Warmup },
-        };
-
-        private static readonly Dictionary<string, IRacingSessionTypeEnum> IRacingSessionTypes = new Dictionary<string, IRacingSessionTypeEnum>()
-        {
-            { "Practice", IRacingSessionTypeEnum.Practice },
-            { "Open Qualify", IRacingSessionTypeEnum.OpenQualify },
-            { "Lone Qualify", IRacingSessionTypeEnum.LoneQualify },
-            { "Offline Testing", IRacingSessionTypeEnum.OfflineTesting },
-            { "Race", IRacingSessionTypeEnum.Race },
-            { "Warmup", IRacingSessionTypeEnum.Warmup },
-        };
-
-        private static readonly Dictionary<string, IRacingCategoryEnum> IRacingCategoryTypes = new Dictionary<string, IRacingCategoryEnum>()
-        {
-            { "Road", IRacingCategoryEnum.Road },
-            { "Oval", IRacingCategoryEnum.Oval },
-            { "DirtRoad", IRacingCategoryEnum.DirtRoad },
-            { "DirtOval", IRacingCategoryEnum.DirtOval },
-        };
-
         public IRacingSessionTracker(IEventBus eventBus, IIRacingEventFactory eventFactory)
         {
             EventBus = eventBus;
             EventFactory = eventFactory;
         }
 
-        public void Handle(DataSample data, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
         {
-            var sessionData = data.SessionData.SessionInfo.Sessions[data.Telemetry.SessionNum];
-            var sessionType = IRacingSessionTypes[sessionData.SessionType];
-            var sessionTime = data.Telemetry.SessionTime;
+            var sessionData = currentState.CurrentSession;
+            var sessionType = currentState.SessionType;
+            var sessionTime = currentState.SessionTime;
 
-            var category = IRacingCategoryTypes[data.SessionData.WeekendInfo.Category];
-            var sessionState = data.Telemetry.SessionState;
-            var sessionStateMapped = SessionStateMapping[data.Telemetry.SessionState];
-            var lapsLimited = sessionData.IsLimitedSessionLaps;
-            var timeLimited = sessionData.IsLimitedTime;
-            var totalSessionTime = sessionData._SessionTime / 10_000;
-            var totalSessionLaps = sessionData._SessionLaps;
+            var category = currentState.RaceCategory;
+            var sessionState = currentState.SessionState;
+            var lapsLimited = sessionData.LapsLimited;
+            var timeLimited = sessionData.TimeLimited;
+            var totalSessionTime = sessionData.TotalSessionTime;
+            var totalSessionLaps = sessionData.TotalSessionLaps;
 
             if (sessionType != state.LastSessionType || sessionState != state.LastSessionState || state.SendSessionState)
             {
                 IIRacingSessionState @event =
                    sessionType switch
                    {
-                       IRacingSessionTypeEnum.Practice => EventFactory.CreateIRacingPractice(sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionStateMapped, category: category),
-                       IRacingSessionTypeEnum.OpenQualify => EventFactory.CreateIRacingQualify(sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionStateMapped, category: category, openQualify: true),
-                       IRacingSessionTypeEnum.LoneQualify => EventFactory.CreateIRacingQualify(sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionStateMapped, category: category, openQualify: false),
-                       IRacingSessionTypeEnum.OfflineTesting => EventFactory.CreateIRacingTesting(sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionStateMapped, category: category),
-                       IRacingSessionTypeEnum.Race => EventFactory.CreateIRacingRace(sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionStateMapped, category: category),
-                       IRacingSessionTypeEnum.Warmup => EventFactory.CreateIRacingWarmup(sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionStateMapped, category: category),
+                       IRacingSessionTypeEnum.Practice => EventFactory.CreateIRacingPractice(sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionState, category: category),
+                       IRacingSessionTypeEnum.OpenQualify => EventFactory.CreateIRacingQualify(sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionState, category: category, openQualify: true),
+                       IRacingSessionTypeEnum.LoneQualify => EventFactory.CreateIRacingQualify(sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionState, category: category, openQualify: false),
+                       IRacingSessionTypeEnum.OfflineTesting => EventFactory.CreateIRacingTesting(sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionState, category: category),
+                       IRacingSessionTypeEnum.Race => EventFactory.CreateIRacingRace(sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionState, category: category),
+                       IRacingSessionTypeEnum.Warmup => EventFactory.CreateIRacingWarmup(sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionState, category: category),
                        _ => throw new NotImplementedException(),
                    };
 

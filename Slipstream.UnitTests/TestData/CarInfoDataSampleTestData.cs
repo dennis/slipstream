@@ -1,31 +1,27 @@
-﻿using iRacingSDK;
-using Slipstream.Components.IRacing.Plugins.Models;
+﻿using Slipstream.Components.IRacing.Plugins.GameState;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Slipstream.UnitTests.TestData
 {
-    class CarInfoDataSampleTestData : IEnumerable<object[]>
+    internal partial class CarInfoDataSampleTestData : IEnumerable<object[]>
     {
-        private const int MAXCARS = 64;
-        private readonly List<DataSample> data;
+        private readonly List<IState> data;
 
         public CarInfoDataSampleTestData()
         {
-            data = new List<DataSample>
+            data = new List<IState>
             {
-                CreateCarInfoTestData(1),
-                CreateCarInfoTestData(1, userId: 1),
-                CreateCarInfoTestData(1, userId: 2, userName: "Dennis")
+                CreateCarInfoTestData(0),
+                CreateCarInfoTestData(0, userId: 1),
+                CreateCarInfoTestData(0, userId: 2, userName: "Dennis")
             };
         }
 
-        private DataSample CreateCarInfoTestData(
-            long carIdx,
+        private IState CreateCarInfoTestData(
+            int carIdx,
             double sessionTime = 0,
             string carNumber = "not set",
             long userId = -1,
@@ -37,71 +33,42 @@ namespace Slipstream.UnitTests.TestData
             long iRating = 1350,
             string licString = "A4.99",
             long driverCarIdx = -1,
-            long isSpectator = 0,
-            CarState carState = null
+            bool isSpectator = false
             )
         {
-            DataSample data = CreateDataSample();
+            List<Car> cars = new List<Car>();
 
-            // data.IsConnected = true; 
-            // need to cheat here to set the property as it is marked for internal set in iRacingSDK
-            typeof(DataSample).GetProperty("IsConnected").SetValue(data, true); 
-            data.Telemetry["SessionTime"] = sessionTime;
-            data.SessionData.DriverInfo.Drivers[carIdx].CarIdx = carIdx;
-            data.SessionData.DriverInfo.Drivers[carIdx].CarNumber = carNumber;
-            data.SessionData.DriverInfo.Drivers[carIdx].UserID = userId;
-            data.SessionData.DriverInfo.Drivers[carIdx].UserName = userName;
-            data.SessionData.DriverInfo.Drivers[carIdx].TeamID = teamId;
-            data.SessionData.DriverInfo.Drivers[carIdx].TeamName= teamName;
-            data.SessionData.DriverInfo.Drivers[carIdx].CarScreenName = carScreenName;
-            data.SessionData.DriverInfo.Drivers[carIdx].CarScreenNameShort = carScreenNameShort;
-            data.SessionData.DriverInfo.Drivers[carIdx].IRating = iRating;
-            data.SessionData.DriverInfo.Drivers[carIdx].LicString = licString;
-            data.SessionData.DriverInfo.DriverCarIdx = driverCarIdx;
-            data.SessionData.DriverInfo.Drivers[carIdx].IsSpectator = isSpectator;
-
-            SetCarState(carIdx, data, carState ?? new CarState());
-
-            return data;
-        }
-
-        private void SetCarState(long carIdx, DataSample data, CarState carState)
-        {
-            data.Telemetry["CarIdxLap"] = new int[MAXCARS];
-            data.Telemetry["CarIdxLapCompleted"] = new int[MAXCARS];
-
-            data.Telemetry.CarIdxLapCompleted[carIdx] = carState.StintStartLap;
-            data.Telemetry["FuelLevel"] = carState.StintFuelLevel;
-            data.Telemetry["SessionTime"] = carState.StintStartTime;
-        }
-
-        private static DataSample CreateDataSample()
-        {
-            var driverInfo = new SessionData._DriverInfo();
-            driverInfo.Drivers = Enumerable.Repeat(new SessionData._DriverInfo._Drivers(), MAXCARS).ToArray(); // Default to 64 drivers, can be reduced if needed
-
-            var sessionData = new SessionData
+            for (int i = 0; i < carIdx; i++)
             {
-                CameraInfo = new SessionData._CameraInfo(),
-                DriverInfo = driverInfo,
-                RadioInfo = new SessionData._RadioInfo(),
-                SessionInfo = new SessionData._SessionInfo(),
-                SplitTimeInfo = new SessionData._SplitTimeInfo(),
-                WeekendInfo = new SessionData._WeekendInfo()
-            };
+                cars.Add(new Car { CarIdx = i });
+            }
 
-            var telemetry = new Telemetry();
-            
-            return new DataSample
+            cars.Add(new Car
             {
-                SessionData = sessionData,
-                Telemetry = telemetry,
+                CarIdx = carIdx,
+                CarNumber = carNumber,
+                UserId = userId,
+                UserName = userName,
+                TeamId = teamId,
+                TeamName = teamName,
+                CarName = carScreenName,
+                CarNameShort = carScreenNameShort,
+                IRating = iRating,
+                License = licString,
+                IsSpectator = isSpectator,
+            });
+
+            return new TestState
+            {
+                SessionTime = sessionTime,
+                Cars = cars.ToArray(),
+                DriverCarIdx = driverCarIdx,
             };
         }
 
         public IEnumerator<object[]> GetEnumerator()
         {
-            return data.Select(m => new [] {m}).GetEnumerator(); // Create an object array with the data sample to be used by TestTheory data in tests as params
+            return data.Select(m => new[] { m }).GetEnumerator(); // Create an object array with the data sample to be used by TestTheory data in tests as params
         }
 
         IEnumerator IEnumerable.GetEnumerator()

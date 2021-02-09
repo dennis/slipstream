@@ -1,7 +1,6 @@
-﻿using iRacingSDK;
-using Slipstream.Components.IRacing.Plugins.Models;
+﻿using Slipstream.Components.IRacing.Plugins.Models;
 using Slipstream.Shared;
-using System;
+using static Slipstream.Components.IRacing.IIRacingEventFactory;
 
 namespace Slipstream.Components.IRacing.Plugins.Trackers
 {
@@ -16,17 +15,17 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(DataSample data, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
         {
             var weatherInfo = EventFactory.CreateIRacingWeatherInfo
             (
-                sessionTime: data.Telemetry.SessionTime,
-                skies: data.Telemetry.Skies,
-                surfaceTemp: data.Telemetry.TrackTempCrew,
-                airTemp: data.Telemetry.AirTemp,
-                airPressure: data.Telemetry.AirPressure,
-                relativeHumidity: data.Telemetry.RelativeHumidity,
-                fogLevel: data.Telemetry.FogLevel
+                sessionTime: currentState.SessionTime,
+                skies: (Skies)(int)currentState.Skies,
+                surfaceTemp: currentState.TrackTempCrew,
+                airTemp: currentState.AirTemp,
+                airPressure: currentState.AirPressure,
+                relativeHumidity: currentState.RelativeHumidity,
+                fogLevel: currentState.FogLevel
             );
 
             if (state.LastWeatherInfo == null || weatherInfo.DifferentTo(state.LastWeatherInfo) || state.SendWeatherInfo)

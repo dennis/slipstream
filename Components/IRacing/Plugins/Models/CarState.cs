@@ -1,5 +1,4 @@
-﻿using iRacingSDK;
-using Slipstream.Components.IRacing.Events;
+﻿using Slipstream.Components.IRacing.Events;
 
 namespace Slipstream.Components.IRacing.Plugins.Models
 {
@@ -16,13 +15,13 @@ namespace Slipstream.Components.IRacing.Plugins.Models
         public float StintFuelLevel { get; set; }
         public double StintStartTime { get; set; }
 
-        public static CarState Build(long idx, DataSample data)
+        public static CarState Build(long idx, GameState.IState gameState)
         {
             return new CarState
             {
-                StintStartLap = data.Telemetry.CarIdxLapCompleted[idx],
-                StintFuelLevel = data.Telemetry.FuelLevel,
-                StintStartTime = data.Telemetry.SessionTime
+                StintStartLap = gameState.Cars[idx].LapsCompleted,
+                StintFuelLevel = gameState.FuelLevel, // FIXME: This shouldn't be set, unless it's our car
+                StintStartTime = gameState.SessionTime
             };
         }
 

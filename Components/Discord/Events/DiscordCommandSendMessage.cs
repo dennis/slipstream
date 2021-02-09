@@ -12,7 +12,7 @@ namespace Slipstream.Components.Discord.Events
 
         public ulong ChannelId { get; set; }
 
-        public string Message { get; set; }
+        public string Message { get; set; } = string.Empty;
 
         public bool TextToSpeech { get; set; }
     }

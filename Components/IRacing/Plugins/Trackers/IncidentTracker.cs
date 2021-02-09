@@ -1,7 +1,5 @@
-﻿using iRacingSDK;
-using Slipstream.Components.IRacing.Plugins.Models;
+﻿using Slipstream.Components.IRacing.Plugins.Models;
 using Slipstream.Shared;
-using System;
 
 #nullable enable
 
@@ -18,9 +16,9 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(DataSample data, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
         {
-            int incidents = Convert.ToInt32(data.Telemetry["PlayerCarDriverIncidentCount"]);
+            int incidents = currentState.DriverIncidentCount;
             var incidentDelta = incidents - state.DriverState_.PlayerCarDriverIncidentCount;
 
             if (incidentDelta > 0)

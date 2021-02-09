@@ -1,5 +1,4 @@
-﻿using iRacingSDK;
-using Slipstream.Components.IRacing.Plugins.Models;
+﻿using Slipstream.Components.IRacing.Plugins.Models;
 using Slipstream.Shared;
 using System.Collections.Generic;
 
@@ -31,10 +30,10 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
             DataTrackers.Add(new CarPositionTracker(eventBus, eventFactory));
         }
 
-        public void HandleSample(DataSample data)
+        public void Handle(GameState.IState currentState)
         {
             foreach (var t in DataTrackers)
-                t.Handle(data, TrackerState);
+                t.Handle(currentState, TrackerState);
         }
     }
 }

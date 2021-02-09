@@ -1,7 +1,4 @@
-﻿using iRacingSDK;
-using Slipstream.Shared;
-using System;
-using System.Diagnostics;
+﻿using Slipstream.Shared;
 using System.Threading;
 
 #nullable enable
@@ -10,9 +7,10 @@ namespace Slipstream.Components.IRacing.Plugins
 {
     internal class IRacingPlugin : BasePlugin
     {
+        private readonly GameState.Mapper Mapper = new GameState.Mapper();
+
         internal const int MAX_CARS = 64;
 
-        private readonly iRacingConnection Connection = new iRacingConnection();
         private readonly IIRacingEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly Trackers.Trackers DataTrackers;
@@ -35,28 +33,20 @@ namespace Slipstream.Components.IRacing.Plugins
 
         public override void Loop()
         {
-            try
-            {
-                foreach (var data in Connection.GetDataFeed().WithCorrectedDistances().WithCorrectedPercentages())
-                {
-                    DataTrackers.HandleSample(data);
-                    break; // give control back to PluginWorker
-                }
-            }
-            catch (Exception e)
-            {
-                if (e.Message == "Attempt to read session data before connection to iRacing" || e.Message == "Attempt to read telemetry data before connection to iRacing")
-                {
-                    if (DataTrackers.Connected)
-                    {
-                        DataTrackers.Connected = false;
-                        EventBus.PublishEvent(EventFactory.CreateIRacingDisconnected());
-                    }
-                    Thread.Sleep(5000);
-                }
+            var state = Mapper.GetState();
 
-                Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.StackTrace);
+            if (state != null)
+            {
+                DataTrackers.Handle(state);
+            }
+            else
+            {
+                if (DataTrackers.Connected)
+                {
+                    DataTrackers.Connected = false;
+                    EventBus.PublishEvent(EventFactory.CreateIRacingDisconnected());
+                }
+                Thread.Sleep(5000);
             }
         }
     }

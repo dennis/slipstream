@@ -1,4 +1,4 @@
-﻿using iRacingSDK;
+﻿using Slipstream.Components.IRacing.Plugins.GameState;
 using Slipstream.Components.IRacing.Plugins.Models;
 using Slipstream.Shared;
 
@@ -17,38 +17,38 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(DataSample data, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
         {
-            var sessionFlags = data.Telemetry.SessionFlags;
+            var sessionFlags = currentState.SessionFlags;
 
             var @event = EventFactory.CreateIRacingRaceFlags
             (
-                sessionTime: data.Telemetry.SessionTime,
-                black: sessionFlags.HasFlag(SessionFlags.black),
-                blue: sessionFlags.HasFlag(SessionFlags.blue),
-                caution: sessionFlags.HasFlag(SessionFlags.caution),
-                cautionWaving: sessionFlags.HasFlag(SessionFlags.cautionWaving),
-                checkered: sessionFlags.HasFlag(SessionFlags.checkered),
-                crossed: sessionFlags.HasFlag(SessionFlags.crossed),
-                debris: sessionFlags.HasFlag(SessionFlags.debris),
-                disqualify: sessionFlags.HasFlag(SessionFlags.disqualify),
-                fiveToGo: sessionFlags.HasFlag(SessionFlags.fiveToGo),
-                furled: sessionFlags.HasFlag(SessionFlags.furled),
-                green: sessionFlags.HasFlag(SessionFlags.green),
-                greenHeld: sessionFlags.HasFlag(SessionFlags.greenHeld),
-                oneLapToGreen: sessionFlags.HasFlag(SessionFlags.oneLapToGreen),
-                randomWaving: sessionFlags.HasFlag(SessionFlags.randomWaving),
-                red: sessionFlags.HasFlag(SessionFlags.red),
-                repair: sessionFlags.HasFlag(SessionFlags.repair),
-                servicible: sessionFlags.HasFlag(SessionFlags.servicible),
-                startGo: sessionFlags.HasFlag(SessionFlags.startGo),
-                startHidden: sessionFlags.HasFlag(SessionFlags.startHidden),
-                startReady: sessionFlags.HasFlag(SessionFlags.startReady),
-                startSet: sessionFlags.HasFlag(SessionFlags.startSet),
-                tenToGo: sessionFlags.HasFlag(SessionFlags.tenToGo),
-                white: sessionFlags.HasFlag(SessionFlags.white),
-                yellow: sessionFlags.HasFlag(SessionFlags.yellow),
-                yellowWaving: sessionFlags.HasFlag(SessionFlags.yellowWaving)
+                sessionTime: currentState.SessionTime,
+                black: sessionFlags.HasFlag(SessionFlags.Black),
+                blue: sessionFlags.HasFlag(SessionFlags.Blue),
+                caution: sessionFlags.HasFlag(SessionFlags.Caution),
+                cautionWaving: sessionFlags.HasFlag(SessionFlags.CautionWaving),
+                checkered: sessionFlags.HasFlag(SessionFlags.Checkered),
+                crossed: sessionFlags.HasFlag(SessionFlags.Crossed),
+                debris: sessionFlags.HasFlag(SessionFlags.Debris),
+                disqualify: sessionFlags.HasFlag(SessionFlags.Disqualify),
+                fiveToGo: sessionFlags.HasFlag(SessionFlags.FiveToGo),
+                furled: sessionFlags.HasFlag(SessionFlags.Furled),
+                green: sessionFlags.HasFlag(SessionFlags.Green),
+                greenHeld: sessionFlags.HasFlag(SessionFlags.GreenHeld),
+                oneLapToGreen: sessionFlags.HasFlag(SessionFlags.OneLapToGreen),
+                randomWaving: sessionFlags.HasFlag(SessionFlags.RandomWaving),
+                red: sessionFlags.HasFlag(SessionFlags.Red),
+                repair: sessionFlags.HasFlag(SessionFlags.Repair),
+                servicible: sessionFlags.HasFlag(SessionFlags.Servicible),
+                startGo: sessionFlags.HasFlag(SessionFlags.StartGo),
+                startHidden: sessionFlags.HasFlag(SessionFlags.StartHidden),
+                startReady: sessionFlags.HasFlag(SessionFlags.StartReady),
+                startSet: sessionFlags.HasFlag(SessionFlags.StartSet),
+                tenToGo: sessionFlags.HasFlag(SessionFlags.TenToGo),
+                white: sessionFlags.HasFlag(SessionFlags.White),
+                yellow: sessionFlags.HasFlag(SessionFlags.Yellow),
+                yellowWaving: sessionFlags.HasFlag(SessionFlags.YellowWaving)
             );
 
             if (state.LastRaceFlags?.DifferentTo(@event) != true || state.SendRaceFlags)

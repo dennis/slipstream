@@ -1,8 +1,8 @@
-﻿using iRacingSDK;
-using Moq;
+﻿using Moq;
 using Slipstream.Components.IRacing;
 using Slipstream.Components.IRacing.EventFactory;
 using Slipstream.Components.IRacing.Events;
+using Slipstream.Components.IRacing.Plugins.GameState;
 using Slipstream.Components.IRacing.Plugins.Models;
 using Slipstream.Components.IRacing.Plugins.Trackers;
 using Slipstream.UnitTests.TestData;
@@ -28,7 +28,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
 
         [Theory]
         [ClassData(typeof(CarInfoDataSampleTestData))]
-        public void HandleRaisesIRacingCarInfo(DataSample dataSample)
+        internal void HandleRaisesIRacingCarInfo_ForAllCars(IState currentState)
         {
             // arrange
             var eventBusMock = new Mock<Shared.IEventBus>();
@@ -37,10 +37,10 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             var sut = new CarInfoTracker(eventBusMock.Object, eventFactory);
 
             // act
-            sut.Handle(dataSample, trackerDataState);
+            sut.Handle(currentState, trackerDataState);
 
             // assert
-            eventBusMock.Verify(eb => eb.PublishEvent(It.IsAny<IRacingCarInfo>()), Times.Once(), "IRacingCarInfo event not raised");
+            eventBusMock.Verify(eb => eb.PublishEvent(It.IsAny<IRacingCarInfo>()), Times.Once, "IRacingCarInfo event not raised");
         }
     }
 }

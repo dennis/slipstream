@@ -1,5 +1,4 @@
-﻿using iRacingSDK;
-using Slipstream.Components.IRacing.Plugins.Models;
+﻿using Slipstream.Components.IRacing.Plugins.Models;
 using Slipstream.Shared;
 
 #nullable enable
@@ -17,7 +16,7 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(DataSample data, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
         {
             if (!state.Connected)
             {

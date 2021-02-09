@@ -21,6 +21,11 @@ namespace Slipstream.Components.IRacing
             Road, Oval, DirtOval, DirtRoad
         }
 
+        public enum Skies
+        {
+            Clear = 0, PartlyCloudy = 1, MostlyCloudy = 2, Overcast = 3
+        }
+
         IRacingCarCompletedLap CreateIRacingCarCompletedLap(double sessionTime, long carIdx, double time, int lapsCompleted, float? fuelDiff, bool localUser);
 
         IRacingCarInfo CreateIRacingCarInfo(
@@ -119,7 +124,7 @@ namespace Slipstream.Components.IRacing
 
         IRacingWeatherInfo CreateIRacingWeatherInfo(
             double sessionTime,
-            iRacingSDK.Skies skies,
+            Skies skies,
             float surfaceTemp,
             float airTemp,
             float airPressure,

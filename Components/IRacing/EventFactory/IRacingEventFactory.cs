@@ -272,7 +272,7 @@ namespace Slipstream.Components.IRacing.EventFactory
 
         public IRacingWeatherInfo CreateIRacingWeatherInfo(
             double sessionTime,
-            iRacingSDK.Skies skies,
+            Skies skies,
             float surfaceTemp,
             float airTemp,
             float airPressure,

@@ -6,20 +6,30 @@ to be sure your script will see them.
 When IRacingPlugin can fetch data from IRacing it will issue a `IRacingConnected`. Similar when 
 connection is lost a `IRacingDisconnected` is sent.
 
-When connected to IRacing you might receive one or more of the following events:
- - `IRacingCarCompletedLap`
- - `IRacingCarInfo`
- - `IRacingCurrentSession`
- - `IRacingDriverIncident`
- - `IRacingPitEnter`
- - `IRacingPitExit`
- - `IRacingPitstopReport`
- - `IRacingRaceFlags`
- - `IRacingSessionState`
- - `IRacingTrackInfo`
- - `IRacingWeatherInfo`
+When connected to IRacing you will get a number of events depending on what happens in IRacing.
 
 ## Lua
+
+<details><summary>internal:register_plugin({plugin_name = "IRacingPlugin"})</summary><br />
+Registers the IRacingPlugin. 
+
+| Parameter      | Type    | Description                                            |
+|:---------------|:-------:|:-------------------------------------------------------|
+| plugin_name    | string  | "IRacingPlugin"                                        |
+| plugin_id      | string  | Ignored                                                |
+| send_raw_state | boolean | Default false. If enabled, sends raw IRacing gamestate |
+
+
+If you enable `send_raw_state`, you will get an event 60 times a second, containing 
+all supported information from IRacing. You can use this to act on changes that isn't 
+directly supported. As this causes a significantly load, it is disabled per default.
+
+```lua
+internal:register_plugin({plugin_name = "IRacingPlugin", send_raw_estate = true}}
+```
+
+The raw state is sent as `IRacingRaw` events.
+</details>
 
 <details><summary>iracing:send_car_info()</summary><br />
 Request IRacingPlugin to send cars in session.
@@ -460,6 +470,18 @@ For user, this is sent after a pitshop, showing some data about the pitstop.
 
 **JSON Example:**
 `{"EventType":"IRacingRaceFlags","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":1058.3000081380189,"Black":false,"Blue":false,"Caution":false,"CautionWaving":false,"Checkered":false,"Crossed":false,"Debris":false,"Disqualify":false,"FiveToGo":false,"Furled":false,"Green":false,"GreenHeld":false,"OneLapToGreen":false,"RandomWaving":false,"Red":false,"Repair":false,"Servicible":false,"StartGo":false,"StartHidden":true,"StartReady":false,"StartSet":false,"TenToGo":false,"White":false,"Yellow":false,"YellowWaving":false}`
+</details>
+
+<details><summary>IRacingRaw</summary><br />
+
+| Name            | Type                                                     | Description                                                       |
+|:----------------|:--------------------------------------------------------:|:------------------------------------------------------------------|
+| EventType       | string                                                   | `IRacingRaw` (constant)                                           |
+| ExcludeFromTxrx | boolean                                                  | false (constant)                                                  |
+| Uptime          | integer                                                  | Time of when the message was sent via Eventbus (in milliseconds). |
+| CurrentState    | [IState](Components/IRacing/Plugins/GameState/IState.cs) | Object containing Slipstreams IRacing state                       |
+
+`IState` is not documented. Please refer to the sourcecode.
 </details>
 
 <details><summary>IRacingTrackInfo</summary><br />

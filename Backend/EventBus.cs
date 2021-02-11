@@ -9,8 +9,8 @@ namespace Slipstream.Backend
         private readonly IList<EventBusSubscription> Listeners = new List<EventBusSubscription>();
         private readonly IList<IEvent> Events = new List<IEvent>(EVENT_MAX_SIZE);
         private readonly List<IEvent> PendingEvents = new List<IEvent>();
-        private const int EVENT_MAX_SIZE = 10000;
-        private const int EVENT_DELETE_SIZE = 1000; // when we hit EVENT_MAX_SIZE. How many elements should we remove?
+        private const int EVENT_MAX_SIZE = 1000;
+        private const int EVENT_DELETE_SIZE = 200; // when we hit EVENT_MAX_SIZE. How many elements should we remove?
         private volatile bool enabled = false;
         private readonly ulong StartedAt;
 

@@ -1,6 +1,6 @@
 ﻿namespace Slipstream.Components.IRacing.Plugins.GameState
 {
-    internal interface ISession
+    public interface ISession
     {
         public bool LapsLimited { get; }
         public bool TimeLimited { get; }

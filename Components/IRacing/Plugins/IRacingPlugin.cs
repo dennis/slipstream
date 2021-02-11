@@ -1,4 +1,7 @@
-﻿using Slipstream.Shared;
+﻿using Slipstream.Components.IRacing.Plugins.GameState;
+using Slipstream.Shared;
+using Slipstream.Shared.Helpers.StrongParameters;
+using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using System.Threading;
 
 #nullable enable
@@ -7,18 +10,31 @@ namespace Slipstream.Components.IRacing.Plugins
 {
     internal class IRacingPlugin : BasePlugin
     {
-        private readonly GameState.Mapper Mapper = new GameState.Mapper();
+        public static DictionaryValidator ConfigurationValidator { get; }
+
+        private readonly GameState.Mapper Mapper;
 
         internal const int MAX_CARS = 64;
 
         private readonly IIRacingEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly Trackers.Trackers DataTrackers;
+        private readonly bool PublishRawState = false;
 
-        public IRacingPlugin(IEventHandlerController eventHandlerController, string id, IIRacingEventFactory eventFactory, IEventBus eventBus) : base(eventHandlerController, id, "IRacingPlugin", id)
+        static IRacingPlugin()
+        {
+            ConfigurationValidator = new DictionaryValidator().PermitBool("send_raw_state");
+        }
+
+        public IRacingPlugin(IEventHandlerController eventHandlerController, string id, IIRacingEventFactory eventFactory, IEventBus eventBus, Parameters configuration) : base(eventHandlerController, id, "IRacingPlugin", id)
         {
             EventFactory = eventFactory;
             EventBus = eventBus;
+            Mapper = new GameState.Mapper(new StateFactory());
+
+            ConfigurationValidator.Validate(configuration);
+
+            PublishRawState = configuration.ExtractOrDefault("send_raw_state", false);
 
             DataTrackers = new Trackers.Trackers(eventBus, eventFactory);
 
@@ -37,6 +53,11 @@ namespace Slipstream.Components.IRacing.Plugins
 
             if (state != null)
             {
+                if (PublishRawState)
+                {
+                    EventBus.PublishEvent(EventFactory.CreateIRacingRaw(state));
+                }
+
                 DataTrackers.Handle(state);
             }
             else

@@ -1,5 +1,5 @@
-﻿using Serilog;
-using Slipstream.Shared;
+﻿using Slipstream.Shared;
+using System;
 using System.IO;
 
 #nullable enable
@@ -9,6 +9,7 @@ namespace Slipstream.Components.Internal.Services
     public class LuaContext : ILuaContext
     {
         private readonly NLua.LuaFunction? HandleFunc;
+        private UInt64 LastLuaGC = 0;
 
         private NLua.Lua? Lua;
 
@@ -47,6 +48,13 @@ namespace Slipstream.Components.Internal.Services
 
         public void HandleEvent(IEvent @event)
         {
+            // Perform GC in Lua approx every second
+            if (@event.Uptime - LastLuaGC > 1000)
+            {
+                LastLuaGC = @event.Uptime;
+                Lua.DoString("collectgarbage()");
+            }
+
             HandleFunc?.Call(@event);
         }
     }

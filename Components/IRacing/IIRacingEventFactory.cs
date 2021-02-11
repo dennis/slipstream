@@ -1,4 +1,5 @@
 ﻿using Slipstream.Components.IRacing.Events;
+using Slipstream.Components.IRacing.Plugins.GameState;
 
 #nullable enable
 
@@ -154,5 +155,7 @@ namespace Slipstream.Components.IRacing
         IRacingWarmup CreateIRacingWarmup(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category);
 
         IRacingCarPosition CreateIRacingCarPosition(double sessionTime, int carIdx, bool localUser, int positionInClass, int positionInRace);
+
+        IRacingRaw CreateIRacingRaw(IState state);
     }
 }

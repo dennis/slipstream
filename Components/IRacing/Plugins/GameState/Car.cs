@@ -1,8 +1,6 @@
-﻿using iRacingSDK;
-
-namespace Slipstream.Components.IRacing.Plugins.GameState
+﻿namespace Slipstream.Components.IRacing.Plugins.GameState
 {
-    internal class Car
+    public class Car
     {
         public int CarIdx { get; set; }
         public string CarNumber { get; set; } = string.Empty;
@@ -19,30 +17,5 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
         public bool OnPitRoad { get; set; }
         public int ClassPosition { get; set; }
         public int Position { get; set; }
-
-        public Car()
-        {
-        }
-
-        public Car(int idx, DataSample ds)
-        {
-            var d = ds.SessionData.DriverInfo.Drivers[idx];
-
-            CarIdx = idx;
-            CarNumber = d.CarNumber;
-            UserId = d.UserID;
-            UserName = d.UserName;
-            TeamId = d.TeamID;
-            TeamName = d.TeamName;
-            CarName = d.CarScreenName;
-            CarNameShort = d.CarScreenNameShort;
-            IRating = d.IRating;
-            License = d.LicString;
-            IsSpectator = d.IsSpectator != 0;
-            LapsCompleted = ds.Telemetry.CarIdxLapCompleted[idx];
-            OnPitRoad = ds.Telemetry.CarIdxOnPitRoad[idx];
-            ClassPosition = ds.Telemetry.CarIdxClassPosition[idx];
-            Position = ds.Telemetry.CarIdxPosition[idx];
-        }
     }
 }

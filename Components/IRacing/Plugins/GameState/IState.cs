@@ -4,7 +4,7 @@ using static Slipstream.Components.IRacing.IIRacingEventFactory;
 
 namespace Slipstream.Components.IRacing.Plugins.GameState
 {
-    internal interface IState
+    public interface IState
     {
         public double SessionTime { get; }
         public int SessionNum { get; }

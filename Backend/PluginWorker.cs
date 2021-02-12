@@ -46,6 +46,8 @@ namespace Slipstream.Backend
 
                 Plugin.Loop();
             }
+
+            Subscription.Dispose();
         }
 
         private long GetTick()

@@ -23,7 +23,8 @@ namespace Slipstream.Components.IRacing
                 ctx.EventHandlerController,
                 ctx.PluginId,
                 ctx.EventFactory.Get<IIRacingEventFactory>(),
-                ctx.EventBus
+                ctx.EventBus,
+                ctx.PluginParameters
             );
         }
     }

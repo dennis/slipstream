@@ -1,4 +1,5 @@
 ﻿using Slipstream.Components.IRacing.Events;
+using Slipstream.Components.IRacing.Plugins.GameState;
 using System;
 using static Slipstream.Components.IRacing.IIRacingEventFactory;
 
@@ -405,6 +406,14 @@ namespace Slipstream.Components.IRacing.EventFactory
                 LocalUser = localUser,
                 PositionInClass = positionInClass,
                 PositionInRace = positionInRace
+            };
+        }
+
+        public IRacingRaw CreateIRacingRaw(IState state)
+        {
+            return new IRacingRaw
+            {
+                CurrentState = state
             };
         }
     }

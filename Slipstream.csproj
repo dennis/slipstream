@@ -172,6 +172,7 @@
     <Compile Include="Components\IRacing\Plugins\GameState\State.cs" />
     <Compile Include="Components\IRacing\Plugins\GameState\Mapper.cs" />
     <Compile Include="Components\IRacing\Plugins\GameState\StateFactory.cs" />
+    <Compile Include="Components\IRacing\Plugins\Models\LapState.cs" />
     <Compile Include="Components\IRacing\Plugins\Models\CarState.cs" />
     <Compile Include="Components\IRacing\Plugins\Models\DriverState.cs" />
     <Compile Include="Components\IRacing\Plugins\Trackers\CarInfoTracker.cs" />

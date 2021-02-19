@@ -27,6 +27,15 @@ namespace Slipstream.Components.IRacing
             Clear = 0, PartlyCloudy = 1, MostlyCloudy = 2, Overcast = 3
         }
 
+        public enum CarLocation
+        {
+            NotInWorld = -1,
+            OffTrack,
+            InPitStall,
+            AproachingPits,
+            OnTrack
+        }
+
         IRacingCarCompletedLap CreateIRacingCarCompletedLap(double sessionTime, long carIdx, double time, int lapsCompleted, float? fuelDiff, bool localUser);
 
         IRacingCarInfo CreateIRacingCarInfo(

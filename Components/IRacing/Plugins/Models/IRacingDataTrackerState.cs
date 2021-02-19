@@ -16,6 +16,7 @@ namespace Slipstream.Components.IRacing.Plugins.Models
         public bool Connected { get; set; }
         public IRacingWeatherInfo? LastWeatherInfo { get; set; }
         public IDictionary<long, CarState> CarsTracked { get; set; } = new Dictionary<long, CarState>();
+        public IDictionary<long, LapState> Laps { get; set; } = new Dictionary<long, LapState>();
         public DriverState DriverState_ { get; set; } = new DriverState();
         public IRacingRaceFlags? LastRaceFlags { get; set; }
         public IRacingSessionTypeEnum LastSessionType { get; set; }
@@ -36,6 +37,7 @@ namespace Slipstream.Components.IRacing.Plugins.Models
             LastRaceFlags = null;
             CarsTracked.Clear();
             DriverState_.ClearState();
+            Laps.Clear();
 
             for (int i = 0; i < IRacingPlugin.MAX_CARS; i++)
             {

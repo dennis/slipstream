@@ -1,5 +1,6 @@
 ﻿using Slipstream.Components.IRacing.Plugins.Models;
 using Slipstream.Shared;
+using System.Diagnostics;
 
 #nullable enable
 
@@ -18,58 +19,124 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
 
         public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
         {
-            // We cant use data.Telemetry.Cars[].LastTime, as it wont contain data if
-            // the driver had an incident. So we calculate it ourself which will be slightly
-            // off compared to IRacings own timing.
-            // If you plan to use LastTime, please remember to wait approx 2.5 before reading
-            // LastTime, as the value is updated with about 2.5s delay
             var now = currentState.SessionTime;
 
             foreach (var car in currentState.Cars)
             {
-                if (!state.CarsTracked.TryGetValue(car.CarIdx, out CarState carState))
-                {
-                    carState = CarState.Build(car.CarIdx, currentState);
-                    state.CarsTracked.Add(car.CarIdx, carState);
-                }
-
                 var lapsCompleted = car.LapsCompleted;
+                var localUser = car.CarIdx == currentState.DriverCarIdx;
 
-                if (lapsCompleted != -1 && carState.LastLap != lapsCompleted)
+                if (!state.Laps.TryGetValue(car.CarIdx, out LapState lapState))
                 {
-                    carState.ObservedCrossFinishingLine++;
-                    if (lapsCompleted == 0) // This is initial lap, so we can use times from next lap
-                        carState.ObservedCrossFinishingLine++;
+                    Debug.WriteLine($"{now} Added car: {car.CarIdx} at {car.Location}");
 
-                    bool localUser = car.CarIdx == currentState.DriverCarIdx;
-
-                    // 1st time is when leaving the pits / or whatever lap it is on when we join
-                    // 2nd time is start of first real lap (that we see in full)
-                    // 3rd+ is lap times (we can begin timing laps)
-                    // if "we" are doing laps, then we know we joined with the car,
-                    // so we can track laps from the 1st one.
-                    // for everybody else, we need to see them crossing the line 3 or more times as describe above
-                    if (carState.ObservedCrossFinishingLine >= 3 || (localUser && lapsCompleted > 0))
+                    lapState = new LapState
                     {
-                        var lapTime = now - carState.LastLapTime;
+                        Location = car.Location,
+                        LapsCompleted = lapsCompleted,
+                        TimingEnabled = false,
+                    };
 
-                        var fuelLeft = currentState.FuelLevel;
+                    state.Laps.Add(car.CarIdx, lapState);
+                }
+                else
+                {
+                    if (lapState.Location == IIRacingEventFactory.CarLocation.InPitStall && car.Location == IIRacingEventFactory.CarLocation.AproachingPits)
+                    {
+                        Debug.WriteLine($"{now} Car-{car.CarIdx} exiting pits. enabled timing as of {now}");
+                        lapState.TimingEnabled = true;
+                        lapState.CurrentLapStartTime = now;
+                    }
+                    else if (lapState.TimingEnabled && car.Location == IIRacingEventFactory.CarLocation.NotInWorld)
+                    {
+                        Debug.WriteLine($"{now} Car-{car.CarIdx} Resetting - disable timings. Using 0 as CurrentLapStartTime");
+                        lapState.TimingEnabled = false;
+                    }
+                    else if (lapsCompleted != lapState.LapsCompleted && lapsCompleted != -1)
+                    {
+                        Debug.WriteLine($"{now} Car-{car.CarIdx} new lap lapsCompleted={lapsCompleted}, lapState.LapsCompleted={lapState.LapsCompleted}, lapState.TimingEnabled={lapState.TimingEnabled}");
 
-                        float? usedFuel = fuelLeft - carState.FuelLevelLastLap;
-                        carState.FuelLevelLastLap = fuelLeft;
+                        if (car.CarIdx == 5)
+                        {
+                            Debug.WriteLine("DEBUG");
+                        }
+
+                        lapState.OurLapTimeMeasurement = now - lapState.CurrentLapStartTime;
+                        lapState.CurrentLapStartTime = now;
+                        lapState.PendingLapTime = lapState.TimingEnabled;
+                        lapState.TimingEnabled = true;
+
+                        if (localUser)
+                        {
+                            lapState.LastLapFuelDelta = currentState.FuelLevel - lapState.FuelLevelAtLapStart;
+                        }
+                        else
+                        {
+                            lapState.LastLapFuelDelta = null;
+                        }
+
+                        lapState.FuelLevelAtLapStart = currentState.FuelLevel;
+                    }
+
+                    if (lapState.TimingEnabled && lapState.PendingLapTime && (lapState.CurrentLapStartTime + 3) <= now)
+                    {
+                        // If possible we will use the timing provided by IRacing. These are updated after approx 2.5s
+                        // after we cross s/f line. In case of incidents, no laptime will be provided, and we'll fall back
+                        // to our own timing (which can be pretty inaccurate)
+
+                        Debug.WriteLine($"{now} Car-{car.CarIdx}. Pending time. 3s delay localUser={localUser}, car.LastLapTime={car.LastLapTime}, lapState.OurLapTimeMeasurement={lapState.OurLapTimeMeasurement}");
+
+                        var time = car.LastLapTime;
+
+                        if (time == -1)
+                        {
+                            Debug.WriteLine($"{now} Car-{car.CarIdx}. Using own timing");
+                            time = lapState.OurLapTimeMeasurement;
+                        }
 
                         var @event = EventFactory.CreateIRacingCarCompletedLap(
                             sessionTime: now,
                             carIdx: car.CarIdx,
-                            time: lapTime,
+                            time: time,
                             lapsCompleted: lapsCompleted,
-                            fuelDiff: localUser ? usedFuel : null,
-                            localUser: localUser);
+                            fuelDiff: lapState.LastLapFuelDelta,
+                            localUser: localUser
+                        );
 
                         EventBus.PublishEvent(@event);
+
+                        lapState.PendingLapTime = false;
                     }
-                    carState.LastLapTime = now;
-                    carState.LastLap = lapsCompleted;
+
+                    lapState.LapsCompleted = lapsCompleted;
+                    lapState.Location = car.Location;
+                    /*
+
+    if (car.CarIdx == 6 && false)
+        Debug.WriteLine($"Car-{car.CarIdx} car.Location={car.Location}, lapState.Location={lapState.Location}, lapState.TimingEnabled={lapState.TimingEnabled}, car.LapsCompleted={car.LapsCompleted}, lapState.LapsCompleted={lapState.LapsCompleted}");
+
+    if (car.Location != lapState.Location)
+    {
+        Debug.WriteLine($"{now} Car-{car.CarIdx} new location. lapState.TimingEnabled={lapState.TimingEnabled} car.Location={car.Location}");
+        if (lapState.TimingEnabled && car.Location == IIRacingEventFactory.CarLocation.NotInWorld)
+        {
+            Debug.WriteLine($"{now} Car-{car.CarIdx} Resetting - disable timings. Using 0 as CurrentLapStartTime");
+            lapState.TimingEnabled = false;
+            lapState.CurrentLapStartTime = 0;
+        }
+
+        // InPitStall -> AproachingPits - start of lap
+                    // WAS: Below also had !lapState.TimingEnabled &&
+        if (lapState.Location == IIRacingEventFactory.CarLocation.InPitStall && car.Location == IIRacingEventFactory.CarLocation.AproachingPits)
+        {
+            Debug.WriteLine($"{now} Car-{car.CarIdx} exiting pits. enabled timing as of {now}");
+            lapState.TimingEnabled = true;
+            lapState.CurrentLapStartTime = now;
+        }
+
+        lapState.Location = car.Location;
+    }
+*/
                 }
             }
         }

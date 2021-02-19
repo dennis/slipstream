@@ -2,17 +2,14 @@
 
 namespace Slipstream.UnitTests.TestData
 {
-    internal partial class CarInfoDataSampleTestData
+    public class TestSession : ISession
     {
-        private class TestSession : ISession
-        {
-            public bool LapsLimited { get; set; } = true;
+        public bool LapsLimited { get; set; } = true;
 
-            public bool TimeLimited { get; set; } = false;
+        public bool TimeLimited { get; set; } = false;
 
-            public double TotalSessionTime { get; set; } = 0;
+        public double TotalSessionTime { get; set; } = 0;
 
-            public int TotalSessionLaps { get; set; } = 20;
-        }
+        public int TotalSessionLaps { get; set; } = 20;
     }
 }

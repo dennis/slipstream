@@ -1,4 +1,6 @@
-﻿namespace Slipstream.Components.IRacing.Plugins.GameState
+﻿using System.Collections.Generic;
+
+namespace Slipstream.Components.IRacing.Plugins.GameState
 {
     public class Car
     {
@@ -17,5 +19,7 @@
         public bool OnPitRoad { get; set; }
         public int ClassPosition { get; set; }
         public int Position { get; set; }
+        public IIRacingEventFactory.CarLocation Location { get; set; }
+        public double LastLapTime { get; set; }
     }
 }

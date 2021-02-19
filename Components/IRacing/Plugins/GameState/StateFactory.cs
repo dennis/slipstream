@@ -2,6 +2,7 @@
 
 using iRacingSDK;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using static Slipstream.Components.IRacing.IIRacingEventFactory;
 
@@ -9,7 +10,7 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
 {
     internal class StateFactory : IStateFactory
     {
-        private Dictionary<int, Car> Cars = new Dictionary<int, Car>();
+        private readonly Dictionary<int, Car> Cars = new Dictionary<int, Car>();
 
         private static readonly Dictionary<iRacingSDK.SessionState, IRacingSessionStateEnum> SessionStateMapping = new Dictionary<iRacingSDK.SessionState, IRacingSessionStateEnum>() {
             { iRacingSDK.SessionState.Checkered, IRacingSessionStateEnum.Checkered },
@@ -101,7 +102,7 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
                 RelativeHumidity = ds.Telemetry.RelativeHumidity,
                 FogLevel = ds.Telemetry.FogLevel,
 
-                RaceCategory = IRacingCategoryTypes[ds.SessionData.WeekendInfo.Category]
+                RaceCategory = IRacingCategoryTypes[ds.SessionData.WeekendInfo.Category],
             };
 
             {
@@ -109,6 +110,12 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
                 foreach (var d in ds.SessionData.DriverInfo.Drivers)
                 {
                     int idx = (int)d.CarIdx;
+                    double lastLapTime = -1;
+
+                    if (ds.Telemetry.Session.ResultsPositions != null)
+                    {
+                        lastLapTime = ds.Telemetry.Session.ResultsPositions.Where(a => a.CarIdx == d.CarIdx).Select(a => a.LastTime).DefaultIfEmpty(-1).First();
+                    }
 
                     var car = new Car
                     {
@@ -127,6 +134,8 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
                         OnPitRoad = ds.Telemetry.CarIdxOnPitRoad[idx],
                         ClassPosition = ds.Telemetry.CarIdxClassPosition[idx],
                         Position = ds.Telemetry.CarIdxPosition[idx],
+                        Location = (IIRacingEventFactory.CarLocation)(int)ds.Telemetry.CarIdxTrackSurface[idx],
+                        LastLapTime = lastLapTime,
                     };
 
                     if (Cars.TryGetValue(idx, out Car existingCar))

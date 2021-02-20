@@ -105,7 +105,7 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
                             carIdx: car.CarIdx,
                             time: time,
                             lapsCompleted: lapsCompleted,
-                            fuelDiff: lapState.LastLapFuelDelta,
+                            fuelDelta: lapState.LastLapFuelDelta,
                             localUser: localUser
                         );
 

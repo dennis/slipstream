@@ -116,11 +116,11 @@ Published every time a driver completes a full lap.
 | CarIdx          | integer | Id of car                                                         |
 | Time            | float   | Lap time                                                          |
 | LapsCompleted   | integer | How many laps were completed                                      |
-| FuelDiff        | float   | Changes in fuel levels                                            |
+| FuelDelta       | float   | Changes in fuel levels                                            |
 | LocalUser       | boolean | Is it our car?                                                    |
 
 **JSON Example:**
-`{"EventType":"IRacingCompletedLap","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":7306.3000976104477,"CarIdx":5,"Time":7306.3000976104477,"LapsCompleted":9,"FuelDiff":null,"LocalUser":false}`
+`{"EventType":"IRacingCompletedLap","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":7306.3000976104477,"CarIdx":5,"Time":7306.3000976104477,"LapsCompleted":9,"FuelDelta":null,"LocalUser":false}`
 </details>
 
 <details><summary>IRacingCarInfo</summary><br />
@@ -429,7 +429,7 @@ For user, this is sent after a pitshop, showing some data about the pitstop.
 | WearRRM         | uint    | Tyre wear: Right Front M                                          |
 | WearRRR         | uint    | Tyre wear: Right Front R                                          |
 | Laps            | long    | Number of laps completed during stint                             |
-| FuelDiff        | float   | Fuel level changes                                                |
+| FuelDelta       | float   | Fuel level changes                                                |
 | Duration        | float   | Stint duration                                                    |
 
 </details>

@@ -187,7 +187,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             var @event = EventBus.Events[0] as IRacingCompletedLap;
 
             Assert.True(@event.CarIdx == 0);
-            Assert.True(@event.FuelDiff == -8.2f);
+            Assert.True(@event.FuelDelta == -8.2f);
             Assert.True(@event.LapsCompleted == 2);
             Assert.True(@event.LocalUser == true);
             Assert.True(@event.SessionTime == NOW);

@@ -90,7 +90,7 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
                                     wearRRR: (uint)Math.Round(currentState.RRwearR * 100),
 
                                     laps: car.LapsCompleted - carState.StintStartLap,
-                                    fuelDiff: currentState.FuelLevel - carState.StintFuelLevel,
+                                    fuelDelta: currentState.FuelLevel - carState.StintFuelLevel,
                                     duration: now - carState.StintStartTime
                                 );
 

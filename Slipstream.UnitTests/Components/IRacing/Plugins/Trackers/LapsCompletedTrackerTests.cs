@@ -68,7 +68,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
                 }
             };
             GameState.SessionTime = NOW;
-            GameState.DriverCarIdx = 1; // LappingLars is another drive, so we dont have fuel levels
+            GameState.DriverCarIdx = 1;
 
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
@@ -82,6 +82,39 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             Assert.True(TrackerState.Laps[0].FuelLevelAtLapStart == 0);
             Assert.Null(TrackerState.Laps[0].LastLapFuelDelta);
             Assert.True(TrackerState.Laps[0].LapsCompleted == 2);
+            Assert.Empty(EventBus.Events);
+        }
+
+        [Fact]
+        public void CarDoesInitialLap()
+        {
+            const float LAP_STARTED_AT = 20.0f;
+            const float NOW = 40.0f;
+            // arrange
+            TrackerState.Laps.Add(0, new LapState
+            {
+                Location = IIRacingEventFactory.CarLocation.OnTrack,
+                TimingEnabled = true,
+                LapsCompleted = -1,
+                CurrentLapStartTime = LAP_STARTED_AT,
+                FuelLevelAtLapStart = 0,
+            });
+            GameState.Cars = new Car[] {
+                new Car {
+                    Location = IIRacingEventFactory.CarLocation.OnTrack,
+                    LapsCompleted = 1,
+                }
+            };
+            GameState.SessionTime = NOW;
+            GameState.DriverCarIdx = 0;
+
+            // act
+            var sut = new LapsCompletedTracker(EventBus, EventFactory);
+            sut.Handle(GameState, TrackerState);
+
+            // assert
+            Assert.False(TrackerState.Laps[0].PendingLapTime);
+            Assert.True(TrackerState.Laps[0].TimingEnabled);
             Assert.Empty(EventBus.Events);
         }
 

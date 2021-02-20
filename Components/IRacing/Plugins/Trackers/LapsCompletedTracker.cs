@@ -43,7 +43,7 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
                 {
                     if (lapState.Location == IIRacingEventFactory.CarLocation.InPitStall && car.Location == IIRacingEventFactory.CarLocation.AproachingPits)
                     {
-                        Debug.WriteLine($"{now} Car-{car.CarIdx} exiting pits. enabled timing as of {now}");
+                        Debug.WriteLine($"{now} Car-{car.CarIdx} exiting pits. enabled timing as of {now} lapState.LapsCompleted={lapState.LapsCompleted}, lapsCompleted={lapsCompleted}");
                         lapState.TimingEnabled = true;
                         lapState.CurrentLapStartTime = now;
                     }
@@ -52,8 +52,10 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
                         Debug.WriteLine($"{now} Car-{car.CarIdx} Resetting - disable timings. Using 0 as CurrentLapStartTime");
                         lapState.TimingEnabled = false;
                     }
-                    else if (lapsCompleted != lapState.LapsCompleted && lapsCompleted != -1)
+                    else if (lapsCompleted != lapState.LapsCompleted && lapState.LapsCompleted != -1)
                     {
+                        // if previous lap was -1, then this is the initial lap and there was no previous lap, hence no timing is available
+
                         Debug.WriteLine($"{now} Car-{car.CarIdx} new lap lapsCompleted={lapsCompleted}, lapState.LapsCompleted={lapState.LapsCompleted}, lapState.TimingEnabled={lapState.TimingEnabled}");
 
                         if (car.CarIdx == 5)
@@ -63,7 +65,7 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
 
                         lapState.OurLapTimeMeasurement = now - lapState.CurrentLapStartTime;
                         lapState.CurrentLapStartTime = now;
-                        lapState.PendingLapTime = lapState.TimingEnabled;
+                        lapState.PendingLapTime = lapState.TimingEnabled && lapState.LapsCompleted != -1; ;
                         lapState.TimingEnabled = true;
 
                         if (localUser)
@@ -110,33 +112,6 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
 
                     lapState.LapsCompleted = lapsCompleted;
                     lapState.Location = car.Location;
-                    /*
-
-    if (car.CarIdx == 6 && false)
-        Debug.WriteLine($"Car-{car.CarIdx} car.Location={car.Location}, lapState.Location={lapState.Location}, lapState.TimingEnabled={lapState.TimingEnabled}, car.LapsCompleted={car.LapsCompleted}, lapState.LapsCompleted={lapState.LapsCompleted}");
-
-    if (car.Location != lapState.Location)
-    {
-        Debug.WriteLine($"{now} Car-{car.CarIdx} new location. lapState.TimingEnabled={lapState.TimingEnabled} car.Location={car.Location}");
-        if (lapState.TimingEnabled && car.Location == IIRacingEventFactory.CarLocation.NotInWorld)
-        {
-            Debug.WriteLine($"{now} Car-{car.CarIdx} Resetting - disable timings. Using 0 as CurrentLapStartTime");
-            lapState.TimingEnabled = false;
-            lapState.CurrentLapStartTime = 0;
-        }
-
-        // InPitStall -> AproachingPits - start of lap
-                    // WAS: Below also had !lapState.TimingEnabled &&
-        if (lapState.Location == IIRacingEventFactory.CarLocation.InPitStall && car.Location == IIRacingEventFactory.CarLocation.AproachingPits)
-        {
-            Debug.WriteLine($"{now} Car-{car.CarIdx} exiting pits. enabled timing as of {now}");
-            lapState.TimingEnabled = true;
-            lapState.CurrentLapStartTime = now;
-        }
-
-        lapState.Location = car.Location;
-    }
-*/
                 }
             }
         }

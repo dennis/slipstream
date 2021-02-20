@@ -42,13 +42,21 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
 
         public IState? BuildState(DataSample ds)
         {
+            IRacingSessionTypeEnum sessionType = IRacingSessionTypeEnum.Practice; // Default
+
+            // IRacing sometimes gives SessionNum == -1 back, so we need handle that
+            if (ds.Telemetry.SessionNum >= 0)
+            {
+                sessionType = IRacingSessionTypes[ds.SessionData.SessionInfo.Sessions[ds.Telemetry.SessionNum].SessionType];
+            }
+
             var state = new State
             {
                 SessionTime = ds.Telemetry.SessionTime,
-                SessionNum = ds.Telemetry.SessionNum,
+                SessionNum = Math.Max(0, ds.Telemetry.SessionNum),
                 SessionFlags = (SessionFlags)(int)ds.Telemetry.SessionFlags,
                 SessionState = SessionStateMapping[ds.Telemetry.SessionState],
-                SessionType = IRacingSessionTypes[ds.SessionData.SessionInfo.Sessions[ds.Telemetry.SessionNum].SessionType],
+                SessionType = sessionType,
 
                 DriverCarIdx = ds.SessionData.DriverInfo.DriverCarIdx,
                 DriverIncidentCount = Convert.ToInt32(ds.Telemetry["PlayerCarDriverIncidentCount"]),
@@ -112,7 +120,7 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
                     int idx = (int)d.CarIdx;
                     double lastLapTime = -1;
 
-                    if (ds.Telemetry.Session.ResultsPositions != null)
+                    if (ds.Telemetry.Session?.ResultsPositions != null)
                     {
                         lastLapTime = ds.Telemetry.Session.ResultsPositions.Where(a => a.CarIdx == d.CarIdx).Select(a => a.LastTime).DefaultIfEmpty(-1).First();
                     }

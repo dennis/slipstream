@@ -1,6 +1,4 @@
-﻿using Slipstream.Components.IRacing.Events;
-
-namespace Slipstream.Components.IRacing.Plugins.Models
+﻿namespace Slipstream.Components.IRacing.Plugins.Models
 {
     internal class LapState
     {
@@ -12,5 +10,6 @@ namespace Slipstream.Components.IRacing.Plugins.Models
         public bool PendingLapTime { get; set; }
         public float FuelLevelAtLapStart { get; set; }
         public float? LastLapFuelDelta { get; set; }
+        public int ConsecutiveNotInWorld { get; set; }
     }
 }

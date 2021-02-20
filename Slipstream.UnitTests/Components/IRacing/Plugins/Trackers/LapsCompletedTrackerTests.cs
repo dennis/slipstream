@@ -356,8 +356,32 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             });
             GameState.Cars = new Car[] {
                 new Car {
-                    Location = IIRacingEventFactory.CarLocation.NotInWorld,
-                    LapsCompleted = 2
+                    Location = IIRacingEventFactory.CarLocation.NotInWorld
+                }
+            };
+
+            // act
+            var sut = new LapsCompletedTracker(EventBus, EventFactory);
+            sut.Handle(GameState, TrackerState);
+            sut.Handle(GameState, TrackerState); // Reprocess the same GameState as new. This l
+
+            // assert
+            Assert.False(TrackerState.Laps[0].TimingEnabled);
+            Assert.True(TrackerState.Laps[0].Location == IIRacingEventFactory.CarLocation.NotInWorld);
+        }
+
+        [Fact]
+        public void IgnoreSingleNotInWorldAsThisMightJustBeDroppedFrames()
+        {
+            // arrange
+            TrackerState.Laps.Add(0, new LapState
+            {
+                Location = IIRacingEventFactory.CarLocation.OnTrack,
+                TimingEnabled = true,
+            });
+            GameState.Cars = new Car[] {
+                new Car {
+                    Location = IIRacingEventFactory.CarLocation.NotInWorld
                 }
             };
 
@@ -366,8 +390,9 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             sut.Handle(GameState, TrackerState);
 
             // assert
-            Assert.False(TrackerState.Laps[0].TimingEnabled);
+            Assert.True(TrackerState.Laps[0].TimingEnabled);
             Assert.True(TrackerState.Laps[0].Location == IIRacingEventFactory.CarLocation.NotInWorld);
+            Assert.True(TrackerState.Laps[0].ConsecutiveNotInWorld == 1);
         }
     }
 }

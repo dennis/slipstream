@@ -41,13 +41,22 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
                 }
                 else
                 {
+                    if (car.Location == IIRacingEventFactory.CarLocation.NotInWorld)
+                    {
+                        lapState.ConsecutiveNotInWorld += 1;
+                    }
+                    else
+                    {
+                        lapState.ConsecutiveNotInWorld = 0;
+                    }
+
                     if (lapState.Location == IIRacingEventFactory.CarLocation.InPitStall && car.Location == IIRacingEventFactory.CarLocation.AproachingPits)
                     {
                         Debug.WriteLine($"{now} Car-{car.CarIdx} exiting pits. enabled timing as of {now} lapState.LapsCompleted={lapState.LapsCompleted}, lapsCompleted={lapsCompleted}");
                         lapState.TimingEnabled = true;
                         lapState.CurrentLapStartTime = now;
                     }
-                    else if (lapState.TimingEnabled && car.Location == IIRacingEventFactory.CarLocation.NotInWorld)
+                    else if (lapState.TimingEnabled && car.Location == IIRacingEventFactory.CarLocation.NotInWorld && lapState.ConsecutiveNotInWorld > 1)
                     {
                         Debug.WriteLine($"{now} Car-{car.CarIdx} Resetting - disable timings. Using 0 as CurrentLapStartTime");
                         lapState.TimingEnabled = false;

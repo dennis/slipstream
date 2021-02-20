@@ -58,11 +58,6 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
 
                         Debug.WriteLine($"{now} Car-{car.CarIdx} new lap lapsCompleted={lapsCompleted}, lapState.LapsCompleted={lapState.LapsCompleted}, lapState.TimingEnabled={lapState.TimingEnabled}");
 
-                        if (car.CarIdx == 5)
-                        {
-                            Debug.WriteLine("DEBUG");
-                        }
-
                         lapState.OurLapTimeMeasurement = now - lapState.CurrentLapStartTime;
                         lapState.CurrentLapStartTime = now;
                         lapState.PendingLapTime = lapState.TimingEnabled && lapState.LapsCompleted != -1; ;

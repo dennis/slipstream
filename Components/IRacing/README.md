@@ -103,13 +103,13 @@ This function is aliased as ``iracing_send_race_flags`` (deprecated)
 
 ## Events
 
-<details><summary>IRacingCarCompletedLap</summary><br />
+<details><summary>IRacingCompletedLap</summary><br />
 
 Published every time a driver completes a full lap.
 
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
-| EventType       | string  | `IRacingCarCompletedLap` (constant)                               |
+| EventType       | string  | `IRacingCompletedLap` (constant)                                  |
 | ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | SessionTime     | float   | Time of event (seconds into the session)                          |
@@ -120,7 +120,7 @@ Published every time a driver completes a full lap.
 | LocalUser       | boolean | Is it our car?                                                    |
 
 **JSON Example:**
-`{"EventType":"IRacingCarCompletedLap","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":7306.3000976104477,"CarIdx":5,"Time":7306.3000976104477,"LapsCompleted":9,"FuelDiff":null,"LocalUser":false}`
+`{"EventType":"IRacingCompletedLap","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":7306.3000976104477,"CarIdx":5,"Time":7306.3000976104477,"LapsCompleted":9,"FuelDiff":null,"LocalUser":false}`
 </details>
 
 <details><summary>IRacingCarInfo</summary><br />
@@ -128,7 +128,7 @@ Info about a new car or car with changed details (such as driver).
 
 | Name                 | Type    | Description                                                       |
 |:---------------------|:-------:|:------------------------------------------------------------------|
-| EventType            | string  | `IRacingCarCompletedLap` (constant)                               |
+| EventType            | string  | `IRacingCarInfo` (constant)                               |
 | ExcludeFromTxrx      | boolean | false (constant)                                                  |
 | Uptime               | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | SessionTime          | float   | Time of event (seconds into the session)                          |

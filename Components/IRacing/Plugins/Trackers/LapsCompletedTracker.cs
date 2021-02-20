@@ -94,7 +94,7 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
                             time = lapState.OurLapTimeMeasurement;
                         }
 
-                        var @event = EventFactory.CreateIRacingCarCompletedLap(
+                        var @event = EventFactory.CreateIRacingCompletedLap(
                             sessionTime: now,
                             carIdx: car.CarIdx,
                             time: time,

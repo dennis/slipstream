@@ -149,9 +149,9 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             // assert
             Assert.False(TrackerState.Laps[0].PendingLapTime);
             Assert.NotEmpty(EventBus.Events);
-            Assert.True(EventBus.Events[0].EventType == "IRacingCarCompletedLap");
+            Assert.True(EventBus.Events[0].EventType == "IRacingCompletedLap");
 
-            var @event = EventBus.Events[0] as IRacingCarCompletedLap;
+            var @event = EventBus.Events[0] as IRacingCompletedLap;
 
             Assert.True(@event.CarIdx == 0);
             Assert.True(@event.FuelDiff == -8.2f);
@@ -223,9 +223,9 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             // assert
             Assert.False(TrackerState.Laps[0].PendingLapTime);
             Assert.NotEmpty(EventBus.Events);
-            Assert.True(EventBus.Events[0].EventType == "IRacingCarCompletedLap");
+            Assert.True(EventBus.Events[0].EventType == "IRacingCompletedLap");
 
-            var @event = EventBus.Events[0] as IRacingCarCompletedLap;
+            var @event = EventBus.Events[0] as IRacingCompletedLap;
 
             Assert.True(@event.Time == LAP_TIME);
         }

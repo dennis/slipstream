@@ -9,9 +9,9 @@ namespace Slipstream.Components.IRacing.EventFactory
 {
     public class IRacingEventFactory : IIRacingEventFactory
     {
-        public IRacingCarCompletedLap CreateIRacingCarCompletedLap(double sessionTime, long carIdx, double time, int lapsCompleted, float? fuelDiff, bool localUser)
+        public IRacingCompletedLap CreateIRacingCompletedLap(double sessionTime, long carIdx, double time, int lapsCompleted, float? fuelDiff, bool localUser)
         {
-            return new IRacingCarCompletedLap
+            return new IRacingCompletedLap
             {
                 SessionTime = sessionTime,
                 CarIdx = carIdx,

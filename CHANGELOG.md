@@ -26,6 +26,7 @@
   - New plugin: DiscordPlugin
   - IRacingPlugin: Fix IRacingWeatherInfo - now reports actual values and not values from start of session.
   - IRacingPlugin: Support sending "raw" game state events. Allowing you to act on data changes not directly represented as an event.
+  - IRacingPlugin: Rename IRacingCarCompletedLap to IRacingCompletedLap
 
 ## [0.4.0](https://github.com/dennis/slipstream/releases/tag/v0.3.0) (2020-01-10)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.3.0...v0.4.0)

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Slipstream.Components.IRacing.Events
 {
-    public class IRacingCarCompletedLap : IEvent
+    public class IRacingCompletedLap : IEvent
     {
-        public string EventType => "IRacingCarCompletedLap";
+        public string EventType => "IRacingCompletedLap";
         public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
         public double SessionTime { get; set; }
@@ -17,7 +17,7 @@ namespace Slipstream.Components.IRacing.Events
 
         public override bool Equals(object obj)
         {
-            return obj is IRacingCarCompletedLap lap &&
+            return obj is IRacingCompletedLap lap &&
                    EventType == lap.EventType &&
                    ExcludeFromTxrx == lap.ExcludeFromTxrx &&
                    SessionTime == lap.SessionTime &&

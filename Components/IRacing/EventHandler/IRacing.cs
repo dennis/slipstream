@@ -14,7 +14,7 @@ namespace Slipstream.Components.IRacing.EventHandler
             Parent = eventHandler;
         }
 
-        public delegate void OnIRacingCarCompletedLapHandler(EventHandlerController source, EventHandlerArgs<IRacingCarCompletedLap> e);
+        public delegate void OnIRacingCarCompletedLapHandler(EventHandlerController source, EventHandlerArgs<IRacingCompletedLap> e);
 
         public delegate void OnIRacingCarInfoHandler(EventHandlerController source, EventHandlerArgs<IRacingCarInfo> e);
 
@@ -170,10 +170,10 @@ namespace Slipstream.Components.IRacing.EventHandler
                     {
                         return IEventHandler.HandledStatus.UseDefault;
                     }
-                case IRacingCarCompletedLap tev:
+                case IRacingCompletedLap tev:
                     if (OnIRacingCarCompletedLap != null)
                     {
-                        OnIRacingCarCompletedLap.Invoke(Parent, new EventHandlerArgs<IRacingCarCompletedLap>(tev));
+                        OnIRacingCarCompletedLap.Invoke(Parent, new EventHandlerArgs<IRacingCompletedLap>(tev));
                         return IEventHandler.HandledStatus.Handled;
                     }
                     else

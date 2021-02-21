@@ -55,12 +55,14 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             // arrange
             TrackerState.Laps.Add(0, new LapState
             {
+                LastSessionNum = 0,
                 Location = IIRacingEventFactory.CarLocation.OnTrack,
                 TimingEnabled = true,
                 LapsCompleted = 1,
                 CurrentLapStartTime = LAP_STARTED_AT,
                 FuelLevelAtLapStart = 0,
             });
+            GameState.SessionNum = 0;
             GameState.Cars = new Car[] {
                 new Car {
                     Location = IIRacingEventFactory.CarLocation.OnTrack,
@@ -93,12 +95,14 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             // arrange
             TrackerState.Laps.Add(0, new LapState
             {
+                LastSessionNum = 0,
                 Location = IIRacingEventFactory.CarLocation.OnTrack,
                 TimingEnabled = true,
                 LapsCompleted = -1,
                 CurrentLapStartTime = LAP_STARTED_AT,
                 FuelLevelAtLapStart = 0,
             });
+            GameState.SessionNum = 0;
             GameState.Cars = new Car[] {
                 new Car {
                     Location = IIRacingEventFactory.CarLocation.OnTrack,
@@ -129,6 +133,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             // arrange
             TrackerState.Laps.Add(0, new LapState
             {
+                LastSessionNum = 0,
                 Location = IIRacingEventFactory.CarLocation.InPitStall
             });
             GameState.Cars = new Car[] {
@@ -137,6 +142,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
                     LapsCompleted = 2
                 }
             };
+            GameState.SessionNum = 0;
             GameState.SessionTime = NOW;
 
             // act
@@ -159,6 +165,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             // arrange
             TrackerState.Laps.Add(0, new LapState
             {
+                LastSessionNum = 0,
                 Location = IIRacingEventFactory.CarLocation.OnTrack,
                 TimingEnabled = true,
                 PendingLapTime = true,
@@ -173,6 +180,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
                     LastLapTime = 43.2f,
                 }
             };
+            GameState.SessionNum = 0;
             GameState.SessionTime = NOW;
 
             // act
@@ -233,6 +241,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             // arrange
             TrackerState.Laps.Add(0, new LapState
             {
+                LastSessionNum = 0,
                 Location = IIRacingEventFactory.CarLocation.OnTrack,
                 TimingEnabled = true,
                 PendingLapTime = true,
@@ -247,6 +256,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
                     LastLapTime = -1,
                 }
             };
+            GameState.SessionNum = 0;
             GameState.SessionTime = NOW;
 
             // act
@@ -273,6 +283,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             // arrange
             TrackerState.Laps.Add(0, new LapState
             {
+                LastSessionNum = 0,
                 Location = IIRacingEventFactory.CarLocation.OnTrack,
                 TimingEnabled = false,
                 LapsCompleted = 1,
@@ -285,6 +296,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
                     LapsCompleted = 2,
                 }
             };
+            GameState.SessionNum = 0;
             GameState.SessionTime = NOW;
             GameState.FuelLevel = FUEL_NOW;
             GameState.DriverCarIdx = 0;
@@ -314,6 +326,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             // arrange
             TrackerState.Laps.Add(0, new LapState
             {
+                LastSessionNum = 0,
                 Location = IIRacingEventFactory.CarLocation.OnTrack,
                 TimingEnabled = true,
                 LapsCompleted = 1,
@@ -329,6 +342,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             GameState.SessionTime = NOW;
             GameState.FuelLevel = FUEL_NOW;
             GameState.DriverCarIdx = 0;
+            GameState.SessionNum = 0;
 
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
@@ -351,6 +365,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             // arrange
             TrackerState.Laps.Add(0, new LapState
             {
+                LastSessionNum = 0,
                 Location = IIRacingEventFactory.CarLocation.OnTrack,
                 TimingEnabled = true,
             });
@@ -359,6 +374,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
                     Location = IIRacingEventFactory.CarLocation.NotInWorld
                 }
             };
+            GameState.SessionNum = 0;
 
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
@@ -376,6 +392,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             // arrange
             TrackerState.Laps.Add(0, new LapState
             {
+                LastSessionNum = 0,
                 Location = IIRacingEventFactory.CarLocation.OnTrack,
                 TimingEnabled = true,
             });
@@ -384,6 +401,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
                     Location = IIRacingEventFactory.CarLocation.NotInWorld
                 }
             };
+            GameState.SessionNum = 0;
 
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
@@ -393,6 +411,57 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             Assert.True(TrackerState.Laps[0].TimingEnabled);
             Assert.True(TrackerState.Laps[0].Location == IIRacingEventFactory.CarLocation.NotInWorld);
             Assert.True(TrackerState.Laps[0].ConsecutiveNotInWorld == 1);
+        }
+
+        [Fact]
+        public void ResetAtSessionChange()
+        {
+            const float LAP_STARTED_AT = 20.0f;
+            const float NOW = 40.0f;
+            // arrange
+            TrackerState.Laps.Add(0, new LapState
+            {
+                LastSessionNum = 0,
+                Location = IIRacingEventFactory.CarLocation.OnTrack,
+                TimingEnabled = true,
+                LapsCompleted = 2,
+                CurrentLapStartTime = LAP_STARTED_AT,
+                FuelLevelAtLapStart = 0,
+            });
+            GameState.SessionNum = 0;
+            GameState.Cars = new Car[] {
+                new Car {
+                    Location = IIRacingEventFactory.CarLocation.OnTrack,
+                    LapsCompleted = 2,
+                }
+            };
+            GameState.SessionTime = NOW;
+
+            var newSessionGameState = new TestState();
+            newSessionGameState.SessionNum = 1;
+            newSessionGameState.SessionTime = NOW + 1;
+            newSessionGameState.Cars = new Car[]
+            {
+                new Car {
+                    Location = IIRacingEventFactory.CarLocation.OnTrack,
+                    LapsCompleted = -1,
+                }
+            };
+
+            // act
+            var sut = new LapsCompletedTracker(EventBus, EventFactory);
+            sut.Handle(GameState, TrackerState);
+            sut.Handle(newSessionGameState, TrackerState);
+
+            // assert
+            Assert.True(TrackerState.Laps[0].OurLapTimeMeasurement == 0);
+            Assert.True(TrackerState.Laps[0].CurrentLapStartTime == 0);
+            Assert.False(TrackerState.Laps[0].PendingLapTime);
+            Assert.False(TrackerState.Laps[0].TimingEnabled);
+            Assert.True(TrackerState.Laps[0].FuelLevelAtLapStart == 0);
+            Assert.True(TrackerState.Laps[0].LastLapFuelDelta == 0);
+            Assert.True(TrackerState.Laps[0].LapsCompleted == -1);
+            Assert.Empty(EventBus.Events);
         }
     }
 }

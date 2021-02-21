@@ -35,15 +35,22 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
                         Location = car.Location,
                         LapsCompleted = lapsCompleted,
                         TimingEnabled = false,
+                        LastSessionNum = currentState.SessionNum,
                     };
 
                     state.Laps.Add(car.CarIdx, lapState);
                 }
                 else
                 {
+                    if (lapState.LastSessionNum != currentState.SessionNum)
+                    {
+                        lapState.Clear();
+                        lapState.LastSessionNum = currentState.SessionNum;
+                    }
+
                     if (car.Location == IIRacingEventFactory.CarLocation.NotInWorld)
                     {
-                        lapState.ConsecutiveNotInWorld += 1;
+                        lapState.ConsecutiveNotInWorld++;
                     }
                     else
                     {

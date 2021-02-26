@@ -2,7 +2,6 @@
 
 using iRacingSDK;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using static Slipstream.Components.IRacing.IIRacingEventFactory;
 
@@ -118,12 +117,6 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
                 foreach (var d in ds.SessionData.DriverInfo.Drivers)
                 {
                     int idx = (int)d.CarIdx;
-                    double lastLapTime = -1;
-
-                    if (ds.Telemetry.Session?.ResultsPositions != null)
-                    {
-                        lastLapTime = ds.Telemetry.Session.ResultsPositions.Where(a => a.CarIdx == d.CarIdx).Select(a => a.LastTime).DefaultIfEmpty(-1).First();
-                    }
 
                     var car = new Car
                     {
@@ -143,7 +136,7 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
                         ClassPosition = ds.Telemetry.CarIdxClassPosition[idx],
                         Position = ds.Telemetry.CarIdxPosition[idx],
                         Location = (IIRacingEventFactory.CarLocation)(int)ds.Telemetry.CarIdxTrackSurface[idx],
-                        LastLapTime = lastLapTime,
+                        LastLapTime = ((float[])ds.Telemetry["CarIdxLastLapTime"])[idx],
                     };
 
                     if (Cars.TryGetValue(idx, out Car existingCar))

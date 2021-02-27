@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Slipstream.Components.IRacing.Plugins.GameState
+﻿namespace Slipstream.Components.IRacing.Plugins.GameState
 {
     public class Car
     {
@@ -21,5 +19,29 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
         public int Position { get; set; }
         public IIRacingEventFactory.CarLocation Location { get; set; }
         public double LastLapTime { get; set; }
+
+        public Car Clone()
+        {
+            return new Car
+            {
+                CarIdx = CarIdx,
+                CarNumber = CarNumber,
+                UserId = UserId,
+                UserName = UserName,
+                TeamId = TeamId,
+                TeamName = TeamName,
+                CarName = CarName,
+                CarNameShort = CarNameShort,
+                IRating = IRating,
+                License = License,
+                IsSpectator = IsSpectator,
+                LapsCompleted = LapsCompleted,
+                OnPitRoad = OnPitRoad,
+                ClassPosition = ClassPosition,
+                Position = Position,
+                Location = Location,
+                LastLapTime = LastLapTime
+            };
+        }
     }
 }

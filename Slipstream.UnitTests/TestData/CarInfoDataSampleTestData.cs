@@ -58,7 +58,7 @@ namespace Slipstream.UnitTests.TestData
                 IsSpectator = isSpectator,
             });
 
-            return new TestState
+            return new State
             {
                 SessionTime = sessionTime,
                 Cars = cars.ToArray(),

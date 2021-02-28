@@ -28,19 +28,12 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
         public void AddUnseenCarsToTrackerState()
         {
             // arrange
-            var GameState = Builder.SetupState(a =>
-            {
-                a.Cars = new Car[] {
-                    new Car {
-                        Location = IIRacingEventFactory.CarLocation.NotInWorld,
-                        LapsCompleted = 2
-                    }
-                };
-            });
+            Builder.Car(0).EntersGame().AtLap(2).Commit();
 
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
-            sut.Handle(GameState, TrackerState);
+            foreach (var s in Builder.States)
+                sut.Handle(s, TrackerState);
 
             // assert
             Assert.True(TrackerState.Laps.Count == 1);
@@ -55,32 +48,18 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
         {
             const float LAP_STARTED_AT = 20.0f;
             const float NOW = 40.0f;
+
             // arrange
-            TrackerState.Laps.Add(0, new LapState
-            {
-                LastSessionNum = 0,
-                Location = IIRacingEventFactory.CarLocation.OnTrack,
-                TimingEnabled = true,
-                LapsCompleted = 1,
-                CurrentLapStartTime = LAP_STARTED_AT,
-                FuelLevelAtLapStart = 0,
-            });
-            var GameState = Builder.SetupState(a =>
-            {
-                a.SessionNum = 0;
-                a.Cars = new Car[] {
-                    new Car {
-                        Location = IIRacingEventFactory.CarLocation.OnTrack,
-                        LapsCompleted = 2,
-                    }
-                };
-                a.SessionTime = NOW;
-                a.DriverCarIdx = 1;
-            });
+            Builder.ChangeState(a => a.DriverCarIdx = 1); // This is not our car, so we wont have fuel data
+            Builder.Car(0).EntersGame().AtLap(1).Commit();
+            Builder.AtSessionTime(LAP_STARTED_AT).Car(0).InPits().Commit();
+            Builder.Car(0).ExitingPits().Commit();
+            Builder.AtSessionTime(NOW).Car(0).LapsCompleted(2).Commit();
 
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
-            sut.Handle(GameState, TrackerState);
+            foreach (var s in Builder.States)
+                sut.Handle(s, TrackerState);
 
             // assert
             Assert.True(TrackerState.Laps[0].OurLapTimeMeasurement == NOW - LAP_STARTED_AT);
@@ -98,32 +77,17 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
         {
             const float LAP_STARTED_AT = 20.0f;
             const float NOW = 40.0f;
+
             // arrange
-            TrackerState.Laps.Add(0, new LapState
-            {
-                LastSessionNum = 0,
-                Location = IIRacingEventFactory.CarLocation.OnTrack,
-                TimingEnabled = true,
-                LapsCompleted = -1,
-                CurrentLapStartTime = LAP_STARTED_AT,
-                FuelLevelAtLapStart = 0,
-            });
-            var GameState = Builder.SetupState(a =>
-            {
-                a.SessionNum = 0;
-                a.Cars = new Car[] {
-                    new Car {
-                        Location = IIRacingEventFactory.CarLocation.OnTrack,
-                        LapsCompleted = 1,
-                    }
-                };
-                a.SessionTime = NOW;
-                a.DriverCarIdx = 0;
-            });
+            Builder.Car(0).EntersGame().Commit();
+            Builder.AtSessionTime(LAP_STARTED_AT).Car(0).InPits().Commit();
+            Builder.Car(0).ExitingPits().Commit();
+            Builder.AtSessionTime(NOW).Car(0).LapsCompleted(1).Commit();
 
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
-            sut.Handle(GameState, TrackerState);
+            foreach (var s in Builder.States)
+                sut.Handle(s, TrackerState);
 
             // assert
             Assert.False(TrackerState.Laps[0].PendingLapTime);
@@ -140,26 +104,15 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             const float NOW = 40.0f;
 
             // arrange
-            TrackerState.Laps.Add(0, new LapState
-            {
-                LastSessionNum = 0,
-                Location = IIRacingEventFactory.CarLocation.InPitStall
-            });
-            var GameState = Builder.SetupState(a =>
-            {
-                a.Cars = new Car[] {
-                    new Car {
-                        Location = IIRacingEventFactory.CarLocation.AproachingPits,
-                        LapsCompleted = 2
-                    }
-                };
-                a.SessionNum = 0;
-                a.SessionTime = NOW;
-            });
+            Builder.Car(0).EntersGame().Commit();
+            Builder.AtSessionTime(NOW).Car(0).InPits().Commit();
+            Builder.Car(0).LapsCompleted(2).Commit();
+            Builder.Car(0).ExitingPits().Commit();
 
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
-            sut.Handle(GameState, TrackerState);
+            foreach (var s in Builder.States)
+                sut.Handle(s, TrackerState);
 
             // assert
             Assert.True(TrackerState.Laps.Count == 1);
@@ -174,33 +127,17 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
         public void CarWithPendingTimeAfter3sPublishesEvent()
         {
             const float NOW = 40.0f;
+
             // arrange
-            TrackerState.Laps.Add(0, new LapState
-            {
-                LastSessionNum = 0,
-                Location = IIRacingEventFactory.CarLocation.OnTrack,
-                TimingEnabled = true,
-                PendingLapTime = true,
-                CurrentLapStartTime = NOW - 3,
-                LapsCompleted = 2,
-                LastLapFuelDelta = -8.2f,
-            });
-            var GameState = Builder.SetupState(a =>
-            {
-                a.Cars = new Car[] {
-                    new Car {
-                        Location = IIRacingEventFactory.CarLocation.OnTrack,
-                        LapsCompleted = 2,
-                        LastLapTime = 43.2f,
-                    }
-                };
-                a.SessionNum = 0;
-                a.SessionTime = NOW;
-            });
+            Builder.Car(0).LapsCompleted(0).Commit();
+            Builder.FuelLevel(80.0f).Car(0).OnTrack().LapsCompleted(1).Commit();
+            Builder.AtSessionTime(NOW - 3).FuelLevel(69.0f).Car(0).LapsCompleted(2).Commit();
+            Builder.AtSessionTime(NOW).FuelLevel(59.0f).Car(0).LastLapTime(43.2f).Commit();
 
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
-            sut.Handle(GameState, TrackerState);
+            foreach (var s in Builder.States)
+                sut.Handle(s, TrackerState);
 
             // assert
             Assert.False(TrackerState.Laps[0].PendingLapTime);
@@ -210,7 +147,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             var @event = EventBus.Events[0] as IRacingCompletedLap;
 
             Assert.True(@event.CarIdx == 0);
-            Assert.True(@event.FuelDelta == -8.2f);
+            Assert.True(@event.FuelDelta == -11.0f);
             Assert.True(@event.LapsCompleted == 2);
             Assert.True(@event.LocalUser == true);
             Assert.True(@event.SessionTime == NOW);
@@ -223,28 +160,15 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             const float NOW = 40.0f;
 
             // arrange
-            TrackerState.Laps.Add(0, new LapState
-            {
-                Location = IIRacingEventFactory.CarLocation.OnTrack,
-                TimingEnabled = true,
-                PendingLapTime = true,
-                CurrentLapStartTime = NOW - 2,
-                LapsCompleted = 2,
-            });
-            var GameState = Builder.SetupState(a =>
-            {
-                a.Cars = new Car[] {
-                    new Car {
-                        Location = IIRacingEventFactory.CarLocation.OnTrack,
-                        LapsCompleted = 2,
-                    }
-                };
-                a.SessionTime = NOW;
-            });
+            Builder.Car(0).LapsCompleted(0).Commit();
+            Builder.FuelLevel(80.0f).Car(0).OnTrack().LapsCompleted(1).Commit();
+            Builder.AtSessionTime(NOW - 2).Car(0).LapsCompleted(2).Commit();
+            Builder.AtSessionTime(NOW).Car(0).LastLapTime(43.2f).Commit();
 
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
-            sut.Handle(GameState, TrackerState);
+            foreach (var s in Builder.States)
+                sut.Handle(s, TrackerState);
 
             // assert
             Assert.Empty(EventBus.Events);
@@ -253,36 +177,19 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
         [Fact]
         public void CarWithPendingTimeUsesOurTimingIfOfficialLapTimeIsntAvailable()
         {
-            const float NOW = 40.0f;
+            const float NOW = 50.0f;
             const float LAP_TIME = 43.2f;
 
             // arrange
-            TrackerState.Laps.Add(0, new LapState
-            {
-                LastSessionNum = 0,
-                Location = IIRacingEventFactory.CarLocation.OnTrack,
-                TimingEnabled = true,
-                PendingLapTime = true,
-                CurrentLapStartTime = NOW - 3,
-                LapsCompleted = 2,
-                OurLapTimeMeasurement = 43.2f,
-            });
-            var GameState = Builder.SetupState(a =>
-            {
-                a.Cars = new Car[] {
-                    new Car {
-                        Location = IIRacingEventFactory.CarLocation.OnTrack,
-                        LapsCompleted = 2,
-                        LastLapTime = -1,
-                    }
-                };
-                a.SessionNum = 0;
-                a.SessionTime = NOW;
-            });
+            Builder.Car(0).LapsCompleted(0).Commit();
+            Builder.FuelLevel(80.0f).Car(0).OnTrack().LapsCompleted(1).Commit();
+            Builder.AtSessionTime(LAP_TIME).Car(0).LapsCompleted(2).Commit();
+            Builder.AtSessionTime(NOW).Car(0).LastLapTime(-1).Commit();
 
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
-            sut.Handle(GameState, TrackerState);
+            foreach (var s in Builder.States)
+                sut.Handle(s, TrackerState);
 
             // assert
             Assert.False(TrackerState.Laps[0].PendingLapTime);
@@ -295,150 +202,39 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
         }
 
         [Fact]
-        public void DriverDoesANewLapWithoutTimingEnabled()
-        {
-            const float LAP_STARTED_AT = 20.0f;
-            const float NOW = 40.0f;
-            const float FUEL_AT_START_LAP = 100f;
-            const float FUEL_NOW = 92.2f;
-            // arrange
-            TrackerState.Laps.Add(0, new LapState
-            {
-                LastSessionNum = 0,
-                Location = IIRacingEventFactory.CarLocation.OnTrack,
-                TimingEnabled = false,
-                LapsCompleted = 1,
-                CurrentLapStartTime = LAP_STARTED_AT,
-                FuelLevelAtLapStart = FUEL_AT_START_LAP,
-            });
-            var GameState = Builder.SetupState(a =>
-            {
-                a.Cars = new Car[] {
-                    new Car {
-                        Location = IIRacingEventFactory.CarLocation.OnTrack,
-                        LapsCompleted = 2,
-                    }
-                };
-                a.SessionNum = 0;
-                a.SessionTime = NOW;
-                a.FuelLevel = FUEL_NOW;
-                a.DriverCarIdx = 0;
-            });
-
-            // act
-            var sut = new LapsCompletedTracker(EventBus, EventFactory);
-            sut.Handle(GameState, TrackerState);
-
-            // assert
-            Assert.True(TrackerState.Laps[0].OurLapTimeMeasurement == NOW - LAP_STARTED_AT);
-            Assert.True(TrackerState.Laps[0].CurrentLapStartTime == NOW);
-            Assert.False(TrackerState.Laps[0].PendingLapTime);
-            Assert.True(TrackerState.Laps[0].TimingEnabled); // Make sure we time the next lap
-            Assert.True(TrackerState.Laps[0].FuelLevelAtLapStart == FUEL_NOW);
-            Assert.True(TrackerState.Laps[0].LastLapFuelDelta == FUEL_NOW - FUEL_AT_START_LAP);
-            Assert.True(TrackerState.Laps[0].LapsCompleted == 2);
-            Assert.Empty(EventBus.Events);
-        }
-
-        [Fact]
-        public void DriverDoesANewLapWithTimingEnabled()
-        {
-            const float LAP_STATED_AT = 20.0f;
-            const float NOW = 40.0f;
-            const float FUEL_AT_LAP_START = 100f;
-            const float FUEL_NOW = 92.2f;
-            // arrange
-            TrackerState.Laps.Add(0, new LapState
-            {
-                LastSessionNum = 0,
-                Location = IIRacingEventFactory.CarLocation.OnTrack,
-                TimingEnabled = true,
-                LapsCompleted = 1,
-                CurrentLapStartTime = LAP_STATED_AT,
-                FuelLevelAtLapStart = FUEL_AT_LAP_START,
-            });
-            var GameState = Builder.SetupState(a =>
-            {
-                a.Cars = new Car[] {
-                    new Car {
-                        Location = IIRacingEventFactory.CarLocation.OnTrack,
-                        LapsCompleted = 2,
-                    }
-                };
-                a.SessionTime = NOW;
-                a.FuelLevel = FUEL_NOW;
-                a.DriverCarIdx = 0;
-                a.SessionNum = 0;
-            });
-
-            // act
-            var sut = new LapsCompletedTracker(EventBus, EventFactory);
-            sut.Handle(GameState, TrackerState);
-
-            // assert
-            Assert.True(TrackerState.Laps[0].OurLapTimeMeasurement == NOW - LAP_STATED_AT);
-            Assert.True(TrackerState.Laps[0].CurrentLapStartTime == NOW);
-            Assert.True(TrackerState.Laps[0].PendingLapTime);
-            Assert.True(TrackerState.Laps[0].TimingEnabled); // Make sure we time the next lap
-            Assert.True(TrackerState.Laps[0].FuelLevelAtLapStart == FUEL_NOW);
-            Assert.True(TrackerState.Laps[0].LastLapFuelDelta == FUEL_NOW - FUEL_AT_LAP_START);
-            Assert.True(TrackerState.Laps[0].LapsCompleted == 2);
-            Assert.Empty(EventBus.Events);
-        }
-
-        [Fact]
         public void StopTimingWhenResettingToPits()
         {
             // arrange
-            TrackerState.Laps.Add(0, new LapState
-            {
-                LastSessionNum = 0,
-                Location = IIRacingEventFactory.CarLocation.OnTrack,
-                TimingEnabled = true,
-            });
-            var GameState = Builder.SetupState(a =>
-            {
-                a.Cars = new Car[] {
-                    new Car {
-                        Location = IIRacingEventFactory.CarLocation.NotInWorld
-                    }
-                };
-                a.SessionNum = 0;
-            });
+            Builder.AtSessionTime(0).Car(0).InPits().Commit();
+            Builder.Car(0).ExitingPits().Commit();
+            // We reset: multiple NotInWorld locations will be received until you're at the pits again
+            Builder.AtSessionTime(2.0f).Car(0).NotInWorld().Commit();
+            Builder.AtSessionTime(2.1f).Commit();
+            Builder.AtSessionTime(2.2f).Commit();
 
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
-            sut.Handle(GameState, TrackerState);
-            sut.Handle(GameState, TrackerState); // Reprocess the same GameState as new. This l
+            foreach (var s in Builder.States)
+                sut.Handle(s, TrackerState);
 
             // assert
             Assert.False(TrackerState.Laps[0].TimingEnabled);
             Assert.True(TrackerState.Laps[0].Location == IIRacingEventFactory.CarLocation.NotInWorld);
+            Assert.Empty(EventBus.Events);
         }
 
         [Fact]
         public void IgnoreSingleNotInWorldAsThisMightJustBeDroppedFrames()
         {
             // arrange
-            TrackerState.Laps.Add(0, new LapState
-            {
-                LastSessionNum = 0,
-                Location = IIRacingEventFactory.CarLocation.OnTrack,
-                TimingEnabled = true,
-            });
-            var GameState = Builder.SetupState(a =>
-            {
-                a.Cars = new Car[] {
-                    new Car {
-                        Location = IIRacingEventFactory.CarLocation.NotInWorld
-                    }
-                };
-                a.SessionNum = 0;
-            });
+            Builder.AtSessionTime(0).Car(0).InPits().Commit();
+            Builder.Car(0).ExitingPits().Commit();
+            Builder.AtSessionTime(2.0f).Car(0).NotInWorld().Commit();
 
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
-            sut.Handle(GameState, TrackerState);
+            foreach (var s in Builder.States)
+                sut.Handle(s, TrackerState);
 
             // assert
             Assert.True(TrackerState.Laps[0].TimingEnabled);
@@ -449,47 +245,19 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
         [Fact]
         public void ResetAtSessionChange()
         {
-            const float LAP_STARTED_AT = 20.0f;
             const float NOW = 40.0f;
-            // arrange
-            TrackerState.Laps.Add(0, new LapState
-            {
-                LastSessionNum = 0,
-                Location = IIRacingEventFactory.CarLocation.OnTrack,
-                TimingEnabled = true,
-                LapsCompleted = 2,
-                CurrentLapStartTime = LAP_STARTED_AT,
-                FuelLevelAtLapStart = 0,
-            });
-            var GameState = Builder.SetupState(a =>
-            {
-                a.SessionNum = 0;
-                a.Cars = new Car[] {
-                    new Car {
-                        Location = IIRacingEventFactory.CarLocation.OnTrack,
-                        LapsCompleted = 2,
-                    }
-                };
-                a.SessionTime = NOW;
-            });
 
-            var newSessionGameState = Builder.SetupState(a =>
-            {
-                a.SessionNum = 1;
-                a.SessionTime = NOW + 1;
-                a.Cars = new Car[]
-                {
-                    new Car {
-                        Location = IIRacingEventFactory.CarLocation.OnTrack,
-                        LapsCompleted = -1,
-                    }
-                };
-            });
+            // arrange
+            Builder.Car(0).LapsCompleted(0).Commit();
+            Builder.Car(0).OnTrack().LapsCompleted(1).Commit();
+            Builder.AtSessionTime(NOW - 3).Car(0).LapsCompleted(2).Commit();
+            Builder.AtSessionTime(NOW).Car(0).LastLapTime(43.2f).Commit();
+            Builder.InSessionNum(1).Car(0).LapsCompleted(-1).Commit();
 
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
-            sut.Handle(GameState, TrackerState);
-            sut.Handle(newSessionGameState, TrackerState);
+            foreach (var s in Builder.States)
+                sut.Handle(s, TrackerState);
 
             // assert
             Assert.True(TrackerState.Laps[0].OurLapTimeMeasurement == 0);
@@ -499,7 +267,6 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             Assert.True(TrackerState.Laps[0].FuelLevelAtLapStart == 0);
             Assert.True(TrackerState.Laps[0].LastLapFuelDelta == 0);
             Assert.True(TrackerState.Laps[0].LapsCompleted == -1);
-            Assert.Empty(EventBus.Events);
         }
     }
 }

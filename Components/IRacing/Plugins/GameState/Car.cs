@@ -19,6 +19,8 @@
         public int Position { get; set; }
         public IIRacingEventFactory.CarLocation Location { get; set; }
         public double LastLapTime { get; set; }
+        public float BestLapTime { get; set; }
+        public int BestLapNum { get; set; }
 
         public Car Clone()
         {
@@ -40,7 +42,9 @@
                 ClassPosition = ClassPosition,
                 Position = Position,
                 Location = Location,
-                LastLapTime = LastLapTime
+                LastLapTime = LastLapTime,
+                BestLapTime = BestLapTime,
+                BestLapNum = BestLapNum,
             };
         }
     }

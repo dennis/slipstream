@@ -97,23 +97,24 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
                         // after we cross s/f line. In case of incidents, no laptime will be provided, and we'll fall back
                         // to our own timing (which can be pretty inaccurate)
 
-                        Debug.WriteLine($"{now} Car-{car.CarIdx}. Pending time. 3s delay localUser={localUser}, car.LastLapTime={car.LastLapTime}, lapState.OurLapTimeMeasurement={lapState.OurLapTimeMeasurement}");
+                        Debug.WriteLine($"{now} Car-{car.CarIdx}. Pending time. 3s delay localUser={localUser}, car.LastLapTime={car.LastLapTime}, lapState.OurLapTimeMeasurement={lapState.OurLapTimeMeasurement}, BestLapNum={car.BestLapNum}, BestLapTime={car.BestLapTime}");
 
-                        var time = car.LastLapTime;
+                        var lapTime = car.LastLapTime;
 
-                        if (time == -1)
+                        if (lapTime == -1)
                         {
                             Debug.WriteLine($"{now} Car-{car.CarIdx}. Using own timing");
-                            time = lapState.OurLapTimeMeasurement;
+                            lapTime = lapState.OurLapTimeMeasurement;
                         }
 
                         var @event = EventFactory.CreateIRacingCompletedLap(
                             sessionTime: now,
                             carIdx: car.CarIdx,
-                            time: time,
+                            time: lapTime,
                             lapsCompleted: lapsCompleted,
                             fuelDelta: lapState.LastLapFuelDelta,
-                            localUser: localUser
+                            localUser: localUser,
+                            bestLap: car.BestLapNum == lapsCompleted
                         );
 
                         EventBus.PublishEvent(@event);

@@ -138,6 +138,13 @@ namespace Slipstream.UnitTests.TestData
                 return this;
             }
 
+            public CarBuilder BestLapNum(int v)
+            {
+                Set(a => a.BestLapNum = v);
+
+                return this;
+            }
+
             public void Commit()
             {
                 Builder.Commit();

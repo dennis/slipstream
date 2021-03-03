@@ -152,6 +152,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             Assert.True(@event.LocalUser == true);
             Assert.True(@event.SessionTime == NOW);
             Assert.True(@event.Time == 43.2f);
+            Assert.False(@event.BestLap);
         }
 
         [Fact]
@@ -267,6 +268,33 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             Assert.True(TrackerState.Laps[0].FuelLevelAtLapStart == 0);
             Assert.True(TrackerState.Laps[0].LastLapFuelDelta == 0);
             Assert.True(TrackerState.Laps[0].LapsCompleted == -1);
+        }
+
+        [Fact]
+        public void CarSettingFastestLap()
+        {
+            const float NOW = 40.0f;
+
+            // arrange
+            Builder.Car(0).LapsCompleted(0).Commit();
+            Builder.Car(0).OnTrack().LapsCompleted(1).Commit();
+            Builder.AtSessionTime(NOW - 3).Car(0).LapsCompleted(2).Commit();
+            Builder.AtSessionTime(NOW).Car(0).LastLapTime(43.2f).BestLapNum(2).Commit();
+
+            // act
+            var sut = new LapsCompletedTracker(EventBus, EventFactory);
+            foreach (var s in Builder.States)
+                sut.Handle(s, TrackerState);
+
+            // assert
+            Assert.False(TrackerState.Laps[0].PendingLapTime);
+            Assert.NotEmpty(EventBus.Events);
+            Assert.True(EventBus.Events[0].EventType == "IRacingCompletedLap");
+
+            var @event = EventBus.Events[0] as IRacingCompletedLap;
+
+            Assert.NotNull(@event);
+            Assert.True(@event.BestLap);
         }
     }
 }

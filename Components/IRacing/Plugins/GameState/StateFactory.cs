@@ -137,6 +137,8 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
                         Position = ds.Telemetry.CarIdxPosition[idx],
                         Location = (IIRacingEventFactory.CarLocation)(int)ds.Telemetry.CarIdxTrackSurface[idx],
                         LastLapTime = ((float[])ds.Telemetry["CarIdxLastLapTime"])[idx],
+                        BestLapTime = ((float[])ds.Telemetry["CarIdxBestLapTime"])[idx],
+                        BestLapNum = ((int[])ds.Telemetry["CarIdxBestLapNum"])[idx],
                     };
 
                     if (Cars.TryGetValue(idx, out Car existingCar))

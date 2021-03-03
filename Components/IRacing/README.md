@@ -118,9 +118,10 @@ Published every time a driver completes a full lap.
 | LapsCompleted   | integer | How many laps were completed                                      |
 | FuelDelta       | float   | Changes in fuel levels                                            |
 | LocalUser       | boolean | Is it our car?                                                    |
+| BestLap         | boolean | Was this lap a new best lap time in this session?                 |
 
 **JSON Example:**
-`{"EventType":"IRacingCompletedLap","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":7306.3000976104477,"CarIdx":5,"Time":7306.3000976104477,"LapsCompleted":9,"FuelDelta":null,"LocalUser":false}`
+`{"EventType":"IRacingCompletedLap","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":7306.3000976104477,"CarIdx":5,"Time":7306.3000976104477,"LapsCompleted":9,"FuelDelta":null,"LocalUser":false,"BestLap":false}`
 </details>
 
 <details><summary>IRacingCarInfo</summary><br />

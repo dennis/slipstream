@@ -36,7 +36,15 @@ namespace Slipstream.Components.IRacing
             OnTrack
         }
 
-        IRacingCompletedLap CreateIRacingCompletedLap(double sessionTime, long carIdx, double time, int lapsCompleted, float? fuelDelta, bool localUser);
+        IRacingCompletedLap CreateIRacingCompletedLap(
+            double sessionTime,
+            long carIdx,
+            double time,
+            int lapsCompleted,
+            float? fuelDelta,
+            bool localUser,
+            bool bestLap
+        );
 
         IRacingCarInfo CreateIRacingCarInfo(
             double sessionTime,

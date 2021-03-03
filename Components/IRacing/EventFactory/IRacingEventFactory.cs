@@ -9,16 +9,25 @@ namespace Slipstream.Components.IRacing.EventFactory
 {
     public class IRacingEventFactory : IIRacingEventFactory
     {
-        public IRacingCompletedLap CreateIRacingCompletedLap(double sessionTime, long carIdx, double time, int lapsCompleted, float? fuelDelta, bool localUser)
+        public IRacingCompletedLap CreateIRacingCompletedLap(
+            double sessionTime,
+            long carIdx,
+            double lapTime,
+            int lapsCompleted,
+            float? fuelDelta,
+            bool localUser,
+            bool bestLap
+        )
         {
             return new IRacingCompletedLap
             {
                 SessionTime = sessionTime,
                 CarIdx = carIdx,
-                Time = time,
+                Time = lapTime,
                 LapsCompleted = lapsCompleted,
                 FuelDelta = fuelDelta,
                 LocalUser = localUser,
+                BestLap = bestLap,
             };
         }
 

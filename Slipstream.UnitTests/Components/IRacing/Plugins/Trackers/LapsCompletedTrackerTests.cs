@@ -151,7 +151,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             Assert.True(@event.LapsCompleted == 2);
             Assert.True(@event.LocalUser == true);
             Assert.True(@event.SessionTime == NOW);
-            Assert.True(@event.Time == 43.2f);
+            Assert.True(@event.LapTime == 43.2f);
             Assert.False(@event.BestLap);
         }
 
@@ -199,7 +199,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
 
             var @event = EventBus.Events[0] as IRacingCompletedLap;
 
-            Assert.True(@event.Time == LAP_TIME);
+            Assert.True(@event.LapTime == LAP_TIME);
         }
 
         [Fact]

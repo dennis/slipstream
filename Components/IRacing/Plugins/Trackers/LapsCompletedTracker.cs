@@ -110,7 +110,7 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
                         var @event = EventFactory.CreateIRacingCompletedLap(
                             sessionTime: now,
                             carIdx: car.CarIdx,
-                            time: lapTime,
+                            lapTime: lapTime,
                             lapsCompleted: lapsCompleted,
                             fuelDelta: lapState.LastLapFuelDelta,
                             localUser: localUser,

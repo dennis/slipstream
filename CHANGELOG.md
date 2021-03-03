@@ -29,6 +29,7 @@
   - IRacingPlugin: Rename IRacingCarCompletedLap to IRacingCompletedLap
   - IRacingPlugin: Renamed FuelDiff to FuelDelta in IRacingCompletedLap, IRacingPitstopReport for consistency
   - IRacingPlugin: Adds BestLap to IRacingCompletedLap.
+  - IRacingPlugin: Rename IRacingCompletedLap.Time to IRacingCompletedLap.LapTime.
 
 ## [0.4.0](https://github.com/dennis/slipstream/releases/tag/v0.3.0) (2020-01-10)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.3.0...v0.4.0)

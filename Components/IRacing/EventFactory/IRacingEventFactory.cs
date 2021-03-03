@@ -23,7 +23,7 @@ namespace Slipstream.Components.IRacing.EventFactory
             {
                 SessionTime = sessionTime,
                 CarIdx = carIdx,
-                Time = lapTime,
+                LapTime = lapTime,
                 LapsCompleted = lapsCompleted,
                 FuelDelta = fuelDelta,
                 LocalUser = localUser,

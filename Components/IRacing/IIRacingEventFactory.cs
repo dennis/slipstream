@@ -39,7 +39,7 @@ namespace Slipstream.Components.IRacing
         IRacingCompletedLap CreateIRacingCompletedLap(
             double sessionTime,
             long carIdx,
-            double time,
+            double lapTime,
             int lapsCompleted,
             float? fuelDelta,
             bool localUser,

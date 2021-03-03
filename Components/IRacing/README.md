@@ -114,14 +114,14 @@ Published every time a driver completes a full lap.
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | SessionTime     | float   | Time of event (seconds into the session)                          |
 | CarIdx          | integer | Id of car                                                         |
-| Time            | float   | Lap time                                                          |
+| LapTime         | float   | Lap time                                                          |
 | LapsCompleted   | integer | How many laps were completed                                      |
 | FuelDelta       | float   | Changes in fuel levels                                            |
 | LocalUser       | boolean | Is it our car?                                                    |
 | BestLap         | boolean | Was this lap a new best lap time in this session?                 |
 
 **JSON Example:**
-`{"EventType":"IRacingCompletedLap","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":7306.3000976104477,"CarIdx":5,"Time":7306.3000976104477,"LapsCompleted":9,"FuelDelta":null,"LocalUser":false,"BestLap":false}`
+`{"EventType":"IRacingCompletedLap","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":7306.3000976104477,"CarIdx":5,"LapTime":7306.3000976104477,"LapsCompleted":9,"FuelDelta":null,"LocalUser":false,"BestLap":false}`
 </details>
 
 <details><summary>IRacingCarInfo</summary><br />

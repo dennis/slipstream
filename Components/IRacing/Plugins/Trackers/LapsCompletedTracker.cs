@@ -1,6 +1,5 @@
 ﻿using Slipstream.Components.IRacing.Plugins.Models;
 using Slipstream.Shared;
-using System.Diagnostics;
 
 #nullable enable
 
@@ -28,8 +27,6 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
 
                 if (!state.Laps.TryGetValue(car.CarIdx, out LapState lapState))
                 {
-                    Debug.WriteLine($"{now} Added car: {car.CarIdx} at {car.Location}");
-
                     lapState = new LapState
                     {
                         Location = car.Location,
@@ -59,20 +56,19 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
 
                     if (lapState.Location == IIRacingEventFactory.CarLocation.InPitStall && car.Location == IIRacingEventFactory.CarLocation.AproachingPits)
                     {
-                        Debug.WriteLine($"{now} Car-{car.CarIdx} exiting pits. enabled timing as of {now} lapState.LapsCompleted={lapState.LapsCompleted}, lapsCompleted={lapsCompleted}");
+                        // Exiting pits
                         lapState.TimingEnabled = true;
                         lapState.CurrentLapStartTime = now;
                     }
                     else if (lapState.TimingEnabled && car.Location == IIRacingEventFactory.CarLocation.NotInWorld && lapState.ConsecutiveNotInWorld > 1)
                     {
-                        Debug.WriteLine($"{now} Car-{car.CarIdx} Resetting - disable timings. Using 0 as CurrentLapStartTime");
+                        // Car resetting
                         lapState.TimingEnabled = false;
                     }
                     else if (lapsCompleted != lapState.LapsCompleted && lapState.LapsCompleted != -1)
                     {
-                        // if previous lap was -1, then this is the initial lap and there was no previous lap, hence no timing is available
-
-                        Debug.WriteLine($"{now} Car-{car.CarIdx} new lap lapsCompleted={lapsCompleted}, lapState.LapsCompleted={lapState.LapsCompleted}, lapState.TimingEnabled={lapState.TimingEnabled}");
+                        // New lap: if previous lap was -1, then this is the initial lap and there
+                        // was no previous lap, hence no timing is available
 
                         lapState.OurLapTimeMeasurement = now - lapState.CurrentLapStartTime;
                         lapState.CurrentLapStartTime = now;
@@ -97,14 +93,11 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
                         // after we cross s/f line. In case of incidents, no laptime will be provided, and we'll fall back
                         // to our own timing (which can be pretty inaccurate)
 
-                        Debug.WriteLine($"{now} Car-{car.CarIdx}. Pending time. 3s delay localUser={localUser}, car.LastLapTime={car.LastLapTime}, lapState.OurLapTimeMeasurement={lapState.OurLapTimeMeasurement}, BestLapNum={car.BestLapNum}, BestLapTime={car.BestLapTime}");
-
                         var lapTime = car.LastLapTime;
                         var estimatedLapTime = false;
 
                         if (lapTime == -1)
                         {
-                            Debug.WriteLine($"{now} Car-{car.CarIdx}. Using own timing");
                             lapTime = lapState.OurLapTimeMeasurement;
                             estimatedLapTime = true;
                         }

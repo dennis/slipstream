@@ -40,6 +40,7 @@ namespace Slipstream.Components.IRacing
             double sessionTime,
             long carIdx,
             double lapTime,
+            bool estimatedLapTime,
             int lapsCompleted,
             float? fuelDelta,
             bool localUser,

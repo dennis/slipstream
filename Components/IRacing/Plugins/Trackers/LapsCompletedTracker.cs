@@ -100,17 +100,20 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
                         Debug.WriteLine($"{now} Car-{car.CarIdx}. Pending time. 3s delay localUser={localUser}, car.LastLapTime={car.LastLapTime}, lapState.OurLapTimeMeasurement={lapState.OurLapTimeMeasurement}, BestLapNum={car.BestLapNum}, BestLapTime={car.BestLapTime}");
 
                         var lapTime = car.LastLapTime;
+                        var estimatedLapTime = false;
 
                         if (lapTime == -1)
                         {
                             Debug.WriteLine($"{now} Car-{car.CarIdx}. Using own timing");
                             lapTime = lapState.OurLapTimeMeasurement;
+                            estimatedLapTime = true;
                         }
 
                         var @event = EventFactory.CreateIRacingCompletedLap(
                             sessionTime: now,
                             carIdx: car.CarIdx,
                             lapTime: lapTime,
+                            estimatedLapTime: estimatedLapTime,
                             lapsCompleted: lapsCompleted,
                             fuelDelta: lapState.LastLapFuelDelta,
                             localUser: localUser,

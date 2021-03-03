@@ -107,18 +107,19 @@ This function is aliased as ``iracing_send_race_flags`` (deprecated)
 
 Published every time a driver completes a full lap.
 
-| Name            | Type    | Description                                                       |
-|:----------------|:-------:|:------------------------------------------------------------------|
-| EventType       | string  | `IRacingCompletedLap` (constant)                                  |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
-| Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
-| SessionTime     | float   | Time of event (seconds into the session)                          |
-| CarIdx          | integer | Id of car                                                         |
-| LapTime         | float   | Lap time                                                          |
-| LapsCompleted   | integer | How many laps were completed                                      |
-| FuelDelta       | float   | Changes in fuel levels                                            |
-| LocalUser       | boolean | Is it our car?                                                    |
-| BestLap         | boolean | Was this lap a new best lap time in this session?                 |
+| Name             | Type    | Description                                                                                               |
+|:-----------------|:-------:|:----------------------------------------------------------------------------------------------------------|
+| EventType        | string  | `IRacingCompletedLap` (constant)                                                                          |
+| ExcludeFromTxrx  | boolean | false (constant)                                                                                          |
+| Uptime           | integer | Time of when the message was sent via Eventbus (in milliseconds).                                         |
+| SessionTime      | float   | Time of event (seconds into the session)                                                                  |
+| CarIdx           | integer | Id of car                                                                                                 |
+| LapTime          | float   | Lap time                                                                                                  |
+| EstimatedLapTime | boolean | true = if laptime was calculated by Slipstream as no IRacing laptime was available. false=IRacing laptime |
+| LapsCompleted    | integer | How many laps were completed                                                                              |
+| FuelDelta        | float   | Changes in fuel levels                                                                                    |
+| LocalUser        | boolean | Is it our car?                                                                                            |
+| BestLap          | boolean | Was this lap a new best lap time in this session?                                                         |
 
 **JSON Example:**
 `{"EventType":"IRacingCompletedLap","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":7306.3000976104477,"CarIdx":5,"LapTime":7306.3000976104477,"LapsCompleted":9,"FuelDelta":null,"LocalUser":false,"BestLap":false}`

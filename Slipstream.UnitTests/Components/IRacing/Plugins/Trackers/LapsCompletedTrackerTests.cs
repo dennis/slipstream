@@ -153,6 +153,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             Assert.True(@event.SessionTime == NOW);
             Assert.True(@event.LapTime == 43.2f);
             Assert.False(@event.BestLap);
+            Assert.False(@event.EstimatedLapTime);
         }
 
         [Fact]
@@ -176,7 +177,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
         }
 
         [Fact]
-        public void CarWithPendingTimeUsesOurTimingIfOfficialLapTimeIsntAvailable()
+        public void UseEstimatedLapTimeIfNoLastLapTimeIsAvailable()
         {
             const float NOW = 50.0f;
             const float LAP_TIME = 43.2f;
@@ -200,6 +201,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             var @event = EventBus.Events[0] as IRacingCompletedLap;
 
             Assert.True(@event.LapTime == LAP_TIME);
+            Assert.True(@event.EstimatedLapTime);
         }
 
         [Fact]

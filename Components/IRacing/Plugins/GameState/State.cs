@@ -58,6 +58,8 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
         public IRacingSessionTypeEnum SessionType { get; set; } = IRacingSessionTypeEnum.Practice;
         public ISession[] Sessions { get; set; } = new Session[] { };
         public ISession CurrentSession { get => Sessions[SessionNum]; }
+        public int MyIncidentCount { get; internal set; }
+        public int TeamIncidentCount { get; internal set; }
 
         public State()
         {
@@ -84,6 +86,8 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
                 SessionTime = SessionTime,
                 SessionNum = SessionNum,
                 DriverCarIdx = DriverCarIdx,
+                TeamIncidentCount = TeamIncidentCount,
+                MyIncidentCount = MyIncidentCount,
                 DriverIncidentCount = DriverIncidentCount,
                 Cars = cars.ToArray(),
                 FuelLevel = FuelLevel,

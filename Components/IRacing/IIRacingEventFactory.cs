@@ -160,7 +160,7 @@ namespace Slipstream.Components.IRacing
 
         IRacingCommandSendRaceFlags CreateIRacingCommandSendRaceFlags();
 
-        IRacingDriverIncident CreateIRacingDriverIncident(int totalIncidents, int incidentDelta);
+        IRacingDriverIncident CreateIRacingDriverIncident(int driverIncidents, int driverIncidentsDelta, int teamIncidents, int teamIncidentsDelta, int myIncidents, int myIncidentsDelta);
 
         IRacingPractice CreateIRacingPractice(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category);
 

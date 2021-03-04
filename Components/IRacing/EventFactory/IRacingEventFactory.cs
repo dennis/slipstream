@@ -328,12 +328,16 @@ namespace Slipstream.Components.IRacing.EventFactory
             return new IRacingCommandSendRaceFlags();
         }
 
-        public IRacingDriverIncident CreateIRacingDriverIncident(int totalIncidents, int incidentDelta)
+        public IRacingDriverIncident CreateIRacingDriverIncident(int driverIncidents, int driverIncidentsDelta, int teamIncidents, int teamIncidentsDelta, int myIncidents, int myIncidentsDelta)
         {
             return new IRacingDriverIncident
             {
-                IncidentCount = totalIncidents,
-                IncidentDelta = incidentDelta
+                DriverIncidentCount = driverIncidents,
+                DriverIncidentDelta = driverIncidentsDelta,
+                TeamIncidentCount = teamIncidents,
+                TeamIncidentDelta = teamIncidentsDelta,
+                MyIncidentCount = myIncidents,
+                MyIncidentDelta = myIncidentsDelta,
             };
         }
 

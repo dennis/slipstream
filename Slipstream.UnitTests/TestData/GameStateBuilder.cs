@@ -48,9 +48,11 @@ namespace Slipstream.UnitTests.TestData
             };
         }
 
-        public void ChangeState(Action<State> a)
+        public GameStateBuilder Set(Action<State> a)
         {
             a(State);
+
+            return this;
         }
 
         public class CarBuilder

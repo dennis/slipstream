@@ -10,16 +10,24 @@ namespace Slipstream.Components.IRacing.Events
         public string EventType => "IRacingDriverIncident";
         public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
-        public int IncidentCount { get; set; }
-        public int IncidentDelta { get; set; }
+        public int DriverIncidentCount { get; set; }
+        public int DriverIncidentDelta { get; set; }
+        public int TeamIncidentCount { get; set; }
+        public int TeamIncidentDelta { get; set; }
+        public int MyIncidentCount { get; set; }
+        public int MyIncidentDelta { get; set; }
 
         public override bool Equals(object? obj)
         {
             return obj is IRacingDriverIncident incident &&
                    EventType == incident.EventType &&
                    ExcludeFromTxrx == incident.ExcludeFromTxrx &&
-                   IncidentCount == incident.IncidentCount &&
-                   IncidentDelta == incident.IncidentDelta;
+                   DriverIncidentCount == incident.DriverIncidentCount &&
+                   DriverIncidentDelta == incident.DriverIncidentDelta &&
+                   TeamIncidentCount == incident.TeamIncidentCount &&
+                   TeamIncidentDelta == incident.TeamIncidentDelta &&
+                   MyIncidentCount == incident.MyIncidentCount &&
+                   MyIncidentDelta == incident.MyIncidentDelta;
         }
 
         public override int GetHashCode()
@@ -27,8 +35,12 @@ namespace Slipstream.Components.IRacing.Events
             int hashCode = 1200671587;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
             hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
-            hashCode = hashCode * -1521134295 + IncidentCount.GetHashCode();
-            hashCode = hashCode * -1521134295 + IncidentDelta.GetHashCode();
+            hashCode = hashCode * -1521134295 + DriverIncidentCount.GetHashCode();
+            hashCode = hashCode * -1521134295 + DriverIncidentDelta.GetHashCode();
+            hashCode = hashCode * -1521134295 + TeamIncidentCount.GetHashCode();
+            hashCode = hashCode * -1521134295 + TeamIncidentDelta.GetHashCode();
+            hashCode = hashCode * -1521134295 + MyIncidentCount.GetHashCode();
+            hashCode = hashCode * -1521134295 + MyIncidentDelta.GetHashCode();
             return hashCode;
         }
     }

@@ -18,13 +18,29 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
 
         public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
         {
-            int incidents = currentState.DriverIncidentCount;
-            var incidentDelta = incidents - state.DriverState_.PlayerCarDriverIncidentCount;
+            int driverIncidents = currentState.DriverIncidentCount;
+            var driverIncidentDelta = driverIncidents - state.DriverState_.DriverIncidentCount;
 
-            if (incidentDelta > 0)
+            int teamIncidents = currentState.TeamIncidentCount;
+            var teamIncidentsDelta = teamIncidents - state.DriverState_.TeamIncidentCount;
+
+            int myIncidents = currentState.MyIncidentCount;
+            var myIncidentsDelta = myIncidents - state.DriverState_.MyIncidentCount;
+
+            if (driverIncidentDelta + teamIncidentsDelta + myIncidentsDelta > 0)
             {
-                state.DriverState_.PlayerCarDriverIncidentCount = incidents;
-                EventBus.PublishEvent(EventFactory.CreateIRacingDriverIncident(totalIncidents: incidents, incidentDelta: incidentDelta));
+                state.DriverState_.DriverIncidentCount = driverIncidents;
+                state.DriverState_.TeamIncidentCount = teamIncidents;
+                state.DriverState_.MyIncidentCount = myIncidents;
+
+                EventBus.PublishEvent(EventFactory.CreateIRacingDriverIncident(
+                    driverIncidents: driverIncidents,
+                    driverIncidentsDelta: driverIncidentDelta,
+                    teamIncidents: teamIncidents,
+                    teamIncidentsDelta: teamIncidentsDelta,
+                    myIncidents: myIncidents,
+                    myIncidentsDelta: myIncidentsDelta
+                ));
             }
         }
     }

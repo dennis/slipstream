@@ -351,16 +351,20 @@ Sent when connected to IRacing
 
 Sent every time an incident is detected (only for user, not other drivers).
 
-| Name            | Type    | Description                                                       |
-|:----------------|:-------:|:------------------------------------------------------------------|
-| EventType       | string  | `IRacingDriverIncident` (constant)                                |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
-| Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
-| IncidentCount   | int     | Total incident count                                              |
-| IncidentDelta   | int     | Delta incident count                                              |
+| Name                | Type    | Description                                                       |
+|:--------------------|:-------:|:------------------------------------------------------------------|
+| EventType           | string  | `IRacingDriverIncident` (constant)                                |
+| ExcludeFromTxrx     | boolean | false (constant)                                                  |
+| Uptime              | integer | Time of when the message was sent via Eventbus (in milliseconds). |
+| DriverIncidentCount | int     | Total incidents for current driver in car                         |
+| DriverIncidentDelta | int     | Change since last event                                           |
+| TeamIncidentCount   | int     | Total incidents for the whole team                                |
+| TeamIncidentDelta   | int     | Change since last event                                           |
+| MyIncidentCount     | int     | Total incidents for the user running IRacing locally              |
+| MyIncidentDelta     | int     | Change since last event                                           |
 
 **JSON Example:**
-TODO
+`{"EventType":"IRacingDriverIncident","ExcludeFromTxrx":false,"Uptime":262234,"DriverIncidentCount":1,"DriverIncidentDelta":1,"TeamIncidentCount":9,"TeamIncidentDelta":5,"MyIncidentCount":0,"MyIncidentDelta":0}`
 </details>
 
 <details><summary>IRacingPitEnter</summary><br />

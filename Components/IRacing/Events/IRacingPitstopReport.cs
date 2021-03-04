@@ -78,7 +78,7 @@ namespace Slipstream.Components.IRacing.Events
         #endregion Wear: Right Rear
 
         public long Laps { get; set; }
-        public float FuelDiff { get; set; }
+        public float FuelDelta { get; set; }
         public double Duration { get; set; }
 
         public override bool Equals(object? obj)
@@ -113,7 +113,7 @@ namespace Slipstream.Components.IRacing.Events
                    WearRRM == report.WearRRM &&
                    WearRRR == report.WearRRR &&
                    Laps == report.Laps &&
-                   FuelDiff == report.FuelDiff &&
+                   FuelDelta == report.FuelDelta &&
                    Duration == report.Duration;
         }
 
@@ -149,7 +149,7 @@ namespace Slipstream.Components.IRacing.Events
             hashCode = hashCode * -1521134295 + WearRRM.GetHashCode();
             hashCode = hashCode * -1521134295 + WearRRR.GetHashCode();
             hashCode = hashCode * -1521134295 + Laps.GetHashCode();
-            hashCode = hashCode * -1521134295 + FuelDiff.GetHashCode();
+            hashCode = hashCode * -1521134295 + FuelDelta.GetHashCode();
             hashCode = hashCode * -1521134295 + Duration.GetHashCode();
             return hashCode;
         }

@@ -1,11 +1,12 @@
 ﻿#nullable enable
 
+using System.Collections.Generic;
 using static Slipstream.Components.IRacing.IIRacingEventFactory;
 using Skies = Slipstream.Components.IRacing.IIRacingEventFactory.Skies;
 
 namespace Slipstream.Components.IRacing.Plugins.GameState
 {
-    internal class State : IState
+    public class State : IState
     {
         public double SessionTime { get; set; }
         public int SessionNum { get; set; }
@@ -61,6 +62,75 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
         public State()
         {
             Sessions = new Session[] { new Session() };
+        }
+
+        public IState Clone()
+        {
+            var cars = new List<Car>(Cars.Length);
+
+            foreach (var c in Cars)
+            {
+                cars.Add(c.Clone());
+            }
+
+            var sessions = new List<ISession>(Sessions.Length);
+            foreach (var s in Sessions)
+            {
+                sessions.Add(s);
+            }
+
+            return new State
+            {
+                SessionTime = SessionTime,
+                SessionNum = SessionNum,
+                DriverCarIdx = DriverCarIdx,
+                DriverIncidentCount = DriverIncidentCount,
+                Cars = cars.ToArray(),
+                FuelLevel = FuelLevel,
+                LFtempCL = LFtempCL,
+                LFtempCM = LFtempCM,
+                LFtempCR = LFtempCR,
+                RFtempCL = RFtempCL,
+                RFtempCM = RFtempCM,
+                RFtempCR = RFtempCR,
+                LRtempCL = LRtempCL,
+                LRtempCM = LRtempCM,
+                LRtempCR = LRtempCR,
+                RRtempCL = RRtempCL,
+                RRtempCM = RRtempCM,
+                RRtempCR = RRtempCR,
+                LFwearL = LFwearL,
+                LFwearM = LFwearM,
+                LFwearR = LFwearR,
+                RFwearL = RFwearL,
+                RFwearM = RFwearM,
+                RFwearR = RFwearR,
+                LRwearL = LRwearL,
+                LRwearM = LRwearM,
+                LRwearR = LRwearR,
+                RRwearL = RRwearL,
+                RRwearM = RRwearM,
+                RRwearR = RRwearR,
+                TrackId = TrackId,
+                TrackLength = TrackLength,
+                TrackDisplayName = TrackDisplayName,
+                TrackCity = TrackCity,
+                TrackCountry = TrackCountry,
+                TrackDisplayShortName = TrackDisplayShortName,
+                TrackConfigName = TrackConfigName,
+                TrackType = TrackType,
+                Skies = Skies,
+                TrackTempCrew = TrackTempCrew,
+                AirTemp = AirTemp,
+                AirPressure = AirPressure,
+                RelativeHumidity = RelativeHumidity,
+                FogLevel = FogLevel,
+                RaceCategory = RaceCategory,
+                SessionFlags = SessionFlags,
+                SessionState = SessionState,
+                SessionType = SessionType,
+                Sessions = sessions.ToArray(),
+            };
         }
     }
 }

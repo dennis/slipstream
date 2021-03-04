@@ -9,7 +9,7 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
 {
     internal class StateFactory : IStateFactory
     {
-        private Dictionary<int, Car> Cars = new Dictionary<int, Car>();
+        private readonly Dictionary<int, Car> Cars = new Dictionary<int, Car>();
 
         private static readonly Dictionary<iRacingSDK.SessionState, IRacingSessionStateEnum> SessionStateMapping = new Dictionary<iRacingSDK.SessionState, IRacingSessionStateEnum>() {
             { iRacingSDK.SessionState.Checkered, IRacingSessionStateEnum.Checkered },
@@ -41,13 +41,21 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
 
         public IState? BuildState(DataSample ds)
         {
+            IRacingSessionTypeEnum sessionType = IRacingSessionTypeEnum.Practice; // Default
+
+            // IRacing sometimes gives SessionNum == -1 back, so we need handle that
+            if (ds.Telemetry.SessionNum >= 0)
+            {
+                sessionType = IRacingSessionTypes[ds.SessionData.SessionInfo.Sessions[ds.Telemetry.SessionNum].SessionType];
+            }
+
             var state = new State
             {
                 SessionTime = ds.Telemetry.SessionTime,
-                SessionNum = ds.Telemetry.SessionNum,
+                SessionNum = Math.Max(0, ds.Telemetry.SessionNum),
                 SessionFlags = (SessionFlags)(int)ds.Telemetry.SessionFlags,
                 SessionState = SessionStateMapping[ds.Telemetry.SessionState],
-                SessionType = IRacingSessionTypes[ds.SessionData.SessionInfo.Sessions[ds.Telemetry.SessionNum].SessionType],
+                SessionType = sessionType,
 
                 DriverCarIdx = ds.SessionData.DriverInfo.DriverCarIdx,
                 DriverIncidentCount = Convert.ToInt32(ds.Telemetry["PlayerCarDriverIncidentCount"]),
@@ -101,7 +109,7 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
                 RelativeHumidity = ds.Telemetry.RelativeHumidity,
                 FogLevel = ds.Telemetry.FogLevel,
 
-                RaceCategory = IRacingCategoryTypes[ds.SessionData.WeekendInfo.Category]
+                RaceCategory = IRacingCategoryTypes[ds.SessionData.WeekendInfo.Category],
             };
 
             {
@@ -127,6 +135,10 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
                         OnPitRoad = ds.Telemetry.CarIdxOnPitRoad[idx],
                         ClassPosition = ds.Telemetry.CarIdxClassPosition[idx],
                         Position = ds.Telemetry.CarIdxPosition[idx],
+                        Location = (IIRacingEventFactory.CarLocation)(int)ds.Telemetry.CarIdxTrackSurface[idx],
+                        LastLapTime = ((float[])ds.Telemetry["CarIdxLastLapTime"])[idx],
+                        BestLapTime = ((float[])ds.Telemetry["CarIdxBestLapTime"])[idx],
+                        BestLapNum = ((int[])ds.Telemetry["CarIdxBestLapNum"])[idx],
                     };
 
                     if (Cars.TryGetValue(idx, out Car existingCar))

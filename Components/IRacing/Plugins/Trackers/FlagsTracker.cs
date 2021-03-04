@@ -58,8 +58,8 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
                     // We can trust timings
                     foreach (var info in state.CarsTracked)
                     {
-                        // We dont need to observe laps, just start
-                        info.Value.ObservedCrossFinishingLine = 3;
+                        // Just start
+                        info.Value.LapStartNotSeen = false;
                     }
                 }
 

@@ -18,58 +18,108 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
 
         public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
         {
-            // We cant use data.Telemetry.Cars[].LastTime, as it wont contain data if
-            // the driver had an incident. So we calculate it ourself which will be slightly
-            // off compared to IRacings own timing.
-            // If you plan to use LastTime, please remember to wait approx 2.5 before reading
-            // LastTime, as the value is updated with about 2.5s delay
             var now = currentState.SessionTime;
 
             foreach (var car in currentState.Cars)
             {
-                if (!state.CarsTracked.TryGetValue(car.CarIdx, out CarState carState))
-                {
-                    carState = CarState.Build(car.CarIdx, currentState);
-                    state.CarsTracked.Add(car.CarIdx, carState);
-                }
-
                 var lapsCompleted = car.LapsCompleted;
+                var localUser = car.CarIdx == currentState.DriverCarIdx;
 
-                if (lapsCompleted != -1 && carState.LastLap != lapsCompleted)
+                if (!state.Laps.TryGetValue(car.CarIdx, out LapState lapState))
                 {
-                    carState.ObservedCrossFinishingLine++;
-                    if (lapsCompleted == 0) // This is initial lap, so we can use times from next lap
-                        carState.ObservedCrossFinishingLine++;
-
-                    bool localUser = car.CarIdx == currentState.DriverCarIdx;
-
-                    // 1st time is when leaving the pits / or whatever lap it is on when we join
-                    // 2nd time is start of first real lap (that we see in full)
-                    // 3rd+ is lap times (we can begin timing laps)
-                    // if "we" are doing laps, then we know we joined with the car,
-                    // so we can track laps from the 1st one.
-                    // for everybody else, we need to see them crossing the line 3 or more times as describe above
-                    if (carState.ObservedCrossFinishingLine >= 3 || (localUser && lapsCompleted > 0))
+                    lapState = new LapState
                     {
-                        var lapTime = now - carState.LastLapTime;
+                        Location = car.Location,
+                        LapsCompleted = lapsCompleted,
+                        TimingEnabled = false,
+                        LastSessionNum = currentState.SessionNum,
+                    };
 
-                        var fuelLeft = currentState.FuelLevel;
+                    state.Laps.Add(car.CarIdx, lapState);
+                }
+                else
+                {
+                    if (lapState.LastSessionNum != currentState.SessionNum)
+                    {
+                        lapState.Clear();
+                        lapState.LastSessionNum = currentState.SessionNum;
+                    }
 
-                        float? usedFuel = fuelLeft - carState.FuelLevelLastLap;
-                        carState.FuelLevelLastLap = fuelLeft;
+                    if (car.Location == IIRacingEventFactory.CarLocation.NotInWorld)
+                    {
+                        lapState.ConsecutiveNotInWorld++;
+                    }
+                    else
+                    {
+                        lapState.ConsecutiveNotInWorld = 0;
+                    }
 
-                        var @event = EventFactory.CreateIRacingCarCompletedLap(
+                    if (lapState.Location == IIRacingEventFactory.CarLocation.InPitStall && car.Location == IIRacingEventFactory.CarLocation.AproachingPits)
+                    {
+                        // Exiting pits
+                        lapState.TimingEnabled = true;
+                        lapState.CurrentLapStartTime = now;
+                    }
+                    else if (lapState.TimingEnabled && car.Location == IIRacingEventFactory.CarLocation.NotInWorld && lapState.ConsecutiveNotInWorld > 1)
+                    {
+                        // Car resetting
+                        lapState.TimingEnabled = false;
+                    }
+                    else if (lapsCompleted != lapState.LapsCompleted && lapState.LapsCompleted != -1)
+                    {
+                        // New lap: if previous lap was -1, then this is the initial lap and there
+                        // was no previous lap, hence no timing is available
+
+                        lapState.OurLapTimeMeasurement = now - lapState.CurrentLapStartTime;
+                        lapState.CurrentLapStartTime = now;
+                        lapState.PendingLapTime = lapState.TimingEnabled && lapState.LapsCompleted != -1; ;
+                        lapState.TimingEnabled = true;
+
+                        if (localUser)
+                        {
+                            lapState.LastLapFuelDelta = currentState.FuelLevel - lapState.FuelLevelAtLapStart;
+                        }
+                        else
+                        {
+                            lapState.LastLapFuelDelta = null;
+                        }
+
+                        lapState.FuelLevelAtLapStart = currentState.FuelLevel;
+                    }
+
+                    if (lapState.TimingEnabled && lapState.PendingLapTime && (lapState.CurrentLapStartTime + 3) <= now)
+                    {
+                        // If possible we will use the timing provided by IRacing. These are updated after approx 2.5s
+                        // after we cross s/f line. In case of incidents, no laptime will be provided, and we'll fall back
+                        // to our own timing (which can be pretty inaccurate)
+
+                        var lapTime = car.LastLapTime;
+                        var estimatedLapTime = false;
+
+                        if (lapTime == -1)
+                        {
+                            lapTime = lapState.OurLapTimeMeasurement;
+                            estimatedLapTime = true;
+                        }
+
+                        var @event = EventFactory.CreateIRacingCompletedLap(
                             sessionTime: now,
                             carIdx: car.CarIdx,
-                            time: lapTime,
+                            lapTime: lapTime,
+                            estimatedLapTime: estimatedLapTime,
                             lapsCompleted: lapsCompleted,
-                            fuelDiff: localUser ? usedFuel : null,
-                            localUser: localUser);
+                            fuelDelta: lapState.LastLapFuelDelta,
+                            localUser: localUser,
+                            bestLap: car.BestLapNum == lapsCompleted
+                        );
 
                         EventBus.PublishEvent(@event);
+
+                        lapState.PendingLapTime = false;
                     }
-                    carState.LastLapTime = now;
-                    carState.LastLap = lapsCompleted;
+
+                    lapState.LapsCompleted = lapsCompleted;
+                    lapState.Location = car.Location;
                 }
             }
         }

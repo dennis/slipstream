@@ -17,5 +17,35 @@
         public bool OnPitRoad { get; set; }
         public int ClassPosition { get; set; }
         public int Position { get; set; }
+        public IIRacingEventFactory.CarLocation Location { get; set; }
+        public double LastLapTime { get; set; }
+        public float BestLapTime { get; set; }
+        public int BestLapNum { get; set; }
+
+        public Car Clone()
+        {
+            return new Car
+            {
+                CarIdx = CarIdx,
+                CarNumber = CarNumber,
+                UserId = UserId,
+                UserName = UserName,
+                TeamId = TeamId,
+                TeamName = TeamName,
+                CarName = CarName,
+                CarNameShort = CarNameShort,
+                IRating = IRating,
+                License = License,
+                IsSpectator = IsSpectator,
+                LapsCompleted = LapsCompleted,
+                OnPitRoad = OnPitRoad,
+                ClassPosition = ClassPosition,
+                Position = Position,
+                Location = Location,
+                LastLapTime = LastLapTime,
+                BestLapTime = BestLapTime,
+                BestLapNum = BestLapNum,
+            };
+        }
     }
 }

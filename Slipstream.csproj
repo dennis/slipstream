@@ -172,6 +172,7 @@
     <Compile Include="Components\IRacing\Plugins\GameState\State.cs" />
     <Compile Include="Components\IRacing\Plugins\GameState\Mapper.cs" />
     <Compile Include="Components\IRacing\Plugins\GameState\StateFactory.cs" />
+    <Compile Include="Components\IRacing\Plugins\Models\LapState.cs" />
     <Compile Include="Components\IRacing\Plugins\Models\CarState.cs" />
     <Compile Include="Components\IRacing\Plugins\Models\DriverState.cs" />
     <Compile Include="Components\IRacing\Plugins\Trackers\CarInfoTracker.cs" />
@@ -299,7 +300,7 @@
     <Compile Include="Components\IRacing\Events\IRacingPitstopReport.cs" />
     <Compile Include="Components\IRacing\Events\IRacingPitExit.cs" />
     <Compile Include="Components\IRacing\Events\IRacingPitEnter.cs" />
-    <Compile Include="Components\IRacing\Events\IRacingCarCompletedLap.cs" />
+    <Compile Include="Components\IRacing\Events\IRacingCompletedLap.cs" />
     <Compile Include="Components\IRacing\Events\IRacingRaceFlags.cs" />
     <Compile Include="Components\IRacing\Events\IRacingCarInfo.cs" />
     <Compile Include="Components\IRacing\Plugins\IRacingPlugin.cs" />

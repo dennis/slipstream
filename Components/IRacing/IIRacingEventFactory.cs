@@ -27,7 +27,25 @@ namespace Slipstream.Components.IRacing
             Clear = 0, PartlyCloudy = 1, MostlyCloudy = 2, Overcast = 3
         }
 
-        IRacingCarCompletedLap CreateIRacingCarCompletedLap(double sessionTime, long carIdx, double time, int lapsCompleted, float? fuelDiff, bool localUser);
+        public enum CarLocation
+        {
+            NotInWorld = -1,
+            OffTrack,
+            InPitStall,
+            AproachingPits,
+            OnTrack
+        }
+
+        IRacingCompletedLap CreateIRacingCompletedLap(
+            double sessionTime,
+            long carIdx,
+            double lapTime,
+            bool estimatedLapTime,
+            int lapsCompleted,
+            float? fuelDelta,
+            bool localUser,
+            bool bestLap
+        );
 
         IRacingCarInfo CreateIRacingCarInfo(
             double sessionTime,
@@ -80,7 +98,7 @@ namespace Slipstream.Components.IRacing
             uint wearRRM,
             uint wearRRR,
             long laps,
-            float fuelDiff,
+            float fuelDelta,
             double duration);
 
         IRacingRaceFlags CreateIRacingRaceFlags(

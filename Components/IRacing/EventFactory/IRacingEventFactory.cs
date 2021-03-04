@@ -9,16 +9,27 @@ namespace Slipstream.Components.IRacing.EventFactory
 {
     public class IRacingEventFactory : IIRacingEventFactory
     {
-        public IRacingCarCompletedLap CreateIRacingCarCompletedLap(double sessionTime, long carIdx, double time, int lapsCompleted, float? fuelDiff, bool localUser)
+        public IRacingCompletedLap CreateIRacingCompletedLap(
+            double sessionTime,
+            long carIdx,
+            double lapTime,
+            bool estimatedLapTime,
+            int lapsCompleted,
+            float? fuelDelta,
+            bool localUser,
+            bool bestLap
+        )
         {
-            return new IRacingCarCompletedLap
+            return new IRacingCompletedLap
             {
                 SessionTime = sessionTime,
                 CarIdx = carIdx,
-                Time = time,
+                LapTime = lapTime,
+                EstimatedLapTime = estimatedLapTime,
                 LapsCompleted = lapsCompleted,
-                FuelDiff = fuelDiff,
+                FuelDelta = fuelDelta,
                 LocalUser = localUser,
+                BestLap = bestLap,
             };
         }
 
@@ -141,7 +152,7 @@ namespace Slipstream.Components.IRacing.EventFactory
             uint wearRRM,
             uint wearRRR,
             long laps,
-            float fuelDiff,
+            float fuelDelta,
             double duration)
         {
             return new IRacingPitstopReport
@@ -182,7 +193,7 @@ namespace Slipstream.Components.IRacing.EventFactory
                 WearRRR = wearRRR,
 
                 Laps = laps,
-                FuelDiff = fuelDiff,
+                FuelDelta = fuelDelta,
                 Duration = duration
             };
         }

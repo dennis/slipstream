@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 
 #nullable enable
 
@@ -13,6 +14,7 @@ namespace Slipstream.Components.Internal.Services
             List<ILuaGlue>? luaGlues = null)
         {
             Lua = new NLua.Lua();
+            Lua.State.Encoding = Encoding.UTF8;
 
             luaGlues ??= new List<ILuaGlue>();
             LuaGlues = luaGlues;

@@ -2,11 +2,15 @@
 {
     internal class DriverState
     {
-        public int PlayerCarDriverIncidentCount { get; set; }
+        public int DriverIncidentCount { get; set; }
+        public int TeamIncidentCount { get; set; }
+        public int MyIncidentCount { get; set; }
 
         public void ClearState()
         {
-            PlayerCarDriverIncidentCount = 0;
+            DriverIncidentCount = 0;
+            TeamIncidentCount = 0;
+            MyIncidentCount = 0;
         }
     }
 }

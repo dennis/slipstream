@@ -13,7 +13,7 @@ namespace Slipstream.UnitTests.TestData
 
         public long DriverCarIdx { get; set; } = 0;
 
-        public int DriverIncidentCount { get; set; } = 0;
+        public int TeamIncidentCount { get; set; } = 0;
 
         public Car[] Cars { get; set; } = new Car[] { };
 
@@ -108,6 +108,9 @@ namespace Slipstream.UnitTests.TestData
         public ISession CurrentSession { get => Sessions[0]; }
 
         public float LastLapTime { get; set; }
+
+        public int DriverIncidentCount { get; set; }
+        public int MyIncidentCount { get; set; }
 
         public TestState()
         {

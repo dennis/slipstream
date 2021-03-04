@@ -59,6 +59,8 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
 
                 DriverCarIdx = ds.SessionData.DriverInfo.DriverCarIdx,
                 DriverIncidentCount = Convert.ToInt32(ds.Telemetry["PlayerCarDriverIncidentCount"]),
+                MyIncidentCount = Convert.ToInt32(ds.Telemetry["PlayerCarMyIncidentCount"]),
+                TeamIncidentCount = Convert.ToInt32(ds.Telemetry["PlayerCarTeamIncidentCount"]),
                 FuelLevel = ds.Telemetry.FuelLevel,
 
                 LFtempCL = ds.Telemetry.LFtempCL,

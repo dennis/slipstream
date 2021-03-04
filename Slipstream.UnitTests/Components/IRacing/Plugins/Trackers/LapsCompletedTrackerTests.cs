@@ -1,7 +1,6 @@
 ﻿using Slipstream.Components.IRacing;
 using Slipstream.Components.IRacing.EventFactory;
 using Slipstream.Components.IRacing.Events;
-using Slipstream.Components.IRacing.Plugins.GameState;
 using Slipstream.Components.IRacing.Plugins.Models;
 using Slipstream.Components.IRacing.Plugins.Trackers;
 using Slipstream.UnitTests.TestData;
@@ -50,7 +49,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             const float NOW = 40.0f;
 
             // arrange
-            Builder.ChangeState(a => a.DriverCarIdx = 1); // This is not our car, so we wont have fuel data
+            Builder.Set(a => a.DriverCarIdx = 1); // This is not our car, so we wont have fuel data
             Builder.Car(0).EntersGame().AtLap(1).Commit();
             Builder.AtSessionTime(LAP_STARTED_AT).Car(0).InPits().Commit();
             Builder.Car(0).ExitingPits().Commit();

@@ -10,6 +10,8 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
         public int SessionNum { get; }
         public long DriverCarIdx { get; }
         public int DriverIncidentCount { get; }
+        public int TeamIncidentCount { get; }
+        public int MyIncidentCount { get; }
         public Car[] Cars { get; }
         public float FuelLevel { get; }
         public float LFtempCL { get; }

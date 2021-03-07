@@ -58,5 +58,6 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
         public IRacingSessionTypeEnum SessionType { get; }
         public ISession[] Sessions { get; }
         public ISession CurrentSession { get; }
+        public float PlayerCarTowTime { get; }
     }
 }

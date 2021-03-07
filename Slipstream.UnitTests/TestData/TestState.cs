@@ -106,11 +106,10 @@ namespace Slipstream.UnitTests.TestData
         public ISession[] Sessions { get; set; } = new Session[] { };
 
         public ISession CurrentSession { get => Sessions[0]; }
-
         public float LastLapTime { get; set; }
-
         public int DriverIncidentCount { get; set; }
         public int MyIncidentCount { get; set; }
+        public float PlayerCarTowTime { get; set; }
 
         public TestState()
         {

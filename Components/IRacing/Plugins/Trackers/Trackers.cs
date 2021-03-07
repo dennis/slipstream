@@ -28,6 +28,7 @@ namespace Slipstream.Components.IRacing.Plugins.Trackers
             DataTrackers.Add(new PitUsageTracker(eventBus, eventFactory));
             DataTrackers.Add(new IRacingSessionTracker(eventBus, eventFactory));
             DataTrackers.Add(new CarPositionTracker(eventBus, eventFactory));
+            DataTrackers.Add(new TowTracker(eventBus, eventFactory));
         }
 
         public void Handle(GameState.IState currentState)

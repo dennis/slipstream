@@ -538,7 +538,7 @@ Published every time car changes positions.
 | EventType       | string  | `IRacingCarPosition` (constant)                                   |
 | ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
-| SessionTime     | string  |                                                                   |
+| SessionTime     | float   |                                                                   |
 | CarIdx          | int     | Car Index                                                         |
 | LocalUser       | bool    | Is it our car?                                                    |
 | PositionInClass | int     | Position in class                                                 |
@@ -546,4 +546,20 @@ Published every time car changes positions.
 
 **JSON Example:**
 `{"EventType":"IRacingCarPosition","ExcludeFromTxrx":false,"Uptime":2528216,"SessionTime":2711.7666666666669,"CarIdx":28,"LocalUser":true,"PositionInClass":15,"PositionInRace":15}`
+</details>
+
+<details><summary>IRacingTowed</summary><br />
+
+Published every your car is being towed to pits. You will not get these events for other cars. These isn't published during replays.
+
+| Name             | Type    | Description                                                       |
+|:-----------------|:-------:|:------------------------------------------------------------------|
+| EventType        | string  | `IRacingTowed` (constant)                                         |
+| ExcludeFromTxrx  | boolean | false (constant)                                                  |
+| Uptime           | integer | Time of when the message was sent via Eventbus (in milliseconds). |
+| SessionTime      | float   |                                                                   |
+| RemainingTowTime | float   | How many seconds before we're in pit                              |
+
+**JSON Example:**
+`{"EventType":"IRacingTowed","ExcludeFromTxrx":false,"Uptime":2528216,"SessionTime":2711.7666666666669,"CarIdx":28,"LocalUser":true,"PositionInClass":15,"PositionInRace":15}`
 </details>

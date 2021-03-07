@@ -32,6 +32,7 @@
   - IRacingPlugin: Rename IRacingCompletedLap.Time to IRacingCompletedLap.LapTime.
   - IRacingPlugin: Add IRacingCompletedLap.EstimatedLapTime - to show if this was a laptime as recorded by IRacing or by Slipstream in case IRacing doesn't provide a laptime
   - IRacingPlugin: Change IRacingDriverIncident: Rename Incident(Count|Delta) to DriverIncident(Count|Delta). Added fields: TeamIncident(Count|Delta) and MyIncident(Count|Delta)
+  - IRacingPlugin: Adds: IRacingTowed event
 
 ## [0.4.0](https://github.com/dennis/slipstream/releases/tag/v0.3.0) (2020-01-10)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.3.0...v0.4.0)

@@ -112,6 +112,8 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
                 FogLevel = ds.Telemetry.FogLevel,
 
                 RaceCategory = IRacingCategoryTypes[ds.SessionData.WeekendInfo.Category],
+
+                PlayerCarTowTime = (float)ds.Telemetry["PlayerCarTowTime"],
             };
 
             {

@@ -60,6 +60,8 @@ namespace Slipstream.Components.IRacing.EventHandler
 
         public delegate void OnIRacingRawHandler(EventHandlerController source, EventHandlerArgs<IRacingRaw> e);
 
+        public delegate void OnIRacingTowedHandler(EventHandlerController source, EventHandlerArgs<IRacingTowed> e);
+
         public event OnIRacingCarCompletedLapHandler? OnIRacingCarCompletedLap;
 
         public event OnIRacingCarInfoHandler? OnIRacingCarInfo;
@@ -105,6 +107,8 @@ namespace Slipstream.Components.IRacing.EventHandler
         public event OnIRacingCarPositionHandler? OnIRacingCarPosition;
 
         public event OnIRacingRawHandler? OnIRacingRaw;
+
+        public event OnIRacingTowedHandler? OnIRacingTowed;
 
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)
         {
@@ -334,6 +338,16 @@ namespace Slipstream.Components.IRacing.EventHandler
                     if (OnIRacingRaw != null)
                     {
                         OnIRacingRaw(Parent, new EventHandlerArgs<IRacingRaw>(tev));
+                        return IEventHandler.HandledStatus.Handled;
+                    }
+                    else
+                    {
+                        return IEventHandler.HandledStatus.UseDefault;
+                    }
+                case IRacingTowed tev:
+                    if (OnIRacingTowed != null)
+                    {
+                        OnIRacingTowed(Parent, new EventHandlerArgs<IRacingTowed>(tev));
                         return IEventHandler.HandledStatus.Handled;
                     }
                     else

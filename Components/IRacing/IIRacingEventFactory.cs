@@ -1,5 +1,6 @@
 ﻿using Slipstream.Components.IRacing.Events;
 using Slipstream.Components.IRacing.Plugins.GameState;
+using Slipstream.Shared;
 
 #nullable enable
 
@@ -46,6 +47,8 @@ namespace Slipstream.Components.IRacing
             bool localUser,
             bool bestLap
         );
+
+        IEvent CreateIRacingTowed(double sessionTime, float remainingTowTime);
 
         IRacingCarInfo CreateIRacingCarInfo(
             double sessionTime,

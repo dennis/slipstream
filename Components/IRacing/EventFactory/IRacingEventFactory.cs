@@ -1,5 +1,6 @@
 ﻿using Slipstream.Components.IRacing.Events;
 using Slipstream.Components.IRacing.Plugins.GameState;
+using Slipstream.Shared;
 using System;
 using static Slipstream.Components.IRacing.IIRacingEventFactory;
 
@@ -429,6 +430,15 @@ namespace Slipstream.Components.IRacing.EventFactory
             return new IRacingRaw
             {
                 CurrentState = state
+            };
+        }
+
+        public IEvent CreateIRacingTowed(double sessionTime, float remainingTowTime)
+        {
+            return new IRacingTowed
+            {
+                SessionTime = sessionTime,
+                RemainingTowTime = remainingTowTime,
             };
         }
     }

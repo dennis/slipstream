@@ -193,6 +193,7 @@
     <Compile Include="Components\Internal\LuaGLues\HttpLuaGlueFactory.cs" />
     <Compile Include="Components\Internal\LuaGLues\CoreLuaGlueFactory.cs" />
     <Compile Include="Components\Internal\Internal.cs" />
+    <Compile Include="Components\IRacing\Events\IRacingTrackPosition.cs" />
     <Compile Include="Components\IRacing\Events\IRacingTowed.cs" />
     <Compile Include="Components\IRacing\Events\IRacingRaw.cs" />
     <Compile Include="Components\IRacing\LuaGlueFactory.cs" />
@@ -210,6 +211,7 @@
     <Compile Include="Components\IRacing\Plugins\Models\DriverState.cs" />
     <Compile Include="Components\IRacing\Plugins\Trackers\CarInfoTracker.cs" />
     <Compile Include="Components\IRacing\Plugins\Trackers\CarPositionTracker.cs" />
+    <Compile Include="Components\IRacing\Plugins\Trackers\TrackPositionTracker.cs" />
     <Compile Include="Components\IRacing\Plugins\Trackers\TowTracker.cs" />
     <Compile Include="Components\IRacing\Plugins\Trackers\IRacingSessionTracker.cs" />
     <Compile Include="Components\IRacing\Plugins\Trackers\PitUsageTracker.cs" />

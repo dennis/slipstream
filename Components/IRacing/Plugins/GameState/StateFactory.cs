@@ -2,6 +2,7 @@
 
 using iRacingSDK;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using static Slipstream.Components.IRacing.IIRacingEventFactory;
 
@@ -121,6 +122,11 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
                 foreach (var d in ds.SessionData.DriverInfo.Drivers)
                 {
                     int idx = (int)d.CarIdx;
+                    var location = (IIRacingEventFactory.CarLocation)(int)ds.Telemetry.CarIdxTrackSurface[idx];
+                    var lastLapTime = ((float[])ds.Telemetry["CarIdxLastLapTime"])[idx];
+                    var bestLapTime = ((float[])ds.Telemetry["CarIdxBestLapTime"])[idx];
+                    var bestLapNum = ((int[])ds.Telemetry["CarIdxBestLapNum"])[idx];
+                    var lapDistPct = ((float[])ds.Telemetry["CarIdxLapDistPct"])[idx];
 
                     var car = new Car
                     {
@@ -135,14 +141,17 @@ namespace Slipstream.Components.IRacing.Plugins.GameState
                         IRating = d.IRating,
                         License = d.LicString,
                         IsSpectator = d.IsSpectator != 0,
+                        Laps = ds.Telemetry.CarIdxLap[idx],
                         LapsCompleted = ds.Telemetry.CarIdxLapCompleted[idx],
                         OnPitRoad = ds.Telemetry.CarIdxOnPitRoad[idx],
                         ClassPosition = ds.Telemetry.CarIdxClassPosition[idx],
                         Position = ds.Telemetry.CarIdxPosition[idx],
-                        Location = (IIRacingEventFactory.CarLocation)(int)ds.Telemetry.CarIdxTrackSurface[idx],
-                        LastLapTime = ((float[])ds.Telemetry["CarIdxLastLapTime"])[idx],
-                        BestLapTime = ((float[])ds.Telemetry["CarIdxBestLapTime"])[idx],
-                        BestLapNum = ((int[])ds.Telemetry["CarIdxBestLapNum"])[idx],
+                        Location = location,
+                        LastLapTime = lastLapTime,
+                        BestLapTime = bestLapTime,
+                        BestLapNum = bestLapNum,
+                        LapDistPct = lapDistPct,
+                        CarClassId = ds.SessionData.DriverInfo.Drivers.Where(a => a.CarIdx == idx).Select(a => a.CarClassID).FirstOrDefault()
                     };
 
                     if (Cars.TryGetValue(idx, out Car existingCar))

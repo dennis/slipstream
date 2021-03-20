@@ -1,7 +1,10 @@
 ﻿# Changelog
 
 ## Next version
-[Full Changelog](https://github.com/dennis/slipstream/compare/v0.4.0...main)
+[Full Changelog](https://github.com/dennis/slipstream/compare/v0.4.1...main)
+
+## [0.4.1](https://github.com/dennis/slipstream/releases/tag/v0.4.1) (2021-03-20)
+[Full Changelog](https://github.com/dennis/slipstream/compare/v0.4.0...v0.4.1)
   - Bugfix: Event IRacingCarInfo now sets LocalUser correctly
   - Event: Added CurrentDriverLicense to IRacingCarInfo
   - Event: Added Category to IRacingCurrentSession
@@ -34,7 +37,7 @@
   - IRacingPlugin: Change IRacingDriverIncident: Rename Incident(Count|Delta) to DriverIncident(Count|Delta). Added fields: TeamIncident(Count|Delta) and MyIncident(Count|Delta)
   - IRacingPlugin: Adds: IRacingTowed event
 
-## [0.4.0](https://github.com/dennis/slipstream/releases/tag/v0.3.0) (2020-01-10)
+## [0.4.0](https://github.com/dennis/slipstream/releases/tag/v0.4.0) (2020-01-10)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.3.0...v0.4.0)
  - Lua: Deduplicate identical events. If one or more scripts sends the same
    event on the eventbus during start, they will be deduplicated. This means,

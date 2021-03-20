@@ -1,12 +1,18 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics;
+using System.Reflection;
 
 namespace Slipstream.Shared
 {
-    class ApplicationVersionService : IApplicationVersionService
+    internal class ApplicationVersionService : IApplicationVersionService
     {
-        public string Version => Assembly
-            .GetEntryAssembly()
-            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-            .InformationalVersion;
+        public string Version { get; }
+
+        public ApplicationVersionService()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var versionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+
+            this.Version = versionInfo.FileVersion;
+        }
     }
 }

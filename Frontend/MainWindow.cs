@@ -7,11 +7,14 @@ using Slipstream.Components.UI;
 using Slipstream.Components.UI.Events;
 using Slipstream.Properties;
 using Slipstream.Shared;
+using Squirrel;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using EventHandler = Slipstream.Shared.EventHandlerController;
 
@@ -80,6 +83,9 @@ namespace Slipstream.Frontend
             EventBusSubscription = EventBus.RegisterListener(fromBeginning: true);
             EventHandlerThread = new Thread(new ThreadStart(this.EventListenerMain));
             EventHandlerThread.Start();
+
+            // ToDo: find a better place to put this
+            CheckForUpdates(); // not conserned about the outcome of this function
         }
 
         private void AppendMessages(string msg)
@@ -255,6 +261,24 @@ namespace Slipstream.Frontend
         private void OpenDataDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Process.Start(".");
+        }
+
+        private async Task CheckForUpdates()
+        {
+            var updateLocation = ConfigurationManager.AppSettings["UpdateLocation"];
+
+            if(string.IsNullOrEmpty(updateLocation))
+            {
+                return;
+            }
+
+            // ToDo: tidy this up, allowing for using local folder and GitHub, can be done better, perhaps with DI and named instances
+            // pattern match should also be regex to allow for different url like http and www.
+            // NOTE: GitHub is untested at this point
+            using var manager = updateLocation.StartsWith("https://github.com") ? 
+                await UpdateManager.GitHubUpdateManager(updateLocation) : new UpdateManager(updateLocation);
+            
+            await manager.UpdateApp();
         }
     }
 }

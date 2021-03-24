@@ -175,6 +175,13 @@
     <Compile Include="Backend\IPluginFactory.cs" />
     <Compile Include="Backend\IPluginManager.cs" />
     <Compile Include="Backend\PluginManager.cs" />
+    <Compile Include="Components\AppilcationUpdate\ApplicationUpdate.cs" />
+    <Compile Include="Components\AppilcationUpdate\EventFactory\ApplicationUpdateEventFactory.cs" />
+    <Compile Include="Components\AppilcationUpdate\EventHandler\ApplicationUpdateEventHandler.cs" />
+    <Compile Include="Components\AppilcationUpdate\Events\ApplicationUpdateCommandCheckLatestVersion.cs" />
+    <Compile Include="Components\AppilcationUpdate\Events\ApplicationUpdateLatestVersionChanged.cs" />
+    <Compile Include="Components\AppilcationUpdate\IApplicationUpdateEventFactory.cs" />
+    <Compile Include="Components\AppilcationUpdate\Plugins\ApplicationUpdatePlugin.cs" />
     <Compile Include="Components\Audio\LuaGlueFactory.cs" />
     <Compile Include="Components\Discord\Discord.cs" />
     <Compile Include="Components\Discord\EventFactory\DiscordEventFactory.cs" />
@@ -399,6 +406,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Backend\Bootstrap\init.lua" />
     <None Include="CHANGELOG.md" />
     <None Include="CODE_OF_CONDUCT.md" />
     <None Include="Components\Audio\README.md" />

@@ -424,6 +424,12 @@
     <None Include="Components\UI\README.md" />
     <None Include="docs\init.lua.md" />
     <None Include="docs\release-checklist.md" />
+    <None Include="LuaScripts\iracing_ir.lua" />
+    <None Include="LuaScripts\iracing_track.lua" />
+    <None Include="LuaScripts\lib\common.lua" />
+    <None Include="LuaScripts\iracing_car.lua" />
+    <None Include="LuaScripts\iracing_prechecks.lua" />
+    <None Include="LuaScripts\iracing_sof.lua" />
     <None Include="README.md" />
     <None Include="LuaScripts\debug.lua" />
     <None Include="packages.config" />

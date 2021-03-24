@@ -48,7 +48,7 @@ namespace Slipstream.Components.IRacing
             bool bestLap
         );
 
-        IEvent CreateIRacingTowed(double sessionTime, float remainingTowTime);
+        IRacingTowed CreateIRacingTowed(double sessionTime, float remainingTowTime);
 
         IRacingCarInfo CreateIRacingCarInfo(
             double sessionTime,
@@ -178,5 +178,7 @@ namespace Slipstream.Components.IRacing
         IRacingCarPosition CreateIRacingCarPosition(double sessionTime, int carIdx, bool localUser, int positionInClass, int positionInRace);
 
         IRacingRaw CreateIRacingRaw(IState state);
+
+        IRacingTrackPosition CreateIRacingTrackPosition(double sessionTime, long carIdx, bool localUser, int currentPositionInRace, int currentPositionInClass, int previousPositionInRace, int previousPositionInClass, int[] newCarsAhead, int[] newCarsBehind);
     }
 }

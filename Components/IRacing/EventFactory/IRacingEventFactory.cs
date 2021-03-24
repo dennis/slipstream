@@ -1,6 +1,5 @@
 ﻿using Slipstream.Components.IRacing.Events;
 using Slipstream.Components.IRacing.Plugins.GameState;
-using Slipstream.Shared;
 using System;
 using static Slipstream.Components.IRacing.IIRacingEventFactory;
 
@@ -433,12 +432,28 @@ namespace Slipstream.Components.IRacing.EventFactory
             };
         }
 
-        public IEvent CreateIRacingTowed(double sessionTime, float remainingTowTime)
+        public IRacingTowed CreateIRacingTowed(double sessionTime, float remainingTowTime)
         {
             return new IRacingTowed
             {
                 SessionTime = sessionTime,
                 RemainingTowTime = remainingTowTime,
+            };
+        }
+
+        public IRacingTrackPosition CreateIRacingTrackPosition(double sessionTime, long carIdx, bool localUser, int currentPositionInRace, int currentPositionInClass, int previousPositionInRace, int previousPositionInClass, int[] newCarsAhead, int[] newCarsBehind)
+        {
+            return new IRacingTrackPosition
+            {
+                SessionTime = sessionTime,
+                CarIdx = carIdx,
+                LocalUser = localUser,
+                CurrentPositionInRace = currentPositionInRace,
+                CurrentPositionInClass = currentPositionInClass,
+                PreviousPositionInRace = previousPositionInRace,
+                PreviousPositionInClass = previousPositionInClass,
+                NewCarsAhead = newCarsAhead,
+                NewCarsBehind = newCarsBehind,
             };
         }
     }

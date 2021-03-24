@@ -13,6 +13,7 @@
         public long IRating { get; set; }
         public string License { get; set; } = string.Empty;
         public bool IsSpectator { get; set; }
+        public int Laps { get; set; }
         public int LapsCompleted { get; set; }
         public bool OnPitRoad { get; set; }
         public int ClassPosition { get; set; }
@@ -21,6 +22,8 @@
         public double LastLapTime { get; set; }
         public float BestLapTime { get; set; }
         public int BestLapNum { get; set; }
+        public float LapDistPct { get; set; }
+        public long CarClassId { get; set; }
 
         public Car Clone()
         {
@@ -37,6 +40,7 @@
                 IRating = IRating,
                 License = License,
                 IsSpectator = IsSpectator,
+                Laps = Laps,
                 LapsCompleted = LapsCompleted,
                 OnPitRoad = OnPitRoad,
                 ClassPosition = ClassPosition,
@@ -45,6 +49,8 @@
                 LastLapTime = LastLapTime,
                 BestLapTime = BestLapTime,
                 BestLapNum = BestLapNum,
+                CarClassId = CarClassId,
+                LapDistPct = LapDistPct,
             };
         }
     }

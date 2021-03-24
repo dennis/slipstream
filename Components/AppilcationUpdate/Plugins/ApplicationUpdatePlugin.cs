@@ -52,9 +52,6 @@ namespace Slipstream.Components.AppilcationUpdate.Plugins
                 return;
             }
 
-            //var updateLocation = configuration.ExtractOrDefault("updateLocation", string.Empty); 
-            //var prerelease = configuration.ExtractOrDefault("prerelease", false);
-
             // ToDo: this can be injected in the constructor
             applicationUpdate = EventHandlerController.Get<EventHandler.ApplicationUpdateEventHandler>();
 

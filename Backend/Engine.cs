@@ -22,7 +22,7 @@ namespace Slipstream.Backend
         private readonly ILogger Logger;
         private readonly IEventHandlerController EventHandlerController;
 
-        public Engine(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, IApplicationVersionService applicationVersionService, EventHandlerControllerBuilder eventHandlerControllerBuilder) : base("engine")
+        public Engine(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, EventHandlerControllerBuilder eventHandlerControllerBuilder) : base("engine")
         {
             EventFactory = eventFactory.Get<IInternalEventFactory>();
             EventBus = eventBus;
@@ -41,7 +41,7 @@ namespace Slipstream.Backend
 
             // Plugins..
             {
-                var initFilename = $"init-{applicationVersionService.Version}.lua";
+                const string initFilename = "init.lua";
 
                 if (!File.Exists(initFilename))
                 {

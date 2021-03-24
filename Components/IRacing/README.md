@@ -563,3 +563,28 @@ Published every your car is being towed to pits. You will not get these events f
 **JSON Example:**
 `{"EventType":"IRacingTowed","ExcludeFromTxrx":false,"Uptime":2528216,"SessionTime":2711.7666666666669,"CarIdx":28,"LocalUser":true,"PositionInClass":15,"PositionInRace":15}`
 </details>
+
+<details><summary>IRacingTrackPosition</summary><br />
+
+Published every time a car changes position (overtakes or get overtaken). Mostly, there
+will only be on other car in the event (in `NewCarsAhead` or `NewCarsBehind`)
+
+| Name                    | Type     | Description                                                       |
+|:------------------------|:--------:|:------------------------------------------------------------------|
+| EventType               | string   | `IRacingTrackPosition` (constant)                                 |
+| ExcludeFromTxrx         | boolean  | false (constant)                                                  |
+| Uptime                  | integer  | Time of when the message was sent via Eventbus (in milliseconds). |
+| SessionTime             | float    |                                                                   |
+| CarIdx                  | int      | Car Index                                                         |
+| LocalUser               | boolean  | Is it our car?                                                    |
+| CurrentPositionInClass  | int      | Our current position in our class.                                |
+| CurrentPositionInRace   | int      | Our current position in race.                                     |
+| PreviousPositionInClass | int      | Our current position in our class.                                |
+| PreviousPositionInRace  | int      | Our current position in race.                                     |
+| NewCarsAhead            | [CarIdx] | Array of new CarIdx that overtook the car                         |
+| NewCarsBehind           | [CarIdx] | Array of new CarIdx that car overtook                             |
+**JSON Example:**
+`{"EventType":"IRacingTrackPosition","ExcludeFromTxrx":false,"Uptime":63990,"SessionTime":360.383321126302,"CarIdx":39,"LocalUser":true,"CurrentPositionInClass":35,"CurrentPositionInRace":35,"PreviousPositionInClass":34,"PreviousPositionInRace":34,"NewCarsAhead":[7],"NewCarsBehind":[]}`
+</details>
+
+

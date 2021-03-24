@@ -57,8 +57,8 @@ namespace Slipstream.UnitTests.TestData
 
         public class CarBuilder
         {
-            private GameStateBuilder Builder;
-            private int CarIdx;
+            private readonly GameStateBuilder Builder;
+            private readonly int CarIdx;
             private Car Car { get => Builder.Cars[CarIdx]; }
 
             public CarBuilder(GameStateBuilder b, int carIdx)
@@ -69,7 +69,7 @@ namespace Slipstream.UnitTests.TestData
                 Debug.Assert(b.Cars.Count >= carIdx);
                 if (b.Cars.Count == carIdx)
                 {
-                    b.Cars.Add(new Car());
+                    b.Cars.Add(new Car { CarIdx = carIdx });
                 }
             }
 
@@ -150,6 +150,11 @@ namespace Slipstream.UnitTests.TestData
             public void Commit()
             {
                 Builder.Commit();
+            }
+
+            public GameStateBuilder CarDone()
+            {
+                return Builder;
             }
         }
 

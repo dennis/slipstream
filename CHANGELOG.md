@@ -2,6 +2,7 @@
 
 ## Next version
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.4.1...main)
+  - Event: Adds IRacingTrackPosition
 
 ## [0.4.1](https://github.com/dennis/slipstream/releases/tag/v0.4.1) (2021-03-20)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.4.0...v0.4.1)

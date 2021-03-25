@@ -1,7 +1,10 @@
 ﻿# Changelog
 
 ## Next version
-[Full Changelog](https://github.com/dennis/slipstream/compare/v0.4.1...main)
+[Full Changelog](https://github.com/dennis/slipstream/compare/v0.5.0...main)
+
+## [0.5.0](https://github.com/dennis/slipstream/releases/tag/v0.4.1) (2021-03-25)
+[Full Changelog](https://github.com/dennis/slipstream/compare/v0.4.1...v0.5.0)
   - No more version specific init.lua. From this point and forward, Slipstream only reads init.lua
   - Event: Adds IRacingTrackPosition
   - Adding ApplicationUpdate plugin to manage app install and auto updates using Squirrel.Windows

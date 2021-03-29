@@ -108,6 +108,17 @@ This function publishes `InternalCommandPluginRegister` event, that is handled b
 This function is aliased as ``register_plugin`` (deprecated)
 </details>
 
+<details><summary>internal:shutdown()</summary><br />
+Shutsdown Slipstream
+
+```lua
+internal:shutdown()
+```
+
+This function publishes `InternalCommandShutdown` event, that is handled by Engine, that will
+publish `InternalShutdown` if it allows the shutdown.
+</details>
+
 <details><summary>internal:unregister_plugin(id)</summary><br />
 Removes a plugin
 

@@ -35,9 +35,10 @@ namespace Slipstream.Backend
 
             var internalEventHandler = EventHandlerController.Get<Slipstream.Components.Internal.EventHandler.Internal>();
 
-            internalEventHandler.OnInternalCommandPluginRegister += (s, e) => OnCommandPluginRegister(e.Event);
-            internalEventHandler.OnInternalCommandPluginUnregister += (s, e) => OnCommandPluginUnregister(e.Event);
-            internalEventHandler.OnInternalCommandPluginStates += (s, e) => OnCommandPluginStates(e.Event);
+            internalEventHandler.OnInternalCommandPluginRegister += (_, e) => OnCommandPluginRegister(e.Event);
+            internalEventHandler.OnInternalCommandPluginUnregister += (_, e) => OnCommandPluginUnregister(e.Event);
+            internalEventHandler.OnInternalCommandPluginStates += (_, e) => OnCommandPluginStates(e.Event);
+            internalEventHandler.OnInternalCommandShutdown += (_, e) => OnInternalCommandShutdown(e.Event);
 
             // Plugins..
             {
@@ -58,6 +59,11 @@ namespace Slipstream.Backend
 
             // Tell Plugins that we're live - this will make eventbus distribute events
             EventBus.Enabled = true;
+        }
+
+        private void OnInternalCommandShutdown(InternalCommandShutdown _)
+        {
+            EventBus.PublishEvent(EventFactory.CreateInternalShutdown());
         }
 
         private void CreateInitLua(string initFilename)

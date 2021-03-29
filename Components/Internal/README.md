@@ -245,3 +245,29 @@ registered or unregistered or upon request.
 **JSON Example:**
 `{"EventType": "InternalPluginState", "ExcludeFromTxrx": true, "Uptime":1742, "Id": "AudioPlugin", "PluginName": "AudioPlugin", "DisplayName": "AudioPlugin", "PluginStatus": "Registered"}`
 </details>
+
+<details><summary>InternalCommandShutdown</summary><br />
+Request that Slipstream should shut down.
+
+| Name            | Type    | Description                                                       |
+|:----------------|:-------:|:------------------------------------------------------------------|
+| EventType       | string  | `InternalCommandShutdown` (constant)                              |
+| ExcludeFromTxrx | boolean | true (constant)                                                   |
+| Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
+
+**JSON Example:**
+`{"EventType":"InternalCommandShutdown","ExcludeFromTxrx":true,"Uptime":18396}`
+</details>
+
+<details><summary>InternalShutdown</summary><br />
+Slipstream is shutting down.
+
+| Name            | Type    | Description                                                       |
+|:----------------|:-------:|:------------------------------------------------------------------|
+| EventType       | string  | `InternalShutdown` (constant)                                     |
+| ExcludeFromTxrx | boolean | true (constant)                                                   |
+| Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
+
+**JSON Example:**
+`{"EventType":"InternalShutdown","ExcludeFromTxrx":true,"Uptime":18396}`
+</details>

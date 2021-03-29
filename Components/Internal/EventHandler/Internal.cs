@@ -22,6 +22,10 @@ namespace Slipstream.Components.Internal.EventHandler
 
         public delegate void OnInternalPluginStateHandler(IEventHandlerController source, EventHandlerArgs<InternalPluginState> e);
 
+        public delegate void OnInternalShutdownHandler(IEventHandlerController source, EventHandlerArgs<InternalShutdown> e);
+
+        public delegate void OnInternalCommandShutdownHandler(IEventHandlerController source, EventHandlerArgs<InternalCommandShutdown> e);
+
         public event OnInternalCommandPluginRegisterHandler? OnInternalCommandPluginRegister;
 
         public event OnInternalCommandPluginStatesHandler? OnInternalCommandPluginStates;
@@ -29,6 +33,10 @@ namespace Slipstream.Components.Internal.EventHandler
         public event OnInternalCommandPluginUnregisterHandler? OnInternalCommandPluginUnregister;
 
         public event OnInternalPluginStateHandler? OnInternalPluginState;
+
+        public event OnInternalShutdownHandler? OnInternalShutdown;
+
+        public event OnInternalCommandShutdownHandler? OnInternalCommandShutdown;
 
         public IEventHandler.HandledStatus HandleEvent(IEvent ev)
         {
@@ -70,6 +78,26 @@ namespace Slipstream.Components.Internal.EventHandler
                     if (OnInternalCommandPluginStates != null)
                     {
                         OnInternalCommandPluginStates.Invoke(Parent, new EventHandlerArgs<InternalCommandPluginStates>(tev));
+                        return IEventHandler.HandledStatus.Handled;
+                    }
+                    else
+                    {
+                        return IEventHandler.HandledStatus.UseDefault;
+                    }
+                case InternalShutdown tev:
+                    if (OnInternalShutdown != null)
+                    {
+                        OnInternalShutdown.Invoke(Parent, new EventHandlerArgs<InternalShutdown>(tev));
+                        return IEventHandler.HandledStatus.Handled;
+                    }
+                    else
+                    {
+                        return IEventHandler.HandledStatus.UseDefault;
+                    }
+                case InternalCommandShutdown tev:
+                    if (OnInternalCommandShutdown != null)
+                    {
+                        OnInternalCommandShutdown.Invoke(Parent, new EventHandlerArgs<InternalCommandShutdown>(tev));
                         return IEventHandler.HandledStatus.Handled;
                     }
                     else

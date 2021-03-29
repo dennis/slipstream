@@ -195,6 +195,8 @@
     <Compile Include="Components\Discord\LuaGlueFactory.cs" />
     <Compile Include="Components\Discord\Plugins\DiscordPlugin.cs" />
     <Compile Include="Components\ILuaGlueFactory.cs" />
+    <Compile Include="Components\Internal\Events\InternalShutdown.cs" />
+    <Compile Include="Components\Internal\Events\InternalCommandShutdown.cs" />
     <Compile Include="Components\Internal\LuaGLues\StateLuaGlueFactory.cs" />
     <Compile Include="Components\Internal\LuaGLues\InternalLuaGlueFactory.cs" />
     <Compile Include="Components\Internal\LuaGLues\HttpLuaGlueFactory.cs" />

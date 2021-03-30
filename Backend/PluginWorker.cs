@@ -31,6 +31,20 @@ namespace Slipstream.Backend
 
         override protected void Main()
         {
+            if (Plugin.FullThreadControl)
+            {
+                // We dont need the subscription
+                Subscription?.Dispose();
+                Plugin.Loop();
+            }
+            else
+            {
+                WePerformMainLoop();
+            }
+        }
+
+        private void WePerformMainLoop()
+        {
             while (!Stopped)
             {
                 IEvent? e;
@@ -47,7 +61,7 @@ namespace Slipstream.Backend
                 Plugin.Loop();
             }
 
-            Subscription.Dispose();
+            Subscription?.Dispose();
         }
 
         private long GetTick()

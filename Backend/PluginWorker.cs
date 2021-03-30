@@ -35,7 +35,7 @@ namespace Slipstream.Backend
             {
                 // We dont need the subscription
                 Subscription?.Dispose();
-                Plugin.Loop();
+                Plugin.Run();
             }
             else
             {
@@ -58,7 +58,7 @@ namespace Slipstream.Backend
                         break;
                 }
 
-                Plugin.Loop();
+                Plugin.Run();
             }
 
             Subscription?.Dispose();

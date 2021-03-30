@@ -1,4 +1,4 @@
-﻿namespace Slipstream.Frontend
+﻿namespace Slipstream.Components.WinFormUI.Forms
 {
     partial class MainWindow
     {

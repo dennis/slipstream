@@ -12,7 +12,7 @@ using System.IO;
 
 namespace Slipstream.Backend
 {
-    internal class Engine : Worker, IEngine, IDisposable
+    internal class Engine : IEngine, IDisposable
     {
         private readonly IInternalEventFactory EventFactory;
         private readonly IEventBus EventBus;
@@ -21,8 +21,9 @@ namespace Slipstream.Backend
         private readonly IPluginFactory PluginFactory;
         private readonly ILogger Logger;
         private readonly IEventHandlerController EventHandlerController;
+        private bool Stopped = false;
 
-        public Engine(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, EventHandlerControllerBuilder eventHandlerControllerBuilder) : base("engine")
+        public Engine(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, EventHandlerControllerBuilder eventHandlerControllerBuilder)
         {
             EventFactory = eventFactory.Get<IInternalEventFactory>();
             EventBus = eventBus;
@@ -64,6 +65,7 @@ namespace Slipstream.Backend
         private void OnInternalCommandShutdown(InternalCommandShutdown _)
         {
             EventBus.PublishEvent(EventFactory.CreateInternalShutdown());
+            Stopped = true;
         }
 
         private void CreateInitLua(string initFilename)
@@ -105,11 +107,11 @@ namespace Slipstream.Backend
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Failed creating plugin '{ev.Id}' ('{ev.PluginName}'): {e.ToString()}");
+                Logger.Error(e, $"Failed creating plugin '{ev.Id}' ('{ev.PluginName}'): {e}");
             }
         }
 
-        protected override void Main()
+        public void Start()
         {
             while (!Stopped)
             {
@@ -117,10 +119,9 @@ namespace Slipstream.Backend
             }
         }
 
-        public new void Dispose()
+        public void Dispose()
         {
             PluginManager.Dispose();
-            base.Dispose();
         }
     }
 }

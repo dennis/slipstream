@@ -259,7 +259,9 @@
     <Compile Include="Components\Lua\Lua.cs" />
     <Compile Include="Components\Playback\Playback.cs" />
     <Compile Include="Components\UI\LuaGlueFactory.cs" />
+    <Compile Include="Components\WinFormUI\Plugins\WinFormUIPlugin.cs" />
     <Compile Include="Components\UI\UI.cs" />
+    <Compile Include="Components\WinFormUI\WinFormUI.cs" />
     <Compile Include="Shared\EventHandlerArgs.cs" />
     <Compile Include="Shared\EventHandlerControllerBuilder.cs" />
     <Compile Include="Components\ComponentRegistrator.cs" />
@@ -382,10 +384,10 @@
     <Compile Include="Shared\IEventHandlerController.cs" />
     <Compile Include="Shared\IEventProducer.cs" />
     <Compile Include="Backend\Worker.cs" />
-    <Compile Include="Frontend\MainWindow.cs">
+    <Compile Include="Components\WinFormUI\Forms\MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Frontend\MainWindow.Designer.cs">
+    <Compile Include="Components\WinFormUI\Forms\MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
@@ -398,7 +400,7 @@
     <Compile Include="Shared\IServiceLocator.cs" />
     <Compile Include="Shared\ServiceLocator.cs" />
     <Compile Include="SlipstreamConsoleSink.cs" />
-    <EmbeddedResource Include="Frontend\MainWindow.resx">
+    <EmbeddedResource Include="Components\WinFormUI\Forms\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

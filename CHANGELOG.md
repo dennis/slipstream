@@ -2,6 +2,9 @@
 
 ## Next version
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.5.0...main)
+  - adds WinFormUI component - containing the Slipstream UI. You need to add `register_plugin({ plugin_name = "WinFormUIPlugin"})
+` to you `init.lua` to get it.
+  - add `internal:shutdown()` lua function that quits the application
 
 ## [0.5.0](https://github.com/dennis/slipstream/releases/tag/v0.5.0) (2021-03-25)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.4.1...v0.5.0)

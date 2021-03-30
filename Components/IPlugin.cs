@@ -28,6 +28,6 @@ namespace Slipstream.Components
         public bool Reconfigurable { get; }
         public bool FullThreadControl { get; }
 
-        void Loop();
+        public void Run();
     }
 }

@@ -56,7 +56,7 @@ namespace Slipstream.Components.Discord.Plugins
             DiscordChannelIdMap[e.Event.ChannelId].SendMessageAsync(e.Event.Message, e.Event.TextToSpeech);
         }
 
-        public override void Loop()
+        public override void Run()
         {
             if (RequestConnect)
             {

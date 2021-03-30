@@ -1,6 +1,5 @@
 ﻿#nullable enable
 
-using Slipstream.Backend;
 using Slipstream.Shared;
 
 namespace Slipstream.Components
@@ -41,7 +40,7 @@ namespace Slipstream.Components
             FullThreadControl = fullThreadControl;
         }
 
-        public virtual void Loop()
+        public virtual void Run()
         {
         }
 

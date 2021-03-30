@@ -183,7 +183,7 @@ namespace Slipstream.Components.Lua.Plugins
             return Path.GetExtension(FilePath) == ".lua";
         }
 
-        public override void Loop()
+        public override void Run()
         {
             if (BootupEventsDeadline != null && BootupEventsDeadline <= DateTime.Now)
             {

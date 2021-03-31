@@ -122,7 +122,7 @@ namespace Slipstream.Components.Txrx.Plugins
             Thread.Sleep(1000);
         }
 
-        public override void Loop()
+        public override void Run()
         {
             if (Ip.Length == 0)
                 return;

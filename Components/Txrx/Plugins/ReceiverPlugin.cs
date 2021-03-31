@@ -110,7 +110,7 @@ namespace Slipstream.Components.Txrx.Plugins
             }
         }
 
-        public override void Loop()
+        public override void Run()
         {
             if (Ip.Length == 0)
                 return;

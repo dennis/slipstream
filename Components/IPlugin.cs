@@ -26,7 +26,8 @@ namespace Slipstream.Components
         public string DisplayName { get; }
         public IEventHandlerController EventHandlerController { get; }
         public bool Reconfigurable { get; }
+        public bool FullThreadControl { get; }
 
-        void Loop();
+        public void Run();
     }
 }

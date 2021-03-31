@@ -12,7 +12,7 @@ using System.IO;
 
 namespace Slipstream.Backend
 {
-    internal class Engine : Worker, IEngine, IDisposable
+    internal class Engine : IEngine, IDisposable
     {
         private readonly IInternalEventFactory EventFactory;
         private readonly IEventBus EventBus;
@@ -21,8 +21,9 @@ namespace Slipstream.Backend
         private readonly IPluginFactory PluginFactory;
         private readonly ILogger Logger;
         private readonly IEventHandlerController EventHandlerController;
+        private bool Stopped = false;
 
-        public Engine(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, EventHandlerControllerBuilder eventHandlerControllerBuilder) : base("engine")
+        public Engine(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, EventHandlerControllerBuilder eventHandlerControllerBuilder)
         {
             EventFactory = eventFactory.Get<IInternalEventFactory>();
             EventBus = eventBus;
@@ -35,9 +36,10 @@ namespace Slipstream.Backend
 
             var internalEventHandler = EventHandlerController.Get<Slipstream.Components.Internal.EventHandler.Internal>();
 
-            internalEventHandler.OnInternalCommandPluginRegister += (s, e) => OnCommandPluginRegister(e.Event);
-            internalEventHandler.OnInternalCommandPluginUnregister += (s, e) => OnCommandPluginUnregister(e.Event);
-            internalEventHandler.OnInternalCommandPluginStates += (s, e) => OnCommandPluginStates(e.Event);
+            internalEventHandler.OnInternalCommandPluginRegister += (_, e) => OnCommandPluginRegister(e.Event);
+            internalEventHandler.OnInternalCommandPluginUnregister += (_, e) => OnCommandPluginUnregister(e.Event);
+            internalEventHandler.OnInternalCommandPluginStates += (_, e) => OnCommandPluginStates(e.Event);
+            internalEventHandler.OnInternalCommandShutdown += (_, e) => OnInternalCommandShutdown(e.Event);
 
             // Plugins..
             {
@@ -58,6 +60,12 @@ namespace Slipstream.Backend
 
             // Tell Plugins that we're live - this will make eventbus distribute events
             EventBus.Enabled = true;
+        }
+
+        private void OnInternalCommandShutdown(InternalCommandShutdown _)
+        {
+            EventBus.PublishEvent(EventFactory.CreateInternalShutdown());
+            Stopped = true;
         }
 
         private void CreateInitLua(string initFilename)
@@ -99,11 +107,11 @@ namespace Slipstream.Backend
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Failed creating plugin '{ev.Id}' ('{ev.PluginName}'): {e.ToString()}");
+                Logger.Error(e, $"Failed creating plugin '{ev.Id}' ('{ev.PluginName}'): {e}");
             }
         }
 
-        protected override void Main()
+        public void Start()
         {
             while (!Stopped)
             {
@@ -111,10 +119,9 @@ namespace Slipstream.Backend
             }
         }
 
-        public new void Dispose()
+        public void Dispose()
         {
             PluginManager.Dispose();
-            base.Dispose();
         }
     }
 }

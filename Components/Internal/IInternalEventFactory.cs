@@ -21,5 +21,9 @@ namespace Slipstream.Components.Internal
         InternalCommandPluginUnregister CreateInternalCommandPluginUnregister(string pluginId);
 
         InternalPluginState CreateInternalPluginState(string pluginId, string pluginName, string displayName, PluginStatusEnum pluginStatus);
+
+        InternalShutdown CreateInternalShutdown();
+
+        InternalCommandShutdown CreateInternalCommandShutdown();
     }
 }

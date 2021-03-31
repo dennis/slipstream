@@ -121,7 +121,7 @@ namespace Slipstream.Components.Twitch.Plugins
             Disconnect();
         }
 
-        public override void Loop()
+        public override void Run()
         {
             if (RequestReconnect)
             {

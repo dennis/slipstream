@@ -47,7 +47,7 @@ namespace Slipstream.Components.IRacing.Plugins
             IRacingEventHandler.OnIRacingCommandSendRaceFlags += (s, e) => DataTrackers.SendRaceFlags = true;
         }
 
-        public override void Loop()
+        public override void Run()
         {
             var state = Mapper.GetState();
 

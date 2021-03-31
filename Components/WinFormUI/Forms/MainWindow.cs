@@ -16,7 +16,7 @@ using System.Threading;
 using System.Windows.Forms;
 using EventHandler = Slipstream.Shared.EventHandlerController;
 
-namespace Slipstream.Frontend
+namespace Slipstream.Components.WinFormUI.Forms
 {
     public partial class MainWindow : Form
     {
@@ -31,14 +31,15 @@ namespace Slipstream.Frontend
         private readonly IDictionary<string, Button> LuaButtons = new Dictionary<string, Button>();
         private readonly string CleanTitle;
         private readonly IEventHandlerController EventHandler;
+        private bool ShuttingDown = false;
 
-        public MainWindow(IEventFactory eventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, EventHandlerControllerBuilder eventHandlerControllerBuilder)
+        public MainWindow(IEventFactory eventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, IEventHandlerController eventHandlerController)
         {
             InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
             UIEventFactory = eventFactory.Get<IUIEventFactory>();
             PlaybackEventFactory = eventFactory.Get<IPlaybackEventFactory>();
 
-            EventHandler = eventHandlerControllerBuilder.CreateEventHandlerController();
+            EventHandler = eventHandlerController;
 
             EventBus = eventBus;
 
@@ -53,8 +54,18 @@ namespace Slipstream.Frontend
 
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Settings.Default.WindowLocation = Location;
+            if (!ShuttingDown)
+            {
+                // Just request we want to shut down. We'll receive an InternalShutdown if we
+                // actually will shut down
 
+                EventBus.PublishEvent(InternalEventFactory.CreateInternalCommandShutdown());
+                e.Cancel = true;
+
+                return;
+            }
+
+            Settings.Default.WindowLocation = Location;
             // Copy window size to app settings
             if (WindowState == FormWindowState.Normal)
             {
@@ -117,10 +128,11 @@ namespace Slipstream.Frontend
             var internalEventHandler = EventHandler.Get<Components.Internal.EventHandler.Internal>();
             var uiEventHandler = EventHandler.Get<Components.UI.EventHandler.UIEventHandler>();
 
-            internalEventHandler.OnInternalPluginState += (s, e) => EventHandler_OnInternalPluginState(e.Event);
-            uiEventHandler.OnUICommandWriteToConsole += (s, e) => PendingMessages.Add($"{DateTime.Now:s} {e.Event.Message}");
-            uiEventHandler.OnUICommandCreateButton += (s, e) => EventHandler_OnUICommandCreateButton(e.Event);
-            uiEventHandler.OnUICommandDeleteButton += (s, e) => EventHandler_OnUICommandDeleteButton(e.Event);
+            internalEventHandler.OnInternalPluginState += (_, e) => EventHandler_OnInternalPluginState(e.Event);
+            internalEventHandler.OnInternalShutdown += (_, e) => EventHandler_OnInteralShutdown(e.Event);
+            uiEventHandler.OnUICommandWriteToConsole += (_, e) => PendingMessages.Add($"{DateTime.Now:s} {e.Event.Message}");
+            uiEventHandler.OnUICommandCreateButton += (_, e) => EventHandler_OnUICommandCreateButton(e.Event);
+            uiEventHandler.OnUICommandDeleteButton += (_, e) => EventHandler_OnUICommandDeleteButton(e.Event);
 
             // Request full state of all known plugins, so we get any that might be started before "us"
             EventBus.PublishEvent(InternalEventFactory.CreateInternalCommandPluginStates());
@@ -129,6 +141,12 @@ namespace Slipstream.Frontend
             {
                 EventHandler.HandleEvent(EventBusSubscription?.NextEvent());
             }
+        }
+
+        private void EventHandler_OnInteralShutdown(InternalShutdown _)
+        {
+            ShuttingDown = true;
+            ExecuteSecure(() => Application.Exit());
         }
 
         private void EventHandler_OnUICommandCreateButton(UICommandCreateButton @event)
@@ -233,7 +251,7 @@ namespace Slipstream.Frontend
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            EventBus.PublishEvent(InternalEventFactory.CreateInternalCommandShutdown());
         }
 
         private void SaveEventsToFileToolStripMenuItem_Click(object sender, EventArgs e)

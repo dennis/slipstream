@@ -1,6 +1,5 @@
 ﻿#nullable enable
 
-using Slipstream.Backend;
 using Slipstream.Shared;
 
 namespace Slipstream.Components
@@ -27,19 +26,21 @@ namespace Slipstream.Components
         public event IPlugin.OnStateChangedHandler? OnStateChanged;
 
         public bool Reconfigurable { get; }
+        public bool FullThreadControl { get; }
 
         public IEventHandlerController EventHandlerController { get; }
 
-        public BasePlugin(IEventHandlerController eventHandlerController, string id, string name, string displayName, bool reconfigurable = false)
+        public BasePlugin(IEventHandlerController eventHandlerController, string id, string name, string displayName, bool reconfigurable = false, bool fullThreadControl = false)
         {
             EventHandlerController = eventHandlerController;
             Id = id;
             Name = name;
             DisplayName = displayName;
             Reconfigurable = reconfigurable;
+            FullThreadControl = fullThreadControl;
         }
 
-        public virtual void Loop()
+        public virtual void Run()
         {
         }
 

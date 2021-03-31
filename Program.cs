@@ -2,7 +2,6 @@
 using Serilog;
 using Slipstream.Components.Internal;
 using Slipstream.Components.Internal.Services;
-using Slipstream.Components.UI;
 using Slipstream.Components.UI.EventFactory;
 using Slipstream.Shared;
 using System;
@@ -40,15 +39,11 @@ namespace Slipstream
             var engine = serviceProvider.GetRequiredService<Backend.IEngine>();
 
             engine.Start();
-
-            Application.Run(serviceProvider.GetRequiredService<Frontend.MainWindow>());
-
             engine.Dispose();
         }
 
         private static void ConfigureServices(ServiceCollection services)
         {
-            services.AddScoped<Frontend.MainWindow>();
             services.AddScoped<Shared.IEventBus, Backend.EventBus>();
             services.AddScoped<Shared.IEventProducer>(x => x.GetService<Backend.EventBus>());
             services.AddScoped<IServiceLocator, ServiceLocator>();

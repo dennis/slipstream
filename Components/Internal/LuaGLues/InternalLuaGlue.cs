@@ -58,5 +58,11 @@ function unregister_plugin(id); internal:unregister_plugin(id); end
         {
             EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginUnregister(id));
         }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
+        public void shutdown()
+        {
+            EventBus.PublishEvent(EventFactory.CreateInternalCommandShutdown());
+        }
     }
 }

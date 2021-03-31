@@ -71,7 +71,7 @@ namespace Slipstream.Components.Lua.Plugins
             EventBus.PublishEvent(InternalEventFactory.CreateInternalCommandPluginUnregister(Id));
         }
 
-        public override void Loop()
+        public override void Run()
         {
             try
             {

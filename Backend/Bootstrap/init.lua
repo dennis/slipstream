@@ -45,3 +45,6 @@ register_plugin({ plugin_name = "FileMonitorPlugin"})
  --not much filtering, so RegisterPlugin / Unregister plugins will actually make
 --slipstream perform these actions
 register_plugin({ plugin_name = "PlaybackPlugin"})
+
+-- UI to show console output
+register_plugin({ plugin_name = "WinFormUIPlugin"})

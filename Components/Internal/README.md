@@ -108,6 +108,17 @@ This function publishes `InternalCommandPluginRegister` event, that is handled b
 This function is aliased as ``register_plugin`` (deprecated)
 </details>
 
+<details><summary>internal:shutdown()</summary><br />
+Shutsdown Slipstream
+
+```lua
+internal:shutdown()
+```
+
+This function publishes `InternalCommandShutdown` event, that is handled by Engine, that will
+publish `InternalShutdown` if it allows the shutdown.
+</details>
+
 <details><summary>internal:unregister_plugin(id)</summary><br />
 Removes a plugin
 
@@ -244,4 +255,30 @@ registered or unregistered or upon request.
 
 **JSON Example:**
 `{"EventType": "InternalPluginState", "ExcludeFromTxrx": true, "Uptime":1742, "Id": "AudioPlugin", "PluginName": "AudioPlugin", "DisplayName": "AudioPlugin", "PluginStatus": "Registered"}`
+</details>
+
+<details><summary>InternalCommandShutdown</summary><br />
+Request that Slipstream should shut down.
+
+| Name            | Type    | Description                                                       |
+|:----------------|:-------:|:------------------------------------------------------------------|
+| EventType       | string  | `InternalCommandShutdown` (constant)                              |
+| ExcludeFromTxrx | boolean | true (constant)                                                   |
+| Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
+
+**JSON Example:**
+`{"EventType":"InternalCommandShutdown","ExcludeFromTxrx":true,"Uptime":18396}`
+</details>
+
+<details><summary>InternalShutdown</summary><br />
+Slipstream is shutting down.
+
+| Name            | Type    | Description                                                       |
+|:----------------|:-------:|:------------------------------------------------------------------|
+| EventType       | string  | `InternalShutdown` (constant)                                     |
+| ExcludeFromTxrx | boolean | true (constant)                                                   |
+| Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
+
+**JSON Example:**
+`{"EventType":"InternalShutdown","ExcludeFromTxrx":true,"Uptime":18396}`
 </details>

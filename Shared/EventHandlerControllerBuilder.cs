@@ -20,7 +20,7 @@ namespace Slipstream.Shared
 
             foreach (var t in EventHandlers)
             {
-                var instance = (IEventHandler)Activator.CreateInstance(t, new object[] { controller });
+                var instance = (IEventHandler)Activator.CreateInstance(t);
 
                 controller.Add(instance);
             }

@@ -8,13 +8,6 @@ namespace Slipstream.Components.IRacing.EventHandler
 {
     internal class IRacing : IEventHandler
     {
-        private readonly EventHandlerController Parent;
-
-        public IRacing(EventHandlerController eventHandler)
-        {
-            Parent = eventHandler;
-        }
-
         public event EventHandler<IRacingCompletedLap>? OnIRacingCarCompletedLap;
 
         public event EventHandler<IRacingCarInfo>? OnIRacingCarInfo;
@@ -102,7 +95,7 @@ namespace Slipstream.Components.IRacing.EventHandler
         {
             if (onEvent != null)
             {
-                onEvent.Invoke(Parent, args);
+                onEvent.Invoke(this, args);
                 return IEventHandler.HandledStatus.Handled;
             }
             return IEventHandler.HandledStatus.UseDefault;

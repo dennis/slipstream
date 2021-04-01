@@ -8,13 +8,6 @@ namespace Slipstream.Components.Internal.EventHandler
 {
     internal class Internal : IEventHandler
     {
-        private readonly IEventHandlerController Parent;
-
-        public Internal(IEventHandlerController parent)
-        {
-            Parent = parent;
-        }
-
         public event EventHandler<InternalCommandPluginRegister>? OnInternalCommandPluginRegister;
 
         public event EventHandler<InternalCommandPluginStates>? OnInternalCommandPluginStates;
@@ -45,7 +38,7 @@ namespace Slipstream.Components.Internal.EventHandler
         {
             if (onEvent != null)
             {
-                onEvent.Invoke(Parent, args);
+                onEvent.Invoke(this, args);
                 return IEventHandler.HandledStatus.Handled;
             }
             return IEventHandler.HandledStatus.UseDefault;

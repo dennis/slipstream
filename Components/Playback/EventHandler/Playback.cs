@@ -8,13 +8,6 @@ namespace Slipstream.Components.Playback.EventHandler
 {
     internal class Playback : IEventHandler
     {
-        private readonly EventHandlerController Parent;
-
-        public Playback(EventHandlerController parent)
-        {
-            Parent = parent;
-        }
-
         public event EventHandler<PlaybackCommandInjectEvents>? OnPlaybackCommandInjectEvents;
 
         public event EventHandler<PlaybackCommandSaveEvents>? OnPlaybackCommandSaveEvents;
@@ -33,7 +26,7 @@ namespace Slipstream.Components.Playback.EventHandler
         {
             if (onEvent != null)
             {
-                onEvent.Invoke(Parent, args);
+                onEvent.Invoke(this, args);
                 return IEventHandler.HandledStatus.Handled;
             }
             return IEventHandler.HandledStatus.UseDefault;

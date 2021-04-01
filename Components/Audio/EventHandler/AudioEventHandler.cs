@@ -8,13 +8,6 @@ namespace Slipstream.Components.Audio.EventHandler
 {
     internal class AudioEventHandler : IEventHandler
     {
-        private readonly EventHandlerController Parent;
-
-        public AudioEventHandler(EventHandlerController eventHandler)
-        {
-            Parent = eventHandler;
-        }
-
         public event EventHandler<AudioCommandPlay>? OnAudioCommandPlay;
 
         public event EventHandler<AudioCommandSay>? OnAudioCommandSay;
@@ -42,7 +35,7 @@ namespace Slipstream.Components.Audio.EventHandler
         {
             if (onEvent != null)
             {
-                onEvent.Invoke(Parent, args);
+                onEvent.Invoke(this, args);
                 return IEventHandler.HandledStatus.Handled;
             }
             return IEventHandler.HandledStatus.UseDefault;

@@ -8,13 +8,6 @@ namespace Slipstream.Components.FileMonitor.EventHandler
 {
     internal class FileMonitor : IEventHandler
     {
-        private readonly IEventHandlerController Parent;
-
-        public FileMonitor(IEventHandlerController eventHandler)
-        {
-            Parent = eventHandler;
-        }
-
         public event EventHandler<FileMonitorCommandScan>? OnFileMonitorCommandScan;
 
         public event EventHandler<FileMonitorFileChanged>? OnFileMonitorFileChanged;
@@ -45,7 +38,7 @@ namespace Slipstream.Components.FileMonitor.EventHandler
         {
             if (onEvent != null)
             {
-                onEvent.Invoke(Parent, args);
+                onEvent.Invoke(this, args);
                 return IEventHandler.HandledStatus.Handled;
             }
             return IEventHandler.HandledStatus.UseDefault;

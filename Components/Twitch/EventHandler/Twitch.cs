@@ -8,13 +8,6 @@ namespace Slipstream.Components.Twitch.EventHandler
 {
     internal class Twitch : IEventHandler
     {
-        private readonly EventHandlerController Parent;
-
-        public Twitch(EventHandlerController eventHandler)
-        {
-            Parent = eventHandler;
-        }
-
         public event EventHandler<TwitchCommandSendMessage>? OnTwitchCommandSendMessage;
 
         public event EventHandler<TwitchCommandSendWhisper>? OnTwitchCommandSendWhisper;
@@ -54,7 +47,7 @@ namespace Slipstream.Components.Twitch.EventHandler
         {
             if (onEvent != null)
             {
-                onEvent.Invoke(Parent, args);
+                onEvent.Invoke(this, args);
                 return IEventHandler.HandledStatus.Handled;
             }
             return IEventHandler.HandledStatus.UseDefault;

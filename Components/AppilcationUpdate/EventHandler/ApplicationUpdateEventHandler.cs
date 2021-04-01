@@ -12,13 +12,6 @@ namespace Slipstream.Components.AppilcationUpdate.EventHandler
 
         public event EventHandler<ApplicationUpdateCommandCheckLatestVersion>? OnApplicationUpdateCommandCheckLatestVersion;
 
-        private readonly IEventHandlerController Parent;
-
-        public ApplicationUpdateEventHandler(IEventHandlerController eventHandler)
-        {
-            Parent = eventHandler;
-        }
-
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)
         {
             return @event switch
@@ -33,7 +26,7 @@ namespace Slipstream.Components.AppilcationUpdate.EventHandler
         {
             if (onEvent != null)
             {
-                onEvent.Invoke(Parent, args);
+                onEvent.Invoke(this, args);
                 return IEventHandler.HandledStatus.Handled;
             }
             return IEventHandler.HandledStatus.UseDefault;

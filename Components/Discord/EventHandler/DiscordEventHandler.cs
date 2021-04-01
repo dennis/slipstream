@@ -8,8 +8,6 @@ namespace Slipstream.Components.Discord.EventHandler
 {
     internal class DiscordEventHandler : IEventHandler
     {
-        private readonly EventHandlerController Parent;
-
         public event EventHandler<DiscordConnected>? OnDiscordConnected;
 
         public event EventHandler<DiscordDisconnected>? OnDiscordDisconnected;
@@ -17,11 +15,6 @@ namespace Slipstream.Components.Discord.EventHandler
         public event EventHandler<DiscordMessageReceived>? OnDiscordMessageReceived;
 
         public event EventHandler<DiscordCommandSendMessage>? OnDiscordCommandSendMessage;
-
-        public DiscordEventHandler(EventHandlerController eventHandler)
-        {
-            Parent = eventHandler;
-        }
 
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)
         {
@@ -39,7 +32,7 @@ namespace Slipstream.Components.Discord.EventHandler
         {
             if (onEvent != null)
             {
-                onEvent.Invoke(Parent, args);
+                onEvent.Invoke(this, args);
                 return IEventHandler.HandledStatus.Handled;
             }
             return IEventHandler.HandledStatus.UseDefault;

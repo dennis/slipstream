@@ -8,13 +8,6 @@ namespace Slipstream.Components.UI.EventHandler
 {
     internal class UIEventHandler : IEventHandler
     {
-        private readonly EventHandlerController Parent;
-
-        public UIEventHandler(EventHandlerController eventHandler)
-        {
-            Parent = eventHandler;
-        }
-
         public event EventHandler<UIButtonTriggered>? OnUIButtonTriggered;
 
         public event EventHandler<UICommandCreateButton>? OnUICommandCreateButton;
@@ -39,7 +32,7 @@ namespace Slipstream.Components.UI.EventHandler
         {
             if (onEvent != null)
             {
-                onEvent.Invoke(Parent, args);
+                onEvent.Invoke(this, args);
                 return IEventHandler.HandledStatus.Handled;
             }
             return IEventHandler.HandledStatus.UseDefault;

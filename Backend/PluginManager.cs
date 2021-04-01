@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using Autofac;
 using Serilog;
 using Slipstream.Components;
 using Slipstream.Components.Internal;
@@ -19,6 +20,7 @@ namespace Slipstream.Backend
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, PluginWorker> PluginWorkers = new Dictionary<string, PluginWorker>();
         private readonly ILogger Logger;
+        private readonly ILifetimeScope LifetimeScope;
         private readonly ComponentRegistrator Registrator;
         private readonly List<ILuaGlueFactory> LuaGluesFactories = new List<ILuaGlueFactory>();
         private readonly Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>> ComponentPlugins = new Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>>();
@@ -27,17 +29,15 @@ namespace Slipstream.Backend
             IEventFactory eventFactory,
             IEventBus eventBus,
             ILogger logger,
-            EventHandlerControllerBuilder eventHandlerControllerBuilder,
-            IEventSerdeService eventSerdeService)
+            IEventSerdeService eventSerdeService,
+            ILifetimeScope lifetimeScope)
         {
             Registrator = new ComponentRegistrator(
                 ComponentPlugins,
                 LuaGluesFactories,
                 eventFactory,
                 logger,
-                eventBus,
-                eventHandlerControllerBuilder
-            );
+                eventBus);
 
             foreach (var type in typeof(PluginManager).Assembly.GetTypes().Where(t => typeof(IComponent).IsAssignableFrom(t) && !t.IsAbstract && t.IsClass))
             {
@@ -49,6 +49,7 @@ namespace Slipstream.Backend
             EventSerdeService = eventSerdeService;
             EventBus = eventBus;
             Logger = logger;
+            LifetimeScope = lifetimeScope;
         }
 
         public void UnregisterPlugin(IPlugin p)
@@ -148,7 +149,8 @@ namespace Slipstream.Backend
                 pluginId,
                 pluginName,
                 configuration,
-                EventSerdeService
+                EventSerdeService,
+                LifetimeScope.Resolve<IEventHandlerController>()
             );
             if (!ComponentPlugins.ContainsKey(pluginName))
                 throw new KeyNotFoundException($"Plugin name '{pluginName}' not found");

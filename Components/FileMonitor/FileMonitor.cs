@@ -13,7 +13,6 @@ namespace Slipstream.Components.FileMonitor
 
             ctx.RegisterPlugin(NAME, CreatePlugin);
             ctx.RegisterEventFactory(typeof(IFileMonitorEventFactory), eventFactory);
-            ctx.RegisterEventHandler(typeof(EventHandler.FileMonitor));
         }
 
         private IPlugin CreatePlugin(IComponentPluginCreationContext ctx)

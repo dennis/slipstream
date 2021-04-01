@@ -11,10 +11,7 @@ namespace Slipstream.Components
     {
         private readonly ComponentRegistrator ComponentRegistration;
 
-        public IEventHandlerController EventHandlerController
-        {
-            get { return ComponentRegistration.EventHandlerControllerBuilder.CreateEventHandlerController(); }
-        }
+        public IEventHandlerController EventHandlerController { get; }
 
         public ILogger Logger
         {
@@ -55,7 +52,8 @@ namespace Slipstream.Components
                 string pluginId,
                 string pluginName,
                 Parameters pluginParameters,
-                IEventSerdeService eventSerdeService)
+                IEventSerdeService eventSerdeService,
+                IEventHandlerController eventHandlerController)
         {
             ComponentRegistration = componentRegistration;
             PluginManager = pluginManager;
@@ -65,6 +63,7 @@ namespace Slipstream.Components
             PluginName = pluginName;
             PluginParameters = pluginParameters;
             EventSerdeService = eventSerdeService;
+            EventHandlerController = eventHandlerController;
             Lua = new NLua.Lua();
         }
     }

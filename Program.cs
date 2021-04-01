@@ -48,7 +48,6 @@ namespace Slipstream
             builder.RegisterType<Backend.Engine>().As<Backend.IEngine>().SingleInstance();
             builder.RegisterType<EventSerdeService>().As<IEventSerdeService>().SingleInstance();
             builder.RegisterType<Backend.PluginManager>().As<Backend.IPluginManager>().As<Backend.IPluginFactory>().SingleInstance();
-            builder.RegisterType<EventHandlerControllerBuilder>().SingleInstance();
             builder.RegisterType<EventFactory>().As<IEventFactory>().SingleInstance();
             builder.RegisterType<LuaService>().As<ILuaSevice>().SingleInstance();
             builder.RegisterType<Shared.ApplicationVersionService>().As<Shared.IApplicationVersionService>().SingleInstance();
@@ -63,6 +62,15 @@ namespace Slipstream
 
             builder.RegisterInstance(logger).As<ILogger>().SingleInstance();
             builder.RegisterInstance(sink).As<SlipstreamConsoleSink>().SingleInstance();
+
+            // EventHandlers
+            builder.RegisterAssemblyTypes(typeof(Program).Assembly)
+                .Where(t => t.IsAssignableTo<IEventHandler>())
+                .Where(t => !t.IsAbstract)
+                .As<IEventHandler>()
+                .AsSelf()
+                .InstancePerDependency();
+            builder.RegisterType<EventHandlerController>().As<IEventHandlerController>().InstancePerDependency();
         }
 
         private class PopulateSink

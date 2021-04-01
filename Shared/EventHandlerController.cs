@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Autofac;
+using Slipstream.Backend;
+using System;
 using System.Collections.Generic;
 using static Slipstream.Shared.IEventHandlerController;
 
@@ -8,16 +10,19 @@ namespace Slipstream.Shared
 {
     public class EventHandlerController : IEventHandlerController
     {
-        internal readonly IDictionary<dynamic, IEventHandler> Handlers = new Dictionary<dynamic, IEventHandler>();
+        private readonly IDictionary<dynamic, IEventHandler> Handlers = new Dictionary<dynamic, IEventHandler>();
 
         private volatile bool enabled = true;
         public bool Enabled { get { return enabled; } set { enabled = value; } }
 
         public event EventHandler<IEvent>? OnDefault;
 
-        internal void Add(Type handlerInterface, IEventHandler implementation)
+        public EventHandlerController(ILifetimeScope scope)
         {
-            Handlers.Add(handlerInterface, implementation);
+            foreach (var h in scope.GetImplementingTypes<IEventHandler>())
+            {
+                Add((IEventHandler)scope.Resolve(h));
+            }
         }
 
         public T Get<T>()
@@ -28,7 +33,7 @@ namespace Slipstream.Shared
             return (T)Handlers[typeof(T)];
         }
 
-        internal void Add(IEventHandler eventHandler)
+        private void Add(IEventHandler eventHandler)
         {
             Handlers.Add(eventHandler.GetType(), eventHandler);
         }

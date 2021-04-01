@@ -7,6 +7,7 @@ namespace Slipstream.Components
     internal interface IComponentPluginDependencies
     {
         IEventHandlerController EventHandlerController { get; }
+
         ILogger Logger { get; }
         IEventBus EventBus { get; }
         IEventFactory EventFactory { get; }

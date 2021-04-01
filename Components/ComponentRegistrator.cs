@@ -18,20 +18,15 @@ namespace Slipstream.Components
 
         public IEventFactory EventFactory { get; internal set; }
 
-        public EventHandlerControllerBuilder EventHandlerControllerBuilder { get; }
-
         public ComponentRegistrator(
             Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>> plugins,
             List<ILuaGlueFactory> luaGlueFactories,
             IEventFactory eventFactory,
             ILogger logger,
-            IEventBus eventBus,
-            EventHandlerControllerBuilder eventHandlerControllerBuilder
-        )
+            IEventBus eventBus)
         {
             Plugins = plugins;
             LuaGlueFactories = luaGlueFactories;
-            EventHandlerControllerBuilder = eventHandlerControllerBuilder;
             EventFactory = eventFactory;
             Logger = logger;
             EventBus = eventBus;
@@ -40,11 +35,6 @@ namespace Slipstream.Components
         public void RegisterEventFactory<T>(Type type, T factory)
         {
             EventFactory.Add(type, factory);
-        }
-
-        public void RegisterEventHandler(Type type)
-        {
-            EventHandlerControllerBuilder.Add(type);
         }
 
         public void RegisterPlugin(string name, Func<IComponentPluginCreationContext, IPlugin> plugin)

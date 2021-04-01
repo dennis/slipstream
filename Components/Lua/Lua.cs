@@ -15,7 +15,6 @@ namespace Slipstream.Components.Lua
             ctx.RegisterPlugin("LuaPlugin", CreateLuaPlugin);
             ctx.RegisterPlugin("LuaManagerPlugin", CreateLuaManagerPlugin);
             ctx.RegisterEventFactory(typeof(ILuaEventFactory), eventFactory);
-            ctx.RegisterEventHandler(typeof(EventHandler.Lua));
         }
 
         private IPlugin CreateLuaManagerPlugin(IComponentPluginCreationContext ctx)

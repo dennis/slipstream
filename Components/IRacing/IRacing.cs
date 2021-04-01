@@ -13,7 +13,6 @@ namespace Slipstream.Components.IRacing
 
             ctx.RegisterPlugin(NAME, CreatePlugin);
             ctx.RegisterEventFactory(typeof(IIRacingEventFactory), eventFactory);
-            ctx.RegisterEventHandler(typeof(EventHandler.IRacing));
             ctx.RegisterLuaGlue(new LuaGlueFactory(ctx.EventBus, eventFactory));
         }
 

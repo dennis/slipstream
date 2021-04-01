@@ -11,7 +11,6 @@ namespace Slipstream.Components.Twitch
 
             ctx.RegisterPlugin("TwitchPlugin", CreatePlugin);
             ctx.RegisterEventFactory(typeof(ITwitchEventFactory), eventFactory);
-            ctx.RegisterEventHandler(typeof(EventHandler.Twitch));
             ctx.RegisterLuaGlue(new LuaGlueFactory(ctx.EventBus, eventFactory));
         }
 

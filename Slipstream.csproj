@@ -201,6 +201,7 @@
     <Compile Include="Backend\IEngine.cs" />
     <Compile Include="Backend\IPluginFactory.cs" />
     <Compile Include="Backend\IPluginManager.cs" />
+    <Compile Include="Backend\LifetimeScopeExtensions.cs" />
     <Compile Include="Backend\PluginManager.cs" />
     <Compile Include="Components\AppilcationUpdate\ApplicationUpdate.cs" />
     <Compile Include="Components\AppilcationUpdate\EventFactory\ApplicationUpdateEventFactory.cs" />
@@ -290,7 +291,6 @@
     <Compile Include="Components\UI\UI.cs" />
     <Compile Include="Components\WinFormUI\WinFormUI.cs" />
     <Compile Include="Shared\EventHandlerArgs.cs" />
-    <Compile Include="Shared\EventHandlerControllerBuilder.cs" />
     <Compile Include="Components\ComponentRegistrator.cs" />
     <Compile Include="Components\IComponent.cs" />
     <Compile Include="Components\IComponentPluginCreationContext.cs" />

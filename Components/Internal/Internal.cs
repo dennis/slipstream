@@ -9,7 +9,6 @@ namespace Slipstream.Components.Internal
             var eventFactory = new EventFactory.InternalEventFactory();
 
             ctx.RegisterEventFactory(typeof(IInternalEventFactory), eventFactory);
-            ctx.RegisterEventHandler(typeof(EventHandler.Internal));
             ctx.RegisterLuaGlue(new LuaGlues.CoreLuaGlueFactory(new EventSerdeService()));
             ctx.RegisterLuaGlue(new LuaGlues.HttpLuaGlueFactory(ctx.Logger));
             ctx.RegisterLuaGlue(new LuaGlues.InternalLuaGlueFactory(ctx.EventBus, eventFactory));

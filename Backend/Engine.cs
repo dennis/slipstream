@@ -23,14 +23,14 @@ namespace Slipstream.Backend
         private readonly IEventHandlerController EventHandlerController;
         private bool Stopped = false;
 
-        public Engine(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, EventHandlerControllerBuilder eventHandlerControllerBuilder)
+        public Engine(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, IEventHandlerController eventHandlerController)
         {
             EventFactory = eventFactory.Get<IInternalEventFactory>();
             EventBus = eventBus;
             PluginFactory = pluginFactory;
             PluginManager = pluginManager;
             Logger = logger;
-            EventHandlerController = eventHandlerControllerBuilder.CreateEventHandlerController();
+            EventHandlerController = eventHandlerController;
 
             Subscription = EventBus.RegisterListener();
 

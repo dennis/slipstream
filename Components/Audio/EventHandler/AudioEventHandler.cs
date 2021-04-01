@@ -2,6 +2,7 @@
 
 using Slipstream.Components.Audio.Events;
 using Slipstream.Shared;
+using System;
 
 namespace Slipstream.Components.Audio.EventHandler
 {
@@ -14,83 +15,37 @@ namespace Slipstream.Components.Audio.EventHandler
             Parent = eventHandler;
         }
 
-        public delegate void OnAudioCommandPlayHandler(EventHandlerController source, EventHandlerArgs<AudioCommandPlay> e);
+        public event EventHandler<AudioCommandPlay>? OnAudioCommandPlay;
 
-        public delegate void OnAudioCommandSayHandler(EventHandlerController source, EventHandlerArgs<AudioCommandSay> e);
+        public event EventHandler<AudioCommandSay>? OnAudioCommandSay;
 
-        public delegate void OnAudioCommandSendDevicesHandler(EventHandlerController source, EventHandlerArgs<AudioCommandSendDevices> e);
+        public event EventHandler<AudioCommandSendDevices>? OnAudioCommandSendDevices;
 
-        public delegate void OnAudioCommandSetOutputDeviceHandler(EventHandlerController source, EventHandlerArgs<AudioCommandSetOutputDevice> e);
+        public event EventHandler<AudioCommandSetOutputDevice>? OnAudioCommandSetOutputDevice;
 
-        public delegate void OnAudioOutputDeviceHandler(EventHandlerController source, EventHandlerArgs<AudioOutputDevice> e);
-
-        public event OnAudioCommandPlayHandler? OnAudioCommandPlay;
-
-        public event OnAudioCommandSayHandler? OnAudioCommandSay;
-
-        public event OnAudioCommandSendDevicesHandler? OnAudioCommandSendDevices;
-
-        public event OnAudioCommandSetOutputDeviceHandler? OnAudioCommandSetOutputDevice;
-
-        public event OnAudioOutputDeviceHandler? OnAudioOutputDevice;
+        public event EventHandler<AudioOutputDevice>? OnAudioOutputDevice;
 
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)
         {
-            switch (@event)
+            return @event switch
             {
-                case AudioCommandSay tev:
-                    if (OnAudioCommandSay != null)
-                    {
-                        OnAudioCommandSay.Invoke(Parent, new EventHandlerArgs<AudioCommandSay>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case AudioCommandPlay tev:
-                    if (OnAudioCommandPlay != null)
-                    {
-                        OnAudioCommandPlay.Invoke(Parent, new EventHandlerArgs<AudioCommandPlay>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case AudioCommandSendDevices tev:
-                    if (OnAudioCommandSendDevices != null)
-                    {
-                        OnAudioCommandSendDevices.Invoke(Parent, new EventHandlerArgs<AudioCommandSendDevices>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case AudioOutputDevice tev:
-                    if (OnAudioOutputDevice != null)
-                    {
-                        OnAudioOutputDevice.Invoke(Parent, new EventHandlerArgs<AudioOutputDevice>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case AudioCommandSetOutputDevice tev:
-                    if (OnAudioCommandSetOutputDevice != null)
-                    {
-                        OnAudioCommandSetOutputDevice.Invoke(Parent, new EventHandlerArgs<AudioCommandSetOutputDevice>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-            }
+                AudioCommandSay tev => OnEvent(OnAudioCommandSay, tev),
+                AudioCommandPlay tev => OnEvent(OnAudioCommandPlay, tev),
+                AudioCommandSendDevices tev => OnEvent(OnAudioCommandSendDevices, tev),
+                AudioOutputDevice tev => OnEvent(OnAudioOutputDevice, tev),
+                AudioCommandSetOutputDevice tev => OnEvent(OnAudioCommandSetOutputDevice, tev),
+                _ => IEventHandler.HandledStatus.NotMine,
+            };
+        }
 
-            return IEventHandler.HandledStatus.NotMine;
+        private IEventHandler.HandledStatus OnEvent<TEvent>(EventHandler<TEvent>? onEvent, TEvent args)
+        {
+            if (onEvent != null)
+            {
+                onEvent.Invoke(Parent, args);
+                return IEventHandler.HandledStatus.Handled;
+            }
+            return IEventHandler.HandledStatus.UseDefault;
         }
     }
 }

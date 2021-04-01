@@ -30,11 +30,11 @@ namespace Slipstream.Components.AppilcationUpdate.Plugins
         }
 
         public ApplicationUpdatePlugin(
-            IEventHandlerController eventHandlerController, 
-            string id, 
-            IApplicationUpdateEventFactory applicationUpdateEventFactory, 
-            ILogger logger, 
-            IEventBus eventBus, 
+            IEventHandlerController eventHandlerController,
+            string id,
+            IApplicationUpdateEventFactory applicationUpdateEventFactory,
+            ILogger logger,
+            IEventBus eventBus,
             Parameters configuration)
             : base(eventHandlerController, id, nameof(ApplicationUpdatePlugin), id, true)
         {
@@ -67,18 +67,18 @@ namespace Slipstream.Components.AppilcationUpdate.Plugins
         {
             // Registering for internal plugin state event
             var internalEvents = EventHandlerController.Get<Internal.EventHandler.Internal>();
-            internalEvents.OnInternalPluginState += (s, e) => OnInternalPluginState(s, e);
+            internalEvents.OnInternalPluginState += (s, e) => OnInternalPluginState(e);
         }
 
-        private void OnInternalPluginState(IEventHandlerController s, EventHandlerArgs<InternalPluginState> e)
+        private void OnInternalPluginState(InternalPluginState e)
         {
             // to prevent multiple updates
-            if(updateNotified)
+            if (updateNotified)
             {
                 return;
             }
 
-            if (e.Event.PluginName == this.Name && e.Event.PluginStatus == "Registered")
+            if (e.PluginName == this.Name && e.PluginStatus == "Registered")
             {
                 // Send update event to check for update at startup
                 this.eventBus.PublishEvent(this.applicationUpdateEventFactory.CreateApplicationUpdateCommandCheckLatestVersion());
@@ -119,7 +119,7 @@ namespace Slipstream.Components.AppilcationUpdate.Plugins
 
             var isGitHub = updateLocation.StartsWith("https://github.com");
 
-            if(isGitHub)
+            if (isGitHub)
             {
                 var asyncUpdateManager = UpdateManager.GitHubUpdateManager(updateLocation, prerelease: prerelease);
                 asyncUpdateManager.Wait();
@@ -136,7 +136,7 @@ namespace Slipstream.Components.AppilcationUpdate.Plugins
 
             var canUpdate = await updateManager.CheckForUpdate();
 
-            if(canUpdate.ReleasesToApply.Any())
+            if (canUpdate.ReleasesToApply.Any())
             {
                 Logger.Information("Auto update, new version available, raising the event");
                 this.eventBus.PublishEvent(this.applicationUpdateEventFactory.CreateApplicationUpdateLatestVersionChanged(canUpdate.FutureReleaseEntry.Version.ToString()));

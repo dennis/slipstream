@@ -36,10 +36,10 @@ namespace Slipstream.Backend
 
             var internalEventHandler = EventHandlerController.Get<Slipstream.Components.Internal.EventHandler.Internal>();
 
-            internalEventHandler.OnInternalCommandPluginRegister += (_, e) => OnCommandPluginRegister(e.Event);
-            internalEventHandler.OnInternalCommandPluginUnregister += (_, e) => OnCommandPluginUnregister(e.Event);
-            internalEventHandler.OnInternalCommandPluginStates += (_, e) => OnCommandPluginStates(e.Event);
-            internalEventHandler.OnInternalCommandShutdown += (_, e) => OnInternalCommandShutdown(e.Event);
+            internalEventHandler.OnInternalCommandPluginRegister += (_, e) => OnCommandPluginRegister(e);
+            internalEventHandler.OnInternalCommandPluginUnregister += (_, e) => OnCommandPluginUnregister(e);
+            internalEventHandler.OnInternalCommandPluginStates += (_, e) => OnCommandPluginStates(e);
+            internalEventHandler.OnInternalCommandShutdown += (_, e) => OnInternalCommandShutdown(e);
 
             // Plugins..
             {

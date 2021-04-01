@@ -2,6 +2,7 @@
 
 using Slipstream.Components.Playback.Events;
 using Slipstream.Shared;
+using System;
 
 namespace Slipstream.Components.Playback.EventHandler
 {
@@ -14,41 +15,28 @@ namespace Slipstream.Components.Playback.EventHandler
             Parent = parent;
         }
 
-        public delegate void OnPlaybackCommandInjectEventsHandler(EventHandlerController source, EventHandlerArgs<PlaybackCommandInjectEvents> e);
+        public event EventHandler<PlaybackCommandInjectEvents>? OnPlaybackCommandInjectEvents;
 
-        public event OnPlaybackCommandInjectEventsHandler? OnPlaybackCommandInjectEvents;
-
-        public delegate void OnPlaybackCommandSaveEventsHandler(EventHandlerController source, EventHandlerArgs<PlaybackCommandSaveEvents> e);
-
-        public event OnPlaybackCommandSaveEventsHandler? OnPlaybackCommandSaveEvents;
+        public event EventHandler<PlaybackCommandSaveEvents>? OnPlaybackCommandSaveEvents;
 
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)
         {
-            switch (@event)
+            return @event switch
             {
-                case PlaybackCommandInjectEvents tev:
-                    if (OnPlaybackCommandInjectEvents != null)
-                    {
-                        OnPlaybackCommandInjectEvents.Invoke(Parent, new EventHandlerArgs<PlaybackCommandInjectEvents>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case PlaybackCommandSaveEvents tev:
-                    if (OnPlaybackCommandSaveEvents != null)
-                    {
-                        OnPlaybackCommandSaveEvents.Invoke(Parent, new EventHandlerArgs<PlaybackCommandSaveEvents>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-            }
+                PlaybackCommandInjectEvents tev => OnEvent(OnPlaybackCommandInjectEvents, tev),
+                PlaybackCommandSaveEvents tev => OnEvent(OnPlaybackCommandSaveEvents, tev),
+                _ => IEventHandler.HandledStatus.NotMine,
+            };
+        }
 
-            return IEventHandler.HandledStatus.NotMine;
+        private IEventHandler.HandledStatus OnEvent<TEvent>(EventHandler<TEvent>? onEvent, TEvent args)
+        {
+            if (onEvent != null)
+            {
+                onEvent.Invoke(Parent, args);
+                return IEventHandler.HandledStatus.Handled;
+            }
+            return IEventHandler.HandledStatus.UseDefault;
         }
     }
 }

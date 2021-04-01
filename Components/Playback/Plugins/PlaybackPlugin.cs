@@ -21,8 +21,8 @@ namespace Slipstream.Components.Playback.Plugins
             EventSerdeService = eventSerdeService;
             var playback = EventHandlerController.Get<EventHandler.Playback>();
 
-            playback.OnPlaybackCommandInjectEvents += (s, e) => OnPlaybackCommandInjectEvents(e.Event);
-            playback.OnPlaybackCommandSaveEvents += (s, e) => OnPlaybackCommandSaveEvents(e.Event);
+            playback.OnPlaybackCommandInjectEvents += (s, e) => OnPlaybackCommandInjectEvents(e);
+            playback.OnPlaybackCommandSaveEvents += (s, e) => OnPlaybackCommandSaveEvents(e);
 
             Logger = logger;
         }

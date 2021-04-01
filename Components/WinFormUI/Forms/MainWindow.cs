@@ -128,11 +128,11 @@ namespace Slipstream.Components.WinFormUI.Forms
             var internalEventHandler = EventHandler.Get<Components.Internal.EventHandler.Internal>();
             var uiEventHandler = EventHandler.Get<Components.UI.EventHandler.UIEventHandler>();
 
-            internalEventHandler.OnInternalPluginState += (_, e) => EventHandler_OnInternalPluginState(e.Event);
-            internalEventHandler.OnInternalShutdown += (_, e) => EventHandler_OnInteralShutdown(e.Event);
-            uiEventHandler.OnUICommandWriteToConsole += (_, e) => PendingMessages.Add($"{DateTime.Now:s} {e.Event.Message}");
-            uiEventHandler.OnUICommandCreateButton += (_, e) => EventHandler_OnUICommandCreateButton(e.Event);
-            uiEventHandler.OnUICommandDeleteButton += (_, e) => EventHandler_OnUICommandDeleteButton(e.Event);
+            internalEventHandler.OnInternalPluginState += (_, e) => EventHandler_OnInternalPluginState(e);
+            internalEventHandler.OnInternalShutdown += (_, e) => EventHandler_OnInteralShutdown(e);
+            uiEventHandler.OnUICommandWriteToConsole += (_, e) => PendingMessages.Add($"{DateTime.Now:s} {e.Message}");
+            uiEventHandler.OnUICommandCreateButton += (_, e) => EventHandler_OnUICommandCreateButton(e);
+            uiEventHandler.OnUICommandDeleteButton += (_, e) => EventHandler_OnUICommandDeleteButton(e);
 
             // Request full state of all known plugins, so we get any that might be started before "us"
             EventBus.PublishEvent(InternalEventFactory.CreateInternalCommandPluginStates());

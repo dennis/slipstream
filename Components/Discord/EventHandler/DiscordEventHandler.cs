@@ -1,5 +1,8 @@
-﻿using Slipstream.Components.Discord.Events;
+﻿#nullable enable
+
+using Slipstream.Components.Discord.Events;
 using Slipstream.Shared;
+using System;
 
 namespace Slipstream.Components.Discord.EventHandler
 {
@@ -7,21 +10,13 @@ namespace Slipstream.Components.Discord.EventHandler
     {
         private readonly EventHandlerController Parent;
 
-        public delegate void OnDiscordConnectedHandler(EventHandlerController source, EventHandlerArgs<DiscordConnected> e);
+        public event EventHandler<DiscordConnected>? OnDiscordConnected;
 
-        public delegate void OnDiscordDisconnectedHandler(EventHandlerController source, EventHandlerArgs<DiscordDisconnected> e);
+        public event EventHandler<DiscordDisconnected>? OnDiscordDisconnected;
 
-        public delegate void OnDiscordMessageReceivedHandler(EventHandlerController source, EventHandlerArgs<DiscordMessageReceived> e);
+        public event EventHandler<DiscordMessageReceived>? OnDiscordMessageReceived;
 
-        public delegate void OnDiscordCommandSendMessageHandler(EventHandlerController source, EventHandlerArgs<DiscordCommandSendMessage> e);
-
-        public event OnDiscordConnectedHandler? OnDiscordConnected;
-
-        public event OnDiscordDisconnectedHandler? OnDiscordDisconnected;
-
-        public event OnDiscordMessageReceivedHandler? OnDiscordMessageReceived;
-
-        public event OnDiscordCommandSendMessageHandler? OnDiscordCommandSendMessage;
+        public event EventHandler<DiscordCommandSendMessage>? OnDiscordCommandSendMessage;
 
         public DiscordEventHandler(EventHandlerController eventHandler)
         {
@@ -30,51 +25,24 @@ namespace Slipstream.Components.Discord.EventHandler
 
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)
         {
-            switch (@event)
+            return @event switch
             {
-                case DiscordConnected tev:
-                    if (OnDiscordConnected != null)
-                    {
-                        OnDiscordConnected.Invoke(Parent, new EventHandlerArgs<DiscordConnected>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case DiscordDisconnected tev:
-                    if (OnDiscordDisconnected != null)
-                    {
-                        OnDiscordDisconnected.Invoke(Parent, new EventHandlerArgs<DiscordDisconnected>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case DiscordMessageReceived tev:
-                    if (OnDiscordMessageReceived != null)
-                    {
-                        OnDiscordMessageReceived.Invoke(Parent, new EventHandlerArgs<DiscordMessageReceived>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case DiscordCommandSendMessage tev:
-                    if (OnDiscordCommandSendMessage != null)
-                    {
-                        OnDiscordCommandSendMessage.Invoke(Parent, new EventHandlerArgs<DiscordCommandSendMessage>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-            }
+                DiscordConnected tev => OnEvent(OnDiscordConnected, tev),
+                DiscordDisconnected tev => OnEvent(OnDiscordDisconnected, tev),
+                DiscordMessageReceived tev => OnEvent(OnDiscordMessageReceived, tev),
+                DiscordCommandSendMessage tev => OnEvent(OnDiscordCommandSendMessage, tev),
+                _ => IEventHandler.HandledStatus.NotMine,
+            };
+        }
 
-            return IEventHandler.HandledStatus.NotMine;
+        private IEventHandler.HandledStatus OnEvent<TEvent>(EventHandler<TEvent>? onEvent, TEvent args)
+        {
+            if (onEvent != null)
+            {
+                onEvent.Invoke(Parent, args);
+                return IEventHandler.HandledStatus.Handled;
+            }
+            return IEventHandler.HandledStatus.UseDefault;
         }
     }
 }

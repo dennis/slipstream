@@ -13,7 +13,7 @@ namespace Slipstream.Shared
         private volatile bool enabled = true;
         public bool Enabled { get { return enabled; } set { enabled = value; } }
 
-        public event OnDefaultHandler? OnDefault;
+        public event EventHandler<IEvent>? OnDefault;
 
         internal void Add(Type handlerInterface, IEventHandler implementation)
         {
@@ -49,7 +49,7 @@ namespace Slipstream.Shared
                         break;
 
                     case IEventHandler.HandledStatus.UseDefault:
-                        OnDefault?.Invoke(this, new EventHandlerArgs<IEvent>(ev));
+                        OnDefault?.Invoke(this, ev);
                         handled = true;
                         break;
 

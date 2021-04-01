@@ -41,19 +41,19 @@ namespace Slipstream.Components.Discord.Plugins
             eventHandler.OnDiscordCommandSendMessage += EventHandler_OnDiscordCommandSendMessage;
         }
 
-        private void EventHandler_OnDiscordCommandSendMessage(EventHandlerController source, EventHandlerArgs<Events.DiscordCommandSendMessage> e)
+        private void EventHandler_OnDiscordCommandSendMessage(object source, Events.DiscordCommandSendMessage e)
         {
             if (Client == null)
                 return;
 
-            if (!DiscordChannelIdMap.ContainsKey(e.Event.ChannelId))
+            if (!DiscordChannelIdMap.ContainsKey(e.ChannelId))
             {
-                var channel = Client.GetChannelAsync(e.Event.ChannelId).GetAwaiter().GetResult();
+                var channel = Client.GetChannelAsync(e.ChannelId).GetAwaiter().GetResult();
 
-                DiscordChannelIdMap.Add(e.Event.ChannelId, channel);
+                DiscordChannelIdMap.Add(e.ChannelId, channel);
             }
 
-            DiscordChannelIdMap[e.Event.ChannelId].SendMessageAsync(e.Event.Message, e.Event.TextToSpeech);
+            DiscordChannelIdMap[e.ChannelId].SendMessageAsync(e.Message, e.TextToSpeech);
         }
 
         public override void Run()

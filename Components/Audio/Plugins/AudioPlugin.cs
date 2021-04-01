@@ -55,10 +55,10 @@ namespace Slipstream.Components.Audio.Plugins
 
             var Audio = EventHandlerController.Get<Components.Audio.EventHandler.AudioEventHandler>();
 
-            Audio.OnAudioCommandSay += (_, e) => OnAudioCommandSay(e.Event);
-            Audio.OnAudioCommandPlay += (_, e) => OnAudioCommandPlay(e.Event);
-            Audio.OnAudioCommandSendDevices += (_, e) => OnAudioCommandSendDevices(e.Event);
-            Audio.OnAudioCommandSetOutputDevice += (_, e) => OnAudioCommandSetOutputDevice(e.Event);
+            Audio.OnAudioCommandSay += (_, e) => OnAudioCommandSay(e);
+            Audio.OnAudioCommandPlay += (_, e) => OnAudioCommandPlay(e);
+            Audio.OnAudioCommandSendDevices += (_, e) => OnAudioCommandSendDevices(e);
+            Audio.OnAudioCommandSetOutputDevice += (_, e) => OnAudioCommandSetOutputDevice(e);
         }
 
         private void OnAudioCommandSetOutputDevice(AudioCommandSetOutputDevice @event)

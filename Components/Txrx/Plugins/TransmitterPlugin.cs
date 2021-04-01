@@ -44,7 +44,7 @@ namespace Slipstream.Components.Txrx.Plugins
             Ip = configuration.Extract<string>("ip");
             Port = (int)configuration.Extract<long>("port");
 
-            EventHandlerController.OnDefault += (_, e) => OnEvent(e.Event);
+            EventHandlerController.OnDefault += (_, e) => OnEvent(e);
 
             // To avoid that we get an endless loop, we will Unregister the "other" end in this instance
             EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginUnregister("ReceiverPlugin"));

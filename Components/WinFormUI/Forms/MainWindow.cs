@@ -33,11 +33,11 @@ namespace Slipstream.Components.WinFormUI.Forms
         private readonly IEventHandlerController EventHandler;
         private bool ShuttingDown = false;
 
-        public MainWindow(IEventFactory eventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, IEventHandlerController eventHandlerController)
+        public MainWindow(IInternalEventFactory internalEventFactory, IUIEventFactory uiEventFactory, IPlaybackEventFactory playbackEventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, IEventHandlerController eventHandlerController)
         {
-            InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
-            UIEventFactory = eventFactory.Get<IUIEventFactory>();
-            PlaybackEventFactory = eventFactory.Get<IPlaybackEventFactory>();
+            InternalEventFactory = internalEventFactory;
+            UIEventFactory = uiEventFactory;
+            PlaybackEventFactory = playbackEventFactory;
 
             EventHandler = eventHandlerController;
 

@@ -1,6 +1,15 @@
 ﻿using Serilog;
 using Slipstream.Backend;
+using Slipstream.Components.AppilcationUpdate;
+using Slipstream.Components.Audio;
+using Slipstream.Components.Discord;
+using Slipstream.Components.FileMonitor;
 using Slipstream.Components.Internal;
+using Slipstream.Components.IRacing;
+using Slipstream.Components.Lua;
+using Slipstream.Components.Playback;
+using Slipstream.Components.Twitch;
+using Slipstream.Components.UI;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using System.Collections.Generic;
@@ -23,11 +32,6 @@ namespace Slipstream.Components
             get { return ComponentRegistration.EventBus; }
         }
 
-        public IEventFactory EventFactory
-        {
-            get { return ComponentRegistration.EventFactory; }
-        }
-
         public string PluginId { get; }
 
         public string PluginName { get; }
@@ -44,6 +48,26 @@ namespace Slipstream.Components
 
         public IEventSerdeService EventSerdeService { get; }
 
+        public IInternalEventFactory InternalEventFactory { get; }
+
+        public IUIEventFactory UIEventFactory { get; }
+
+        public IPlaybackEventFactory PlaybackEventFactory { get; }
+
+        public ILuaEventFactory LuaEventFactory { get; }
+
+        public IApplicationUpdateEventFactory ApplicationUpdateEventFactory { get; }
+
+        public IFileMonitorEventFactory FileMonitorEventFactory { get; }
+
+        public IAudioEventFactory AudioEventFactory { get; }
+
+        public IDiscordEventFactory DiscordEventFactory { get; }
+
+        public IIRacingEventFactory IRacingEventFactory { get; }
+
+        public ITwitchEventFactory TwitchEventFactory { get; }
+
         public ComponentPluginCreationContext(
                 ComponentRegistrator componentRegistration,
                 IPluginManager pluginManager,
@@ -53,7 +77,17 @@ namespace Slipstream.Components
                 string pluginName,
                 Parameters pluginParameters,
                 IEventSerdeService eventSerdeService,
-                IEventHandlerController eventHandlerController)
+                IEventHandlerController eventHandlerController,
+                IInternalEventFactory internalEventFactory,
+                IUIEventFactory uiEventFactory,
+                IPlaybackEventFactory playbackEventFactory,
+                ILuaEventFactory luaEventFactory,
+                IApplicationUpdateEventFactory applicationUpdateEventFactory,
+                IFileMonitorEventFactory fileMonitorEventFactory,
+                IAudioEventFactory audioEventFactory,
+                IDiscordEventFactory discordEventFactory,
+                IIRacingEventFactory iRacingEventFactory,
+                ITwitchEventFactory twitchEventFactory)
         {
             ComponentRegistration = componentRegistration;
             PluginManager = pluginManager;
@@ -64,6 +98,16 @@ namespace Slipstream.Components
             PluginParameters = pluginParameters;
             EventSerdeService = eventSerdeService;
             EventHandlerController = eventHandlerController;
+            InternalEventFactory = internalEventFactory;
+            UIEventFactory = uiEventFactory;
+            PlaybackEventFactory = playbackEventFactory;
+            LuaEventFactory = luaEventFactory;
+            ApplicationUpdateEventFactory = applicationUpdateEventFactory;
+            FileMonitorEventFactory = fileMonitorEventFactory;
+            AudioEventFactory = audioEventFactory;
+            DiscordEventFactory = discordEventFactory;
+            IRacingEventFactory = iRacingEventFactory;
+            TwitchEventFactory = twitchEventFactory;
             Lua = new NLua.Lua();
         }
     }

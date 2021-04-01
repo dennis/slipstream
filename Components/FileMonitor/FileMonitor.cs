@@ -1,5 +1,4 @@
-﻿using Slipstream.Backend;
-using Slipstream.Components.FileMonitor.Plugins;
+﻿using Slipstream.Components.FileMonitor.Plugins;
 
 namespace Slipstream.Components.FileMonitor
 {
@@ -9,10 +8,7 @@ namespace Slipstream.Components.FileMonitor
 
         public void Register(IComponentRegistrationContext ctx)
         {
-            var eventFactory = new EventFactory.FileMonitorEventFactory();
-
             ctx.RegisterPlugin(NAME, CreatePlugin);
-            ctx.RegisterEventFactory(typeof(IFileMonitorEventFactory), eventFactory);
         }
 
         private IPlugin CreatePlugin(IComponentPluginCreationContext ctx)
@@ -20,7 +16,7 @@ namespace Slipstream.Components.FileMonitor
             return new FileMonitorPlugin(
                 ctx.EventHandlerController,
                 ctx.PluginId,
-                ctx.EventFactory.Get<IFileMonitorEventFactory>(),
+                ctx.FileMonitorEventFactory,
                 ctx.EventBus,
                 ctx.PluginParameters
             );

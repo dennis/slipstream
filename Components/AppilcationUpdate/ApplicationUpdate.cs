@@ -8,9 +8,6 @@ namespace Slipstream.Components.AppilcationUpdate
 
         void IComponent.Register(IComponentRegistrationContext ctx)
         {
-            var eventFactory = new EventFactory.ApplicationUpdateEventFactory();
-
-            ctx.RegisterEventFactory(typeof(IApplicationUpdateEventFactory), eventFactory);
             ctx.RegisterPlugin(NAME, CreatePlugin);
         }
 
@@ -19,7 +16,7 @@ namespace Slipstream.Components.AppilcationUpdate
             return new ApplicationUpdatePlugin(
                 ctx.EventHandlerController,
                 ctx.PluginId,
-                ctx.EventFactory.Get<IApplicationUpdateEventFactory>(),
+                ctx.ApplicationUpdateEventFactory,
                 ctx.Logger.ForContext(typeof(ApplicationUpdate)),
                 ctx.EventBus,
                 ctx.PluginParameters

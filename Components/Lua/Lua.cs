@@ -1,6 +1,4 @@
-﻿using Slipstream.Backend;
-using Slipstream.Components.FileMonitor;
-using Slipstream.Components.Internal.Services;
+﻿using Slipstream.Components.Internal.Services;
 using Slipstream.Components.Lua.Plugins;
 using System.Collections.Generic;
 
@@ -10,11 +8,8 @@ namespace Slipstream.Components.Lua
     {
         public void Register(IComponentRegistrationContext ctx)
         {
-            var eventFactory = new EventFactory.LuaEventFactory(new EventSerdeService());
-
             ctx.RegisterPlugin("LuaPlugin", CreateLuaPlugin);
             ctx.RegisterPlugin("LuaManagerPlugin", CreateLuaManagerPlugin);
-            ctx.RegisterEventFactory(typeof(ILuaEventFactory), eventFactory);
         }
 
         private IPlugin CreateLuaManagerPlugin(IComponentPluginCreationContext ctx)
@@ -23,7 +18,7 @@ namespace Slipstream.Components.Lua
                 ctx.EventHandlerController,
                 ctx.PluginId,
                 ctx.Logger.ForContext(typeof(LuaManagerPlugin)),
-                ctx.EventFactory.Get<IFileMonitorEventFactory>(),
+                ctx.FileMonitorEventFactory,
                 ctx.EventBus,
                 ctx.PluginManager,
                 ctx.PluginFactory,
@@ -47,7 +42,8 @@ namespace Slipstream.Components.Lua
                 ctx.EventHandlerController,
                 ctx.PluginId,
                 ctx.Logger.ForContext(typeof(LuaPlugin)),
-                ctx.EventFactory,
+                ctx.LuaEventFactory,
+                ctx.InternalEventFactory,
                 ctx.EventBus,
                 luaService,
                 ctx.PluginParameters

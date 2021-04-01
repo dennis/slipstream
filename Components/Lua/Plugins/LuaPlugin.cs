@@ -24,15 +24,16 @@ namespace Slipstream.Components.Lua.Plugins
             IEventHandlerController eventHandlerController,
             string id,
             ILogger logger,
-            IEventFactory eventFactory,
+            ILuaEventFactory luaEventFactory,
+            IInternalEventFactory internalEventFactory,
             IEventBus eventBus,
             ILuaSevice luaService,
             Parameters configuration
         ) : base(eventHandlerController, id, "LuaPlugin", id)
         {
             Logger = logger;
-            LuaEventFactory = eventFactory.Get<ILuaEventFactory>();
-            InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
+            LuaEventFactory = luaEventFactory;
+            InternalEventFactory = internalEventFactory;
             LuaService = luaService;
             EventBus = new CapturingEventBus(eventBus);
 

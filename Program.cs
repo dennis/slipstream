@@ -48,7 +48,6 @@ namespace Slipstream
             builder.RegisterType<Backend.Engine>().As<Backend.IEngine>().SingleInstance();
             builder.RegisterType<EventSerdeService>().As<IEventSerdeService>().SingleInstance();
             builder.RegisterType<Backend.PluginManager>().As<Backend.IPluginManager>().As<Backend.IPluginFactory>().SingleInstance();
-            builder.RegisterType<EventFactory>().As<IEventFactory>().SingleInstance();
             builder.RegisterType<LuaService>().As<ILuaSevice>().SingleInstance();
             builder.RegisterType<Shared.ApplicationVersionService>().As<Shared.IApplicationVersionService>().SingleInstance();
             builder.RegisterType<PopulateSink>().SingleInstance();
@@ -70,15 +69,19 @@ namespace Slipstream
                 .As<IEventHandler>()
                 .AsSelf()
                 .InstancePerDependency();
+            builder.RegisterAssemblyTypes(typeof(Program).Assembly)
+                .Where(t => t.Name.EndsWith("EventFactory"))
+                .AsImplementedInterfaces()
+                .SingleInstance();
             builder.RegisterType<EventHandlerController>().As<IEventHandlerController>().InstancePerDependency();
         }
 
         private class PopulateSink
         {
-            public PopulateSink(SlipstreamConsoleSink sink, IEventBus eventBus, IEventFactory eventFactory)
+            public PopulateSink(SlipstreamConsoleSink sink, IEventBus eventBus, Components.UI.IUIEventFactory uiEventFactory)
             {
                 sink.EventBus = eventBus;
-                sink.EventFactory = new UIEventFactory();
+                sink.EventFactory = uiEventFactory;
             }
         }
     }

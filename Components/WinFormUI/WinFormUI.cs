@@ -17,7 +17,9 @@ namespace Slipstream.Components.WinFormUI
             return new WinFormUIPlugin(
                 ctx.EventHandlerController,
                 ctx.PluginId,
-                ctx.EventFactory,
+                ctx.InternalEventFactory,
+                ctx.UIEventFactory,
+                ctx.PlaybackEventFactory,
                 ctx.EventBus,
                 new ApplicationVersionService()
             );

@@ -9,7 +9,6 @@ namespace Slipstream.Components.Discord
             var eventFactory = new EventFactory.DiscordEventFactory();
 
             ctx.RegisterPlugin("DiscordPlugin", CreatePlugin);
-            ctx.RegisterEventFactory(typeof(IDiscordEventFactory), eventFactory);
             ctx.RegisterLuaGlue(new LuaGlueFactory(ctx.EventBus, eventFactory));
         }
 
@@ -19,7 +18,7 @@ namespace Slipstream.Components.Discord
                 ctx.EventHandlerController,
                 ctx.PluginId,
                 ctx.EventBus,
-                ctx.EventFactory.Get<IDiscordEventFactory>(),
+                ctx.DiscordEventFactory,
                 ctx.PluginParameters
             );
         }

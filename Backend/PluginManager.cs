@@ -3,7 +3,16 @@
 using Autofac;
 using Serilog;
 using Slipstream.Components;
+using Slipstream.Components.AppilcationUpdate;
+using Slipstream.Components.Audio;
+using Slipstream.Components.Discord;
+using Slipstream.Components.FileMonitor;
 using Slipstream.Components.Internal;
+using Slipstream.Components.IRacing;
+using Slipstream.Components.Lua;
+using Slipstream.Components.Playback;
+using Slipstream.Components.Twitch;
+using Slipstream.Components.UI;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using System;
@@ -26,16 +35,16 @@ namespace Slipstream.Backend
         private readonly Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>> ComponentPlugins = new Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>>();
 
         public PluginManager(
-            IEventFactory eventFactory,
+            IInternalEventFactory internalEventFactory,
             IEventBus eventBus,
             ILogger logger,
             IEventSerdeService eventSerdeService,
-            ILifetimeScope lifetimeScope)
+            ILifetimeScope lifetimeScope
+        )
         {
             Registrator = new ComponentRegistrator(
                 ComponentPlugins,
                 LuaGluesFactories,
-                eventFactory,
                 logger,
                 eventBus);
 
@@ -45,7 +54,7 @@ namespace Slipstream.Backend
                 ((IComponent)Activator.CreateInstance(type)).Register(Registrator);
             }
 
-            InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
+            InternalEventFactory = internalEventFactory;
             EventSerdeService = eventSerdeService;
             EventBus = eventBus;
             Logger = logger;
@@ -150,7 +159,17 @@ namespace Slipstream.Backend
                 pluginName,
                 configuration,
                 EventSerdeService,
-                LifetimeScope.Resolve<IEventHandlerController>()
+                LifetimeScope.Resolve<IEventHandlerController>(),
+                LifetimeScope.Resolve<IInternalEventFactory>(),
+                LifetimeScope.Resolve<IUIEventFactory>(),
+                LifetimeScope.Resolve<IPlaybackEventFactory>(),
+                LifetimeScope.Resolve<ILuaEventFactory>(),
+                LifetimeScope.Resolve<IApplicationUpdateEventFactory>(),
+                LifetimeScope.Resolve<IFileMonitorEventFactory>(),
+                LifetimeScope.Resolve<IAudioEventFactory>(),
+                LifetimeScope.Resolve<IDiscordEventFactory>(),
+                LifetimeScope.Resolve<IIRacingEventFactory>(),
+                LifetimeScope.Resolve<ITwitchEventFactory>()
             );
             if (!ComponentPlugins.ContainsKey(pluginName))
                 throw new KeyNotFoundException($"Plugin name '{pluginName}' not found");

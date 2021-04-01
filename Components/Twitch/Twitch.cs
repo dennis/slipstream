@@ -10,7 +10,6 @@ namespace Slipstream.Components.Twitch
             var eventFactory = new EventFactory.TwitchEventFactory();
 
             ctx.RegisterPlugin("TwitchPlugin", CreatePlugin);
-            ctx.RegisterEventFactory(typeof(ITwitchEventFactory), eventFactory);
             ctx.RegisterLuaGlue(new LuaGlueFactory(ctx.EventBus, eventFactory));
         }
 
@@ -20,7 +19,7 @@ namespace Slipstream.Components.Twitch
                 ctx.EventHandlerController,
                 ctx.PluginId,
                 ctx.Logger.ForContext(typeof(Twitch)),
-                ctx.EventFactory.Get<ITwitchEventFactory>(),
+                ctx.TwitchEventFactory,
                 ctx.EventBus,
                 ctx.PluginParameters
             );

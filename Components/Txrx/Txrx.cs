@@ -22,7 +22,7 @@ namespace Slipstream.Components.Audio
                 ctx.EventHandlerController,
                 ctx.PluginId,
                 ctx.Logger,
-                ctx.EventFactory.Get<IInternalEventFactory>(),
+                ctx.InternalEventFactory,
                 ctx.EventBus,
                 txrxService,
                 ctx.PluginParameters
@@ -37,7 +37,7 @@ namespace Slipstream.Components.Audio
                 ctx.EventHandlerController,
                 ctx.PluginId,
                 ctx.Logger,
-                ctx.EventFactory.Get<IInternalEventFactory>(),
+                ctx.InternalEventFactory,
                 ctx.EventBus,
                 txrxService,
                 ctx.PluginParameters

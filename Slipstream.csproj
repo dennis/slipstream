@@ -329,7 +329,6 @@
     <Compile Include="Components\Txrx\Services\TxrxService.cs" />
     <Compile Include="GlobalSuppressions2.cs" />
     <Compile Include="Components\Audio\Audio.cs" />
-    <Compile Include="Shared\EventFactory.cs" />
     <Compile Include="Components\Audio\EventHandler\AudioEventHandler.cs" />
     <Compile Include="Components\Playback\EventHandler\Playback.cs" />
     <Compile Include="Components\Playback\Events\PlaybackCommandInjectEvents.cs" />
@@ -406,7 +405,6 @@
     <Compile Include="Backend\Engine.cs" />
     <Compile Include="Components\IPlugin.cs" />
     <Compile Include="Shared\IEvent.cs" />
-    <Compile Include="Shared\IEventFactory.cs" />
     <Compile Include="Shared\IEventHandler.cs" />
     <Compile Include="Shared\IEventHandlerController.cs" />
     <Compile Include="Shared\IEventProducer.cs" />

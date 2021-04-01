@@ -10,6 +10,5 @@ namespace Slipstream.Components
 
         ILogger Logger { get; }
         IEventBus EventBus { get; }
-        IEventFactory EventFactory { get; }
     }
 }

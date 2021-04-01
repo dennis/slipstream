@@ -45,7 +45,6 @@ namespace Slipstream
         private static void ConfigureServices(ContainerBuilder builder)
         {
             builder.RegisterType<Backend.EventBus>().As<Shared.IEventBus>().As<Shared.IEventProducer>().SingleInstance();
-            builder.RegisterType<ServiceLocator>().As<IServiceLocator>().SingleInstance();
             builder.RegisterType<Backend.Engine>().As<Backend.IEngine>().SingleInstance();
             builder.RegisterType<EventSerdeService>().As<IEventSerdeService>().SingleInstance();
             builder.RegisterType<Backend.PluginManager>().As<Backend.IPluginManager>().As<Backend.IPluginFactory>().SingleInstance();

@@ -23,7 +23,7 @@ namespace Slipstream.Components.Playback
                 ctx.PluginId,
                 ctx.Logger,
                 ctx.EventBus,
-                ctx.ServiceLocator.Get<IEventSerdeService>()
+                ctx.EventSerdeService
             );
         }
     }

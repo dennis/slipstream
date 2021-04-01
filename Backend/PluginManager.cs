@@ -15,6 +15,7 @@ namespace Slipstream.Backend
     public class PluginManager : IPluginManager, IPluginFactory
     {
         private readonly IInternalEventFactory InternalEventFactory;
+        private readonly IEventSerdeService EventSerdeService;
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, PluginWorker> PluginWorkers = new Dictionary<string, PluginWorker>();
         private readonly ILogger Logger;
@@ -25,11 +26,18 @@ namespace Slipstream.Backend
         public PluginManager(
             IEventFactory eventFactory,
             IEventBus eventBus,
-            IServiceLocator serviceLocator,
             ILogger logger,
-            EventHandlerControllerBuilder eventHandlerControllerBuilder)
+            EventHandlerControllerBuilder eventHandlerControllerBuilder,
+            IEventSerdeService eventSerdeService)
         {
-            Registrator = new ComponentRegistrator(ComponentPlugins, LuaGluesFactories, eventFactory, logger, eventBus, eventHandlerControllerBuilder, serviceLocator);
+            Registrator = new ComponentRegistrator(
+                ComponentPlugins,
+                LuaGluesFactories,
+                eventFactory,
+                logger,
+                eventBus,
+                eventHandlerControllerBuilder
+            );
 
             foreach (var type in typeof(PluginManager).Assembly.GetTypes().Where(t => typeof(IComponent).IsAssignableFrom(t) && !t.IsAbstract && t.IsClass))
             {
@@ -38,6 +46,7 @@ namespace Slipstream.Backend
             }
 
             InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
+            EventSerdeService = eventSerdeService;
             EventBus = eventBus;
             Logger = logger;
         }
@@ -131,7 +140,16 @@ namespace Slipstream.Backend
 
         public IPlugin CreatePlugin(string pluginId, string pluginName, IEventBus eventBus, Parameters configuration)
         {
-            ComponentPluginCreationContext reg = new ComponentPluginCreationContext(Registrator, this, this, LuaGluesFactories, pluginId, pluginName, configuration);
+            ComponentPluginCreationContext reg = new ComponentPluginCreationContext(
+                Registrator,
+                this,
+                this,
+                LuaGluesFactories,
+                pluginId,
+                pluginName,
+                configuration,
+                EventSerdeService
+            );
             if (!ComponentPlugins.ContainsKey(pluginName))
                 throw new KeyNotFoundException($"Plugin name '{pluginName}' not found");
             return ComponentPlugins[pluginName].Invoke(reg);

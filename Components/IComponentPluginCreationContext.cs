@@ -1,4 +1,5 @@
 ﻿using Slipstream.Backend;
+using Slipstream.Components.Internal;
 using Slipstream.Shared.Helpers.StrongParameters;
 using System.Collections.Generic;
 
@@ -12,5 +13,6 @@ namespace Slipstream.Components
         List<ILuaGlueFactory> LuaGlueFactories { get; }
         IPluginManager PluginManager { get; }
         IPluginFactory PluginFactory { get; }
+        IEventSerdeService EventSerdeService { get; }
     }
 }

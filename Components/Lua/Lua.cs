@@ -28,7 +28,7 @@ namespace Slipstream.Components.Lua
                 ctx.EventBus,
                 ctx.PluginManager,
                 ctx.PluginFactory,
-                ctx.ServiceLocator);
+                ctx.EventSerdeService);
         }
 
         private IPlugin CreateLuaPlugin(IComponentPluginCreationContext ctx)

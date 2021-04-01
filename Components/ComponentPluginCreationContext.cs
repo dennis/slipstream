@@ -31,11 +31,6 @@ namespace Slipstream.Components
             get { return ComponentRegistration.EventFactory; }
         }
 
-        public IServiceLocator ServiceLocator
-        {
-            get { return ComponentRegistration.ServiceLocator; }
-        }
-
         public string PluginId { get; }
 
         public string PluginName { get; }
@@ -50,6 +45,8 @@ namespace Slipstream.Components
 
         public IPluginFactory PluginFactory { get; }
 
+        public IEventSerdeService EventSerdeService { get; }
+
         public ComponentPluginCreationContext(
                 ComponentRegistrator componentRegistration,
                 IPluginManager pluginManager,
@@ -57,7 +54,8 @@ namespace Slipstream.Components
                 List<ILuaGlueFactory> luaGlueFactories,
                 string pluginId,
                 string pluginName,
-                Parameters pluginParameters)
+                Parameters pluginParameters,
+                IEventSerdeService eventSerdeService)
         {
             ComponentRegistration = componentRegistration;
             PluginManager = pluginManager;
@@ -66,6 +64,7 @@ namespace Slipstream.Components
             PluginId = pluginId;
             PluginName = pluginName;
             PluginParameters = pluginParameters;
+            EventSerdeService = eventSerdeService;
             Lua = new NLua.Lua();
         }
     }

@@ -18,8 +18,6 @@ namespace Slipstream.Components
 
         public IEventFactory EventFactory { get; internal set; }
 
-        public IServiceLocator ServiceLocator { get; internal set; }
-
         public EventHandlerControllerBuilder EventHandlerControllerBuilder { get; }
 
         public ComponentRegistrator(
@@ -28,8 +26,7 @@ namespace Slipstream.Components
             IEventFactory eventFactory,
             ILogger logger,
             IEventBus eventBus,
-            EventHandlerControllerBuilder eventHandlerControllerBuilder,
-            IServiceLocator serviceLocator
+            EventHandlerControllerBuilder eventHandlerControllerBuilder
         )
         {
             Plugins = plugins;
@@ -38,7 +35,6 @@ namespace Slipstream.Components
             EventFactory = eventFactory;
             Logger = logger;
             EventBus = eventBus;
-            ServiceLocator = serviceLocator;
         }
 
         public void RegisterEventFactory<T>(Type type, T factory)

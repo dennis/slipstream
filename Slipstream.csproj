@@ -424,8 +424,6 @@
     <Compile Include="Components\Lua\EventHandler\Lua.cs" />
     <Compile Include="Components\Twitch\EventHandler\Twitch.cs" />
     <Compile Include="Components\UI\EventHandler\UIEventHandler.cs" />
-    <Compile Include="Shared\IServiceLocator.cs" />
-    <Compile Include="Shared\ServiceLocator.cs" />
     <Compile Include="SlipstreamConsoleSink.cs" />
     <EmbeddedResource Include="Components\WinFormUI\Forms\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>

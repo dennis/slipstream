@@ -44,7 +44,7 @@ namespace Slipstream.Components.Lua.Plugins
             IEventBus eventBus,
             IPluginManager pluginManager,
             IPluginFactory pluginFactory,
-            IServiceLocator serviceLocator
+            IEventSerdeService eventSerdeService
         ) : base(eventHandlerController, id, "LuaManagerPlugin", id)
         {
             Logger = logger;
@@ -52,7 +52,7 @@ namespace Slipstream.Components.Lua.Plugins
             EventBus = eventBus;
             PluginManager = pluginManager;
             PluginFactory = pluginFactory;
-            EventSerdeService = serviceLocator.Get<IEventSerdeService>();
+            EventSerdeService = eventSerdeService;
 
             var fileMonitor = EventHandlerController.Get<Components.FileMonitor.EventHandler.FileMonitor>();
             var @internal = EventHandlerController.Get<Components.Internal.EventHandler.Internal>();
@@ -132,7 +132,7 @@ namespace Slipstream.Components.Lua.Plugins
 
         private void DeletedFile(string filePath)
         {
-            if(Scripts.ContainsKey(filePath))
+            if (Scripts.ContainsKey(filePath))
             {
                 PluginManager.UnregisterPlugin(Scripts[filePath]);
 

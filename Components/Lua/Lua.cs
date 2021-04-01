@@ -27,15 +27,8 @@ namespace Slipstream.Components.Lua
 
         private IPlugin CreateLuaPlugin(IComponentPluginCreationContext ctx)
         {
-            List<ILuaGlue> states = new List<ILuaGlue>();
-
-            foreach (var factories in ctx.LuaGlueFactories)
-            {
-                states.Add(factories.CreateLuaGlue(ctx));
-            }
-
             var luaService = new LuaService(
-                states
+                ctx.LuaGlues
             );
 
             return new LuaPlugin(

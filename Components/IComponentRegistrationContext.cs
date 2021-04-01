@@ -11,7 +11,5 @@ namespace Slipstream.Components
         public IEventBus EventBus { get; }
 
         public void RegisterPlugin(string name, Func<IComponentPluginCreationContext, IPlugin> plugin);
-
-        void RegisterLuaGlue(ILuaGlueFactory luaGlueFactory);
     }
 }

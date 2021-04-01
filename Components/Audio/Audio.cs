@@ -12,7 +12,6 @@ namespace Slipstream.Components.Audio
             var eventFactory = new EventFactory.AudioEventFactory();
 
             ctx.RegisterPlugin(NAME, CreateAudioPlugin);
-            ctx.RegisterLuaGlue(new LuaGlueFactory(ctx.EventBus, eventFactory));
         }
 
         private IPlugin CreateAudioPlugin(IComponentPluginCreationContext ctx)

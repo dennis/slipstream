@@ -11,7 +11,6 @@ namespace Slipstream.Components.Playback
             var eventFactory = new EventFactory.PlaybackEventFactory();
 
             ctx.RegisterPlugin("PlaybackPlugin", CreatePlugin);
-            ctx.RegisterLuaGlue(new LuaGlueFactory(ctx.EventBus, eventFactory));
         }
 
         private IPlugin CreatePlugin(IComponentPluginCreationContext ctx)

@@ -40,8 +40,6 @@ namespace Slipstream.Components
 
         public NLua.Lua Lua { get; }
 
-        public List<ILuaGlueFactory> LuaGlueFactories { get; }
-
         public IPluginManager PluginManager { get; }
 
         public IPluginFactory PluginFactory { get; }
@@ -68,11 +66,12 @@ namespace Slipstream.Components
 
         public ITwitchEventFactory TwitchEventFactory { get; }
 
+        public IEnumerable<ILuaGlue> LuaGlues { get; }
+
         public ComponentPluginCreationContext(
                 ComponentRegistrator componentRegistration,
                 IPluginManager pluginManager,
                 IPluginFactory pluginFactory,
-                List<ILuaGlueFactory> luaGlueFactories,
                 string pluginId,
                 string pluginName,
                 Parameters pluginParameters,
@@ -87,12 +86,12 @@ namespace Slipstream.Components
                 IAudioEventFactory audioEventFactory,
                 IDiscordEventFactory discordEventFactory,
                 IIRacingEventFactory iRacingEventFactory,
-                ITwitchEventFactory twitchEventFactory)
+                ITwitchEventFactory twitchEventFactory,
+                IEnumerable<ILuaGlue> luaGlues)
         {
             ComponentRegistration = componentRegistration;
             PluginManager = pluginManager;
             PluginFactory = pluginFactory;
-            LuaGlueFactories = luaGlueFactories;
             PluginId = pluginId;
             PluginName = pluginName;
             PluginParameters = pluginParameters;
@@ -108,6 +107,7 @@ namespace Slipstream.Components
             DiscordEventFactory = discordEventFactory;
             IRacingEventFactory = iRacingEventFactory;
             TwitchEventFactory = twitchEventFactory;
+            LuaGlues = luaGlues;
             Lua = new NLua.Lua();
         }
     }

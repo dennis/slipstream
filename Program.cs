@@ -1,8 +1,8 @@
 ﻿using Autofac;
 using Serilog;
+using Slipstream.Components;
 using Slipstream.Components.Internal;
 using Slipstream.Components.Internal.Services;
-using Slipstream.Components.UI.EventFactory;
 using Slipstream.Shared;
 using System;
 using System.Windows.Forms;
@@ -74,6 +74,14 @@ namespace Slipstream
                 .AsImplementedInterfaces()
                 .SingleInstance();
             builder.RegisterType<EventHandlerController>().As<IEventHandlerController>().InstancePerDependency();
+
+            // LuaGlues
+            builder.RegisterAssemblyTypes(typeof(Program).Assembly)
+                .Where(t => t.IsAssignableTo<ILuaGlue>())
+                .Where(t => !t.IsAbstract)
+                .As<ILuaGlue>()
+                .AsSelf()
+                .InstancePerDependency();
         }
 
         private class PopulateSink

@@ -19,7 +19,6 @@ namespace Slipstream.Components
         string PluginId { get; }
         string PluginName { get; }
         Parameters PluginParameters { get; }
-        List<ILuaGlueFactory> LuaGlueFactories { get; }
         IPluginManager PluginManager { get; }
         IPluginFactory PluginFactory { get; }
         IEventSerdeService EventSerdeService { get; }
@@ -33,5 +32,6 @@ namespace Slipstream.Components
         IDiscordEventFactory DiscordEventFactory { get; }
         IIRacingEventFactory IRacingEventFactory { get; }
         ITwitchEventFactory TwitchEventFactory { get; }
+        IEnumerable<ILuaGlue> LuaGlues { get; }
     }
 }

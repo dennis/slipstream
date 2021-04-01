@@ -7,17 +7,21 @@ namespace Slipstream.Components.Internal.Services
 {
     internal class LuaService : ILuaSevice
     {
-        private readonly List<ILuaGlue> LuaGlues;
+        private readonly List<ILuaGlue> LuaGlues = new List<ILuaGlue>();
         private readonly NLua.Lua Lua;
 
         public LuaService(
-            List<ILuaGlue>? luaGlues = null)
+            IEnumerable<ILuaGlue>? luaGlues = null)
         {
             Lua = new NLua.Lua();
             Lua.State.Encoding = Encoding.UTF8;
 
             luaGlues ??= new List<ILuaGlue>();
-            LuaGlues = luaGlues;
+
+            foreach (var lg in luaGlues)
+            {
+                LuaGlues.Add(lg);
+            }
 
             foreach (var glue in luaGlues)
             {

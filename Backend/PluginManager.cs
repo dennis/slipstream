@@ -17,6 +17,7 @@ using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using static Slipstream.Components.Internal.IInternalEventFactory;
 
@@ -31,8 +32,8 @@ namespace Slipstream.Backend
         private readonly ILogger Logger;
         private readonly ILifetimeScope LifetimeScope;
         private readonly ComponentRegistrator Registrator;
-        private readonly List<ILuaGlueFactory> LuaGluesFactories = new List<ILuaGlueFactory>();
         private readonly Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>> ComponentPlugins = new Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>>();
+        private readonly IEnumerable<Type> LuaGlueTypes;
 
         public PluginManager(
             IInternalEventFactory internalEventFactory,
@@ -44,7 +45,6 @@ namespace Slipstream.Backend
         {
             Registrator = new ComponentRegistrator(
                 ComponentPlugins,
-                LuaGluesFactories,
                 logger,
                 eventBus);
 
@@ -59,6 +59,7 @@ namespace Slipstream.Backend
             EventBus = eventBus;
             Logger = logger;
             LifetimeScope = lifetimeScope;
+            LuaGlueTypes = lifetimeScope.GetImplementingTypes<ILuaGlue>();
         }
 
         public void UnregisterPlugin(IPlugin p)
@@ -150,11 +151,17 @@ namespace Slipstream.Backend
 
         public IPlugin CreatePlugin(string pluginId, string pluginName, IEventBus eventBus, Parameters configuration)
         {
+            List<ILuaGlue> luaGlues = new List<ILuaGlue>();
+
+            foreach (var luaGlueType in LuaGlueTypes)
+            {
+                luaGlues.Add((ILuaGlue)LifetimeScope.Resolve(luaGlueType, new NamedParameter("configuration", configuration)));
+            }
+
             ComponentPluginCreationContext reg = new ComponentPluginCreationContext(
                 Registrator,
                 this,
                 this,
-                LuaGluesFactories,
                 pluginId,
                 pluginName,
                 configuration,
@@ -169,7 +176,8 @@ namespace Slipstream.Backend
                 LifetimeScope.Resolve<IAudioEventFactory>(),
                 LifetimeScope.Resolve<IDiscordEventFactory>(),
                 LifetimeScope.Resolve<IIRacingEventFactory>(),
-                LifetimeScope.Resolve<ITwitchEventFactory>()
+                LifetimeScope.Resolve<ITwitchEventFactory>(),
+                luaGlues
             );
             if (!ComponentPlugins.ContainsKey(pluginName))
                 throw new KeyNotFoundException($"Plugin name '{pluginName}' not found");

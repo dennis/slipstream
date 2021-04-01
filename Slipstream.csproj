@@ -210,7 +210,6 @@
     <Compile Include="Components\AppilcationUpdate\Events\ApplicationUpdateLatestVersionChanged.cs" />
     <Compile Include="Components\AppilcationUpdate\IApplicationUpdateEventFactory.cs" />
     <Compile Include="Components\AppilcationUpdate\Plugins\ApplicationUpdatePlugin.cs" />
-    <Compile Include="Components\Audio\LuaGlueFactory.cs" />
     <Compile Include="Components\Discord\Discord.cs" />
     <Compile Include="Components\Discord\EventFactory\DiscordEventFactory.cs" />
     <Compile Include="Components\Discord\EventHandler\DiscordEventHandler.cs" />
@@ -220,20 +219,13 @@
     <Compile Include="Components\Discord\Events\DiscordConnected.cs" />
     <Compile Include="Components\Discord\IDiscordEventFactory.cs" />
     <Compile Include="Components\Discord\LuaGlue.cs" />
-    <Compile Include="Components\Discord\LuaGlueFactory.cs" />
     <Compile Include="Components\Discord\Plugins\DiscordPlugin.cs" />
-    <Compile Include="Components\ILuaGlueFactory.cs" />
     <Compile Include="Components\Internal\Events\InternalShutdown.cs" />
     <Compile Include="Components\Internal\Events\InternalCommandShutdown.cs" />
-    <Compile Include="Components\Internal\LuaGLues\StateLuaGlueFactory.cs" />
-    <Compile Include="Components\Internal\LuaGLues\InternalLuaGlueFactory.cs" />
-    <Compile Include="Components\Internal\LuaGLues\HttpLuaGlueFactory.cs" />
-    <Compile Include="Components\Internal\LuaGLues\CoreLuaGlueFactory.cs" />
     <Compile Include="Components\Internal\Internal.cs" />
     <Compile Include="Components\IRacing\Events\IRacingTrackPosition.cs" />
     <Compile Include="Components\IRacing\Events\IRacingTowed.cs" />
     <Compile Include="Components\IRacing\Events\IRacingRaw.cs" />
-    <Compile Include="Components\IRacing\LuaGlueFactory.cs" />
     <Compile Include="Components\IRacing\Plugins\GameState\Car.cs" />
     <Compile Include="Components\IRacing\Plugins\GameState\ISession.cs" />
     <Compile Include="Components\IRacing\Plugins\GameState\IState.cs" />
@@ -262,9 +254,7 @@
     <Compile Include="Components\IRacing\Plugins\Trackers\TrackInfoTracker.cs" />
     <Compile Include="Components\IRacing\Plugins\Trackers\WeatherTracker.cs" />
     <Compile Include="Components\Lua\CapturingEventBus.cs" />
-    <Compile Include="Components\Playback\LuaGlueFactory.cs" />
     <Compile Include="Components\Playback\Plugins\PlaybackPlugin.cs" />
-    <Compile Include="Components\Twitch\LuaGlueFactory.cs" />
     <Compile Include="Components\Twitch\Twitch.cs" />
     <Compile Include="Components\Txrx\Txrx.cs" />
     <Compile Include="Components\Txrx\Plugins\ReceiverPlugin.cs" />
@@ -286,7 +276,6 @@
     <Compile Include="Components\IRacing\IRacing.cs" />
     <Compile Include="Components\Lua\Lua.cs" />
     <Compile Include="Components\Playback\Playback.cs" />
-    <Compile Include="Components\UI\LuaGlueFactory.cs" />
     <Compile Include="Components\WinFormUI\Plugins\WinFormUIPlugin.cs" />
     <Compile Include="Components\UI\UI.cs" />
     <Compile Include="Components\WinFormUI\WinFormUI.cs" />

@@ -13,10 +13,7 @@ namespace Slipstream.Components.Internal.Services
 
         private NLua.Lua? Lua;
 
-        public LuaContext(
-            string filePath,
-            NLua.Lua lua
-        )
+        public LuaContext(string filePath, NLua.Lua lua)
         {
             try
             {
@@ -52,7 +49,7 @@ namespace Slipstream.Components.Internal.Services
             if (@event.Uptime - LastLuaGC > 1000)
             {
                 LastLuaGC = @event.Uptime;
-                Lua.DoString("collectgarbage()");
+                Lua?.DoString("collectgarbage()");
             }
 
             HandleFunc?.Call(@event);

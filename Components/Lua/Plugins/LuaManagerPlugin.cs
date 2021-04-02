@@ -16,7 +16,7 @@ using System.Linq;
 
 namespace Slipstream.Components.Lua.Plugins
 {
-    internal class LuaManagerPlugin : BasePlugin
+    internal class LuaManagerPlugin : BasePlugin, IPlugin
     {
         private readonly ILogger Logger;
         private readonly IFileMonitorEventFactory EventFactory;
@@ -208,6 +208,11 @@ namespace Slipstream.Components.Lua.Plugins
 
                 BootupEventsDeadline = null;
             }
+        }
+
+        public IEnumerable<ILuaGlue> CreateLuaGlues()
+        {
+            return new ILuaGlue[] { };
         }
     }
 }

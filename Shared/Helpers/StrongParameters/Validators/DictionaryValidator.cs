@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Slipstream.Shared.Helpers.StrongParameters.Validators
 {
-    internal class DictionaryValidator : IValidator
+    public class DictionaryValidator : IValidator
     {
         private readonly Dictionary<string, IValidator> Schema = new Dictionary<string, IValidator>();
         private bool AllowExtras = false;

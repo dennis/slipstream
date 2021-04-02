@@ -1,6 +1,6 @@
 ﻿namespace Slipstream.Components
 {
-    internal interface ILuaGlue
+    public interface ILuaGlue
     {
         void SetupLua(NLua.Lua lua);
 

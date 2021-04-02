@@ -4,7 +4,7 @@
 
 namespace Slipstream.Shared.Helpers.StrongParameters.Validators
 {
-    internal class ArrayFailValidator : IValidator
+    public class ArrayFailValidator : IValidator
     {
         public bool Required => false;
 
@@ -14,7 +14,7 @@ namespace Slipstream.Shared.Helpers.StrongParameters.Validators
         }
     }
 
-    internal class ArrayValidator : IValidator
+    public class ArrayValidator : IValidator
     {
         private IValidator Schema = new ArrayFailValidator();
 

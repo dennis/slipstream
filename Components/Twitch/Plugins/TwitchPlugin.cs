@@ -17,7 +17,7 @@ using TwitchLib.Communication.Models;
 
 namespace Slipstream.Components.Twitch.Plugins
 {
-    internal class TwitchPlugin : BasePlugin
+    internal class TwitchPlugin : BasePlugin, IPlugin
     {
         private readonly IEventBus EventBus;
         private readonly ITwitchEventFactory EventFactory;
@@ -330,6 +330,11 @@ namespace Slipstream.Components.Twitch.Plugins
             EventBus.PublishEvent(
                 EventFactory.CreateTwitchReceivedWhisper(message.DisplayName, message.Message)
             );
+        }
+
+        public IEnumerable<ILuaGlue> CreateLuaGlues()
+        {
+            return new ILuaGlue[] { new LuaGlue(EventBus, EventFactory) };
         }
     }
 }

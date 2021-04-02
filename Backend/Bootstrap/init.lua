@@ -47,4 +47,5 @@ register_plugin({ plugin_name = "FileMonitorPlugin"})
 register_plugin({ plugin_name = "PlaybackPlugin"})
 
 -- UI to show console output
+register_plugin({ plugin_name = "UIPlugin"})
 register_plugin({ plugin_name = "WinFormUIPlugin"})

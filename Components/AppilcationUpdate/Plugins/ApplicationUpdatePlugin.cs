@@ -1,16 +1,17 @@
 ﻿using Serilog;
+using Slipstream.Components.Internal.Events;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using Squirrel;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Slipstream.Components.Internal.Events;
 
 namespace Slipstream.Components.AppilcationUpdate.Plugins
 {
-    public class ApplicationUpdatePlugin : BasePlugin
+    public class ApplicationUpdatePlugin : BasePlugin, IPlugin
     {
         private readonly EventHandler.ApplicationUpdateEventHandler applicationUpdate;
         private readonly IApplicationUpdateEventFactory applicationUpdateEventFactory;
@@ -158,6 +159,11 @@ namespace Slipstream.Components.AppilcationUpdate.Plugins
             Logger.Information("Auto updating to the latest version");
             var releaseInfo = await updateManager.UpdateApp();
             Logger.Information($"Auto update, update completed for {releaseInfo.Version}");
+        }
+
+        public IEnumerable<ILuaGlue> CreateLuaGlues()
+        {
+            return new ILuaGlue[] { };
         }
     }
 }

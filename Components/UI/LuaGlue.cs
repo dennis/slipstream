@@ -1,7 +1,5 @@
 ﻿using Serilog;
 using Slipstream.Shared;
-using Slipstream.Shared.Helpers.StrongParameters;
-using System.IO;
 
 #nullable enable
 
@@ -14,12 +12,12 @@ namespace Slipstream.Components.UI
         private readonly IUIEventFactory EventFactory;
         private readonly string Prefix;
 
-        public LuaGlue(ILogger logger, IEventBus eventBus, IUIEventFactory eventFactory, Parameters configuration)
+        public LuaGlue(ILogger logger, IEventBus eventBus, IUIEventFactory eventFactory, string prefix)
         {
             Logger = logger;
             EventBus = eventBus;
             EventFactory = eventFactory;
-            Prefix = Path.GetFileName(configuration.GetOrDefault("filepath", ""));
+            Prefix = prefix;
         }
 
         public void SetupLua(NLua.Lua lua)

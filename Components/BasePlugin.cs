@@ -5,7 +5,7 @@ using System;
 
 namespace Slipstream.Components
 {
-    public class BasePlugin : IPlugin
+    public abstract class BasePlugin
     {
         public string Id { get; } = "INVALID-PLUGIN-ID";
         private string name = "INVALID-PLUGIN-NAME";
@@ -24,7 +24,7 @@ namespace Slipstream.Components
             set { displayName = value; OnStateChanged?.Invoke(this, this); }
         }
 
-        public event EventHandler<IPlugin>? OnStateChanged;
+        public event EventHandler<BasePlugin>? OnStateChanged;
 
         public bool Reconfigurable { get; }
         public bool FullThreadControl { get; }

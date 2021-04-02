@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Slipstream.Components.IRacing.Plugins.Models
+﻿namespace Slipstream.Components.IRacing.Plugins.Models
 {
     internal class LapState
     {

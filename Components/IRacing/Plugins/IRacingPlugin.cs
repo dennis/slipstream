@@ -2,13 +2,14 @@
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
+using System.Collections.Generic;
 using System.Threading;
 
 #nullable enable
 
 namespace Slipstream.Components.IRacing.Plugins
 {
-    internal class IRacingPlugin : BasePlugin
+    internal class IRacingPlugin : BasePlugin, IPlugin
     {
         public static DictionaryValidator ConfigurationValidator { get; }
 
@@ -69,6 +70,11 @@ namespace Slipstream.Components.IRacing.Plugins
                 }
                 Thread.Sleep(5000);
             }
+        }
+
+        public IEnumerable<ILuaGlue> CreateLuaGlues()
+        {
+            return new ILuaGlue[] { new LuaGlue(EventBus, EventFactory) };
         }
     }
 }

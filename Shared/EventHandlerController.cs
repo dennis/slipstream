@@ -2,7 +2,6 @@
 using Slipstream.Backend;
 using System;
 using System.Collections.Generic;
-using static Slipstream.Shared.IEventHandlerController;
 
 #nullable enable
 

@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Slipstream.Components.FileMonitor.Plugins
 {
-    internal class FileMonitorPlugin : BasePlugin
+    internal class FileMonitorPlugin : BasePlugin, IPlugin
     {
         private static readonly DictionaryValidator ConfigurationValidator;
         private readonly IFileMonitorEventFactory EventFactory;
@@ -96,6 +96,11 @@ namespace Slipstream.Components.FileMonitor.Plugins
         private void WatcherOnCreated(object sender, FileSystemEventArgs e)
         {
             EventBus.PublishEvent(EventFactory.CreateFileMonitorFileCreated(e.FullPath));
+        }
+
+        public IEnumerable<ILuaGlue> CreateLuaGlues()
+        {
+            return new ILuaGlue[] { };
         }
     }
 }

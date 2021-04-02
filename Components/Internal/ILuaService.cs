@@ -2,7 +2,7 @@
 
 namespace Slipstream.Components.Internal
 {
-    public interface ILuaSevice
+    public interface ILuaService
     {
         ILuaContext Parse(string filename);
 

@@ -3,22 +3,11 @@
 using Autofac;
 using Serilog;
 using Slipstream.Components;
-using Slipstream.Components.AppilcationUpdate;
-using Slipstream.Components.Audio;
-using Slipstream.Components.Discord;
-using Slipstream.Components.FileMonitor;
 using Slipstream.Components.Internal;
-using Slipstream.Components.IRacing;
-using Slipstream.Components.Lua;
-using Slipstream.Components.Playback;
-using Slipstream.Components.Twitch;
-using Slipstream.Components.UI;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using static Slipstream.Components.Internal.IInternalEventFactory;
 
 namespace Slipstream.Backend
@@ -26,40 +15,29 @@ namespace Slipstream.Backend
     public class PluginManager : IPluginManager, IPluginFactory
     {
         private readonly IInternalEventFactory InternalEventFactory;
-        private readonly IEventSerdeService EventSerdeService;
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, PluginWorker> PluginWorkers = new Dictionary<string, PluginWorker>();
+        private readonly IDictionary<string, Type> PluginFactories = new Dictionary<string, Type>();
         private readonly ILogger Logger;
         private readonly ILifetimeScope LifetimeScope;
-        private readonly ComponentRegistrator Registrator;
-        private readonly Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>> ComponentPlugins = new Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>>();
-        private readonly IEnumerable<Type> LuaGlueTypes;
 
         public PluginManager(
             IInternalEventFactory internalEventFactory,
             IEventBus eventBus,
             ILogger logger,
-            IEventSerdeService eventSerdeService,
             ILifetimeScope lifetimeScope
         )
         {
-            Registrator = new ComponentRegistrator(
-                ComponentPlugins,
-                logger,
-                eventBus);
-
-            foreach (var type in typeof(PluginManager).Assembly.GetTypes().Where(t => typeof(IComponent).IsAssignableFrom(t) && !t.IsAbstract && t.IsClass))
+            foreach (var type in lifetimeScope.GetImplementingTypes<IPlugin>())
             {
-                logger.Information("Initializing component {pluginName}", type.Name);
-                ((IComponent)Activator.CreateInstance(type)).Register(Registrator);
+                logger.Information("Found plugin {pluginName}", type.Name);
+                PluginFactories.Add(type.Name, type);
             }
 
             InternalEventFactory = internalEventFactory;
-            EventSerdeService = eventSerdeService;
             EventBus = eventBus;
             Logger = logger;
             LifetimeScope = lifetimeScope;
-            LuaGlueTypes = lifetimeScope.GetImplementingTypes<ILuaGlue>();
         }
 
         public void UnregisterPlugin(IPlugin p)
@@ -151,37 +129,15 @@ namespace Slipstream.Backend
 
         public IPlugin CreatePlugin(string pluginId, string pluginName, IEventBus eventBus, Parameters configuration)
         {
-            List<ILuaGlue> luaGlues = new List<ILuaGlue>();
-
-            foreach (var luaGlueType in LuaGlueTypes)
-            {
-                luaGlues.Add((ILuaGlue)LifetimeScope.Resolve(luaGlueType, new NamedParameter("configuration", configuration)));
-            }
-
-            ComponentPluginCreationContext reg = new ComponentPluginCreationContext(
-                Registrator,
-                this,
-                this,
-                pluginId,
-                pluginName,
-                configuration,
-                EventSerdeService,
-                LifetimeScope.Resolve<IEventHandlerController>(),
-                LifetimeScope.Resolve<IInternalEventFactory>(),
-                LifetimeScope.Resolve<IUIEventFactory>(),
-                LifetimeScope.Resolve<IPlaybackEventFactory>(),
-                LifetimeScope.Resolve<ILuaEventFactory>(),
-                LifetimeScope.Resolve<IApplicationUpdateEventFactory>(),
-                LifetimeScope.Resolve<IFileMonitorEventFactory>(),
-                LifetimeScope.Resolve<IAudioEventFactory>(),
-                LifetimeScope.Resolve<IDiscordEventFactory>(),
-                LifetimeScope.Resolve<IIRacingEventFactory>(),
-                LifetimeScope.Resolve<ITwitchEventFactory>(),
-                luaGlues
-            );
-            if (!ComponentPlugins.ContainsKey(pluginName))
+            if (!PluginFactories.ContainsKey(pluginName))
                 throw new KeyNotFoundException($"Plugin name '{pluginName}' not found");
-            return ComponentPlugins[pluginName].Invoke(reg);
+
+            return (IPlugin)LifetimeScope.Resolve(
+                PluginFactories[pluginName],
+                new NamedParameter("id", pluginId),
+                new NamedParameter("configuration", configuration),
+                new NamedParameter("eventBus", eventBus)
+            );
         }
 
         public void Dispose()

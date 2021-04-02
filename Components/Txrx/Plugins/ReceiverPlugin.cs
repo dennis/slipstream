@@ -5,6 +5,7 @@ using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
@@ -13,7 +14,7 @@ using System.Net.Sockets;
 
 namespace Slipstream.Components.Txrx.Plugins
 {
-    public class ReceiverPlugin : BasePlugin
+    public class ReceiverPlugin : BasePlugin, IPlugin
     {
         internal static DictionaryValidator ConfigurationValidator { get; }
 
@@ -129,6 +130,11 @@ namespace Slipstream.Components.Txrx.Plugins
             {
                 ReadData();
             }
+        }
+
+        public IEnumerable<ILuaGlue> CreateLuaGlues()
+        {
+            return new ILuaGlue[] { };
         }
     }
 }

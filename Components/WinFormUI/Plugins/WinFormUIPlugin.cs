@@ -3,13 +3,14 @@ using Slipstream.Components.Playback;
 using Slipstream.Components.UI;
 using Slipstream.Components.WinFormUI.Forms;
 using Slipstream.Shared;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 #nullable enable
 
 namespace Slipstream.Components.WinFormUI.Plugins
 {
-    internal class WinFormUIPlugin : BasePlugin
+    internal class WinFormUIPlugin : BasePlugin, IPlugin
     {
         private readonly IEventBus EventBus;
         private readonly IApplicationVersionService ApplicationVersionService;
@@ -24,6 +25,11 @@ namespace Slipstream.Components.WinFormUI.Plugins
             PlaybackEventFactory = playbackEventFactory;
             EventBus = eventBus;
             ApplicationVersionService = applicationVersionService;
+        }
+
+        public IEnumerable<ILuaGlue> CreateLuaGlues()
+        {
+            return new ILuaGlue[] { };
         }
 
         public override void Run()

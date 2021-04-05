@@ -1,32 +1,44 @@
-﻿using System.Collections.Generic;
+﻿using Slipstream.Backend;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 #nullable enable
 
 namespace Slipstream.Components.Internal.Services
 {
-    internal class LuaService : ILuaSevice
+    internal class LuaService : ILuaService
     {
-        private readonly List<ILuaGlue> LuaGlues;
-        private readonly NLua.Lua Lua;
+        private readonly IPluginManager PluginManager;
+        private readonly List<ILuaGlue> LuaGlues = new List<ILuaGlue>();
 
-        public LuaService(
-            List<ILuaGlue>? luaGlues = null)
+        public LuaService(IPluginManager pluginManager)
         {
-            Lua = new NLua.Lua();
-            Lua.State.Encoding = Encoding.UTF8;
-
-            luaGlues ??= new List<ILuaGlue>();
-            LuaGlues = luaGlues;
-
-            foreach (var glue in luaGlues)
-            {
-                glue.SetupLua(Lua);
-            }
+            PluginManager = pluginManager;
         }
 
         public ILuaContext Parse(string filename)
         {
+            if (LuaGlues.Count > 0)
+                throw new System.Exception("This have already been populated");
+
+            var Lua = new NLua.Lua();
+            Lua.State.Encoding = Encoding.UTF8;
+
+            PluginManager.ForAllPluginsExecute(plugin =>
+            {
+                foreach (var glue in plugin.CreateLuaGlues())
+                {
+                    LuaGlues.Add(glue);
+                }
+            });
+
+            foreach (var glue in LuaGlues)
+            {
+                Debug.WriteLine($"Initializing NLua for {filename} with {glue}");
+                glue.SetupLua(Lua);
+            }
+
             return new LuaContext(filename, Lua);
         }
 

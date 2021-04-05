@@ -1,6 +1,5 @@
 ﻿using Slipstream.Components.IRacing.Events;
 using Slipstream.Components.IRacing.Plugins.GameState;
-using Slipstream.Shared;
 
 #nullable enable
 

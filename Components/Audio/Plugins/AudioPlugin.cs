@@ -5,6 +5,7 @@ using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Speech.Synthesis;
 using System.Threading;
@@ -13,7 +14,7 @@ using System.Threading;
 
 namespace Slipstream.Components.Audio.Plugins
 {
-    internal class AudioPlugin : BasePlugin
+    public class AudioPlugin : BasePlugin, IPlugin
     {
         public static DictionaryValidator ConfigurationValidator { get; }
 
@@ -55,10 +56,10 @@ namespace Slipstream.Components.Audio.Plugins
 
             var Audio = EventHandlerController.Get<Components.Audio.EventHandler.AudioEventHandler>();
 
-            Audio.OnAudioCommandSay += (_, e) => OnAudioCommandSay(e.Event);
-            Audio.OnAudioCommandPlay += (_, e) => OnAudioCommandPlay(e.Event);
-            Audio.OnAudioCommandSendDevices += (_, e) => OnAudioCommandSendDevices(e.Event);
-            Audio.OnAudioCommandSetOutputDevice += (_, e) => OnAudioCommandSetOutputDevice(e.Event);
+            Audio.OnAudioCommandSay += (_, e) => OnAudioCommandSay(e);
+            Audio.OnAudioCommandPlay += (_, e) => OnAudioCommandPlay(e);
+            Audio.OnAudioCommandSendDevices += (_, e) => OnAudioCommandSendDevices(e);
+            Audio.OnAudioCommandSetOutputDevice += (_, e) => OnAudioCommandSetOutputDevice(e);
         }
 
         private void OnAudioCommandSetOutputDevice(AudioCommandSetOutputDevice @event)
@@ -128,6 +129,11 @@ namespace Slipstream.Components.Audio.Plugins
             {
                 Thread.Sleep(100);
             }
+        }
+
+        public IEnumerable<ILuaGlue> CreateLuaGlues()
+        {
+            return new LuaGlue[] { new LuaGlue(EventBus, EventFactory) };
         }
     }
 }

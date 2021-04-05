@@ -1,13 +1,12 @@
 ﻿using Slipstream.Shared;
+using System;
 
 namespace Slipstream.Backend
 {
-    public interface IEngine
+    public interface IEngine : IDisposable
     {
         void UnregisterSubscription(IEventBusSubscription subscription);
 
         void Start();
-
-        void Dispose();
     }
 }

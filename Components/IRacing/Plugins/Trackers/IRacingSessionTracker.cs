@@ -2,7 +2,6 @@
 using Slipstream.Components.IRacing.Plugins.Models;
 using Slipstream.Shared;
 using System;
-using System.Collections.Generic;
 using static Slipstream.Components.IRacing.IIRacingEventFactory;
 
 #nullable enable

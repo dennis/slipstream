@@ -2,151 +2,55 @@
 
 using Slipstream.Components.Twitch.Events;
 using Slipstream.Shared;
+using System;
 
 namespace Slipstream.Components.Twitch.EventHandler
 {
     internal class Twitch : IEventHandler
     {
-        private readonly EventHandlerController Parent;
+        public event EventHandler<TwitchCommandSendMessage>? OnTwitchCommandSendMessage;
 
-        public Twitch(EventHandlerController eventHandler)
-        {
-            Parent = eventHandler;
-        }
+        public event EventHandler<TwitchCommandSendWhisper>? OnTwitchCommandSendWhisper;
 
-        public delegate void OnTwitchCommandSendMessageHandler(EventHandlerController source, EventHandlerArgs<TwitchCommandSendMessage> e);
+        public event EventHandler<TwitchConnected>? OnTwitchConnected;
 
-        public delegate void OnTwitchCommandSendWhisperHandler(EventHandlerController source, EventHandlerArgs<TwitchCommandSendWhisper> e);
+        public event EventHandler<TwitchDisconnected>? OnTwitchDisconnected;
 
-        public delegate void OnTwitchConnectedHandler(EventHandlerController source, EventHandlerArgs<TwitchConnected> e);
+        public event EventHandler<TwitchReceivedMessage>? OnTwitchReceivedMessage;
 
-        public delegate void OnTwitchDisconnectedHandler(EventHandlerController source, EventHandlerArgs<TwitchDisconnected> e);
+        public event EventHandler<TwitchReceivedWhisper>? OnTwitchReceivedWhisper;
 
-        public delegate void OnTwitchReceivedMessageHandler(EventHandlerController source, EventHandlerArgs<TwitchReceivedMessage> e);
+        public event EventHandler<TwitchUserSubscribed>? OnTwitchUserSubscribed;
 
-        public delegate void OnTwitchReceivedWhisperHandler(EventHandlerController source, EventHandlerArgs<TwitchReceivedWhisper> e);
+        public event EventHandler<TwitchGiftedSubscription>? OnTwitchGiftedSubscription;
 
-        public delegate void OnTwitchUserSubscribedHandler(EventHandlerController source, EventHandlerArgs<TwitchUserSubscribed> e);
-
-        public delegate void OnTwitchGiftedSubscriptionHandler(EventHandlerController source, EventHandlerArgs<TwitchGiftedSubscription> e);
-
-        public delegate void OnTwitchRaidedHandler(EventHandlerController source, EventHandlerArgs<TwitchRaided> e);
-
-        public event OnTwitchCommandSendMessageHandler? OnTwitchCommandSendMessage;
-
-        public event OnTwitchCommandSendWhisperHandler? OnTwitchCommandSendWhisper;
-
-        public event OnTwitchConnectedHandler? OnTwitchConnected;
-
-        public event OnTwitchDisconnectedHandler? OnTwitchDisconnected;
-
-        public event OnTwitchReceivedMessageHandler? OnTwitchReceivedMessage;
-
-        public event OnTwitchReceivedWhisperHandler? OnTwitchReceivedWhisper;
-
-        public event OnTwitchUserSubscribedHandler? OnTwitchUserSubscribed;
-
-        public event OnTwitchGiftedSubscriptionHandler? OnTwitchGiftedSubscription;
-
-        public event OnTwitchRaidedHandler? OnTwitchRaided;
+        public event EventHandler<TwitchRaided>? OnTwitchRaided;
 
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)
         {
-            switch (@event)
+            return @event switch
             {
-                case TwitchConnected tev:
-                    if (OnTwitchConnected != null)
-                    {
-                        OnTwitchConnected.Invoke(Parent, new EventHandlerArgs<TwitchConnected>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case TwitchDisconnected tev:
-                    if (OnTwitchDisconnected != null)
-                    {
-                        OnTwitchDisconnected.Invoke(Parent, new EventHandlerArgs<TwitchDisconnected>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case TwitchCommandSendMessage tev:
-                    if (OnTwitchCommandSendMessage != null)
-                    {
-                        OnTwitchCommandSendMessage.Invoke(Parent, new EventHandlerArgs<TwitchCommandSendMessage>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case TwitchCommandSendWhisper tev:
-                    if (OnTwitchCommandSendWhisper != null)
-                    {
-                        OnTwitchCommandSendWhisper.Invoke(Parent, new EventHandlerArgs<TwitchCommandSendWhisper>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case TwitchReceivedMessage tev:
-                    if (OnTwitchReceivedMessage != null)
-                    {
-                        OnTwitchReceivedMessage.Invoke(Parent, new EventHandlerArgs<TwitchReceivedMessage>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case TwitchReceivedWhisper tev:
-                    if (OnTwitchReceivedWhisper != null)
-                    {
-                        OnTwitchReceivedWhisper.Invoke(Parent, new EventHandlerArgs<TwitchReceivedWhisper>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case TwitchUserSubscribed tev:
-                    if (OnTwitchUserSubscribed != null)
-                    {
-                        OnTwitchUserSubscribed.Invoke(Parent, new EventHandlerArgs<TwitchUserSubscribed>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case TwitchGiftedSubscription tev:
-                    if (OnTwitchGiftedSubscription != null)
-                    {
-                        OnTwitchGiftedSubscription.Invoke(Parent, new EventHandlerArgs<TwitchGiftedSubscription>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case TwitchRaided tev:
-                    if (OnTwitchRaided != null)
-                    {
-                        OnTwitchRaided.Invoke(Parent, new EventHandlerArgs<TwitchRaided>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-            }
+                TwitchConnected tev => OnEvent(OnTwitchConnected, tev),
+                TwitchDisconnected tev => OnEvent(OnTwitchDisconnected, tev),
+                TwitchCommandSendMessage tev => OnEvent(OnTwitchCommandSendMessage, tev),
+                TwitchCommandSendWhisper tev => OnEvent(OnTwitchCommandSendWhisper, tev),
+                TwitchReceivedMessage tev => OnEvent(OnTwitchReceivedMessage, tev),
+                TwitchReceivedWhisper tev => OnEvent(OnTwitchReceivedWhisper, tev),
+                TwitchUserSubscribed tev => OnEvent(OnTwitchUserSubscribed, tev),
+                TwitchGiftedSubscription tev => OnEvent(OnTwitchGiftedSubscription, tev),
+                TwitchRaided tev => OnEvent(OnTwitchRaided, tev),
+                _ => IEventHandler.HandledStatus.NotMine,
+            };
+        }
 
-            return IEventHandler.HandledStatus.NotMine;
+        private IEventHandler.HandledStatus OnEvent<TEvent>(EventHandler<TEvent>? onEvent, TEvent args)
+        {
+            if (onEvent != null)
+            {
+                onEvent.Invoke(this, args);
+                return IEventHandler.HandledStatus.Handled;
+            }
+            return IEventHandler.HandledStatus.UseDefault;
         }
     }
 }

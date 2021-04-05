@@ -17,7 +17,7 @@ using TwitchLib.Communication.Models;
 
 namespace Slipstream.Components.Twitch.Plugins
 {
-    internal class TwitchPlugin : BasePlugin
+    internal class TwitchPlugin : BasePlugin, IPlugin
     {
         private readonly IEventBus EventBus;
         private readonly ITwitchEventFactory EventFactory;
@@ -61,8 +61,8 @@ namespace Slipstream.Components.Twitch.Plugins
 
             var twitchEventHandler = EventHandlerController.Get<EventHandler.Twitch>();
 
-            twitchEventHandler.OnTwitchCommandSendMessage += (_, e) => SendMessage(e.Event.Message);
-            twitchEventHandler.OnTwitchCommandSendWhisper += (_, e) => SendWhisper(e.Event.To, e.Event.Message);
+            twitchEventHandler.OnTwitchCommandSendMessage += (_, e) => SendMessage(e.Message);
+            twitchEventHandler.OnTwitchCommandSendWhisper += (_, e) => SendWhisper(e.To, e.Message);
 
             TwitchUsername = configuration.Extract<string>("twitch_username");
             TwitchChannel = configuration.Extract<string>("twitch_channel");
@@ -330,6 +330,11 @@ namespace Slipstream.Components.Twitch.Plugins
             EventBus.PublishEvent(
                 EventFactory.CreateTwitchReceivedWhisper(message.DisplayName, message.Message)
             );
+        }
+
+        public IEnumerable<ILuaGlue> CreateLuaGlues()
+        {
+            return new ILuaGlue[] { new LuaGlue(EventBus, EventFactory) };
         }
     }
 }

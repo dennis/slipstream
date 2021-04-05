@@ -24,7 +24,7 @@ namespace Slipstream.Backend
             EventFactory = eventFactory;
         }
 
-        private void Plugin_OnStateChanged(IPlugin plugin, IPlugin.EventHandlerArgs<IPlugin> e)
+        private void Plugin_OnStateChanged(object source, BasePlugin plugin)
         {
             EventBus.PublishEvent(EventFactory.CreateInternalPluginState(plugin.Id, plugin.Name, plugin.DisplayName, PluginStatusEnum.Registered));
         }

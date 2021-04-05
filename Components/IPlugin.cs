@@ -1,5 +1,6 @@
 ﻿using Slipstream.Shared;
 using System;
+using System.Collections.Generic;
 
 #nullable enable
 
@@ -7,19 +8,7 @@ namespace Slipstream.Components
 {
     public interface IPlugin : IDisposable
     {
-        public class EventHandlerArgs<T> : EventArgs
-        {
-            public T Event { get; }
-
-            public EventHandlerArgs(T e)
-            {
-                Event = e;
-            }
-        }
-
-        public delegate void OnStateChangedHandler(IPlugin source, EventHandlerArgs<IPlugin> e);
-
-        public event OnStateChangedHandler? OnStateChanged;
+        public event EventHandler<BasePlugin>? OnStateChanged;
 
         public string Id { get; }
         public string Name { get; }
@@ -29,5 +18,7 @@ namespace Slipstream.Components
         public bool FullThreadControl { get; }
 
         public void Run();
+
+        public IEnumerable<ILuaGlue> CreateLuaGlues();
     }
 }

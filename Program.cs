@@ -1,8 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Autofac;
 using Serilog;
 using Slipstream.Components.Internal;
 using Slipstream.Components.Internal.Services;
-using Slipstream.Components.UI.EventFactory;
 using Slipstream.Shared;
 using System;
 using System.Windows.Forms;
@@ -19,44 +18,39 @@ namespace Slipstream
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            var services = new ServiceCollection();
+            var builder = new ContainerBuilder();
 
-            ConfigureServices(services);
-
-            using ServiceProvider serviceProvider = services.BuildServiceProvider();
-
-            var _ = serviceProvider.GetService<PopulateSink>(); // HACK: Will inject EventBus/EventFactory into sink
+            ConfigureServices(builder);
 
             string cwd = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Slipstream\";
             System.IO.Directory.CreateDirectory(cwd);
             System.IO.Directory.SetCurrentDirectory(cwd);
 
-            Start(serviceProvider);
+            using var container = builder.Build();
+
+            Start(container);
         }
 
-        private static void Start(ServiceProvider serviceProvider)
+        private static void Start(IContainer container)
         {
-            var engine = serviceProvider.GetRequiredService<Backend.IEngine>();
+            using var scope = container.BeginLifetimeScope();
 
+            var _ = scope.Resolve<PopulateSink>(); // HACK: Will inject EventBus/EventFactory into sink
+
+            using var engine = scope.Resolve<Backend.IEngine>();
             engine.Start();
-            engine.Dispose();
         }
 
-        private static void ConfigureServices(ServiceCollection services)
+        private static void ConfigureServices(ContainerBuilder builder)
         {
-            services.AddScoped<Shared.IEventBus, Backend.EventBus>();
-            services.AddScoped<Shared.IEventProducer>(x => x.GetService<Backend.EventBus>());
-            services.AddScoped<IServiceLocator, ServiceLocator>();
-            services.AddScoped<Backend.IEngine, Backend.Engine>();
-            services.AddScoped<IStateService>(x => new StateService(x.GetService<ILogger>(), Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Slipstream\state.txt"));
-            services.AddScoped<IEventSerdeService, EventSerdeService>();
-            services.AddScoped<Backend.PluginManager>();
-            services.AddScoped<Backend.IPluginManager>(x => x.GetService<Backend.PluginManager>());
-            services.AddScoped<Backend.IPluginFactory>(x => x.GetService<Backend.PluginManager>());
-            services.AddScoped<EventHandlerControllerBuilder>();
-            services.AddScoped<IEventFactory, EventFactory>();
-            services.AddScoped<ILuaSevice, LuaService>();
-            services.AddSingleton<Shared.IApplicationVersionService, Shared.ApplicationVersionService>();
+            builder.RegisterType<Backend.EventBus>().As<Shared.IEventBus>().As<Shared.IEventProducer>().SingleInstance();
+            builder.RegisterType<Backend.Engine>().As<Backend.IEngine>().SingleInstance();
+            builder.RegisterType<EventSerdeService>().As<IEventSerdeService>().SingleInstance();
+            builder.RegisterType<Backend.PluginManager>().As<Backend.IPluginManager>().As<Backend.IPluginFactory>().SingleInstance();
+            builder.RegisterType<LuaService>().As<ILuaService>().InstancePerDependency();
+            builder.RegisterType<Shared.ApplicationVersionService>().As<Shared.IApplicationVersionService>().SingleInstance();
+            builder.RegisterType<PopulateSink>().SingleInstance();
+            builder.Register(c => new StateService(c.Resolve<ILogger>(), Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Slipstream\state.txt")).As<IStateService>().SingleInstance();
 
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
@@ -64,17 +58,37 @@ namespace Slipstream
                 .WriteTo.SlipstreamConsoleSink(out SlipstreamConsoleSink sink)
                 .CreateLogger();
 
-            services.AddScoped<ILogger>(_ => logger);
-            services.AddScoped<SlipstreamConsoleSink>(_ => sink);
-            services.AddScoped<PopulateSink>();
+            builder.RegisterInstance(logger).As<ILogger>().SingleInstance();
+            builder.RegisterInstance(sink).As<SlipstreamConsoleSink>().SingleInstance();
+
+            // EventHandlers
+            builder.RegisterAssemblyTypes(typeof(Program).Assembly)
+                .Where(t => t.IsAssignableTo<IEventHandler>())
+                .Where(t => !t.IsAbstract)
+                .As<IEventHandler>()
+                .AsSelf()
+                .InstancePerDependency();
+            builder.RegisterAssemblyTypes(typeof(Program).Assembly)
+                .Where(t => t.Name.EndsWith("EventFactory"))
+                .AsImplementedInterfaces()
+                .SingleInstance();
+            builder.RegisterType<EventHandlerController>().As<IEventHandlerController>().InstancePerDependency();
+
+            // Plugins
+            builder.RegisterAssemblyTypes(typeof(Program).Assembly)
+                .Where(t => t.IsAssignableTo<Components.IPlugin>())
+                .Where(t => !t.IsAbstract)
+                .As<Components.IPlugin>()
+                .AsSelf()
+                .InstancePerDependency();
         }
 
         private class PopulateSink
         {
-            public PopulateSink(SlipstreamConsoleSink sink, IEventBus eventBus, IEventFactory eventFactory)
+            public PopulateSink(SlipstreamConsoleSink sink, IEventBus eventBus, Components.UI.IUIEventFactory uiEventFactory)
             {
                 sink.EventBus = eventBus;
-                sink.EventFactory = new UIEventFactory();
+                sink.EventFactory = uiEventFactory;
             }
         }
     }

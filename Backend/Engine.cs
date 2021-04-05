@@ -2,7 +2,6 @@
 using Serilog;
 using Slipstream.Components.Internal;
 using Slipstream.Components.Internal.Events;
-using Slipstream.Components.Internal.Services;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using System;
@@ -23,23 +22,31 @@ namespace Slipstream.Backend
         private readonly IEventHandlerController EventHandlerController;
         private bool Stopped = false;
 
-        public Engine(ILogger logger, IEventFactory eventFactory, IEventBus eventBus, IPluginFactory pluginFactory, IPluginManager pluginManager, EventHandlerControllerBuilder eventHandlerControllerBuilder)
+        public Engine(
+            ILogger logger,
+            IInternalEventFactory eventFactory,
+            IEventBus eventBus,
+            IPluginFactory pluginFactory,
+            IPluginManager pluginManager,
+            IEventHandlerController eventHandlerController,
+            ILuaService luaService
+        )
         {
-            EventFactory = eventFactory.Get<IInternalEventFactory>();
+            EventFactory = eventFactory;
             EventBus = eventBus;
             PluginFactory = pluginFactory;
             PluginManager = pluginManager;
             Logger = logger;
-            EventHandlerController = eventHandlerControllerBuilder.CreateEventHandlerController();
+            EventHandlerController = eventHandlerController;
 
             Subscription = EventBus.RegisterListener();
 
             var internalEventHandler = EventHandlerController.Get<Slipstream.Components.Internal.EventHandler.Internal>();
 
-            internalEventHandler.OnInternalCommandPluginRegister += (_, e) => OnCommandPluginRegister(e.Event);
-            internalEventHandler.OnInternalCommandPluginUnregister += (_, e) => OnCommandPluginUnregister(e.Event);
-            internalEventHandler.OnInternalCommandPluginStates += (_, e) => OnCommandPluginStates(e.Event);
-            internalEventHandler.OnInternalCommandShutdown += (_, e) => OnInternalCommandShutdown(e.Event);
+            internalEventHandler.OnInternalCommandPluginRegister += (_, e) => OnCommandPluginRegister(e);
+            internalEventHandler.OnInternalCommandPluginUnregister += (_, e) => OnCommandPluginUnregister(e);
+            internalEventHandler.OnInternalCommandPluginStates += (_, e) => OnCommandPluginStates(e);
+            internalEventHandler.OnInternalCommandShutdown += (_, e) => OnInternalCommandShutdown(e);
 
             // Plugins..
             {
@@ -53,8 +60,9 @@ namespace Slipstream.Backend
 
                 Logger.Information("Loading {initcfg}", initFilename);
 
-                // FIXME: This needs to be reimplemented
-                var luaService = new LuaService(new System.Collections.Generic.List<Components.ILuaGlue> { new Slipstream.Components.Internal.LuaGlues.InternalLuaGlue(eventBus, EventFactory) });
+                // We need to bootstrap this. InternalPlugin isn't loaded yet, as we're about to parse init.lua. However
+                // InternalPlugin provides the register_plugin() method, so we need to add it here, to make init.lua work
+                PluginManager.RegisterPlugin(PluginFactory.CreatePlugin("InternalPlugin", "InternalPlugin", new Parameters()));
                 luaService.Parse(initFilename);
             }
 

@@ -2,111 +2,46 @@
 
 using Slipstream.Components.Internal.Events;
 using Slipstream.Shared;
+using System;
 
 namespace Slipstream.Components.Internal.EventHandler
 {
     internal class Internal : IEventHandler
     {
-        private readonly IEventHandlerController Parent;
+        public event EventHandler<InternalCommandPluginRegister>? OnInternalCommandPluginRegister;
 
-        public Internal(IEventHandlerController parent)
+        public event EventHandler<InternalCommandPluginStates>? OnInternalCommandPluginStates;
+
+        public event EventHandler<InternalCommandPluginUnregister>? OnInternalCommandPluginUnregister;
+
+        public event EventHandler<InternalPluginState>? OnInternalPluginState;
+
+        public event EventHandler<InternalShutdown>? OnInternalShutdown;
+
+        public event EventHandler<InternalCommandShutdown>? OnInternalCommandShutdown;
+
+        public IEventHandler.HandledStatus HandleEvent(IEvent @event)
         {
-            Parent = parent;
+            return @event switch
+            {
+                InternalCommandPluginRegister tev => OnEvent(OnInternalCommandPluginRegister, tev),
+                InternalCommandPluginUnregister tev => OnEvent(OnInternalCommandPluginUnregister, tev),
+                InternalPluginState tev => OnEvent(OnInternalPluginState, tev),
+                InternalCommandPluginStates tev => OnEvent(OnInternalCommandPluginStates, tev),
+                InternalShutdown tev => OnEvent(OnInternalShutdown, tev),
+                InternalCommandShutdown tev => OnEvent(OnInternalCommandShutdown, tev),
+                _ => IEventHandler.HandledStatus.NotMine,
+            };
         }
 
-        public delegate void OnInternalCommandPluginRegisterHandler(IEventHandlerController source, EventHandlerArgs<InternalCommandPluginRegister> e);
-
-        public delegate void OnInternalCommandPluginStatesHandler(IEventHandlerController source, EventHandlerArgs<InternalCommandPluginStates> e);
-
-        public delegate void OnInternalCommandPluginUnregisterHandler(IEventHandlerController source, EventHandlerArgs<InternalCommandPluginUnregister> e);
-
-        public delegate void OnInternalPluginStateHandler(IEventHandlerController source, EventHandlerArgs<InternalPluginState> e);
-
-        public delegate void OnInternalShutdownHandler(IEventHandlerController source, EventHandlerArgs<InternalShutdown> e);
-
-        public delegate void OnInternalCommandShutdownHandler(IEventHandlerController source, EventHandlerArgs<InternalCommandShutdown> e);
-
-        public event OnInternalCommandPluginRegisterHandler? OnInternalCommandPluginRegister;
-
-        public event OnInternalCommandPluginStatesHandler? OnInternalCommandPluginStates;
-
-        public event OnInternalCommandPluginUnregisterHandler? OnInternalCommandPluginUnregister;
-
-        public event OnInternalPluginStateHandler? OnInternalPluginState;
-
-        public event OnInternalShutdownHandler? OnInternalShutdown;
-
-        public event OnInternalCommandShutdownHandler? OnInternalCommandShutdown;
-
-        public IEventHandler.HandledStatus HandleEvent(IEvent ev)
+        private IEventHandler.HandledStatus OnEvent<TEvent>(EventHandler<TEvent>? onEvent, TEvent args)
         {
-            switch (ev)
+            if (onEvent != null)
             {
-                // Internal
-
-                case InternalCommandPluginRegister tev:
-                    if (OnInternalCommandPluginRegister != null)
-                    {
-                        OnInternalCommandPluginRegister?.Invoke(Parent, new EventHandlerArgs<InternalCommandPluginRegister>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case InternalCommandPluginUnregister tev:
-                    if (OnInternalCommandPluginUnregister != null)
-                    {
-                        OnInternalCommandPluginUnregister.Invoke(Parent, new EventHandlerArgs<InternalCommandPluginUnregister>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case InternalPluginState tev:
-                    if (OnInternalPluginState != null)
-                    {
-                        OnInternalPluginState.Invoke(Parent, new EventHandlerArgs<InternalPluginState>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case InternalCommandPluginStates tev:
-                    if (OnInternalCommandPluginStates != null)
-                    {
-                        OnInternalCommandPluginStates.Invoke(Parent, new EventHandlerArgs<InternalCommandPluginStates>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case InternalShutdown tev:
-                    if (OnInternalShutdown != null)
-                    {
-                        OnInternalShutdown.Invoke(Parent, new EventHandlerArgs<InternalShutdown>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-                case InternalCommandShutdown tev:
-                    if (OnInternalCommandShutdown != null)
-                    {
-                        OnInternalCommandShutdown.Invoke(Parent, new EventHandlerArgs<InternalCommandShutdown>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
+                onEvent.Invoke(this, args);
+                return IEventHandler.HandledStatus.Handled;
             }
-
-            return IEventHandler.HandledStatus.NotMine;
+            return IEventHandler.HandledStatus.UseDefault;
         }
     }
 }

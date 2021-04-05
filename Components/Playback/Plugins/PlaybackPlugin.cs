@@ -2,6 +2,7 @@ using Serilog;
 using Slipstream.Components.Internal;
 using Slipstream.Components.Playback.Events;
 using Slipstream.Shared;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
@@ -9,20 +10,23 @@ using System.Threading;
 
 namespace Slipstream.Components.Playback.Plugins
 {
-    internal class PlaybackPlugin : BasePlugin
+    internal class PlaybackPlugin : BasePlugin, IPlugin
     {
         private readonly ILogger Logger;
         private readonly IEventBus EventBus;
         private readonly IEventSerdeService EventSerdeService;
+        private readonly IPlaybackEventFactory EventFactory;
 
-        public PlaybackPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, IEventBus eventBus, IEventSerdeService eventSerdeService) : base(eventHandlerController, id, "PlaybackPlugin", id, true)
+        public PlaybackPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, IEventBus eventBus, IPlaybackEventFactory eventFactory, IEventSerdeService eventSerdeService) : base(eventHandlerController, id, "PlaybackPlugin", id, true)
         {
             EventBus = eventBus;
             EventSerdeService = eventSerdeService;
+            EventFactory = eventFactory;
+
             var playback = EventHandlerController.Get<EventHandler.Playback>();
 
-            playback.OnPlaybackCommandInjectEvents += (s, e) => OnPlaybackCommandInjectEvents(e.Event);
-            playback.OnPlaybackCommandSaveEvents += (s, e) => OnPlaybackCommandSaveEvents(e.Event);
+            playback.OnPlaybackCommandInjectEvents += (s, e) => OnPlaybackCommandInjectEvents(e);
+            playback.OnPlaybackCommandSaveEvents += (s, e) => OnPlaybackCommandSaveEvents(e);
 
             Logger = logger;
         }
@@ -78,6 +82,11 @@ namespace Slipstream.Components.Playback.Plugins
             {
                 Logger.Warning($"Error reading {@event.Filename}: {e.Message}");
             }
+        }
+
+        public IEnumerable<ILuaGlue> CreateLuaGlues()
+        {
+            return new ILuaGlue[] { new LuaGlue(EventBus, EventFactory) };
         }
     }
 }

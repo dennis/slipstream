@@ -1,10 +1,11 @@
 ﻿#nullable enable
 
 using Slipstream.Shared;
+using System;
 
 namespace Slipstream.Components
 {
-    public class BasePlugin : IPlugin
+    public abstract class BasePlugin
     {
         public string Id { get; } = "INVALID-PLUGIN-ID";
         private string name = "INVALID-PLUGIN-NAME";
@@ -12,7 +13,7 @@ namespace Slipstream.Components
         public string Name
         {
             get { return name; }
-            set { name = value; OnStateChanged?.Invoke(this, new IPlugin.EventHandlerArgs<IPlugin>(this)); }
+            set { name = value; OnStateChanged?.Invoke(this, this); }
         }
 
         private string displayName = "INVALID-DISPLAY-NAME";
@@ -20,10 +21,10 @@ namespace Slipstream.Components
         public string DisplayName
         {
             get { return displayName; }
-            set { displayName = value; OnStateChanged?.Invoke(this, new IPlugin.EventHandlerArgs<IPlugin>(this)); }
+            set { displayName = value; OnStateChanged?.Invoke(this, this); }
         }
 
-        public event IPlugin.OnStateChangedHandler? OnStateChanged;
+        public event EventHandler<BasePlugin>? OnStateChanged;
 
         public bool Reconfigurable { get; }
         public bool FullThreadControl { get; }

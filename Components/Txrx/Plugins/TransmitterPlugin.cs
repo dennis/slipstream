@@ -4,6 +4,7 @@ using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Sockets;
 using System.Threading;
@@ -12,7 +13,7 @@ using System.Threading;
 
 namespace Slipstream.Components.Txrx.Plugins
 {
-    public class TransmitterPlugin : BasePlugin
+    public class TransmitterPlugin : BasePlugin, IPlugin
     {
         private static DictionaryValidator ConfigurationValidator { get; }
 
@@ -44,7 +45,7 @@ namespace Slipstream.Components.Txrx.Plugins
             Ip = configuration.Extract<string>("ip");
             Port = (int)configuration.Extract<long>("port");
 
-            EventHandlerController.OnDefault += (_, e) => OnEvent(e.Event);
+            EventHandlerController.OnDefault += (_, e) => OnEvent(e);
 
             // To avoid that we get an endless loop, we will Unregister the "other" end in this instance
             EventBus.PublishEvent(EventFactory.CreateInternalCommandPluginUnregister("ReceiverPlugin"));
@@ -131,6 +132,11 @@ namespace Slipstream.Components.Txrx.Plugins
             {
                 Connect();
             }
+        }
+
+        public IEnumerable<ILuaGlue> CreateLuaGlues()
+        {
+            return new ILuaGlue[] { };
         }
     }
 }

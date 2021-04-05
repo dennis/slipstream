@@ -1,4 +1,6 @@
-﻿using Slipstream.Components.AppilcationUpdate.Events;
+﻿#nullable enable
+
+using Slipstream.Components.AppilcationUpdate.Events;
 using Slipstream.Shared;
 using System;
 
@@ -6,14 +8,9 @@ namespace Slipstream.Components.AppilcationUpdate.EventHandler
 {
     internal class ApplicationUpdateEventHandler : IEventHandler
     {
-        public event EventHandler<ApplicationUpdateLatestVersionChanged> OnApplicationUpdateLatestVersionChanged;
-        public event EventHandler<ApplicationUpdateCommandCheckLatestVersion> OnApplicationUpdateCommandCheckLatestVersion;
-        private readonly IEventHandlerController Parent;
+        public event EventHandler<ApplicationUpdateLatestVersionChanged>? OnApplicationUpdateLatestVersionChanged;
 
-        public ApplicationUpdateEventHandler(IEventHandlerController eventHandler)
-        {
-            Parent = eventHandler;
-        }
+        public event EventHandler<ApplicationUpdateCommandCheckLatestVersion>? OnApplicationUpdateCommandCheckLatestVersion;
 
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)
         {
@@ -25,11 +22,11 @@ namespace Slipstream.Components.AppilcationUpdate.EventHandler
             };
         }
 
-        private IEventHandler.HandledStatus OnEvent<TEvent>(EventHandler<TEvent> onEvent, TEvent args)
+        private IEventHandler.HandledStatus OnEvent<TEvent>(EventHandler<TEvent>? onEvent, TEvent args)
         {
-            if(onEvent != null)
+            if (onEvent != null)
             {
-                onEvent.Invoke(Parent, args);
+                onEvent.Invoke(this, args);
                 return IEventHandler.HandledStatus.Handled;
             }
             return IEventHandler.HandledStatus.UseDefault;

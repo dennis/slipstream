@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using Autofac;
 using Serilog;
 using Slipstream.Components;
 using Slipstream.Components.Internal;
@@ -7,7 +8,6 @@ using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using static Slipstream.Components.Internal.IInternalEventFactory;
 
 namespace Slipstream.Backend
@@ -17,29 +17,27 @@ namespace Slipstream.Backend
         private readonly IInternalEventFactory InternalEventFactory;
         private readonly IEventBus EventBus;
         private readonly IDictionary<string, PluginWorker> PluginWorkers = new Dictionary<string, PluginWorker>();
+        private readonly IDictionary<string, Type> PluginFactories = new Dictionary<string, Type>();
         private readonly ILogger Logger;
-        private readonly ComponentRegistrator Registrator;
-        private readonly List<ILuaGlueFactory> LuaGluesFactories = new List<ILuaGlueFactory>();
-        private readonly Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>> ComponentPlugins = new Dictionary<string, Func<IComponentPluginCreationContext, IPlugin>>();
+        private readonly ILifetimeScope LifetimeScope;
 
         public PluginManager(
-            IEventFactory eventFactory,
+            IInternalEventFactory internalEventFactory,
             IEventBus eventBus,
-            IServiceLocator serviceLocator,
             ILogger logger,
-            EventHandlerControllerBuilder eventHandlerControllerBuilder)
+            ILifetimeScope lifetimeScope
+        )
         {
-            Registrator = new ComponentRegistrator(ComponentPlugins, LuaGluesFactories, eventFactory, logger, eventBus, eventHandlerControllerBuilder, serviceLocator);
-
-            foreach (var type in typeof(PluginManager).Assembly.GetTypes().Where(t => typeof(IComponent).IsAssignableFrom(t) && !t.IsAbstract && t.IsClass))
+            foreach (var type in lifetimeScope.GetImplementingTypes<IPlugin>())
             {
-                logger.Information("Initializing component {pluginName}", type.Name);
-                ((IComponent)Activator.CreateInstance(type)).Register(Registrator);
+                logger.Information("Found plugin {pluginName}", type.Name);
+                PluginFactories.Add(type.Name, type);
             }
 
-            InternalEventFactory = eventFactory.Get<IInternalEventFactory>();
+            InternalEventFactory = internalEventFactory;
             EventBus = eventBus;
             Logger = logger;
+            LifetimeScope = lifetimeScope;
         }
 
         public void UnregisterPlugin(IPlugin p)
@@ -131,10 +129,15 @@ namespace Slipstream.Backend
 
         public IPlugin CreatePlugin(string pluginId, string pluginName, IEventBus eventBus, Parameters configuration)
         {
-            ComponentPluginCreationContext reg = new ComponentPluginCreationContext(Registrator, this, this, LuaGluesFactories, pluginId, pluginName, configuration);
-            if (!ComponentPlugins.ContainsKey(pluginName))
+            if (!PluginFactories.ContainsKey(pluginName))
                 throw new KeyNotFoundException($"Plugin name '{pluginName}' not found");
-            return ComponentPlugins[pluginName].Invoke(reg);
+
+            return (IPlugin)LifetimeScope.Resolve(
+                PluginFactories[pluginName],
+                new NamedParameter("id", pluginId),
+                new NamedParameter("configuration", configuration),
+                new NamedParameter("eventBus", eventBus)
+            );
         }
 
         public void Dispose()

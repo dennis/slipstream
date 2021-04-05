@@ -56,6 +56,9 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=6.1.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>packages\Autofac.6.1.0\lib\netstandard2.0\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="DeltaCompressionDotNet, Version=1.1.0.0, Culture=neutral, PublicKeyToken=1d14d6e5194e7f4a, processorArchitecture=MSIL">
       <HintPath>packages\DeltaCompressionDotNet.1.1.0\lib\net20\DeltaCompressionDotNet.dll</HintPath>
     </Reference>
@@ -73,12 +76,6 @@
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.5.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=5.0.0.1, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Extensions.DependencyInjection.5.0.1\lib\net461\Microsoft.Extensions.DependencyInjection.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=5.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Extensions.DependencyInjection.Abstractions.5.0.0\lib\net461\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=5.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Extensions.Logging.Abstractions.5.0.0\lib\net461\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
@@ -146,6 +143,9 @@
     </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Diagnostics.DiagnosticSource.4.7.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
     </Reference>
@@ -201,16 +201,14 @@
     <Compile Include="Backend\IEngine.cs" />
     <Compile Include="Backend\IPluginFactory.cs" />
     <Compile Include="Backend\IPluginManager.cs" />
+    <Compile Include="Backend\LifetimeScopeExtensions.cs" />
     <Compile Include="Backend\PluginManager.cs" />
-    <Compile Include="Components\AppilcationUpdate\ApplicationUpdate.cs" />
     <Compile Include="Components\AppilcationUpdate\EventFactory\ApplicationUpdateEventFactory.cs" />
     <Compile Include="Components\AppilcationUpdate\EventHandler\ApplicationUpdateEventHandler.cs" />
     <Compile Include="Components\AppilcationUpdate\Events\ApplicationUpdateCommandCheckLatestVersion.cs" />
     <Compile Include="Components\AppilcationUpdate\Events\ApplicationUpdateLatestVersionChanged.cs" />
     <Compile Include="Components\AppilcationUpdate\IApplicationUpdateEventFactory.cs" />
     <Compile Include="Components\AppilcationUpdate\Plugins\ApplicationUpdatePlugin.cs" />
-    <Compile Include="Components\Audio\LuaGlueFactory.cs" />
-    <Compile Include="Components\Discord\Discord.cs" />
     <Compile Include="Components\Discord\EventFactory\DiscordEventFactory.cs" />
     <Compile Include="Components\Discord\EventHandler\DiscordEventHandler.cs" />
     <Compile Include="Components\Discord\Events\DiscordCommandSendMessage.cs" />
@@ -219,20 +217,13 @@
     <Compile Include="Components\Discord\Events\DiscordConnected.cs" />
     <Compile Include="Components\Discord\IDiscordEventFactory.cs" />
     <Compile Include="Components\Discord\LuaGlue.cs" />
-    <Compile Include="Components\Discord\LuaGlueFactory.cs" />
     <Compile Include="Components\Discord\Plugins\DiscordPlugin.cs" />
-    <Compile Include="Components\ILuaGlueFactory.cs" />
     <Compile Include="Components\Internal\Events\InternalShutdown.cs" />
     <Compile Include="Components\Internal\Events\InternalCommandShutdown.cs" />
-    <Compile Include="Components\Internal\LuaGLues\StateLuaGlueFactory.cs" />
-    <Compile Include="Components\Internal\LuaGLues\InternalLuaGlueFactory.cs" />
-    <Compile Include="Components\Internal\LuaGLues\HttpLuaGlueFactory.cs" />
-    <Compile Include="Components\Internal\LuaGLues\CoreLuaGlueFactory.cs" />
-    <Compile Include="Components\Internal\Internal.cs" />
+    <Compile Include="Components\Internal\Plugins\InternalPlugin.cs" />
     <Compile Include="Components\IRacing\Events\IRacingTrackPosition.cs" />
     <Compile Include="Components\IRacing\Events\IRacingTowed.cs" />
     <Compile Include="Components\IRacing\Events\IRacingRaw.cs" />
-    <Compile Include="Components\IRacing\LuaGlueFactory.cs" />
     <Compile Include="Components\IRacing\Plugins\GameState\Car.cs" />
     <Compile Include="Components\IRacing\Plugins\GameState\ISession.cs" />
     <Compile Include="Components\IRacing\Plugins\GameState\IState.cs" />
@@ -261,41 +252,24 @@
     <Compile Include="Components\IRacing\Plugins\Trackers\TrackInfoTracker.cs" />
     <Compile Include="Components\IRacing\Plugins\Trackers\WeatherTracker.cs" />
     <Compile Include="Components\Lua\CapturingEventBus.cs" />
-    <Compile Include="Components\Playback\LuaGlueFactory.cs" />
     <Compile Include="Components\Playback\Plugins\PlaybackPlugin.cs" />
-    <Compile Include="Components\Twitch\LuaGlueFactory.cs" />
-    <Compile Include="Components\Twitch\Twitch.cs" />
-    <Compile Include="Components\Txrx\Txrx.cs" />
     <Compile Include="Components\Txrx\Plugins\ReceiverPlugin.cs" />
     <Compile Include="Components\Txrx\Plugins\TransmitterPlugin.cs" />
     <Compile Include="Components\Audio\LuaGlue.cs" />
-    <Compile Include="Components\FileMonitor\FileMonitor.cs" />
     <Compile Include="Components\ILuaGlue.cs" />
     <Compile Include="Components\Audio\Plugins\AudioPlugin.cs" />
     <Compile Include="Components\BasePlugin.cs" />
     <Compile Include="Components\Twitch\Plugins\TwitchPlugin.cs" />
     <Compile Include="Components\Internal\IEventSerdeService.cs" />
-    <Compile Include="Components\Internal\ILuaSevice.cs" />
+    <Compile Include="Components\Internal\ILuaService.cs" />
     <Compile Include="Components\Internal\IStateService.cs" />
     <Compile Include="Components\Internal\Services\EventSerdeService.cs" />
     <Compile Include="Components\Txrx\ITxrxService.cs" />
     <Compile Include="Components\Internal\Services\LuaService.cs" />
     <Compile Include="Components\Internal\ILuaContext.cs" />
-    <Compile Include="Components\ComponentPluginCreationContext.cs" />
-    <Compile Include="Components\IRacing\IRacing.cs" />
-    <Compile Include="Components\Lua\Lua.cs" />
-    <Compile Include="Components\Playback\Playback.cs" />
-    <Compile Include="Components\UI\LuaGlueFactory.cs" />
+    <Compile Include="Components\UI\Plugins\InternalPlugin.cs" />
     <Compile Include="Components\WinFormUI\Plugins\WinFormUIPlugin.cs" />
-    <Compile Include="Components\UI\UI.cs" />
-    <Compile Include="Components\WinFormUI\WinFormUI.cs" />
     <Compile Include="Shared\EventHandlerArgs.cs" />
-    <Compile Include="Shared\EventHandlerControllerBuilder.cs" />
-    <Compile Include="Components\ComponentRegistrator.cs" />
-    <Compile Include="Components\IComponent.cs" />
-    <Compile Include="Components\IComponentPluginCreationContext.cs" />
-    <Compile Include="Components\IComponentPluginDependencies.cs" />
-    <Compile Include="Components\IComponentRegistrationContext.cs" />
     <Compile Include="Components\IRacing\Events\IIRacingSessionState.cs" />
     <Compile Include="Components\IRacing\Events\IRacingCarPosition.cs" />
     <Compile Include="Components\IRacing\Events\IRacingWarmup.cs" />
@@ -328,8 +302,6 @@
     <Compile Include="Components\Internal\Services\StateService.cs" />
     <Compile Include="Components\Txrx\Services\TxrxService.cs" />
     <Compile Include="GlobalSuppressions2.cs" />
-    <Compile Include="Components\Audio\Audio.cs" />
-    <Compile Include="Shared\EventFactory.cs" />
     <Compile Include="Components\Audio\EventHandler\AudioEventHandler.cs" />
     <Compile Include="Components\Playback\EventHandler\Playback.cs" />
     <Compile Include="Components\Playback\Events\PlaybackCommandInjectEvents.cs" />
@@ -406,7 +378,6 @@
     <Compile Include="Backend\Engine.cs" />
     <Compile Include="Components\IPlugin.cs" />
     <Compile Include="Shared\IEvent.cs" />
-    <Compile Include="Shared\IEventFactory.cs" />
     <Compile Include="Shared\IEventHandler.cs" />
     <Compile Include="Shared\IEventHandlerController.cs" />
     <Compile Include="Shared\IEventProducer.cs" />
@@ -424,8 +395,6 @@
     <Compile Include="Components\Lua\EventHandler\Lua.cs" />
     <Compile Include="Components\Twitch\EventHandler\Twitch.cs" />
     <Compile Include="Components\UI\EventHandler\UIEventHandler.cs" />
-    <Compile Include="Shared\IServiceLocator.cs" />
-    <Compile Include="Shared\ServiceLocator.cs" />
     <Compile Include="SlipstreamConsoleSink.cs" />
     <EmbeddedResource Include="Components\WinFormUI\Forms\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>

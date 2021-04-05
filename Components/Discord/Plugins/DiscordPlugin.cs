@@ -2,7 +2,6 @@
 
 using DSharpPlus;
 using DSharpPlus.Entities;
-using Serilog;
 using Slipstream.Components.Discord.EventHandler;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
@@ -12,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Slipstream.Components.Discord.Plugins
 {
-    internal class DiscordPlugin : BasePlugin
+    internal class DiscordPlugin : BasePlugin, IPlugin
     {
         private static readonly DictionaryValidator ConfigurationValidator;
 
@@ -41,19 +40,19 @@ namespace Slipstream.Components.Discord.Plugins
             eventHandler.OnDiscordCommandSendMessage += EventHandler_OnDiscordCommandSendMessage;
         }
 
-        private void EventHandler_OnDiscordCommandSendMessage(EventHandlerController source, EventHandlerArgs<Events.DiscordCommandSendMessage> e)
+        private void EventHandler_OnDiscordCommandSendMessage(object source, Events.DiscordCommandSendMessage e)
         {
             if (Client == null)
                 return;
 
-            if (!DiscordChannelIdMap.ContainsKey(e.Event.ChannelId))
+            if (!DiscordChannelIdMap.ContainsKey(e.ChannelId))
             {
-                var channel = Client.GetChannelAsync(e.Event.ChannelId).GetAwaiter().GetResult();
+                var channel = Client.GetChannelAsync(e.ChannelId).GetAwaiter().GetResult();
 
-                DiscordChannelIdMap.Add(e.Event.ChannelId, channel);
+                DiscordChannelIdMap.Add(e.ChannelId, channel);
             }
 
-            DiscordChannelIdMap[e.Event.ChannelId].SendMessageAsync(e.Event.Message, e.Event.TextToSpeech);
+            DiscordChannelIdMap[e.ChannelId].SendMessageAsync(e.Message, e.TextToSpeech);
         }
 
         public override void Run()
@@ -103,14 +102,19 @@ namespace Slipstream.Components.Discord.Plugins
                 return Task.CompletedTask;
 
             EventBus.PublishEvent(EventFactory.CreateDiscordMessageReceived(
+                fromId: e.Author.Id,
+                from: e.Author.Username + "#" + e.Author.Discriminator,
                 channelId: e.Channel.Id,
                 channel: e.Channel.Name,
-                from: e.Author.Username + "#" + e.Author.Discriminator,
-                fromId: e.Author.Id,
                 message: e.Message.Content
             ));
 
             return Task.CompletedTask;
+        }
+
+        public IEnumerable<ILuaGlue> CreateLuaGlues()
+        {
+            return new LuaGlue[] { new LuaGlue(EventBus, EventFactory) };
         }
     }
 }

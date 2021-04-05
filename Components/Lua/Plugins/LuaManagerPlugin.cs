@@ -16,7 +16,7 @@ using System.Linq;
 
 namespace Slipstream.Components.Lua.Plugins
 {
-    internal class LuaManagerPlugin : BasePlugin
+    internal class LuaManagerPlugin : BasePlugin, IPlugin
     {
         private readonly ILogger Logger;
         private readonly IFileMonitorEventFactory EventFactory;
@@ -44,7 +44,7 @@ namespace Slipstream.Components.Lua.Plugins
             IEventBus eventBus,
             IPluginManager pluginManager,
             IPluginFactory pluginFactory,
-            IServiceLocator serviceLocator
+            IEventSerdeService eventSerdeService
         ) : base(eventHandlerController, id, "LuaManagerPlugin", id)
         {
             Logger = logger;
@@ -52,7 +52,7 @@ namespace Slipstream.Components.Lua.Plugins
             EventBus = eventBus;
             PluginManager = pluginManager;
             PluginFactory = pluginFactory;
-            EventSerdeService = serviceLocator.Get<IEventSerdeService>();
+            EventSerdeService = eventSerdeService;
 
             var fileMonitor = EventHandlerController.Get<Components.FileMonitor.EventHandler.FileMonitor>();
             var @internal = EventHandlerController.Get<Components.Internal.EventHandler.Internal>();
@@ -64,7 +64,7 @@ namespace Slipstream.Components.Lua.Plugins
             fileMonitor.OnFileMonitorFileRenamed += EventHandler_OnFileMonitorFileRenamed;
             fileMonitor.OnFileMonitorScanCompleted += EventHandler_OnFileMonitorScanCompleted;
             @internal.OnInternalPluginState += EventHandler_OnInternalPluginState;
-            lua.OnLuaCommandDeduplicateEvents += (s, e) => EventHandler_OnLuaCommandDeduplicateEvents(e.Event);
+            lua.OnLuaCommandDeduplicateEvents += (s, e) => EventHandler_OnLuaCommandDeduplicateEvents(e);
 
             BootupEventsDeadline = DateTime.Now.AddMilliseconds(500);
 
@@ -82,11 +82,11 @@ namespace Slipstream.Components.Lua.Plugins
             BootupEventsDeadline = DateTime.Now.AddMilliseconds(500);
         }
 
-        private void EventHandler_OnInternalPluginState(IEventHandlerController source, EventHandlerArgs<InternalPluginState> e)
+        private void EventHandler_OnInternalPluginState(object source, InternalPluginState e)
         {
-            if (e.Event.PluginStatus == "Registered" && e.Event.PluginName == "LuaPlugin")
+            if (e.PluginStatus == "Registered" && e.PluginName == "LuaPlugin")
             {
-                WaitingForLuaScripts.Remove(e.Event.Id);
+                WaitingForLuaScripts.Remove(e.Id);
 
                 if (WaitingForLuaScripts.Count == 0)
                 {
@@ -96,7 +96,7 @@ namespace Slipstream.Components.Lua.Plugins
             }
         }
 
-        private void EventHandler_OnFileMonitorScanCompleted(IEventHandlerController source, EventHandlerArgs<FileMonitorScanCompleted> e)
+        private void EventHandler_OnFileMonitorScanCompleted(object source, FileMonitorScanCompleted e)
         {
             BootUp = false;
         }
@@ -132,7 +132,7 @@ namespace Slipstream.Components.Lua.Plugins
 
         private void DeletedFile(string filePath)
         {
-            if(Scripts.ContainsKey(filePath))
+            if (Scripts.ContainsKey(filePath))
             {
                 PluginManager.UnregisterPlugin(Scripts[filePath]);
 
@@ -140,42 +140,42 @@ namespace Slipstream.Components.Lua.Plugins
             }
         }
 
-        private void EventHandler_OnFileMonitorFileRenamed(IEventHandlerController source, EventHandlerArgs<FileMonitorFileRenamed> e)
+        private void EventHandler_OnFileMonitorFileRenamed(object source, FileMonitorFileRenamed e)
         {
             // If we're been unregistered (while app is running) and re-registered,we need to ignore these events
             // until we're ready (received the FileMonitorScanCompleted). We need to revisit this later.
-            if (e.Event.FilePath == null || e.Event.OldFilePath == null || BootUp)
+            if (e.FilePath == null || e.OldFilePath == null || BootUp)
                 return;
 
-            if (IsApplicable(e.Event.OldFilePath))
-                DeletedFile(e.Event.OldFilePath);
-            if (IsApplicable(e.Event.FilePath))
-                NewFile(e.Event.FilePath);
+            if (IsApplicable(e.OldFilePath))
+                DeletedFile(e.OldFilePath);
+            if (IsApplicable(e.FilePath))
+                NewFile(e.FilePath);
         }
 
-        private void EventHandler_OnFileMonitorFileChanged(IEventHandlerController source, EventHandlerArgs<FileMonitorFileChanged> e)
+        private void EventHandler_OnFileMonitorFileChanged(object source, FileMonitorFileChanged e)
         {
-            if (e.Event.FilePath == null || !IsApplicable(e.Event.FilePath) || BootUp)
+            if (e.FilePath == null || !IsApplicable(e.FilePath) || BootUp)
                 return;
 
-            DeletedFile(e.Event.FilePath);
-            NewFile(e.Event.FilePath);
+            DeletedFile(e.FilePath);
+            NewFile(e.FilePath);
         }
 
-        private void EventHandler_OnFileMonitorFileDeleted(IEventHandlerController source, EventHandlerArgs<FileMonitorFileDeleted> e)
+        private void EventHandler_OnFileMonitorFileDeleted(object source, FileMonitorFileDeleted e)
         {
-            if (e.Event.FilePath == null || !IsApplicable(e.Event.FilePath) || BootUp)
+            if (e.FilePath == null || !IsApplicable(e.FilePath) || BootUp)
                 return;
 
-            DeletedFile(e.Event.FilePath);
+            DeletedFile(e.FilePath);
         }
 
-        private void EventHandler_OnFileMonitorFileCreated(IEventHandlerController source, EventHandlerArgs<FileMonitorFileCreated> e)
+        private void EventHandler_OnFileMonitorFileCreated(object source, FileMonitorFileCreated e)
         {
-            if (e.Event.FilePath == null || !IsApplicable(e.Event.FilePath))
+            if (e.FilePath == null || !IsApplicable(e.FilePath))
                 return;
 
-            NewFile(e.Event.FilePath);
+            NewFile(e.FilePath);
         }
 
         private bool IsApplicable(string FilePath)
@@ -208,6 +208,11 @@ namespace Slipstream.Components.Lua.Plugins
 
                 BootupEventsDeadline = null;
             }
+        }
+
+        public IEnumerable<ILuaGlue> CreateLuaGlues()
+        {
+            return new ILuaGlue[] { };
         }
     }
 }

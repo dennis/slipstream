@@ -2,39 +2,31 @@
 
 using Slipstream.Components.Lua.Events;
 using Slipstream.Shared;
+using System;
 
 namespace Slipstream.Components.Lua.EventHandler
 {
     internal class Lua : IEventHandler
     {
-        private readonly EventHandlerController Parent;
-
-        public Lua(EventHandlerController parent)
-        {
-            Parent = parent;
-        }
-
-        public delegate void OnLuaDeduplicateEventsHandler(EventHandlerController source, EventHandlerArgs<LuaCommandDeduplicateEvents> e);
-
-        public event OnLuaDeduplicateEventsHandler? OnLuaCommandDeduplicateEvents;
+        public event EventHandler<LuaCommandDeduplicateEvents>? OnLuaCommandDeduplicateEvents;
 
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)
         {
-            switch (@event)
+            return @event switch
             {
-                case LuaCommandDeduplicateEvents tev:
-                    if (OnLuaCommandDeduplicateEvents != null)
-                    {
-                        OnLuaCommandDeduplicateEvents?.Invoke(Parent, new EventHandlerArgs<LuaCommandDeduplicateEvents>(tev));
-                        return IEventHandler.HandledStatus.Handled;
-                    }
-                    else
-                    {
-                        return IEventHandler.HandledStatus.UseDefault;
-                    }
-            }
+                LuaCommandDeduplicateEvents tev => OnEvent(OnLuaCommandDeduplicateEvents, tev),
+                _ => IEventHandler.HandledStatus.NotMine,
+            };
+        }
 
-            return IEventHandler.HandledStatus.NotMine;
+        private IEventHandler.HandledStatus OnEvent<TEvent>(EventHandler<TEvent>? onEvent, TEvent args)
+        {
+            if (onEvent != null)
+            {
+                onEvent.Invoke(this, args);
+                return IEventHandler.HandledStatus.Handled;
+            }
+            return IEventHandler.HandledStatus.UseDefault;
         }
     }
 }

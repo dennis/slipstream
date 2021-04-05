@@ -1,6 +1,6 @@
 ﻿#nullable enable
 
-namespace Slipstream.Components.Internal.Services
+namespace Slipstream.Components.Internal.LuaGlues
 {
     public class StateLuaGlue : ILuaGlue
     {

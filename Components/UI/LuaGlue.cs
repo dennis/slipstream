@@ -12,12 +12,12 @@ namespace Slipstream.Components.UI
         private readonly IUIEventFactory EventFactory;
         private readonly string Prefix;
 
-        public LuaGlue(ILogger logger, IEventBus eventBus, IUIEventFactory eventFactory, string logPrefix)
+        public LuaGlue(ILogger logger, IEventBus eventBus, IUIEventFactory eventFactory, string prefix)
         {
             Logger = logger;
             EventBus = eventBus;
             EventFactory = eventFactory;
-            Prefix = logPrefix;
+            Prefix = prefix;
         }
 
         public void SetupLua(NLua.Lua lua)

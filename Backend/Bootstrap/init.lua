@@ -6,13 +6,6 @@ print "Initializing"
 -- Monitors for new versions of the application and raise events for it
 register_plugin({plugin_name = "ApplicationUpdatePlugin", updateLocation="https://github.com/dennis/slipstream", prerelease=true})
 
--- Listens for samples to play or text to speek. Disabling this will mute all
--- sounds. You can add optional argument "output" to device which device to use.
--- Make a small lua script with `audio: send_devices("AudioPlugin")` and look at
--- the incoming `AudioOutputDevice` events.The device index is the value you
--- want to use for the value for "output"
-register_plugin({plugin_name = "AudioPlugin"})
-
 -- Delivers IRacing events as they happen
 register_plugin({ plugin_name = "IRacingPlugin"})
 

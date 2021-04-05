@@ -1,6 +1,5 @@
 ﻿using Slipstream.Backend;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 
 #nullable enable
@@ -35,7 +34,6 @@ namespace Slipstream.Components.Internal.Services
 
             foreach (var glue in LuaGlues)
             {
-                Debug.WriteLine($"Initializing NLua for {filename} with {glue}");
                 glue.SetupLua(Lua);
             }
 
@@ -48,6 +46,11 @@ namespace Slipstream.Components.Internal.Services
             {
                 glue.Loop();
             }
+        }
+
+        public void Dispose()
+        {
+            LuaGlues.Clear();
         }
     }
 }

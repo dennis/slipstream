@@ -115,6 +115,7 @@ namespace Slipstream.Backend
                 {
                     PluginWorkers[id].Stop();
                     EmitPluginStateChanged(PluginWorkers[id].Plugin, PluginStatusEnum.Unregistered);
+                    PluginWorkers[id].Dispose();
 
                     PluginWorkers.Remove(id);
                     Logger.Verbose("Removed plugin: {pluginId}", id);

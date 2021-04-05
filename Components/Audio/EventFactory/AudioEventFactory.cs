@@ -6,29 +6,29 @@ namespace Slipstream.Components.Audio.EventFactory
 {
     public class AudioEventFactory : IAudioEventFactory
     {
-        public AudioCommandPlay CreateAudioCommandPlay(string pluginId, string filename, float volume)
+        public AudioCommandPlay CreateAudioCommandPlay(string instanceId, string filename, float volume)
         {
-            return new AudioCommandPlay { PluginId = pluginId, Filename = filename, Volume = volume };
+            return new AudioCommandPlay { InstanceId = instanceId, Filename = filename, Volume = volume };
         }
 
-        public AudioCommandSay CreateAudioCommandSay(string pluginId, string message, float volume)
+        public AudioCommandSay CreateAudioCommandSay(string instanceId, string message, float volume)
         {
-            return new AudioCommandSay { PluginId = pluginId, Message = message, Volume = volume };
+            return new AudioCommandSay { InstanceId = instanceId, Message = message, Volume = volume };
         }
 
-        public AudioCommandSendDevices CreateAudioCommandSendDevices(string pluginId)
+        public AudioCommandSendDevices CreateAudioCommandSendDevices(string instanceId)
         {
-            return new AudioCommandSendDevices { PluginId = pluginId };
+            return new AudioCommandSendDevices { InstanceId = instanceId };
         }
 
-        public AudioOutputDevice CreateAudioOutputDevice(string pluginId, string product, int deviceIdx)
+        public AudioOutputDevice CreateAudioOutputDevice(string instanceId, string product, int deviceIdx)
         {
-            return new AudioOutputDevice { DeviceIdx = deviceIdx, PluginId = pluginId, Product = product };
+            return new AudioOutputDevice { DeviceIdx = deviceIdx, InstanceId = instanceId, Product = product };
         }
 
-        public AudioCommandSetOutputDevice CreateAudioCommandSetOutputDevice(string pluginId, int deviceIdx)
+        public AudioCommandSetOutputDevice CreateAudioCommandSetOutputDevice(string instanceId, int deviceIdx)
         {
-            return new AudioCommandSetOutputDevice { PluginId = pluginId, DeviceIdx = deviceIdx };
+            return new AudioCommandSetOutputDevice { InstanceId = instanceId, DeviceIdx = deviceIdx };
         }
     }
 }

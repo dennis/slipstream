@@ -68,5 +68,12 @@ namespace Slipstream.Backend
         {
             return (long)((double)Stopwatch.GetTimestamp() * 1000 / Stopwatch.Frequency);
         }
+
+        new public void Dispose()
+        {
+            Subscription?.Dispose();
+            Plugin?.Dispose();
+            base.Dispose();
+        }
     }
 }

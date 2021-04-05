@@ -12,6 +12,7 @@ namespace Slipstream.Components.Internal.Plugins
         private readonly ILogger Logger;
         private readonly IEventSerdeService EventSerdeService;
         private readonly IStateService StateService;
+        private readonly ILuaLibraryRepository ProviderClassRepository;
 
         public InternalPlugin(
             IEventHandlerController eventHandlerController,
@@ -20,7 +21,8 @@ namespace Slipstream.Components.Internal.Plugins
             IEventBus eventBus,
             IInternalEventFactory eventFactory,
             IEventSerdeService eventSerdeService,
-            IStateService stateService)
+            IStateService stateService,
+            ILuaLibraryRepository providerClassRepository)
             : base(eventHandlerController, id, nameof(InternalPlugin), id, true)
         {
             EventFactory = eventFactory;
@@ -28,6 +30,7 @@ namespace Slipstream.Components.Internal.Plugins
             EventBus = eventBus;
             EventSerdeService = eventSerdeService;
             StateService = stateService;
+            ProviderClassRepository = providerClassRepository;
         }
 
         public IEnumerable<ILuaGlue> CreateLuaGlues()
@@ -37,7 +40,8 @@ namespace Slipstream.Components.Internal.Plugins
                 new CoreLuaGlue(EventSerdeService),
                 new HttpLuaGlue(Logger),
                 new InternalLuaGlue(EventBus, EventFactory),
-                new StateLuaGlue(StateService)
+                new StateLuaGlue(StateService),
+                new RequireLuaGlue(ProviderClassRepository)
             };
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Slipstream.Shared;
 using System;
+using System.Diagnostics;
 using System.IO;
 
 #nullable enable
@@ -15,6 +16,8 @@ namespace Slipstream.Components.Internal.Services
 
         public LuaContext(string filePath, NLua.Lua lua)
         {
+            Debug.WriteLine($"Starting LuaContext {filePath}");
+
             try
             {
                 Lua = lua;
@@ -40,6 +43,9 @@ namespace Slipstream.Components.Internal.Services
 
         public void Dispose()
         {
+            Debug.WriteLine($"disposing LuaContext");
+            Lua?.DoString("collectgarbage()");
+            Lua?.Dispose();
             Lua = null;
         }
 

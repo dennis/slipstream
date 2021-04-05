@@ -209,6 +209,10 @@
     <Compile Include="Components\AppilcationUpdate\Events\ApplicationUpdateLatestVersionChanged.cs" />
     <Compile Include="Components\AppilcationUpdate\IApplicationUpdateEventFactory.cs" />
     <Compile Include="Components\AppilcationUpdate\Plugins\ApplicationUpdatePlugin.cs" />
+    <Compile Include="Components\Audio\Lua\AudioLuaLibrary.cs" />
+    <Compile Include="Components\Audio\Lua\AudioLuaReference.cs" />
+    <Compile Include="Components\Audio\Lua\AudioInstanceThread.cs" />
+    <Compile Include="Components\Audio\Lua\IAudioInstanceThread.cs" />
     <Compile Include="Components\Discord\EventFactory\DiscordEventFactory.cs" />
     <Compile Include="Components\Discord\EventHandler\DiscordEventHandler.cs" />
     <Compile Include="Components\Discord\Events\DiscordCommandSendMessage.cs" />
@@ -220,6 +224,7 @@
     <Compile Include="Components\Discord\Plugins\DiscordPlugin.cs" />
     <Compile Include="Components\Internal\Events\InternalShutdown.cs" />
     <Compile Include="Components\Internal\Events\InternalCommandShutdown.cs" />
+    <Compile Include="Components\Internal\LuaGLues\RequireLuaGlue.cs" />
     <Compile Include="Components\Internal\Plugins\InternalPlugin.cs" />
     <Compile Include="Components\IRacing\Events\IRacingTrackPosition.cs" />
     <Compile Include="Components\IRacing\Events\IRacingTowed.cs" />
@@ -252,12 +257,11 @@
     <Compile Include="Components\IRacing\Plugins\Trackers\TrackInfoTracker.cs" />
     <Compile Include="Components\IRacing\Plugins\Trackers\WeatherTracker.cs" />
     <Compile Include="Components\Lua\CapturingEventBus.cs" />
+    <Compile Include="Shared\BaseServiceThread.cs" />
     <Compile Include="Components\Playback\Plugins\PlaybackPlugin.cs" />
     <Compile Include="Components\Txrx\Plugins\ReceiverPlugin.cs" />
     <Compile Include="Components\Txrx\Plugins\TransmitterPlugin.cs" />
-    <Compile Include="Components\Audio\LuaGlue.cs" />
     <Compile Include="Components\ILuaGlue.cs" />
-    <Compile Include="Components\Audio\Plugins\AudioPlugin.cs" />
     <Compile Include="Components\BasePlugin.cs" />
     <Compile Include="Components\Twitch\Plugins\TwitchPlugin.cs" />
     <Compile Include="Components\Internal\IEventSerdeService.cs" />
@@ -395,6 +399,10 @@
     <Compile Include="Components\Lua\EventHandler\Lua.cs" />
     <Compile Include="Components\Twitch\EventHandler\Twitch.cs" />
     <Compile Include="Components\UI\EventHandler\UIEventHandler.cs" />
+    <Compile Include="Shared\ILuaLibrary.cs" />
+    <Compile Include="Shared\ILuaLibraryRepository.cs" />
+    <Compile Include="Shared\ILuaReference.cs" />
+    <Compile Include="Shared\LuaLibraryRepository.cs" />
     <Compile Include="SlipstreamConsoleSink.cs" />
     <EmbeddedResource Include="Components\WinFormUI\Forms\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>

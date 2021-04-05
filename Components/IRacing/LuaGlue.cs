@@ -59,5 +59,9 @@ function iracing_send_race_flags(); iracing:send_race_flags(); end
         {
             EventBus.PublishEvent(EventFactory.CreateIRacingCommandSendRaceFlags());
         }
+
+        public void Dispose()
+        {
+        }
     }
 }

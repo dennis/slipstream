@@ -10,7 +10,7 @@ namespace Slipstream.Components.Audio.Events
         public string EventType => "AudioCommandPlay";
         public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
-        public string PluginId { get; set; } = "INVAILD-PLUGIN-ID";
+        public string InstanceId { get; set; } = "INVAILD-INSTANCE-ID";
         public string Filename { get; set; } = string.Empty;
         public float Volume { get; set; } = 1.0f;
 

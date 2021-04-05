@@ -44,6 +44,7 @@ namespace Slipstream
         private static void ConfigureServices(ContainerBuilder builder)
         {
             builder.RegisterType<Backend.EventBus>().As<Shared.IEventBus>().As<Shared.IEventProducer>().SingleInstance();
+            builder.Register(scope => scope.Resolve<IEventBus>().RegisterListener()).As<IEventBusSubscription>().InstancePerDependency();
             builder.RegisterType<Backend.Engine>().As<Backend.IEngine>().SingleInstance();
             builder.RegisterType<EventSerdeService>().As<IEventSerdeService>().SingleInstance();
             builder.RegisterType<Backend.PluginManager>().As<Backend.IPluginManager>().As<Backend.IPluginFactory>().SingleInstance();
@@ -81,6 +82,24 @@ namespace Slipstream
                 .As<Components.IPlugin>()
                 .AsSelf()
                 .InstancePerDependency();
+
+            // ProviderClasses
+            builder.RegisterType<LuaLibraryRepository>().As<ILuaLibraryRepository>().SingleInstance();
+            builder.RegisterAssemblyTypes(typeof(Program).Assembly)
+                .Where(t => t.IsAssignableTo<ILuaLibrary>())
+                .Where(t => !t.IsAbstract)
+                .As<ILuaLibrary>()
+                .AsSelf()
+                .InstancePerDependency();
+            builder.RegisterAssemblyTypes(typeof(Program).Assembly)
+                .Where(t => t.IsAssignableTo<ILuaReference>())
+                .Where(t => !t.IsAbstract)
+                .As<ILuaReference>()
+                .AsSelf()
+                .InstancePerDependency();
+
+            // AudioProvider
+            builder.RegisterType<Components.Audio.Lua.AudioInstanceThread>().As<Components.Audio.Lua.IAudioInstanceThread>().InstancePerDependency();
         }
 
         private class PopulateSink

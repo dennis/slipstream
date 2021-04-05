@@ -89,5 +89,11 @@ namespace Slipstream.Components.Lua.Plugins
         {
             return new ILuaGlue[] { };
         }
+
+        public override void Dispose()
+        {
+            LuaContext?.Dispose();
+            LuaService?.Dispose();
+        }
     }
 }

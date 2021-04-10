@@ -7,15 +7,11 @@ print "Initializing"
 register_plugin({plugin_name = "ApplicationUpdatePlugin", updateLocation="https://github.com/dennis/slipstream", prerelease=true})
 
 -- Delivers IRacing events as they happen
-register_plugin({ plugin_name = "IRacingPlugin"})
+-- register_plugin({ plugin_name = "IRacingPlugin"})
 
 --Connects to Twitch(via the values provided in Settings) and provide
 --a way to sende and receive twitch messages.Generate a token here: https://twitchapps.com/tmi/
 --register_plugin({ plugin_name = "TwitchPlugin", twitch_username = "<username>", twitch_token = "<token>", twitch_channel = "<channel>"})
-
---Connect to Discord to receive and send messages.
---You need a bot account that can be created here https://discord.com/developers/applications
---register_plugin({ plugin_name = "DiscordPlugin", token = "<token>"})
 
 --Only one of these may be active at a time.ReceiverPlugin listens
 -- for TCP connections, while Transmitter will send the events it sees

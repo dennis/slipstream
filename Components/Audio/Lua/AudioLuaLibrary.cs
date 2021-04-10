@@ -17,6 +17,7 @@ namespace Slipstream.Components.Audio.Lua
         private readonly object Lock = new object();
         private readonly Dictionary<string, IAudioInstanceThread> Instances = new Dictionary<string, IAudioInstanceThread>();
         private readonly ILifetimeScope LifetimeScope;
+
         public string Name => "api/audio";
 
         static AudioLuaLibrary()

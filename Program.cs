@@ -83,7 +83,7 @@ namespace Slipstream
                 .AsSelf()
                 .InstancePerDependency();
 
-            // ProviderClasses
+            // Lua related classes
             builder.RegisterType<LuaLibraryRepository>().As<ILuaLibraryRepository>().SingleInstance();
             builder.RegisterAssemblyTypes(typeof(Program).Assembly)
                 .Where(t => t.IsAssignableTo<ILuaLibrary>())
@@ -98,8 +98,9 @@ namespace Slipstream
                 .AsSelf()
                 .InstancePerDependency();
 
-            // AudioProvider
             builder.RegisterType<Components.Audio.Lua.AudioInstanceThread>().As<Components.Audio.Lua.IAudioInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.Discord.Lua.DiscordServiceThread>().As<Components.Discord.Lua.IDiscordInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.Discord.Lua.DiscordLuaChannelReference>().As<Components.Discord.Lua.IDiscordLuaChannelReference>().InstancePerDependency();
         }
 
         private class PopulateSink

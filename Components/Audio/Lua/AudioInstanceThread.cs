@@ -53,7 +53,7 @@ namespace Slipstream.Components.Audio.Lua
             var internalEventHandler = EventHandlerController.Get<Internal.EventHandler.Internal>();
             internalEventHandler.OnInternalShutdown += (_, _e) => Stopping = true;
 
-            Logger.Debug("Starting AudioInstanceThread");
+            Logger.Debug($"Starting {nameof(AudioInstanceThread)} {InstanceId}");
 
             while (!Stopping)
             {
@@ -65,7 +65,7 @@ namespace Slipstream.Components.Audio.Lua
                 }
             }
 
-            Logger.Debug("Stopping AudioInstanceThread");
+            Logger.Debug($"Stopping {nameof(AudioInstanceThread)} {InstanceId}");
         }
 
         private void OnAudioCommandSetOutputDevice(AudioCommandSetOutputDevice @event)

@@ -10,7 +10,10 @@
   - add `internal:shutdown()` lua function that quits the application
   - Adds `InternalPlugin` (automatically loaded)
   - Adds `UIPlugin` that handles generic UI functionality. Needs to be added to your init.lua!
-  - Replace AudioPlugin with AudioLuaController. Scripts needs to be updated, see [documentation](Components/Audio/README.md). Events modified `PluginId` renamed to `InstanceId`
+  - New init.lua required for the following changes:
+    - Replace AudioPlugin with AudioLuaController. Scripts needs to be updated, see [documentation](Components/Audio/README.md). Events modified `PluginId` renamed to `InstanceId`
+    - Replace DiscordPlugin with DiscordLuaController. Scripts needs to be updated, see [documentation](Components/Discord/README.md). Events modified adding a `InstanceId`
+    - Replace FileMonitorPlugin with FileMonitorLuaController. Scripts needs to be updated, see [documentation](Components/FileMonitor/README.md). Events modified adding a `InstanceId`.
 
 ## [0.5.0](https://github.com/dennis/slipstream/releases/tag/v0.5.0) (2021-03-25)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.4.1...v0.5.0)

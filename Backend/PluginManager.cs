@@ -127,7 +127,6 @@ namespace Slipstream.Backend
         {
             return CreatePlugin(pluginId, name, EventBus, configuration);
         }
-
         public IPlugin CreatePlugin(string pluginId, string pluginName, IEventBus eventBus, Parameters configuration)
         {
             if (!PluginFactories.ContainsKey(pluginName))

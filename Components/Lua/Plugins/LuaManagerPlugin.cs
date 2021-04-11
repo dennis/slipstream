@@ -68,7 +68,7 @@ namespace Slipstream.Components.Lua.Plugins
 
             BootupEventsDeadline = DateTime.Now.AddMilliseconds(500);
 
-            EventBus.PublishEvent(EventFactory.CreateFileMonitorCommandScan());
+            EventBus.PublishEvent(EventFactory.CreateFileMonitorCommandScan(""));
         }
 
         private void EventHandler_OnLuaCommandDeduplicateEvents(LuaCommandDeduplicateEvents @event)

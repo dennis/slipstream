@@ -101,6 +101,8 @@ namespace Slipstream
             builder.RegisterType<Components.Audio.Lua.AudioInstanceThread>().As<Components.Audio.Lua.IAudioInstanceThread>().InstancePerDependency();
             builder.RegisterType<Components.Discord.Lua.DiscordServiceThread>().As<Components.Discord.Lua.IDiscordInstanceThread>().InstancePerDependency();
             builder.RegisterType<Components.Discord.Lua.DiscordLuaChannelReference>().As<Components.Discord.Lua.IDiscordLuaChannelReference>().InstancePerDependency();
+            builder.RegisterType<Components.FileMonitor.Lua.FileMonitorInstanceThread>().As<Components.FileMonitor.Lua.IFileMonitorInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.FileMonitor.Lua.FileMonitorLuaReference>().As<Components.FileMonitor.Lua.IFileMonitorLuaReference>().InstancePerDependency();
         }
 
         private class PopulateSink

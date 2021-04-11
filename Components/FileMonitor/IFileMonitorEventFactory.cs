@@ -6,14 +6,16 @@ namespace Slipstream.Components.FileMonitor
 {
     public interface IFileMonitorEventFactory
     {
-        FileMonitorFileChanged CreateFileMonitorFileChanged(string filePath);
+        FileMonitorFileChanged CreateFileMonitorFileChanged(string instanceId, string filePath);
 
-        FileMonitorFileCreated CreateFileMonitorFileCreated(string path);
+        FileMonitorFileCreated CreateFileMonitorFileCreated(string instanceId, string path);
 
-        FileMonitorFileDeleted CreateFileMonitorFileDeleted(string filePath);
+        FileMonitorFileDeleted CreateFileMonitorFileDeleted(string instanceId, string filePath);
 
-        FileMonitorFileRenamed CreateFileMonitorFileRenamed(string filePath, string oldFilePath);
+        FileMonitorFileRenamed CreateFileMonitorFileRenamed(string instanceId, string filePath, string oldFilePath);
 
-        FileMonitorCommandScan CreateFileMonitorCommandScan();
+        FileMonitorCommandScan CreateFileMonitorCommandScan(string instanceId);
+
+        FileMonitorScanCompleted CreateFileMonitorScanCompleted(string instanceId);
     }
 }

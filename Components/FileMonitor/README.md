@@ -1,15 +1,32 @@
 ﻿# FileMonitor
 
-Monitors Scripts directory and sends out events in  case changes are detected. 
-
-LuaManagerPlugin is the consumer of these events. If the extension is ".lua", it will launch
-a LuaPlugin for the file. Similary, if the file is removed or renamed, it will stop the 
-plugin again. This is the heart of the hot-reloading of lua scripts, every time a file is
-changed.
+Monitors one or more directory and sends out events in  case changes are detected. 
 
 ## Lua
 
-There is no Lua interface for this component.
+<details><summary>Construction</summary><br />
+
+```lua
+local filemonitor = require("api/filemonitor"):instance(config)
+```
+
+`config` is the initial configuration of the instance if one needs to be created. It is a table with one or more keys as defined below.
+
+| Parameter   | Type          | Default     | Description                    |
+| :---------- | :-----------: | :---------: | :----------------------------- |
+| id          | string        |             | Mandatory: Id of this instance |
+| paths       | string array  |             | Directories to monitor         |
+</details>
+
+<details><summary>filemonitor:scan()</summary><br />
+
+```lua
+local filemonitor = require("api/filemonitor"):instance(config)
+filemonitor.scan()
+```
+
+Will scan the existing directories and send out files found.
+</details>
 
 ## Events
 
@@ -21,11 +38,12 @@ were just created. This is used at startup.
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `FileMonitorCommandScan` (constant)                               |
 | ExcludeFromTxrx | boolean | true (constant)                                                   |
+| InstanceId      | string  | Which instance the message originates from                        |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 
 
 **JSON Example:** 
-`{"EventType": "FileMonitorCommandScan", "ExcludeFromTxrx": true, "Uptime":1742}`
+`{"EventType": "FileMonitorCommandScan", "ExcludeFromTxrx": true, "Uptime":1742, "InstanceId":"FS"}`
 </details>
 
 <details><summary>FileMonitorFileChanged</summary><br />
@@ -36,10 +54,11 @@ File modified
 | EventType       | string  | `FileMonitorFileChanged` (constant)                               |
 | ExcludeFromTxrx | boolean | true (constant)                                                   |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
+| InstanceId      | string  | Which instance the message originates from                        |
 | FilePath        | string  | Name of the file changed                                          |
 
 **JSON Example:** 
-`{"EventType": "FileMonitorFileChanged",  "ExcludeFromTxrx": true, "Uptime":1742,  "FilePath": "Scripts\\xiiv45pp.cru~"}`
+`{"EventType": "FileMonitorFileChanged",  "ExcludeFromTxrx": true, "Uptime":1742, "InstanceId":"FS",  "FilePath": "Scripts\\xiiv45pp.cru~"}`
 </details>
 
 <details><summary>FileMonitorFileCreated</summary><br />
@@ -50,10 +69,11 @@ New file created
 | EventType       | string  | `FileMonitorFileCreated` (constant)                               |
 | ExcludeFromTxrx | boolean | true (constant)                                                   |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
+| InstanceId      | string  | Which instance the message originates from                        |
 | FilePath        | string  | Name of the file created                                          |
 
 **JSON Example:** 
-`{ "EventType": "FileMonitorFileCreated", "ExcludeFromTxrx": true, "Uptime":1742, "FilePath": "Scripts\\debug.lua~RF3bee738a.TMP" }`
+`{ "EventType": "FileMonitorFileCreated", "ExcludeFromTxrx": true, "Uptime":1742, "InstanceId":"FS", "FilePath": "Scripts\\debug.lua~RF3bee738a.TMP" }`
 </details>
 
 <details><summary>FileMonitorFileDeleted</summary><br />
@@ -64,10 +84,11 @@ File deleted
 | EventType       | string  | `FileMonitorFileDeleted` (constant)                               |
 | ExcludeFromTxrx | boolean | true (constant)                                                   |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
+| InstanceId      | string  | Which instance the message originates from                        |
 | FilePath        | string  | Name of the file deleted                                          |
 
 **JSON Example:** 
-`{"EventType": "FileMonitorFileDeleted",  "ExcludeFromTxrx": true, "Uptime":1742,  "FilePath": "Scripts\\debug.lua~RF3bee738a.TMP"}`
+`{"EventType": "FileMonitorFileDeleted",  "ExcludeFromTxrx": true, "Uptime":1742, "InstanceId":"FS", "FilePath": "Scripts\\debug.lua~RF3bee738a.TMP"}`
 </details>
 
 <details><summary>FileMonitorFileRenamed</summary><br />
@@ -78,11 +99,12 @@ File renamed
 | EventType       | string  | `FileMonitorFileRenamed` (constant)                               |
 | ExcludeFromTxrx | boolean | true (constant)                                                   |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
+| InstanceId      | string  | Which instance the message originates from                        |
 | FilePath        | string  | New name of the file                                              |
 | OldFilePath     | string  | Previous name of the file                                         |
 
 **JSON Example:** 
-`{"EventType": "FileMonitorFileRenamed",  "ExcludeFromTxrx": true, "Uptime":1742,  "FilePath": "Scripts\\debug.lua",  "OldFilePath": "Scripts\\xiiv45pp.cru~"}`
+`{"EventType": "FileMonitorFileRenamed",  "ExcludeFromTxrx": true, "Uptime":1742, "InstanceId":"FS", "FilePath": "Scripts\\debug.lua",  "OldFilePath": "Scripts\\xiiv45pp.cru~"}`
 </details>
 
 <details><summary>FileMonitorScanCompleted</summary><br />
@@ -93,7 +115,8 @@ A FileMonitorCommandScan was completed.
 | EventType       | string  | `FileMonitorScanCompleted` (constant)                             |
 | ExcludeFromTxrx | boolean | true (constant)                                                   |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
+| InstanceId      | string  | Which instance the message originates from                        |
 
 **JSON Example:**  
-`{"EventType": "FileMonitorScanCompleted", "ExcludeFromTxrx": true, "Uptime":1742}`
+`{"EventType": "FileMonitorScanCompleted", "ExcludeFromTxrx": true, "Uptime":1742, "InstanceId":"FS"}`
 </details>

@@ -2,6 +2,7 @@
 using Serilog;
 using Slipstream.Components.Internal;
 using Slipstream.Components.Internal.Events;
+using Slipstream.Components.Lua.Lua;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using System;
@@ -29,7 +30,7 @@ namespace Slipstream.Backend
             IPluginFactory pluginFactory,
             IPluginManager pluginManager,
             IEventHandlerController eventHandlerController,
-            ILuaService luaService
+            ILuaLuaLibrary luaLuaController
         )
         {
             EventFactory = eventFactory;
@@ -59,11 +60,7 @@ namespace Slipstream.Backend
                 }
 
                 Logger.Information("Loading {initcfg}", initFilename);
-
-                // We need to bootstrap this. InternalPlugin isn't loaded yet, as we're about to parse init.lua. However
-                // InternalPlugin provides the register_plugin() method, so we need to add it here, to make init.lua work
-                PluginManager.RegisterPlugin(PluginFactory.CreatePlugin("InternalPlugin", "InternalPlugin", new Parameters()));
-                luaService.Parse(initFilename);
+                luaLuaController.instance("init.lua", "init.lua");
             }
 
             // Tell Plugins that we're live - this will make eventbus distribute events

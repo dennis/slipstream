@@ -233,7 +233,6 @@
     <Compile Include="Components\FileMonitor\Lua\IFileMonitorInstanceThread.cs" />
     <Compile Include="Components\Internal\Events\InternalShutdown.cs" />
     <Compile Include="Components\Internal\Events\InternalCommandShutdown.cs" />
-    <Compile Include="Components\Internal\LuaGLues\RequireLuaGlue.cs" />
     <Compile Include="Components\Internal\Plugins\InternalPlugin.cs" />
     <Compile Include="Components\IRacing\Events\IRacingTrackPosition.cs" />
     <Compile Include="Components\IRacing\Events\IRacingTowed.cs" />
@@ -266,7 +265,14 @@
     <Compile Include="Components\IRacing\Plugins\Trackers\TrackInfoTracker.cs" />
     <Compile Include="Components\IRacing\Plugins\Trackers\WeatherTracker.cs" />
     <Compile Include="Components\Lua\CapturingEventBus.cs" />
+    <Compile Include="Components\Lua\Lua\ILuaInstanceThread.cs" />
+    <Compile Include="Components\Lua\Lua\ILuaLuaLibrary.cs" />
     <Compile Include="Shared\BaseInstanceThread.cs" />
+    <Compile Include="Components\Lua\Lua\ILuaLuaReference.cs" />
+    <Compile Include="Components\Lua\Lua\LuaInstanceThread.cs" />
+    <Compile Include="Components\Lua\Lua\LuaLuaLibrary.cs" />
+    <Compile Include="Components\Lua\Lua\LuaLuaReference.cs" />
+    <Compile Include="Components\Lua\Plugins\LuaManagerPlugin.cs" />
     <Compile Include="Components\Playback\Plugins\PlaybackPlugin.cs" />
     <Compile Include="Components\Txrx\Plugins\ReceiverPlugin.cs" />
     <Compile Include="Components\Txrx\Plugins\TransmitterPlugin.cs" />
@@ -365,7 +371,6 @@
     <Compile Include="Components\IRacing\Plugins\IRacingPlugin.cs" />
     <Compile Include="Components\IRacing\Events\IRacingWeatherInfo.cs" />
     <Compile Include="Components\Lua\Plugins\LuaPlugin.cs" />
-    <Compile Include="Components\Lua\Plugins\LuaManagerPlugin.cs" />
     <Compile Include="Components\IRacing\Events\IRacingTrackInfo.cs" />
     <Compile Include="Backend\PluginWorker.cs" />
     <Compile Include="Shared\EventHandlerController.cs" />

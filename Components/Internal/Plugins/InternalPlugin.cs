@@ -40,8 +40,7 @@ namespace Slipstream.Components.Internal.Plugins
                 new CoreLuaGlue(EventSerdeService),
                 new HttpLuaGlue(Logger),
                 new InternalLuaGlue(EventBus, EventFactory),
-                new StateLuaGlue(StateService),
-                new RequireLuaGlue(ProviderClassRepository)
+                new StateLuaGlue(StateService)
             };
         }
     }

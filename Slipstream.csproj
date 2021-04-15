@@ -268,7 +268,16 @@
     <Compile Include="Components\Internal\Services\LuaService.cs" />
     <Compile Include="Components\Internal\ILuaContext.cs" />
     <Compile Include="Components\UI\Plugins\InternalPlugin.cs" />
+    <Compile Include="Components\WinFormUI\Forms\EventTestWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\WinFormUI\Forms\EventTestWindow.Designer.cs">
+      <DependentUpon>EventTestWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\WinFormUI\Models\EventInfoModel.cs" />
+    <Compile Include="Components\WinFormUI\Models\EventPropertyInfoModel.cs" />
     <Compile Include="Components\WinFormUI\Plugins\WinFormUIPlugin.cs" />
+    <Compile Include="Components\WinFormUI\Services\EventDataService.cs" />
     <Compile Include="Shared\EventHandlerArgs.cs" />
     <Compile Include="Components\IRacing\Events\IIRacingSessionState.cs" />
     <Compile Include="Components\IRacing\Events\IRacingCarPosition.cs" />
@@ -396,6 +405,9 @@
     <Compile Include="Components\Twitch\EventHandler\Twitch.cs" />
     <Compile Include="Components\UI\EventHandler\UIEventHandler.cs" />
     <Compile Include="SlipstreamConsoleSink.cs" />
+    <EmbeddedResource Include="Components\WinFormUI\Forms\EventTestWindow.resx">
+      <DependentUpon>EventTestWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Components\WinFormUI\Forms\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>

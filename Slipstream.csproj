@@ -268,11 +268,13 @@
     <Compile Include="Components\Lua\Lua\ILuaInstanceThread.cs" />
     <Compile Include="Components\Lua\Lua\ILuaLuaLibrary.cs" />
     <Compile Include="Shared\BaseInstanceThread.cs" />
+    <Compile Include="Components\Lua\Lua\LuaInstanceThread.DelayedExecution.cs" />
+    <Compile Include="Components\Lua\Lua\UtilLuaLibrary.cs" />
+    <Compile Include="Components\Lua\Plugins\LuaManagerPlugin.cs" />
     <Compile Include="Components\Lua\Lua\ILuaLuaReference.cs" />
     <Compile Include="Components\Lua\Lua\LuaInstanceThread.cs" />
     <Compile Include="Components\Lua\Lua\LuaLuaLibrary.cs" />
     <Compile Include="Components\Lua\Lua\LuaLuaReference.cs" />
-    <Compile Include="Components\Lua\Plugins\LuaManagerPlugin.cs" />
     <Compile Include="Components\Playback\Plugins\PlaybackPlugin.cs" />
     <Compile Include="Components\Txrx\Plugins\ReceiverPlugin.cs" />
     <Compile Include="Components\Txrx\Plugins\TransmitterPlugin.cs" />
@@ -308,7 +310,6 @@
     <Compile Include="Shared\Helpers\StrongParameters\Validators\DictionaryValidator.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Parameters.cs" />
     <Compile Include="Components\Playback\LuaGlue.cs" />
-    <Compile Include="Components\Internal\LuaGLues\CoreLuaGlue.cs" />
     <Compile Include="Components\IRacing\LuaGlue.cs" />
     <Compile Include="Components\Internal\LuaGLues\HttpLuaGlue.cs" />
     <Compile Include="Components\Internal\Services\LuaContext.cs" />

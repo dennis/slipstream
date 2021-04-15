@@ -37,7 +37,6 @@ namespace Slipstream.Components.Internal.Plugins
         {
             return new ILuaGlue[]
             {
-                new CoreLuaGlue(EventSerdeService),
                 new HttpLuaGlue(Logger),
                 new InternalLuaGlue(EventBus, EventFactory),
                 new StateLuaGlue(StateService)

@@ -2,14 +2,16 @@
 
 using NLua;
 using Serilog;
+using Slipstream.Components.Internal;
 using Slipstream.Shared;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 namespace Slipstream.Components.Lua.Lua
 {
-    public class LuaInstanceThread : BaseInstanceThread, ILuaInstanceThread
+    public partial class LuaInstanceThread : BaseInstanceThread, ILuaInstanceThread
     {
         private readonly Object Lock = new object();
         private readonly NLua.Lua Lua = new NLua.Lua();
@@ -17,6 +19,8 @@ namespace Slipstream.Components.Lua.Lua
         private readonly ILuaLibraryRepository Repository;
         private readonly IEventBusSubscription Subscription;
         private readonly IEventHandlerController EventHandlerController;
+        private readonly IDictionary<string, DelayedExecution> DebounceDelayedFunctions = new Dictionary<string, DelayedExecution>();
+        private readonly IDictionary<string, DelayedExecution> WaitDelayedFunctions = new Dictionary<string, DelayedExecution>();
         private readonly string FileName = "";
         private readonly LuaFunction? HandleFunc;
         private ulong LastLuaGC;
@@ -81,27 +85,34 @@ namespace Slipstream.Components.Lua.Lua
                         Logger.Error(e, "{fileName} errored while invoking handle(): {message}", FileName, e.Message);
                     }
                 }
+
+                HandleDelayedExecution(WaitDelayedFunctions);
+                HandleDelayedExecution(DebounceDelayedFunctions);
             }
         }
 
         private void SetupLua(NLua.Lua lua)
         {
             var hiddenRequireName = $"require_{RandomString(5)}"; // TODO: is there a better way?
+            var hiddenSelf = $"slipstream_{RandomString(5)}";
 
-            lua["slipstreamrequire"] = this;
+            lua[hiddenSelf] = this;
             lua.DoString(@$"
 local {hiddenRequireName} = require;
 
 function require(n)
-    local m = slipstreamrequire:require(n)
+    local m = {hiddenSelf}:require(n)
 
     if not m then
-      m = { hiddenRequireName}
-            (n)
+      m = {hiddenRequireName}(n)
     end
 
     return m
-end");
+end
+
+function debounce(a, b, c); {hiddenSelf}:debounce(a, b, c); end
+function wait(a, b, c); {hiddenSelf}:wait(a, b, c); end
+");
         }
 
         private string RandomString(int length)
@@ -111,6 +122,7 @@ end");
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
         public ILuaLibrary require(string name)
         {
             lock (Lock)
@@ -119,9 +131,51 @@ end");
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
+        public void debounce(string name, LuaFunction func, float debounceLength)
+        {
+            if (func != null)
+            {
+                lock (Lock)
+                    DebounceDelayedFunctions[name] = new DelayedExecution(func, DateTime.Now.AddSeconds(debounceLength));
+            }
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
+        public void wait(string name, LuaFunction func, float duration)
+        {
+            if (func != null)
+            {
+                lock (Lock)
+                {
+                    if (!WaitDelayedFunctions.ContainsKey(name))
+                        WaitDelayedFunctions[name] = new DelayedExecution(func, DateTime.Now.AddSeconds(duration));
+                }
+            }
+        }
+
         public void Stop()
         {
             Stopping = true;
+        }
+
+        private void HandleDelayedExecution(IDictionary<string, DelayedExecution> functions)
+        {
+            var triggeredFunctions = new Dictionary<string, DelayedExecution>();
+
+            foreach (var d in functions)
+            {
+                if (d.Value.TriggersAt < DateTime.Now)
+                {
+                    triggeredFunctions.Add(d.Key, d.Value);
+                }
+            }
+
+            foreach (var d in triggeredFunctions)
+            {
+                functions.Remove(d.Key);
+                d.Value.Function.Call();
+            }
         }
     }
 }

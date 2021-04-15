@@ -1,11 +1,11 @@
-﻿using NLua;
+﻿#nullable enable
+
+using NLua;
 using System;
 
-#nullable enable
-
-namespace Slipstream.Components.Internal.LuaGlues
+namespace Slipstream.Components.Lua.Lua
 {
-    internal partial class CoreLuaGlue
+    public partial class LuaInstanceThread
     {
         private class DelayedExecution
         {

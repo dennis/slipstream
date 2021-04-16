@@ -233,7 +233,6 @@
     <Compile Include="Components\FileMonitor\Lua\IFileMonitorInstanceThread.cs" />
     <Compile Include="Components\Internal\Events\InternalShutdown.cs" />
     <Compile Include="Components\Internal\Events\InternalCommandShutdown.cs" />
-    <Compile Include="Components\Internal\Plugins\InternalPlugin.cs" />
     <Compile Include="Components\IRacing\Events\IRacingTrackPosition.cs" />
     <Compile Include="Components\IRacing\Events\IRacingTowed.cs" />
     <Compile Include="Components\IRacing\Events\IRacingRaw.cs" />

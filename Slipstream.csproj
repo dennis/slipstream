@@ -257,7 +257,8 @@
     <Compile Include="Components\IRacing\Plugins\Trackers\TrackInfoTracker.cs" />
     <Compile Include="Components\IRacing\Plugins\Trackers\WeatherTracker.cs" />
     <Compile Include="Components\Lua\CapturingEventBus.cs" />
-    <Compile Include="Shared\BaseServiceThread.cs" />
+    <Compile Include="Shared\BaseInstanceThread.cs" />
+    <Compile Include="Components\Lua\Plugins\LuaManagerPlugin.cs" />
     <Compile Include="Components\Playback\Plugins\PlaybackPlugin.cs" />
     <Compile Include="Components\Txrx\Plugins\ReceiverPlugin.cs" />
     <Compile Include="Components\Txrx\Plugins\TransmitterPlugin.cs" />
@@ -356,7 +357,6 @@
     <Compile Include="Components\IRacing\Plugins\IRacingPlugin.cs" />
     <Compile Include="Components\IRacing\Events\IRacingWeatherInfo.cs" />
     <Compile Include="Components\Lua\Plugins\LuaPlugin.cs" />
-    <Compile Include="Components\Lua\Plugins\LuaManagerPlugin.cs" />
     <Compile Include="Components\FileMonitor\Plugins\FileMonitorPlugin.cs" />
     <Compile Include="Components\IRacing\Events\IRacingTrackInfo.cs" />
     <Compile Include="Backend\PluginWorker.cs" />

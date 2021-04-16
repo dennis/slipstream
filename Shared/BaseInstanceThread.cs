@@ -1,18 +1,19 @@
 ﻿#nullable enable
 
 using Serilog;
+using System;
 using System.Threading;
 
 namespace Slipstream.Shared
 {
-    public abstract class BaseServiceThread
+    public abstract class BaseInstanceThread : IDisposable
     {
         private readonly Thread ServiceThread;
         protected readonly string InstanceId;
         protected readonly ILogger Logger;
         protected volatile bool Stopping = false;
 
-        protected BaseServiceThread(string instanceId, ILogger logger)
+        protected BaseInstanceThread(string instanceId, ILogger logger)
         {
             InstanceId = instanceId;
             Logger = logger;
@@ -34,6 +35,12 @@ namespace Slipstream.Shared
         public void Start()
         {
             ServiceThread.Start();
+        }
+
+        public void Dispose()
+        {
+            Stopping = true;
+            ServiceThread?.Join();
         }
     }
 }

@@ -12,11 +12,9 @@ using Slipstream.Shared;
 
 namespace Slipstream.Components.Audio.Lua
 {
-    public class AudioInstanceThread : IAudioInstanceThread, IDisposable
+    public class AudioInstanceThread : BaseInstanceThread, IAudioInstanceThread, IDisposable
     {
-        private readonly ILogger Logger;
         private readonly SpeechSynthesizer Synthesizer = new SpeechSynthesizer();
-        private readonly string InstanceId;
         private readonly string Path;
         private readonly Thread ServiceThead;
         private readonly IEventHandlerController EventHandlerController;
@@ -24,18 +22,15 @@ namespace Slipstream.Components.Audio.Lua
         private readonly IAudioEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private WaveOutEvent OutputDevice = new WaveOutEvent();
-        private volatile bool Stopping = false;
 
-        public AudioInstanceThread(string instanceId, int output, string path, IEventBusSubscription eventBusSubscription, IEventHandlerController eventHandlerController, IEventBus eventBus, IAudioEventFactory audioEventFactory, ILogger logger)
+        public AudioInstanceThread(string instanceId, int output, string path, IEventBusSubscription eventBusSubscription, IEventHandlerController eventHandlerController, IEventBus eventBus, IAudioEventFactory audioEventFactory, ILogger logger) : base(instanceId, logger)
         {
-            InstanceId = instanceId;
             Path = path;
             Subscription = eventBusSubscription;
             ServiceThead = new Thread(new ThreadStart(Main));
             EventHandlerController = eventHandlerController;
             EventFactory = audioEventFactory;
             EventBus = eventBus;
-            Logger = logger;
 
             if (output == -1)
             {
@@ -47,19 +42,7 @@ namespace Slipstream.Components.Audio.Lua
             }
         }
 
-        public void Dispose()
-        {
-            Stopping = true;
-            ServiceThead?.Join();
-        }
-
-        public void Start()
-        {
-            ServiceThead.Name = nameof(AudioInstanceThread) + " " + InstanceId;
-            ServiceThead.Start();
-        }
-
-        private void Main()
+        protected override void Main()
         {
             var audioEventHandler = EventHandlerController.Get<AudioEventHandler>();
             audioEventHandler.OnAudioCommandSay += (_, e) => OnAudioCommandSay(e);

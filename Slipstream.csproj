@@ -311,7 +311,6 @@
     <Compile Include="Shared\Helpers\StrongParameters\Parameters.cs" />
     <Compile Include="Components\Playback\LuaGlue.cs" />
     <Compile Include="Components\IRacing\LuaGlue.cs" />
-    <Compile Include="Components\Internal\LuaGLues\HttpLuaGlue.cs" />
     <Compile Include="Components\Internal\Services\LuaContext.cs" />
     <Compile Include="Components\Internal\Services\LuaException.cs" />
     <Compile Include="Components\Internal\LuaGLues\StateLuaGlue.cs" />

@@ -49,23 +49,30 @@ namespace Slipstream.Components.WinFormUI.Forms
                 return;
             }
 
-            var labels = selectedItem.Properties.Select(p => new Label { Text = p.Name });
-            // ToDo: A massive cheat, this could cause a naming collision
-            var textboxes = selectedItem.Properties.Select(p => new TextBox { Name = p.Name});
-            var inputControls = labels.Zip(textboxes, (label, textbox) => CreateInputControl(label, textbox));
+            //var labels = selectedItem.Properties.Select(p => new Label { Text = p.Name });
+            //// ToDo: A massive cheat, this could cause a naming collision
+            //var textboxes = selectedItem.Properties.Select(p => new TextBox { Name = p.Name });
+            //var descriptions = selectedItem.Properties.Select(p => new Label { Text = p.Description });
+            //var inputControls = labels.Zip(textboxes, (label, textbox) => CreateInputControl(label, textbox));
+
+            var inputControls = selectedItem.Properties.Select(p => CreateInputControl(p.Name, p.Name, p.Description));
 
             flpControls.Controls.Clear();
             flpControls.Controls.AddRange(inputControls.ToArray());
         }
 
-        private Panel CreateInputControl(Label label, TextBox textbox)
+        private Panel CreateInputControl(string label, string textbox, string Description)
         {
-            var panel = new FlowLayoutPanel();
-            panel.Controls.Add(label);
-            panel.Controls.Add(textbox);
-            textbox.Width = 150;
+            var panelControl = new FlowLayoutPanel();
+            var labelControl = new Label { Text = label };
+            var textboxControl = new TextBox { Name = textbox, Width = 150 };
+            var descriptionControl = new Label { Text = Description, Width = 150 };
 
-            return panel;
+            panelControl.Controls.Add(labelControl);
+            panelControl.Controls.Add(textboxControl);
+            panelControl.Controls.Add(descriptionControl);
+
+            return panelControl;
         }
 
         private void btnCreateEvent_Click(object sender, EventArgs e)

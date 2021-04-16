@@ -2,6 +2,7 @@
 using Slipstream.Shared;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -21,6 +22,7 @@ namespace Slipstream.Components.WinFormUI.Services
                     .Where(p => type.IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract)
                     .Select(t => BuildEventInfo(t))
                     .Where(p => filter(p))
+                    .OrderBy(p => p.Name)
                     .ToList();
             });
         }
@@ -33,6 +35,12 @@ namespace Slipstream.Components.WinFormUI.Services
                 Properties = BuildEventProperties(t),
                 EventType = t
             };
+        }
+
+        private static string GetDescriptionFromAttribute(PropertyInfo p)
+        {
+            return Attribute.IsDefined(p, typeof(DescriptionAttribute)) ?
+                    (Attribute.GetCustomAttribute(p, typeof(DescriptionAttribute)) as DescriptionAttribute).Description : null;
         }
 
         private static IList<EventPropertyInfoModel> BuildEventProperties(Type t)
@@ -51,7 +59,8 @@ namespace Slipstream.Components.WinFormUI.Services
             { 
                 Name = p.Name,
                 IsComplex = p.PropertyType.Namespace.StartsWith("Slipstream"),
-                Type = p.PropertyType
+                Type = p.PropertyType,
+                Description = GetDescriptionFromAttribute(p)
             }).ToList();
         }
     }

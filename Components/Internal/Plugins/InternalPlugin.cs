@@ -1,5 +1,4 @@
 ﻿using Serilog;
-using Slipstream.Components.Internal.LuaGlues;
 using Slipstream.Shared;
 using System.Collections.Generic;
 
@@ -35,10 +34,7 @@ namespace Slipstream.Components.Internal.Plugins
 
         public IEnumerable<ILuaGlue> CreateLuaGlues()
         {
-            return new ILuaGlue[]
-            {
-                new StateLuaGlue(StateService)
-            };
+            return new ILuaGlue[] { };
         }
     }
 }

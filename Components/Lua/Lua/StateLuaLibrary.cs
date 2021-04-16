@@ -1,28 +1,28 @@
 ﻿#nullable enable
 
-namespace Slipstream.Components.Internal.LuaGlues
+using NLua;
+using Slipstream.Components.Internal;
+using Slipstream.Shared;
+
+namespace Slipstream.Components.Lua.Lua
 {
-    public class StateLuaGlue : ILuaGlue
+    public class StateLuaLibrary : ILuaLibrary
     {
         private readonly IStateService StateService;
+        public string Name => "api/state";
 
-        public StateLuaGlue(IStateService stateService)
+        public StateLuaLibrary(IStateService stateService)
         {
             StateService = stateService;
         }
 
-        public void SetupLua(NLua.Lua lua)
+        public void Dispose()
         {
-            lua["state"] = this;
-            lua.DoString(@"
-function get_state(a); return state:get(a); end
-function set_state(a,b); return state:set(a, b); end
-function set_temp_state(a,b,c); return state:set_temp(a,b,c); end
-");
         }
 
-        public void Loop()
+        public ILuaReference? instance(LuaTable cfg)
         {
+            return null;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]

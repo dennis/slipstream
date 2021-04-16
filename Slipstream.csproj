@@ -269,6 +269,7 @@
     <Compile Include="Components\Lua\Lua\ILuaLuaLibrary.cs" />
     <Compile Include="Shared\BaseInstanceThread.cs" />
     <Compile Include="Components\Lua\Lua\LuaInstanceThread.DelayedExecution.cs" />
+    <Compile Include="Components\Lua\Lua\InternalUtilLibrary.cs" />
     <Compile Include="Components\Lua\Lua\UtilLuaLibrary.cs" />
     <Compile Include="Components\Lua\Plugins\LuaManagerPlugin.cs" />
     <Compile Include="Components\Lua\Lua\ILuaLuaReference.cs" />
@@ -316,7 +317,6 @@
     <Compile Include="Components\Internal\LuaGLues\StateLuaGlue.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Validators\StringValidator.cs" />
     <Compile Include="Components\Twitch\LuaGlue.cs" />
-    <Compile Include="Components\Internal\LuaGLues\InternalLuaGlue.cs" />
     <Compile Include="Components\UI\LuaGlue.cs" />
     <Compile Include="Components\Internal\Services\StateService.cs" />
     <Compile Include="Components\Txrx\Services\TxrxService.cs" />

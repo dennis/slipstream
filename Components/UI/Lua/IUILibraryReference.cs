@@ -1,37 +1,22 @@
 ﻿using Serilog;
+using Slipstream.Components.UI;
 using Slipstream.Shared;
 
-#nullable enable
-
-namespace Slipstream.Components.UI
+namespace Slipstream.Components.UI.Lua
 {
-    public class LuaGlue : ILuaGlue
+    public class IUILibraryReference : ILuaReference
     {
-        private readonly ILogger Logger;
         private readonly IEventBus EventBus;
         private readonly IUIEventFactory EventFactory;
+        private readonly ILogger Logger;
         private readonly string Prefix;
 
-        public LuaGlue(ILogger logger, IEventBus eventBus, IUIEventFactory eventFactory, string prefix)
+        public IUILibraryReference(string instanceId, string prefix, IEventBus eventBus, IUIEventFactory eventFactory, ILogger logger)
         {
-            Logger = logger;
             EventBus = eventBus;
             EventFactory = eventFactory;
+            Logger = logger;
             Prefix = prefix;
-        }
-
-        public void SetupLua(NLua.Lua lua)
-        {
-            lua["ui"] = this;
-            lua.DoString(@"
-function print(s); ui:print(s); end
-function create_button(a); ui:create_button(a); end
-function delete_button(a); ui:delete_button(a); end
-");
-        }
-
-        public void Loop()
-        {
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
@@ -50,6 +35,10 @@ function delete_button(a); ui:delete_button(a); end
         public void delete_button(string text)
         {
             EventBus.PublishEvent(EventFactory.CreateUICommandDeleteButton(text));
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

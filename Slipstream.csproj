@@ -213,6 +213,7 @@
     <Compile Include="Components\Audio\Lua\AudioLuaReference.cs" />
     <Compile Include="Components\Audio\Lua\AudioInstanceThread.cs" />
     <Compile Include="Components\Audio\Lua\IAudioInstanceThread.cs" />
+    <Compile Include="Components\UI\Lua\IUILibraryReference.cs" />
     <Compile Include="Components\IRacing\Constants.cs" />
     <Compile Include="Components\IRacing\Lua\IIRacingInstanceThread.cs" />
     <Compile Include="Components\Discord\EventFactory\DiscordEventFactory.cs" />
@@ -281,6 +282,7 @@
     <Compile Include="Components\Twitch\Lua\TwitchLuaInstanceThread.cs" />
     <Compile Include="Components\Twitch\Lua\TwitchLuaLibrary.cs" />
     <Compile Include="Components\Twitch\Lua\TwitchLuaReference.cs" />
+    <Compile Include="Components\UI\Lua\UILuaLibrary.cs" />
     <Compile Include="Shared\BaseInstanceThread.cs" />
     <Compile Include="Components\Lua\Lua\LuaInstanceThread.DelayedExecution.cs" />
     <Compile Include="Components\Lua\Lua\InternalUtilLibrary.cs" />
@@ -299,7 +301,6 @@
     <Compile Include="Components\Internal\Services\EventSerdeService.cs" />
     <Compile Include="Components\Internal\Services\LuaService.cs" />
     <Compile Include="Components\Internal\ILuaContext.cs" />
-    <Compile Include="Components\UI\Plugins\InternalPlugin.cs" />
     <Compile Include="Components\WinFormUI\Plugins\WinFormUIPlugin.cs" />
     <Compile Include="Shared\EventHandlerArgs.cs" />
     <Compile Include="Components\IRacing\Events\IIRacingSessionState.cs" />
@@ -323,7 +324,6 @@
     <Compile Include="Components\Internal\Services\LuaContext.cs" />
     <Compile Include="Components\Internal\Services\LuaException.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Validators\StringValidator.cs" />
-    <Compile Include="Components\UI\LuaGlue.cs" />
     <Compile Include="Components\Internal\Services\StateService.cs" />
     <Compile Include="GlobalSuppressions2.cs" />
     <Compile Include="Components\Audio\EventHandler\AudioEventHandler.cs" />

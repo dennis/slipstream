@@ -9,7 +9,6 @@ namespace Slipstream.Components.IRacing.Events
     public class IRacingWeatherInfo : IEvent
     {
         public string EventType => "IRacingWeatherInfo";
-        public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
         public double SessionTime { get; set; }
         public string Skies { get; set; } = string.Empty;
@@ -35,7 +34,6 @@ namespace Slipstream.Components.IRacing.Events
         {
             return obj is IRacingWeatherInfo info &&
                    EventType == info.EventType &&
-                   ExcludeFromTxrx == info.ExcludeFromTxrx &&
                    SessionTime == info.SessionTime &&
                    Skies == info.Skies &&
                    SurfaceTemp == info.SurfaceTemp &&
@@ -49,7 +47,6 @@ namespace Slipstream.Components.IRacing.Events
         {
             int hashCode = 1373460440;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
-            hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
             hashCode = hashCode * -1521134295 + SessionTime.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Skies);
             hashCode = hashCode * -1521134295 + SurfaceTemp.GetHashCode();

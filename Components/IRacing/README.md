@@ -110,7 +110,6 @@ Published every time a driver completes a full lap.
 | Name             | Type    | Description                                                                                               |
 |:-----------------|:-------:|:----------------------------------------------------------------------------------------------------------|
 | EventType        | string  | `IRacingCompletedLap` (constant)                                                                          |
-| ExcludeFromTxrx  | boolean | false (constant)                                                                                          |
 | Uptime           | integer | Time of when the message was sent via Eventbus (in milliseconds).                                         |
 | SessionTime      | float   | Time of event (seconds into the session)                                                                  |
 | CarIdx           | integer | Id of car                                                                                                 |
@@ -122,7 +121,7 @@ Published every time a driver completes a full lap.
 | BestLap          | boolean | Was this lap a new best lap time in this session?                                                         |
 
 **JSON Example:**
-`{"EventType":"IRacingCompletedLap","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":7306.3000976104477,"CarIdx":5,"LapTime":7306.3000976104477,"LapsCompleted":9,"FuelDelta":null,"LocalUser":false,"BestLap":false}`
+`{"EventType":"IRacingCompletedLap","Uptime":1742,"SessionTime":7306.3000976104477,"CarIdx":5,"LapTime":7306.3000976104477,"LapsCompleted":9,"FuelDelta":null,"LocalUser":false,"BestLap":false}`
 </details>
 
 <details><summary>IRacingCarInfo</summary><br />
@@ -131,7 +130,6 @@ Info about a new car or car with changed details (such as driver).
 | Name                 | Type    | Description                                                       |
 |:---------------------|:-------:|:------------------------------------------------------------------|
 | EventType            | string  | `IRacingCarInfo` (constant)                               |
-| ExcludeFromTxrx      | boolean | false (constant)                                                  |
 | Uptime               | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | SessionTime          | float   | Time of event (seconds into the session)                          |
 | CarNumber            | string  | Car's number                                                      |
@@ -147,7 +145,7 @@ Info about a new car or car with changed details (such as driver).
 | Spectator            | bool    | Is car a spectator                                                |
 
 **JSON Example:**
-`{"EventType":"IRacingCarInfo","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":1058.3000081380189,"CarIdx":63,"CarNumber":"042","CurrentDriverUserID":411093,"CurrentDriverName":"Dennis M\u00F8llegaard Pedersen","TeamID":0,"TeamName":"Dennis M\u00F8llegaard Pedersen","CarName":"Mazda MX-5 Cup","CarNameShort":"MX-5 Cup","CurrentDriverIRating":1592,"CurrentDriverLicense":"A 4.50","LocalUser":true,"Spectator":true}`
+`{"EventType":"IRacingCarInfo","Uptime":1742,"SessionTime":1058.3000081380189,"CarIdx":63,"CarNumber":"042","CurrentDriverUserID":411093,"CurrentDriverName":"Dennis M\u00F8llegaard Pedersen","TeamID":0,"TeamName":"Dennis M\u00F8llegaard Pedersen","CarName":"Mazda MX-5 Cup","CarNameShort":"MX-5 Cup","CurrentDriverIRating":1592,"CurrentDriverLicense":"A 4.50","LocalUser":true,"Spectator":true}`
 </details>
 
 <details><summary>IRacingCommandSendCarInfo</summary><br />
@@ -157,11 +155,10 @@ Request IRacingPlugin to send Car Info.
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `IRacingCommandSendCarInfo` (constant)                            |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 
 **JSON Example:**
-`{"EventType":"IRacingCommandSendCarInfo","ExcludeFromTxrx":false, "Uptime":1742}`
+`{"EventType":"IRacingCommandSendCarInfo","Uptime":1742}`
 </details>
 
 <details><summary>IRacingCommandSendRaceFlags</summary><br />
@@ -170,11 +167,10 @@ Request IRacingPlugin to send Race Flags.
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `IRacingCommandSendRaceFlags` (constant)                          |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 
 **JSON Example:**
-`{"EventType":"IRacingCommandSendRaceFlags","ExcludeFromTxrx":false, "Uptime":1742}`
+`{"EventType":"IRacingCommandSendRaceFlags","Uptime":1742}`
 </details>
 
 <details><summary>IRacingCommandSendSessionState</summary><br />
@@ -183,11 +179,10 @@ Request IRacingPlugin to send Session State.
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `IRacingCommandSendSessionState` (constant)                       |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 
 **JSON Example:**
-`{"EventType":"IRacingCommandSendSessionState","ExcludeFromTxrx":false, "Uptime":1742}`
+`{"EventType":"IRacingCommandSendSessionState","Uptime":1742}`
 </details>
 
 <details><summary>IRacingCommandSendTrackInfo</summary><br />
@@ -196,11 +191,10 @@ Request IRacingPlugin to send Track Info.
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `IRacingCommandSendTrackInfo` (constant)                          |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 
 **JSON Example:**
-`{"EventType":"IRacingCommandSendTrackInfo","ExcludeFromTxrx":false, "Uptime":1742}`
+`{"EventType":"IRacingCommandSendTrackInfo","Uptime":1742}`
 </details>
 
 <details><summary>IRacingCommandSendWeatherInfo</summary><br />
@@ -209,11 +203,10 @@ Request IRacingPlugin to send Weather info.
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `IRacingCommandSendWeatherInfo` (constant)                        |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 
 **JSON Example:**
-`{"EventType":"IRacingCommandSendWeatherInfo","ExcludeFromTxrx":false, "Uptime":1742}`
+`{"EventType":"IRacingCommandSendWeatherInfo","Uptime":1742}`
 </details>
 
 <details><summary>IRacingConnected</summary><br />
@@ -222,11 +215,10 @@ Sent when connected to IRacing
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `IRacingConnected` (constant)                                     |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 
 **JSON Example:**
-`{"EventType":"IRacingConnected","ExcludeFromTxrx":false, "Uptime":1742}`
+`{"EventType":"IRacingConnected","Uptime":1742}`
 </details>
 
 <details><summary>IRacingPractice</summary><br />
@@ -234,7 +226,6 @@ Sent when connected to IRacing
 | Name             | Type    | Description                                                        |
 |:-----------------|:-------:|:-------------------------------------------------------------------|
 | EventType        | string  | `IRacingPractice` (constant)                                       |
-| ExcludeFromTxrx  | boolean | false (constant)                                                   |
 | Uptime           | integer | Time of when the message was sent via Eventbus (in milliseconds).  |
 | Category         | string  | `Road`, `Oval`, `DirtOval` or `DirtRoad`                           |
 | SessionTime      | float   | Time of event (seconds into the session)                           |
@@ -247,14 +238,13 @@ Sent when connected to IRacing
 
 
 **JSON Example:**
-`{"EventType":"IRacingPractice","ExcludeFromTxrx":false,"Uptime":1112,"SessionTime":2763.6131673177088,"LapsLimited":false,"TimeLimited":true,"TotalSessionTime":3600.0,"TotalSessionLaps":0,"State":"Racing","Category":"Road"}`
+`{"EventType":"IRacingPractice","Uptime":1112,"SessionTime":2763.6131673177088,"LapsLimited":false,"TimeLimited":true,"TotalSessionTime":3600.0,"TotalSessionLaps":0,"State":"Racing","Category":"Road"}`
 </details>
 
 <details><summary>IRacingQualify</summary><br />
 | Name             | Type    | Description                                                        |
 |:-----------------|:-------:|:-------------------------------------------------------------------|
 | EventType        | string  | `IRacingQualify` (constant)                                        |
-| ExcludeFromTxrx  | boolean | false (constant)                                                   |
 | Uptime           | integer | Time of when the message was sent via Eventbus (in milliseconds).  |
 | Category         | string  | `Road`, `Oval`, `DirtOval` or `DirtRoad`                           |
 | SessionTime      | float   | Time of event (seconds into the session)                           |
@@ -268,14 +258,13 @@ Sent when connected to IRacing
 
 
 **JSON Example:**
-`{"EventType":"IRacingQualify","ExcludeFromTxrx":false,"Uptime":1112,"SessionTime":2763.6131673177088,"LapsLimited":false,"TimeLimited":true,"TotalSessionTime":3600.0,"TotalSessionLaps":0,"State":"Racing","Category":"Road",OpenQualify:false}`
+`{"EventType":"IRacingQualify","Uptime":1112,"SessionTime":2763.6131673177088,"LapsLimited":false,"TimeLimited":true,"TotalSessionTime":3600.0,"TotalSessionLaps":0,"State":"Racing","Category":"Road",OpenQualify:false}`
 </details>
 
 <details><summary>IRacingRace</summary><br />
 | Name             | Type    | Description                                                        |
 |:-----------------|:-------:|:-------------------------------------------------------------------|
 | EventType        | string  | `IRacingRace` (constant)                                           |
-| ExcludeFromTxrx  | boolean | false (constant)                                                   |
 | Uptime           | integer | Time of when the message was sent via Eventbus (in milliseconds).  |
 | Category         | string  | `Road`, `Oval`, `DirtOval` or `DirtRoad`                           |
 | SessionTime      | float   | Time of event (seconds into the session)                           |
@@ -286,9 +275,8 @@ Sent when connected to IRacing
 | State            | string  | Checkered, CoolDown, GetInCar, Invalid, ParadeLaps, Racing, Warmup |
 | Category         | string  | Road, Oval, DirtOval, DirtRoad                                     |
 
-
 **JSON Example:**
-`{"EventType":"IRacingRace","ExcludeFromTxrx":false,"Uptime":1112,"SessionTime":2763.6131673177088,"LapsLimited":false,"TimeLimited":true,"TotalSessionTime":3600.0,"TotalSessionLaps":0,"State":"Racing","Category":"Road"}`
+`{"EventType":"IRacingRace","Uptime":1112,"SessionTime":2763.6131673177088,"LapsLimited":false,"TimeLimited":true,"TotalSessionTime":3600.0,"TotalSessionLaps":0,"State":"Racing","Category":"Road"}`
 </details>
 
 <details><summary>IRacingTesting</summary><br />
@@ -297,7 +285,6 @@ Sent when connected to IRacing
 | Name             | Type    | Description                                                        |
 |:-----------------|:-------:|:-------------------------------------------------------------------|
 | EventType        | string  | `IRacingTesting` (constant)                                        |
-| ExcludeFromTxrx  | boolean | false (constant)                                                   |
 | Uptime           | integer | Time of when the message was sent via Eventbus (in milliseconds).  |
 | Category         | string  | `Road`, `Oval`, `DirtOval` or `DirtRoad`                           |
 | SessionTime      | float   | Time of event (seconds into the session)                           |
@@ -310,7 +297,7 @@ Sent when connected to IRacing
 
 
 **JSON Example:**
-`{"EventType":"IRacingTesting","ExcludeFromTxrx":false,"Uptime":1112,"SessionTime":2763.6131673177088,"LapsLimited":false,"TimeLimited":true,"TotalSessionTime":3600.0,"TotalSessionLaps":0,"State":"Racing","Category":"Road"}`
+`{"EventType":"IRacingTesting","Uptime":1112,"SessionTime":2763.6131673177088,"LapsLimited":false,"TimeLimited":true,"TotalSessionTime":3600.0,"TotalSessionLaps":0,"State":"Racing","Category":"Road"}`
 
 </details>
 
@@ -318,7 +305,6 @@ Sent when connected to IRacing
 | Name             | Type    | Description                                                        |
 |:-----------------|:-------:|:-------------------------------------------------------------------|
 | EventType        | string  | `IRacingWarmup` (constant)                                         |
-| ExcludeFromTxrx  | boolean | false (constant)                                                   |
 | Uptime           | integer | Time of when the message was sent via Eventbus (in milliseconds).  |
 | Category         | string  | `Road`, `Oval`, `DirtOval` or `DirtRoad`                           |
 | SessionTime      | float   | Time of event (seconds into the session)                           |
@@ -331,7 +317,7 @@ Sent when connected to IRacing
 
 
 **JSON Example:**
-`{"EventType":"IRacingWarmup","ExcludeFromTxrx":false,"Uptime":1112,"SessionTime":2763.6131673177088,"LapsLimited":false,"TimeLimited":true,"TotalSessionTime":3600.0,"TotalSessionLaps":0,"State":"Racing","Category":"Road"}`
+`{"EventType":"IRacingWarmup","Uptime":1112,"SessionTime":2763.6131673177088,"LapsLimited":false,"TimeLimited":true,"TotalSessionTime":3600.0,"TotalSessionLaps":0,"State":"Racing","Category":"Road"}`
 </details>
 
 <details><summary>IRacingDisconnected</summary><br />
@@ -340,11 +326,10 @@ Sent when connected to IRacing
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `IRacingDisconnected` (constant)                                  |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 
 **JSON Example:**
-`{"EventType":"IRacingDisconnected","ExcludeFromTxrx":false, "Uptime":1742}`
+`{"EventType":"IRacingDisconnected","Uptime":1742}`
 </details>
 
 <details><summary>IRacingDriverIncident</summary><br />
@@ -354,7 +339,6 @@ Sent every time an incident is detected (only for user, not other drivers).
 | Name                | Type    | Description                                                       |
 |:--------------------|:-------:|:------------------------------------------------------------------|
 | EventType           | string  | `IRacingDriverIncident` (constant)                                |
-| ExcludeFromTxrx     | boolean | false (constant)                                                  |
 | Uptime              | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | DriverIncidentCount | int     | Total incidents for current driver in car                         |
 | DriverIncidentDelta | int     | Change since last event                                           |
@@ -364,7 +348,7 @@ Sent every time an incident is detected (only for user, not other drivers).
 | MyIncidentDelta     | int     | Change since last event                                           |
 
 **JSON Example:**
-`{"EventType":"IRacingDriverIncident","ExcludeFromTxrx":false,"Uptime":262234,"DriverIncidentCount":1,"DriverIncidentDelta":1,"TeamIncidentCount":9,"TeamIncidentDelta":5,"MyIncidentCount":0,"MyIncidentDelta":0}`
+`{"EventType":"IRacingDriverIncident","Uptime":262234,"DriverIncidentCount":1,"DriverIncidentDelta":1,"TeamIncidentCount":9,"TeamIncidentDelta":5,"MyIncidentCount":0,"MyIncidentDelta":0}`
 </details>
 
 <details><summary>IRacingPitEnter</summary><br />
@@ -373,14 +357,13 @@ Sent when a car enters the pit lane.
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `IRacingPitEnter` (constant)                                      |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | SessionTime     | float   | Time of event (seconds into the session)                          |
 | CarIdx          | int     | Car Index                                                         |
 | LocalUser       | bool    | Is it our car?                                                    |
 
 **JSON Example:**
-`{"EventType":"IRacingPitEnter","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":1058.3000081380189,"CarIdx":6,"LocalUser":false}`
+`{"EventType":"IRacingPitEnter","Uptime":1742,"SessionTime":1058.3000081380189,"CarIdx":6,"LocalUser":false}`
 </details>
 
 <details><summary>IRacingPitExit</summary><br />
@@ -389,7 +372,6 @@ Sent when a car leaves the pit lane.
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `IRacingPitExit` (constant)                                       |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | SessionTime     | float   | Time of event (seconds into the session)                          |
 | CarIdx          | int     | Car Index                                                         |
@@ -397,7 +379,7 @@ Sent when a car leaves the pit lane.
 | Duration        | double  | Duration of the pitstop                                           |
 
 **JSON Example:**
-`{"EventType":"IRacingPitExit","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":1077.1666748046685,"CarIdx":11,"LocalUser":false,"Duration":10.233333333324026}`
+`{"EventType":"IRacingPitExit","Uptime":1742,"SessionTime":1077.1666748046685,"CarIdx":11,"LocalUser":false,"Duration":10.233333333324026}`
 </details>
 
 <details><summary>IRacingPitstopReport</summary><br />
@@ -406,7 +388,6 @@ For user, this is sent after a pitshop, showing some data about the pitstop.
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `IRacingPitstopReport` (constant)                                 |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | SessionTime     | float   | Time of event (seconds into the session)                          |
 | CarIdx          | int     | Car Index                                                         |
@@ -445,7 +426,6 @@ For user, this is sent after a pitshop, showing some data about the pitstop.
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `IRacingRaceFlags` (constant)                                     |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | SessionTime     | float   | Time of event (seconds into the session)                          |
 | Black           | bool    |                                                                   |
@@ -475,7 +455,7 @@ For user, this is sent after a pitshop, showing some data about the pitstop.
 | YellowWaving    | bool    |                                                                   |
 
 **JSON Example:**
-`{"EventType":"IRacingRaceFlags","ExcludeFromTxrx":false, "Uptime":1742,"SessionTime":1058.3000081380189,"Black":false,"Blue":false,"Caution":false,"CautionWaving":false,"Checkered":false,"Crossed":false,"Debris":false,"Disqualify":false,"FiveToGo":false,"Furled":false,"Green":false,"GreenHeld":false,"OneLapToGreen":false,"RandomWaving":false,"Red":false,"Repair":false,"Servicible":false,"StartGo":false,"StartHidden":true,"StartReady":false,"StartSet":false,"TenToGo":false,"White":false,"Yellow":false,"YellowWaving":false}`
+`{"EventType":"IRacingRaceFlags","Uptime":1742,"SessionTime":1058.3000081380189,"Black":false,"Blue":false,"Caution":false,"CautionWaving":false,"Checkered":false,"Crossed":false,"Debris":false,"Disqualify":false,"FiveToGo":false,"Furled":false,"Green":false,"GreenHeld":false,"OneLapToGreen":false,"RandomWaving":false,"Red":false,"Repair":false,"Servicible":false,"StartGo":false,"StartHidden":true,"StartReady":false,"StartSet":false,"TenToGo":false,"White":false,"Yellow":false,"YellowWaving":false}`
 </details>
 
 <details><summary>IRacingRaw</summary><br />
@@ -483,7 +463,6 @@ For user, this is sent after a pitshop, showing some data about the pitstop.
 | Name            | Type                                                     | Description                                                       |
 |:----------------|:--------------------------------------------------------:|:------------------------------------------------------------------|
 | EventType       | string                                                   | `IRacingRaw` (constant)                                           |
-| ExcludeFromTxrx | boolean                                                  | false (constant)                                                  |
 | Uptime          | integer                                                  | Time of when the message was sent via Eventbus (in milliseconds). |
 | CurrentState    | [IState](Components/IRacing/Plugins/GameState/IState.cs) | Object containing Slipstreams IRacing state                       |
 
@@ -495,7 +474,6 @@ For user, this is sent after a pitshop, showing some data about the pitstop.
 | Name                  | Type    | Description                                                       |
 |:----------------------|:-------:|:------------------------------------------------------------------|
 | EventType             | string  | `IRacingTrackInfo` (constant)                                     |
-| ExcludeFromTxrx       | boolean | false (constant)                                                  |
 | Uptime                | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | TrackId               | string  |                                                                   |
 | TrackLength           | string  |                                                                   |
@@ -507,7 +485,7 @@ For user, this is sent after a pitshop, showing some data about the pitstop.
 | TrackType             | string  |                                                                   |
 
 **JSON Example:**
-`{"EventType":"IRacingTrackInfo","ExcludeFromTxrx":false, "Uptime":1742,"TrackId":9,"TrackLength":"3.20 km","TrackDisplayName":"Summit Point Raceway","TrackCity":"Summit Point","TrackCountry":"USA","TrackDisplayShortName":"Summit","TrackConfigName":null,"TrackType":"road course"}`
+`{"EventType":"IRacingTrackInfo","Uptime":1742,"TrackId":9,"TrackLength":"3.20 km","TrackDisplayName":"Summit Point Raceway","TrackCity":"Summit Point","TrackCountry":"USA","TrackDisplayShortName":"Summit","TrackConfigName":null,"TrackType":"road course"}`
 </details>
 
 <details><summary>IRacingWeatherInfo</summary><br />
@@ -515,7 +493,6 @@ For user, this is sent after a pitshop, showing some data about the pitstop.
 | Name             | Type    | Description                                                       |
 |:-----------------|:-------:|:------------------------------------------------------------------|
 | EventType        | string  | `IRacingWeatherInfo` (constant)                                   |
-| ExcludeFromTxrx  | boolean | false (constant)                                                  |
 | Uptime           | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | SessionTime      | float   |                                                                   |
 | Skies            | string  | "Clear", "PartlyCloudy", "MostlyCloudy", "Overcast"               |
@@ -526,7 +503,7 @@ For user, this is sent after a pitshop, showing some data about the pitstop.
 | FogLevel         | float   |                                                                   |
 
 **JSON Example:**
-`{"EventType":"IRacingWeatherInfo","ExcludeFromTxrx":false,"Uptime":549,"SessionTime":1911.8300048828126,"Skies":"PartlyCloudy","SurfaceTemp":31.1111145,"AirTemp":25.5555553,"AirPressure":29.92,"RelativeHumidity":0.55,"FogLevel":0.0}`
+`{"EventType":"IRacingWeatherInfo","Uptime":549,"SessionTime":1911.8300048828126,"Skies":"PartlyCloudy","SurfaceTemp":31.1111145,"AirTemp":25.5555553,"AirPressure":29.92,"RelativeHumidity":0.55,"FogLevel":0.0}`
 </details>
 
 <details><summary>IRacingCarPosition</summary><br />
@@ -536,7 +513,6 @@ Published every time car changes positions.
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `IRacingCarPosition` (constant)                                   |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | SessionTime     | float   |                                                                   |
 | CarIdx          | int     | Car Index                                                         |
@@ -545,7 +521,7 @@ Published every time car changes positions.
 | PositionInRace  | int     | Overall position in race                                          |
 
 **JSON Example:**
-`{"EventType":"IRacingCarPosition","ExcludeFromTxrx":false,"Uptime":2528216,"SessionTime":2711.7666666666669,"CarIdx":28,"LocalUser":true,"PositionInClass":15,"PositionInRace":15}`
+`{"EventType":"IRacingCarPosition","Uptime":2528216,"SessionTime":2711.7666666666669,"CarIdx":28,"LocalUser":true,"PositionInClass":15,"PositionInRace":15}`
 </details>
 
 <details><summary>IRacingTowed</summary><br />
@@ -555,13 +531,12 @@ Published every your car is being towed to pits. You will not get these events f
 | Name             | Type    | Description                                                       |
 |:-----------------|:-------:|:------------------------------------------------------------------|
 | EventType        | string  | `IRacingTowed` (constant)                                         |
-| ExcludeFromTxrx  | boolean | false (constant)                                                  |
 | Uptime           | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | SessionTime      | float   |                                                                   |
 | RemainingTowTime | float   | How many seconds before we're in pit                              |
 
 **JSON Example:**
-`{"EventType":"IRacingTowed","ExcludeFromTxrx":false,"Uptime":2528216,"SessionTime":2711.7666666666669,"CarIdx":28,"LocalUser":true,"PositionInClass":15,"PositionInRace":15}`
+`{"EventType":"IRacingTowed","Uptime":2528216,"SessionTime":2711.7666666666669,"CarIdx":28,"LocalUser":true,"PositionInClass":15,"PositionInRace":15}`
 </details>
 
 <details><summary>IRacingTrackPosition</summary><br />
@@ -572,7 +547,6 @@ will only be on other car in the event (in `NewCarsAhead` or `NewCarsBehind`)
 | Name                    | Type     | Description                                                       |
 |:------------------------|:--------:|:------------------------------------------------------------------|
 | EventType               | string   | `IRacingTrackPosition` (constant)                                 |
-| ExcludeFromTxrx         | boolean  | false (constant)                                                  |
 | Uptime                  | integer  | Time of when the message was sent via Eventbus (in milliseconds). |
 | SessionTime             | float    |                                                                   |
 | CarIdx                  | int      | Car Index                                                         |
@@ -584,7 +558,7 @@ will only be on other car in the event (in `NewCarsAhead` or `NewCarsBehind`)
 | NewCarsAhead            | [CarIdx] | Array of new CarIdx that overtook the car                         |
 | NewCarsBehind           | [CarIdx] | Array of new CarIdx that car overtook                             |
 **JSON Example:**
-`{"EventType":"IRacingTrackPosition","ExcludeFromTxrx":false,"Uptime":63990,"SessionTime":360.383321126302,"CarIdx":39,"LocalUser":true,"CurrentPositionInClass":35,"CurrentPositionInRace":35,"PreviousPositionInClass":34,"PreviousPositionInRace":34,"NewCarsAhead":[7],"NewCarsBehind":[]}`
+`{"EventType":"IRacingTrackPosition","Uptime":63990,"SessionTime":360.383321126302,"CarIdx":39,"LocalUser":true,"CurrentPositionInClass":35,"CurrentPositionInRace":35,"PreviousPositionInClass":34,"PreviousPositionInRace":34,"NewCarsAhead":[7],"NewCarsBehind":[]}`
 </details>
 
 

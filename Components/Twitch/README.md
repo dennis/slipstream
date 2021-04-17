@@ -55,12 +55,11 @@ Sends a message to the connected twitch channel.
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `TwitchCommandSendMessage` (constant)                             |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | Message         | string  | Message                                                           |
 
 **JSON Example:**
-`{"EventType":"TwitchCommandSendMessage","ExcludeFromTxrx":false, "Uptime":1742,"Message":"Hello"}`
+`{"EventType":"TwitchCommandSendMessage","Uptime":1742,"Message":"Hello"}`
 </details>
 
 <details><summary>TwitchCommandSendWhisper</summary><br />
@@ -70,13 +69,12 @@ Sends a whisper to a user.
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `TwitchCommandSendWhisper` (constant)                             |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | To              | string  | Message                                                           |
 | Message         | string  | Message                                                           |
 
 **JSON Example:**
-`{"EventType":"TwitchCommandSendWhisper","ExcludeFromTxrx":false, "Uptime":1742,"To":"tntion", "Message":"Hello"}`
+`{"EventType":"TwitchCommandSendWhisper","Uptime":1742,"To":"tntion", "Message":"Hello"}`
 </details>
 
 <details><summary>TwitchConnected</summary><br />
@@ -85,11 +83,10 @@ Published when we're connected to Twitch.
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `TwitchConnected` (constant)                                      |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 
 **JSON Example:**
-`{"EventType":"TwitchConnected","ExcludeFromTxrx":false}`
+`{"EventType":"TwitchConnected"}`
 </details>
 
 <details><summary>TwitchDisconnected</summary><br />
@@ -98,11 +95,10 @@ We were disconnected from Twitch
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `TwitchDisconnected` (constant)                                   |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 
 **JSON Example:**
-`{"EventType":"TwitchConnected","ExcludeFromTxrx":false, "Uptime":1742}`
+`{"EventType":"TwitchConnected","Uptime":1742}`
 </details>
 
 <details><summary>TwitchReceivedMessage</summary><br />
@@ -112,7 +108,6 @@ A message received in the channel
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `TwitchReceivedMessage` (constant)                                |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | From            | string  | Sender's username                                                 |
 | Message         | boolean | Message typed                                                     |
@@ -122,7 +117,7 @@ A message received in the channel
 | Broadcaster     | boolean | Is sender a (twitch) broadcaster?                                 |
 
 **JSON Example:**
-`{"EventType":"TwitchReceivedMessage","ExcludeFromTxrx":false, "Uptime":1742,"From":"TNTion","Message":"!hello","Moderator":false,"Subscriber":false,"Vip":false,"Broadcaster":true}`
+`{"EventType":"TwitchReceivedMessage","Uptime":1742,"From":"TNTion","Message":"!hello","Moderator":false,"Subscriber":false,"Vip":false,"Broadcaster":true}`
 </details>
 
 <details><summary>TwitchReceivedWhisper</summary><br />
@@ -132,13 +127,12 @@ A whisper received.
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `TwitchReceivedWhisper` (constant)                                |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | From            | string  | Sender's username                                                 |
 | Message         | boolean | Message typed                                                     |
 
 **JSON Example:**
-`{"EventType":"TwitchReceivedMessage","ExcludeFromTxrx":false, "Uptime":1742,"From":"TNTion","Message":"!hello"}`
+`{"EventType":"TwitchReceivedMessage","Uptime":1742,"From":"TNTion","Message":"!hello"}`
 </details>
 
 <details><summary>TwitchUserSubscribed</summary><br />
@@ -148,7 +142,6 @@ A user subscribed or resubscribed to the stream
 | Name             | Type    | Description                                                       |
 |:-----------------|:-------:|:------------------------------------------------------------------|
 | EventType        | string  | `TwitchUserSubscribed` (constant)                                 |
-| ExcludeFromTxrx  | boolean | false (constant)                                                  |
 | Uptime           | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | Name             | string  | User (re)subscriping                                              |
 | Message          | string  | User own message                                                  |
@@ -158,7 +151,7 @@ A user subscribed or resubscribed to the stream
 | StreakMonths     | long    | How many months are the currect streak                            |
 
 **JSON Example:**
-`{"EventType":"TwitchUserSubscribed","ExcludeFromTxrx":false,"Uptime":5114474,"Name":"tntion","Message":"","SystemMessage":"tntion subscribed with Prime. They've subscribed for 7 months, currently on a 7 month streak!","SubscriptionPlan":"Prime","CumulativeMonths":7,"StreakMonths":7}`
+`{"EventType":"TwitchUserSubscribed","Uptime":5114474,"Name":"tntion","Message":"","SystemMessage":"tntion subscribed with Prime. They've subscribed for 7 months, currently on a 7 month streak!","SubscriptionPlan":"Prime","CumulativeMonths":7,"StreakMonths":7}`
 </details>
 
 <details><summary>TwitchGiftedSubscription</summary><br />
@@ -168,7 +161,6 @@ A user subscribed or resubscribed to the stream
 | Name             | Type    | Description                                                       |
 |:-----------------|:-------:|:------------------------------------------------------------------|
 | EventType        | string  | `TwitchGiftedSubscription` (constant)                             |
-| ExcludeFromTxrx  | boolean | false (constant)                                                  |
 | Uptime           | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | Gifter           | string  | User gifting sub (might be Anonymous)                             |
 | SubscriptionPlan | string  | One of `Prime`, `Tier1`, `Tier2` or `Tier3`                       |
@@ -176,7 +168,7 @@ A user subscribed or resubscribed to the stream
 | Recipient        | string  | Gift recipient                                                    |
 
 **JSON Example:**
-`{"EventType":"TwitchGiftedSubscription","ExcludeFromTxrx":false,"Uptime":3559925,"Gifter":"skidsmarksbot","SubscriptionPlan":"Tier1","Recipient":"luckyguy","SystemMessage":"skidsmarksbot gifted a Tier 1 sub to luckyguy! They have given 7 Gift Subs in the channel!"}`
+`{"EventType":"TwitchGiftedSubscription","Uptime":3559925,"Gifter":"skidsmarksbot","SubscriptionPlan":"Tier1","Recipient":"luckyguy","SystemMessage":"skidsmarksbot gifted a Tier 1 sub to luckyguy! They have given 7 Gift Subs in the channel!"}`
 </details>
 
 <details><summary>TwitchRaided</summary><br />
@@ -186,11 +178,10 @@ A user subscribed or resubscribed to the stream
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `TwitchRaided` (constant)                                         |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | Name            | string  | Who is raiding                                                    |
 | ViewerCount     | int     | How many viewers does the raid bring                              |
 
 **JSON Example:**
-`{"EventType":"TwitchRaided","ExcludeFromTxrx":false,"Uptime":1986776,"Name":"Sampsoid","ViewerCount":57}`
+`{"EventType":"TwitchRaided","Uptime":1986776,"Name":"Sampsoid","ViewerCount":57}`
 </details>

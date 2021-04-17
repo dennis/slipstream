@@ -283,8 +283,6 @@
     <Compile Include="Components\Lua\Lua\LuaLuaLibrary.cs" />
     <Compile Include="Components\Lua\Lua\LuaLuaReference.cs" />
     <Compile Include="Components\Playback\Plugins\PlaybackPlugin.cs" />
-    <Compile Include="Components\Txrx\Plugins\ReceiverPlugin.cs" />
-    <Compile Include="Components\Txrx\Plugins\TransmitterPlugin.cs" />
     <Compile Include="Components\ILuaGlue.cs" />
     <Compile Include="Components\BasePlugin.cs" />
     <Compile Include="Components\Twitch\Plugins\TwitchPlugin.cs" />
@@ -292,7 +290,6 @@
     <Compile Include="Components\Internal\ILuaService.cs" />
     <Compile Include="Components\Internal\IStateService.cs" />
     <Compile Include="Components\Internal\Services\EventSerdeService.cs" />
-    <Compile Include="Components\Txrx\ITxrxService.cs" />
     <Compile Include="Components\Internal\Services\LuaService.cs" />
     <Compile Include="Components\Internal\ILuaContext.cs" />
     <Compile Include="Components\UI\Plugins\InternalPlugin.cs" />
@@ -323,7 +320,6 @@
     <Compile Include="Components\Twitch\LuaGlue.cs" />
     <Compile Include="Components\UI\LuaGlue.cs" />
     <Compile Include="Components\Internal\Services\StateService.cs" />
-    <Compile Include="Components\Txrx\Services\TxrxService.cs" />
     <Compile Include="GlobalSuppressions2.cs" />
     <Compile Include="Components\Audio\EventHandler\AudioEventHandler.cs" />
     <Compile Include="Components\Playback\EventHandler\Playback.cs" />
@@ -444,7 +440,6 @@
     <None Include="Components\Playback\README.md" />
     <None Include="Components\README.md" />
     <None Include="Components\Twitch\README.md" />
-    <None Include="Components\Txrx\README.md" />
     <None Include="Components\UI\README.md" />
     <None Include="docs\init.lua.md" />
     <None Include="docs\release-checklist.md" />

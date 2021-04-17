@@ -6,7 +6,6 @@ namespace Slipstream.Components.Discord.Events
     public class DiscordMessageReceived : IEvent
     {
         public string EventType => "DiscordMessageReceived";
-        public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
         public string InstanceId { get; set; } = string.Empty;
         public string From { get; set; } = string.Empty;
@@ -19,7 +18,6 @@ namespace Slipstream.Components.Discord.Events
         {
             return obj is DiscordMessageReceived received &&
                    EventType == received.EventType &&
-                   ExcludeFromTxrx == received.ExcludeFromTxrx &&
                    InstanceId == received.InstanceId &&
                    From == received.From &&
                    FromId == received.FromId &&
@@ -32,7 +30,6 @@ namespace Slipstream.Components.Discord.Events
         {
             int hashCode = -1000146541;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
-            hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(InstanceId);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(From);
             hashCode = hashCode * -1521134295 + FromId.GetHashCode();

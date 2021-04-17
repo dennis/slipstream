@@ -18,10 +18,9 @@ in multiple scripts.
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `LuaCommandDeduplicateEvents` (constant)                          |
-| ExcludeFromTxrx | boolean | true (constant)                                                   |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | Events          | string  | JSON serialized version of the events. Separated by \n            |
 
 **JSON Example:**  
-`{"EventType": "LuaCommandDeduplicateEvents",  "ExcludeFromTxrx": true, "Uptime":1742, "Events": "JSON-ENCODED EVENTS"}`
+`{"EventType": "LuaCommandDeduplicateEvents", "Uptime":1742, "Events": "JSON-ENCODED EVENTS"}`
 </details>

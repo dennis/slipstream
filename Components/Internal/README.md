@@ -202,14 +202,13 @@ Request a plugin to be consumed
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `InternalCommandPluginRegister` (constant)                        |
-| ExcludeFromTxrx | boolean | true (constant)                                                   |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | Id              | string  | Id of the Plugin                                                  |
 | PluginName      | string  | Name of the Plugin                                                |
 | Configuration   | string  | JSON-encoded configuration                                        |
 
 **JSON Example:**  
-`{ "EventType": "InternalCommandPluginRegister", "ExcludeFromTxrx": true, "Uptime":1742, "Id": "AudioPlugin", "PluginName": "AudioPlugin"}`
+`{ "EventType": "InternalCommandPluginRegister", "Uptime":1742, "Id": "AudioPlugin", "PluginName": "AudioPlugin"}`
 </details>
 
 <details><summary>InternalCommandPluginStates</summary><br />
@@ -218,11 +217,10 @@ Request Engine to send state of all plugins
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `InternalCommandPluginStates` (constant)                          |
-| ExcludeFromTxrx | boolean | true (constant)                                                   |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 
 **JSON Example:**
-`{"EventType": "InternalCommandPluginStates", "ExcludeFromTxrx": true}`
+`{"EventType": "InternalCommandPluginStates"}`
 </details>
 
 <details><summary>InternalCommandPluginUnregister</summary><br />
@@ -231,12 +229,11 @@ Request a plugin to be removed
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `InternalCommandPluginUnregister` (constant)                      |
-| ExcludeFromTxrx | boolean | true (constant)                                                   |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | Id              | string  | Id of the Plugin                                                  |
 
 **JSON Example:**
-`{"EventType": "InternalCommandPluginUnregister", "ExcludeFromTxrx": true, "Uptime":1742, "Id": "AudioPlugin" }`
+`{"EventType": "InternalCommandPluginUnregister", "Uptime":1742, "Id": "AudioPlugin" }`
 </details>
 
 <details><summary>InternalPluginState</summary><br />
@@ -246,7 +243,6 @@ registered or unregistered or upon request.
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `InternalPluginState` (constant)                                  |
-| ExcludeFromTxrx | boolean | true (constant)                                                   |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | Id              | string  | Id of plugin                                                      |
 | PluginName      | string  | Name of plugin                                                    |
@@ -254,7 +250,7 @@ registered or unregistered or upon request.
 | PluginStatus    | string  | `Registered` or `Unregistered`                                    |
 
 **JSON Example:**
-`{"EventType": "InternalPluginState", "ExcludeFromTxrx": true, "Uptime":1742, "Id": "AudioPlugin", "PluginName": "AudioPlugin", "DisplayName": "AudioPlugin", "PluginStatus": "Registered"}`
+`{"EventType": "InternalPluginState", "Uptime":1742, "Id": "AudioPlugin", "PluginName": "AudioPlugin", "DisplayName": "AudioPlugin", "PluginStatus": "Registered"}`
 </details>
 
 <details><summary>InternalCommandShutdown</summary><br />
@@ -263,11 +259,10 @@ Request that Slipstream should shut down.
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `InternalCommandShutdown` (constant)                              |
-| ExcludeFromTxrx | boolean | true (constant)                                                   |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 
 **JSON Example:**
-`{"EventType":"InternalCommandShutdown","ExcludeFromTxrx":true,"Uptime":18396}`
+`{"EventType":"InternalCommandShutdown","Uptime":18396}`
 </details>
 
 <details><summary>InternalShutdown</summary><br />
@@ -276,9 +271,8 @@ Slipstream is shutting down.
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `InternalShutdown` (constant)                                     |
-| ExcludeFromTxrx | boolean | true (constant)                                                   |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 
 **JSON Example:**
-`{"EventType":"InternalShutdown","ExcludeFromTxrx":true,"Uptime":18396}`
+`{"EventType":"InternalShutdown","Uptime":18396}`
 </details>

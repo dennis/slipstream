@@ -6,7 +6,6 @@ namespace Slipstream.Components.UI.Events
     public class UICommandCreateButton : IEvent
     {
         public string EventType => "UICommandCreateButton";
-        public bool ExcludeFromTxrx => true;
         public ulong Uptime { get; set; }
         public string Text { get; set; } = "";
 
@@ -14,7 +13,6 @@ namespace Slipstream.Components.UI.Events
         {
             return obj is UICommandCreateButton button &&
                    EventType == button.EventType &&
-                   ExcludeFromTxrx == button.ExcludeFromTxrx &&
                    Text == button.Text;
         }
 
@@ -22,7 +20,6 @@ namespace Slipstream.Components.UI.Events
         {
             int hashCode = 25878420;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
-            hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Text);
             return hashCode;
         }

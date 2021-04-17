@@ -8,7 +8,6 @@ namespace Slipstream.Components.Audio.Events
     public class AudioCommandPlay : IEvent
     {
         public string EventType => "AudioCommandPlay";
-        public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
         public string InstanceId { get; set; } = "INVAILD-INSTANCE-ID";
         public string Filename { get; set; } = string.Empty;
@@ -18,7 +17,6 @@ namespace Slipstream.Components.Audio.Events
         {
             return obj is AudioCommandPlay play &&
                    EventType == play.EventType &&
-                   ExcludeFromTxrx == play.ExcludeFromTxrx &&
                    Filename == play.Filename &&
                    Volume == play.Volume;
         }
@@ -27,7 +25,6 @@ namespace Slipstream.Components.Audio.Events
         {
             int hashCode = 2126878269;
             hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(EventType);
-            hashCode = (hashCode * -1521134295) + ExcludeFromTxrx.GetHashCode();
             hashCode = (hashCode * -1521134295) + EqualityComparer<string?>.Default.GetHashCode(Filename);
             hashCode = (hashCode * -1521134295) + Volume.GetHashCode();
             return hashCode;

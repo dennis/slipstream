@@ -6,7 +6,6 @@ namespace Slipstream.Components.Discord.Events
     public class DiscordCommandSendMessage : IEvent
     {
         public string EventType => "DiscordCommandSendMessage";
-        public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
         public string InstanceId { get; set; } = string.Empty;
         public ulong ChannelId { get; set; }
@@ -17,7 +16,6 @@ namespace Slipstream.Components.Discord.Events
         {
             return obj is DiscordCommandSendMessage message &&
                    EventType == message.EventType &&
-                   ExcludeFromTxrx == message.ExcludeFromTxrx &&
                    InstanceId == message.InstanceId &&
                    ChannelId == message.ChannelId &&
                    Message == message.Message &&
@@ -28,7 +26,6 @@ namespace Slipstream.Components.Discord.Events
         {
             int hashCode = 514672855;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
-            hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(InstanceId);
             hashCode = hashCode * -1521134295 + ChannelId.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Message);

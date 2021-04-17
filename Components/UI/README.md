@@ -63,12 +63,11 @@ Is sent every time a button is pressed
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `UIButtonTriggered` (constant)                                    |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | Text            | string  | Text of the button                                                |
 
 **JSON Example:**
-`{"EventType":"UIButtonTriggered","ExcludeFromTxrx":false, "Uptime":1742,"Text":"Hello"}`
+`{"EventType":"UIButtonTriggered","Uptime":1742,"Text":"Hello"}`
 </details>
 
 <details><summary>UICommandCreateButton</summary><br />
@@ -77,12 +76,11 @@ Create a new button, unless it exists
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `UICommandCreateButton` (constant)                                |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | Text            | string  | Text of the button                                                |
 
 **JSON Example:**
-`{"EventType":"UICommandCreateButton","ExcludeFromTxrx":true, "Uptime":1742,"Text":"Hello"}`
+`{"EventType":"UICommandCreateButton","Uptime":1742,"Text":"Hello"}`
 </details>
 
 <details><summary>UICommandDeleteButton</summary><br />
@@ -91,12 +89,11 @@ Removes a button again, if it exists
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `UICommandDeleteButton` (constant)                                |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | Text            | string  | Text of the button                                                |
 
 **JSON Example:**
-`{"EventType":"UICommandDeleteButton","ExcludeFromTxrx":true, "Uptime":1742,"Text":"World"}`
+`{"EventType":"UICommandDeleteButton","Uptime":1742,"Text":"World"}`
 </details>
 
 <details><summary>UICommandWriteToConsole</summary><br />
@@ -105,10 +102,9 @@ Output something to the console.
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `UICommandWriteToConsole` (constant)                              |
-| ExcludeFromTxrx | boolean | true (constant)                                                   |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | Message         | string  | Message                                                           |
 
 **JSON Example:**
-`{"EventType":"UICommandWriteToConsole","ExcludeFromTxrx":true, "Uptime":1742,"Message":"Hello World"}`
+`{"EventType":"UICommandWriteToConsole","Uptime":1742,"Message":"Hello World"}`
 </details>

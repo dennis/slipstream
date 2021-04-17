@@ -45,11 +45,10 @@ Requests that a filename is read and sent as events.
 | Name            | Type    | Description                           |
 |:----------------|:-------:|:--------------------------------------|
 | EventType       | string  | `TwitchCommandSendMessage` (constant) |
-| ExcludeFromTxrx | boolean | false (constant)                      |
 | Filename         | string  | Filename to read events from|
 
 **JSON Example:**
-`{"EventType":"PlaybackCommandInjectEvents","ExcludeFromTxrx":true,"Filename":"C:\\Users\\dennis\\Documents\\2021-01-14T17.53.52.mjson","Uptime":4818}`
+`{"EventType":"PlaybackCommandInjectEvents","Filename":"C:\\Users\\dennis\\Documents\\2021-01-14T17.53.52.mjson","Uptime":4818}`
 </details>
 
 <details><summary>PlaybackCommandSaveEvents</summary><br />
@@ -59,9 +58,8 @@ Requests that events already seen, is stored in a file.
 | Name            | Type    | Description                           |
 |:----------------|:-------:|:--------------------------------------|
 | EventType       | string  | `TwitchCommandSendMessage` (constant) |
-| ExcludeFromTxrx | boolean | false (constant)                      |
 | Filename         | string  | Filename write events to|
 
 **JSON Example:**
-`{"EventType":"PlaybackSaveEvents","ExcludeFromTxrx":true,"Uptime":73571,"Filename":"C:\\Users\\dennis\\Documents\\2021-01-14T21.28.15.mjson"}`
+`{"EventType":"PlaybackSaveEvents","Uptime":73571,"Filename":"C:\\Users\\dennis\\Documents\\2021-01-14T21.28.15.mjson"}`
 </details>

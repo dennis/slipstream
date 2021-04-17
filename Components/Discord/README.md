@@ -84,7 +84,6 @@ Send a message to discord
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `DiscordCommandSendMessage` (constant)                            |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | InstanceId      | string  | Which instance the message originates from                        |
 | ChannelId       | long    | Which channel id to send message to                               |
@@ -92,7 +91,7 @@ Send a message to discord
 | TextToSpeech    | boolean | Use discord TTS to speak the message                              |
 
 **JSON Example:**
-`{"EventType":"DiscordCommandSendMessage","ExcludeFromTxrx":false,"Uptime":1398,"InstanceId":"discord","ChannelId":804666230932766730,"Message":"Hi From Lua","TextToSpeech":false}`
+`{"EventType":"DiscordCommandSendMessage","Uptime":1398,"InstanceId":"discord","ChannelId":804666230932766730,"Message":"Hi From Lua","TextToSpeech":false}`
 </details>
 
 <details><summary>DiscordConnected</summary><br />
@@ -102,12 +101,11 @@ We are connected to discord
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `DiscordConnected` (constant)                                     |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | InstanceId      | string  | Which instance the message originates from                        |
 
 **JSON Example:**
-`{"EventType":"DiscordConnected","ExcludeFromTxrx":false,"Uptime":1391,"InstanceId":"discord"}`
+`{"EventType":"DiscordConnected","Uptime":1391,"InstanceId":"discord"}`
 </details>
 
 <details><summary>DiscordDisconnected</summary><br />
@@ -117,12 +115,11 @@ We are connected to discord
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `DiscordDisconnected` (constant)                                  |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | InstanceId      | string  | Which instance the message originates from                        |
 
 **JSON Example:**
-`{"EventType":"DiscordDisconnected","ExcludeFromTxrx":false,"Uptime":1391,"InstanceId":"discord"}`
+`{"EventType":"DiscordDisconnected","Uptime":1391,"InstanceId":"discord"}`
 </details>
 
 <details><summary>DiscordMessageReceived</summary><br />
@@ -132,7 +129,6 @@ We are connected to discord
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
 | EventType       | string  | `DiscordMessageReceived` (constant)                               |
-| ExcludeFromTxrx | boolean | false (constant)                                                  |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | InstanceId      | string  | Which instance the message originates from                        |
 | From            | String  | User sending the message                                          |
@@ -142,5 +138,5 @@ We are connected to discord
 | ChannelId       | long    | Discord Channel Id for "Channel"                                  |
 
 **JSON Example:**
-`{"EventType":"DiscordMessageReceived","ExcludeFromTxrx":false,"Uptime":265699,"InstanceId":"discord","From":"dennis#2358","FromId":395311112851292161,"Message":"Hello bot","Channel":"live-commentry","ChannelId":804666230932766730}`
+`{"EventType":"DiscordMessageReceived","Uptime":265699,"InstanceId":"discord","From":"dennis#2358","FromId":395311112851292161,"Message":"Hello bot","Channel":"live-commentry","ChannelId":804666230932766730}`
 </details>

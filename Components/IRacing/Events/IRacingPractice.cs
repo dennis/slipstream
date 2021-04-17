@@ -5,7 +5,6 @@ namespace Slipstream.Components.IRacing.Events
     public class IRacingPractice : IIRacingSessionState
     {
         public string EventType => "IRacingPractice";
-        public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
         public double SessionTime { get; set; }
         public bool LapsLimited { get; set; }
@@ -19,7 +18,6 @@ namespace Slipstream.Components.IRacing.Events
         {
             return obj is IRacingPractice practice &&
                    EventType == practice.EventType &&
-                   ExcludeFromTxrx == practice.ExcludeFromTxrx &&
                    SessionTime == practice.SessionTime &&
                    LapsLimited == practice.LapsLimited &&
                    TimeLimited == practice.TimeLimited &&
@@ -33,7 +31,6 @@ namespace Slipstream.Components.IRacing.Events
         {
             int hashCode = -1762114191;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
-            hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
             hashCode = hashCode * -1521134295 + SessionTime.GetHashCode();
             hashCode = hashCode * -1521134295 + LapsLimited.GetHashCode();
             hashCode = hashCode * -1521134295 + TimeLimited.GetHashCode();

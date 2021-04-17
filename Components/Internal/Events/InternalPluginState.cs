@@ -8,7 +8,6 @@ namespace Slipstream.Components.Internal.Events
     public class InternalPluginState : IEvent
     {
         public string EventType => "InternalPluginState";
-        public bool ExcludeFromTxrx => true;
         public ulong Uptime { get; set; }
         public string Id { get; set; } = "INVALID-PLUGIN-ID";
         public string PluginName { get; set; } = "INVALID-PLUGIN-NAME";
@@ -19,7 +18,6 @@ namespace Slipstream.Components.Internal.Events
         {
             return obj is InternalPluginState state &&
                    EventType == state.EventType &&
-                   ExcludeFromTxrx == state.ExcludeFromTxrx &&
                    Id == state.Id &&
                    PluginName == state.PluginName &&
                    DisplayName == state.DisplayName &&
@@ -30,7 +28,6 @@ namespace Slipstream.Components.Internal.Events
         {
             int hashCode = 1261067873;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
-            hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Id);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(PluginName);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(DisplayName);

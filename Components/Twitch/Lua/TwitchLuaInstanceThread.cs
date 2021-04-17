@@ -1,11 +1,13 @@
-using Serilog;
+﻿#nullable enable
+
 using Slipstream.Shared;
-using Slipstream.Shared.Helpers.StrongParameters;
-using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
@@ -13,19 +15,18 @@ using TwitchLib.Communication.Clients;
 using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Models;
 
-#nullable enable
-
-namespace Slipstream.Components.Twitch.Plugins
+namespace Slipstream.Components.Twitch.Lua
 {
-    internal class TwitchPlugin : BasePlugin, IPlugin
+    public class TwitchLuaInstanceThread : BaseInstanceThread, ITwitchLuaInstanceThread
     {
-        private readonly IEventBus EventBus;
-        private readonly ITwitchEventFactory EventFactory;
-        private readonly ILogger Logger;
-        private readonly string TwitchChannel;
-        private readonly bool TwitchLog;
+        private readonly IEventHandlerController EventHandlerController;
         private readonly string TwitchToken;
         private readonly string TwitchUsername;
+        private readonly string TwitchChannel;
+        private bool TwitchLog;
+        private readonly ITwitchEventFactory EventFactory;
+        private readonly IEventBus EventBus;
+        private readonly IEventBusSubscription Subscription;
         private bool AnnouncedConnected = false;
         private TwitchClient? Client;
         private bool RequestReconnect = true;
@@ -41,33 +42,51 @@ namespace Slipstream.Components.Twitch.Plugins
         private DateTime ThrottleDurationStart = DateTime.UtcNow;
         private int CommandCountWithinThrottleDuration = 0;
 
-        static TwitchPlugin()
+        public TwitchLuaInstanceThread(string instanceId, string twitchToken, string twitchUsername, string twitchChannel, bool twitchLog, Serilog.ILogger logger, IEventHandlerController eventHandlerController, ITwitchEventFactory eventFactory, IEventBus eventBus, IEventBusSubscription eventBusSubscription) : base(instanceId, logger)
         {
-            ConfigurationValidator = new DictionaryValidator()
-                .RequireString("twitch_username")
-                .RequireString("twitch_channel")
-                .RequireString("twitch_token")
-                .PermitBool("twitch_log")
-                ;
-        }
-
-        public TwitchPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, ITwitchEventFactory eventFactory, IEventBus eventBus, Parameters configuration) : base(eventHandlerController, id, "TwitchPlugin", id, true)
-        {
-            Logger = logger;
+            EventHandlerController = eventHandlerController;
+            TwitchToken = twitchToken;
+            TwitchUsername = twitchUsername;
+            TwitchChannel = twitchChannel;
+            TwitchLog = twitchLog;
             EventFactory = eventFactory;
             EventBus = eventBus;
+            Subscription = eventBusSubscription;
+        }
 
-            ConfigurationValidator.Validate(configuration);
-
+        protected override void Main()
+        {
             var twitchEventHandler = EventHandlerController.Get<EventHandler.Twitch>();
 
             twitchEventHandler.OnTwitchCommandSendMessage += (_, e) => SendMessage(e.Message);
             twitchEventHandler.OnTwitchCommandSendWhisper += (_, e) => SendWhisper(e.To, e.Message);
 
-            TwitchUsername = configuration.Extract<string>("twitch_username");
-            TwitchChannel = configuration.Extract<string>("twitch_channel");
-            TwitchToken = configuration.Extract<string>("twitch_token");
-            TwitchLog = configuration.ExtractOrDefault("twitch_log", false);
+            var internalEventHandler = EventHandlerController.Get<Internal.EventHandler.Internal>();
+            internalEventHandler.OnInternalShutdown += (_, _e) => Stopping = true;
+
+            while (!Stopping)
+            {
+                IEvent? @event = Subscription.NextEvent(100);
+
+                if (RequestReconnect)
+                {
+                    Disconnect();
+                    Connect();
+
+                    RequestReconnect = false;
+                }
+
+                if (@event != null)
+                {
+                    EventHandlerController.HandleEvent(@event);
+                }
+            }
+        }
+
+        new public void Dispose()
+        {
+            Disconnect();
+            base.Dispose();
         }
 
         private void ThrottleSafe(Action action)
@@ -114,33 +133,13 @@ namespace Slipstream.Components.Twitch.Plugins
             ThrottleSafe(() => Client?.SendWhisper(to, message));
         }
 
-        public static DictionaryValidator ConfigurationValidator { get; }
-
-        public override void Dispose()
-        {
-            Disconnect();
-        }
-
-        public override void Run()
-        {
-            if (RequestReconnect)
-            {
-                Disconnect();
-                Connect();
-
-                RequestReconnect = false;
-            }
-
-            System.Threading.Thread.Sleep(500);
-        }
-
         private void AnnounceConnected()
         {
             Debug.Assert(Client != null);
 
             if (!AnnouncedConnected)
             {
-                EventBus.PublishEvent(EventFactory.CreateTwitchConnected());
+                EventBus.PublishEvent(EventFactory.CreateTwitchConnected(InstanceId));
                 AnnouncedConnected = true;
             }
 
@@ -158,7 +157,7 @@ namespace Slipstream.Components.Twitch.Plugins
         {
             if (AnnouncedConnected)
             {
-                EventBus.PublishEvent(EventFactory.CreateTwitchDisconnected());
+                EventBus.PublishEvent(EventFactory.CreateTwitchDisconnected(InstanceId));
                 AnnouncedConnected = false;
             }
         }
@@ -216,7 +215,7 @@ namespace Slipstream.Components.Twitch.Plugins
 
         private void OnRaidNotification(object sender, OnRaidNotificationArgs e)
         {
-            var @event = EventFactory.CreateTwitchRaided(e.RaidNotification.DisplayName, int.Parse(e.RaidNotification.MsgParamViewerCount));
+            var @event = EventFactory.CreateTwitchRaided(InstanceId, e.RaidNotification.DisplayName, int.Parse(e.RaidNotification.MsgParamViewerCount));
 
             EventBus.PublishEvent(@event);
         }
@@ -224,6 +223,7 @@ namespace Slipstream.Components.Twitch.Plugins
         private void OnReSubscriber(object sender, OnReSubscriberArgs e)
         {
             var @event = EventFactory.CreateTwitchUserSubscribed(
+                instanceId: InstanceId,
                 name: e.ReSubscriber.DisplayName,
                 message: e.ReSubscriber.ResubMessage,
                 subscriptionPlan: e.ReSubscriber.SubscriptionPlan.ToString(),
@@ -237,6 +237,7 @@ namespace Slipstream.Components.Twitch.Plugins
         private void OnNewSubscriber(object sender, OnNewSubscriberArgs e)
         {
             var @event = EventFactory.CreateTwitchUserSubscribed(
+                instanceId: InstanceId,
                 name: e.Subscriber.DisplayName,
                 message: e.Subscriber.ResubMessage,
                 subscriptionPlan: e.Subscriber.SubscriptionPlan.ToString(),
@@ -280,6 +281,7 @@ namespace Slipstream.Components.Twitch.Plugins
             }
 
             var @event = EventFactory.CreateTwitchGiftedSubscription(
+                instanceId: InstanceId,
                 gifter: gifter,
                 subscriptionPlan: e.GiftedSubscription.MsgParamSubPlan.ToString(),
                 recipient: e.GiftedSubscription.MsgParamRecipientDisplayName,
@@ -314,6 +316,7 @@ namespace Slipstream.Components.Twitch.Plugins
             EventBus.PublishEvent(
                 EventFactory.CreateTwitchReceivedMessage
                 (
+                    instanceId: InstanceId,
                     from: chatMessage.DisplayName,
                     message: chatMessage.Message,
                     moderator: chatMessage.IsModerator,
@@ -328,13 +331,8 @@ namespace Slipstream.Components.Twitch.Plugins
             var message = e.WhisperMessage;
 
             EventBus.PublishEvent(
-                EventFactory.CreateTwitchReceivedWhisper(message.DisplayName, message.Message)
+                EventFactory.CreateTwitchReceivedWhisper(InstanceId, message.DisplayName, message.Message)
             );
-        }
-
-        public IEnumerable<ILuaGlue> CreateLuaGlues()
-        {
-            return new ILuaGlue[] { new LuaGlue(EventBus, EventFactory) };
         }
     }
 }

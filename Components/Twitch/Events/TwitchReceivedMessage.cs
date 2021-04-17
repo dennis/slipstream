@@ -9,6 +9,7 @@ namespace Slipstream.Components.Twitch.Events
     {
         public string EventType => "TwitchReceivedMessage";
         public ulong Uptime { get; set; }
+        public string InstanceId { get; set; } = string.Empty;
         public string From { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
         public bool Moderator { get; set; }
@@ -20,6 +21,7 @@ namespace Slipstream.Components.Twitch.Events
         {
             return obj is TwitchReceivedMessage message &&
                    EventType == message.EventType &&
+                   InstanceId == message.InstanceId &&
                    From == message.From &&
                    Message == message.Message &&
                    Moderator == message.Moderator &&
@@ -32,6 +34,7 @@ namespace Slipstream.Components.Twitch.Events
         {
             int hashCode = -588097615;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(InstanceId);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(From);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Message);
             hashCode = hashCode * -1521134295 + Moderator.GetHashCode();

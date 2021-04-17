@@ -7,10 +7,12 @@ namespace Slipstream.Components.Twitch.Events
     {
         public string EventType => "TwitchDisconnected";
         public ulong Uptime { get; set; }
+        public string InstanceId { get; set; } = string.Empty;
 
         public override bool Equals(object obj)
         {
             return obj is TwitchDisconnected disconnected &&
+                   InstanceId == disconnected.InstanceId &&
                    EventType == disconnected.EventType;
         }
 
@@ -18,6 +20,7 @@ namespace Slipstream.Components.Twitch.Events
         {
             int hashCode = -441302714;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(InstanceId);
             return hashCode;
         }
     }

@@ -110,6 +110,8 @@ namespace Slipstream
             builder.RegisterType<Components.IRacing.Lua.IRacingReference>().As<Components.IRacing.Lua.IIRacingReference>().InstancePerDependency();
             builder.RegisterType<Components.Playback.Lua.PlaybackInstanceThread>().As<Components.Playback.Lua.IPlaybackInstanceThread>().InstancePerDependency();
             builder.RegisterType<Components.Playback.Lua.PlaybackLuaReference>().As<Components.Playback.Lua.IPlaybackLuaReference>().InstancePerDependency();
+            builder.RegisterType<Components.Twitch.Lua.TwitchLuaInstanceThread>().As<Components.Twitch.Lua.ITwitchLuaInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.Twitch.Lua.TwitchLuaReference>().As<Components.Twitch.Lua.ITwitchLuaReference>().InstancePerDependency();
         }
 
         private class PopulateSink

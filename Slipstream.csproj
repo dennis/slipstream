@@ -272,6 +272,10 @@
     <Compile Include="Components\Lua\CapturingEventBus.cs" />
     <Compile Include="Components\Lua\Lua\ILuaInstanceThread.cs" />
     <Compile Include="Components\Lua\Lua\ILuaLuaLibrary.cs" />
+    <Compile Include="Components\Playback\Lua\IPlaybackInstanceThread.cs" />
+    <Compile Include="Components\Playback\Lua\IPlaybackLuaReference.cs" />
+    <Compile Include="Components\Playback\Lua\PlaybackInstanceThread.cs" />
+    <Compile Include="Components\Playback\Lua\PlaybackLuaReference.cs" />
     <Compile Include="Shared\BaseInstanceThread.cs" />
     <Compile Include="Components\Lua\Lua\LuaInstanceThread.DelayedExecution.cs" />
     <Compile Include="Components\Lua\Lua\InternalUtilLibrary.cs" />
@@ -282,7 +286,6 @@
     <Compile Include="Components\Lua\Lua\LuaInstanceThread.cs" />
     <Compile Include="Components\Lua\Lua\LuaLuaLibrary.cs" />
     <Compile Include="Components\Lua\Lua\LuaLuaReference.cs" />
-    <Compile Include="Components\Playback\Plugins\PlaybackPlugin.cs" />
     <Compile Include="Components\ILuaGlue.cs" />
     <Compile Include="Components\BasePlugin.cs" />
     <Compile Include="Components\Twitch\Plugins\TwitchPlugin.cs" />
@@ -313,7 +316,6 @@
     <Compile Include="Shared\Helpers\StrongParameters\StrongParametersException.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Validators\DictionaryValidator.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Parameters.cs" />
-    <Compile Include="Components\Playback\LuaGlue.cs" />
     <Compile Include="Components\Internal\Services\LuaContext.cs" />
     <Compile Include="Components\Internal\Services\LuaException.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Validators\StringValidator.cs" />
@@ -437,6 +439,7 @@
     <None Include="Components\Internal\README.md" />
     <None Include="Components\IRacing\README.md" />
     <None Include="Components\Lua\README.md" />
+    <Compile Include="Components\Playback\Lua\PlaybackLuaLibrary.cs" />
     <None Include="Components\Playback\README.md" />
     <None Include="Components\README.md" />
     <None Include="Components\Twitch\README.md" />

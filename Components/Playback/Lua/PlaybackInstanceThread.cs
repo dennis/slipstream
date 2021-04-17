@@ -1,34 +1,46 @@
-using Serilog;
+﻿#nullable enable
+
 using Slipstream.Components.Internal;
 using Slipstream.Components.Playback.Events;
 using Slipstream.Shared;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
-#nullable enable
-
-namespace Slipstream.Components.Playback.Plugins
+namespace Slipstream.Components.Playback.Lua
 {
-    internal class PlaybackPlugin : BasePlugin, IPlugin
+    public class PlaybackInstanceThread : BaseInstanceThread, IPlaybackInstanceThread
     {
-        private readonly ILogger Logger;
         private readonly IEventBus EventBus;
+        private readonly IEventHandlerController EventHandlerController;
         private readonly IEventSerdeService EventSerdeService;
-        private readonly IPlaybackEventFactory EventFactory;
+        private readonly IEventBusSubscription Subscription;
 
-        public PlaybackPlugin(IEventHandlerController eventHandlerController, string id, ILogger logger, IEventBus eventBus, IPlaybackEventFactory eventFactory, IEventSerdeService eventSerdeService) : base(eventHandlerController, id, "PlaybackPlugin", id, true)
+        public PlaybackInstanceThread(string instanceId, Serilog.ILogger logger, IEventBus eventBus, IEventHandlerController eventHandlerController, IEventSerdeService eventSerdeService, IEventBusSubscription eventBusSubscription) : base(instanceId, logger)
         {
             EventBus = eventBus;
+            EventHandlerController = eventHandlerController;
             EventSerdeService = eventSerdeService;
-            EventFactory = eventFactory;
+            Subscription = eventBusSubscription;
+        }
 
+        protected override void Main()
+        {
             var playback = EventHandlerController.Get<EventHandler.Playback>();
-
             playback.OnPlaybackCommandInjectEvents += (s, e) => OnPlaybackCommandInjectEvents(e);
             playback.OnPlaybackCommandSaveEvents += (s, e) => OnPlaybackCommandSaveEvents(e);
 
-            Logger = logger;
+            var internalEventHandler = EventHandlerController.Get<Internal.EventHandler.Internal>();
+            internalEventHandler.OnInternalShutdown += (_, _e) => Stopping = true;
+
+            while (!Stopping)
+            {
+                IEvent? @event = Subscription.NextEvent(100);
+
+                if (@event != null)
+                {
+                    EventHandlerController.HandleEvent(@event);
+                }
+            }
         }
 
         private void OnPlaybackCommandSaveEvents(PlaybackCommandSaveEvents @event)
@@ -82,11 +94,6 @@ namespace Slipstream.Components.Playback.Plugins
             {
                 Logger.Warning($"Error reading {@event.Filename}: {e.Message}");
             }
-        }
-
-        public IEnumerable<ILuaGlue> CreateLuaGlues()
-        {
-            return new ILuaGlue[] { new LuaGlue(EventBus, EventFactory) };
         }
     }
 }

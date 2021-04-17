@@ -1,26 +1,21 @@
-﻿using Slipstream.Shared;
+﻿#nullable enable
 
-#nullable enable
+using Slipstream.Shared;
 
-namespace Slipstream.Components.Playback
+namespace Slipstream.Components.Playback.Lua
 {
-    public class LuaGlue : ILuaGlue
+    public class PlaybackLuaReference : IPlaybackLuaReference
     {
         private readonly IEventBus EventBus;
         private readonly IPlaybackEventFactory EventFactory;
 
-        public LuaGlue(IEventBus eventBus, IPlaybackEventFactory eventFactory)
+        public PlaybackLuaReference(IEventBus eventBus, IPlaybackEventFactory eventFactory)
         {
             EventBus = eventBus;
             EventFactory = eventFactory;
         }
 
-        public void SetupLua(NLua.Lua lua)
-        {
-            lua["playback"] = this;
-        }
-
-        public void Loop()
+        public void Dispose()
         {
         }
 

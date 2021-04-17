@@ -106,6 +106,8 @@ namespace Slipstream
             builder.RegisterType<Components.Lua.Lua.LuaInstanceThread>().As<Components.Lua.Lua.ILuaInstanceThread>().InstancePerDependency();
             builder.RegisterType<Components.Lua.Lua.LuaLuaReference>().As<Components.Lua.Lua.ILuaLuaReference>().InstancePerDependency();
             builder.Register(scope => scope.Resolve<Components.Lua.Lua.LuaLuaLibrary>()).As<Components.Lua.Lua.ILuaLuaLibrary>();
+            builder.RegisterType<Components.IRacing.Lua.IRacingInstanceThread>().As<Components.IRacing.Lua.IIRacingInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.IRacing.Lua.IRacingReference>().As<Components.IRacing.Lua.IIRacingReference>().InstancePerDependency();
         }
 
         private class PopulateSink

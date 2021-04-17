@@ -1,6 +1,6 @@
 ﻿#nullable enable
 
-using Slipstream.Components.IRacing.Plugins.GameState;
+using Slipstream.Components.IRacing.GameState;
 using Slipstream.Shared;
 
 namespace Slipstream.Components.IRacing.Events

@@ -283,6 +283,12 @@
     <Compile Include="Components\Twitch\Lua\TwitchLuaLibrary.cs" />
     <Compile Include="Components\Twitch\Lua\TwitchLuaReference.cs" />
     <Compile Include="Components\UI\Lua\UILuaLibrary.cs" />
+    <Compile Include="Components\WinFormUI\Lua\IWinFormInstanceThread.cs" />
+    <Compile Include="Components\WinFormUI\Lua\IWinFormReference.cs" />
+    <Compile Include="Components\WinFormUI\Lua\IWinFormUIInstance.cs" />
+    <Compile Include="Components\WinFormUI\Lua\WinFormInstanceThread.cs" />
+    <Compile Include="Components\WinFormUI\Lua\WinFormLuaLibrary.cs" />
+    <Compile Include="Components\WinFormUI\Lua\WinFormReference.cs" />
     <Compile Include="Shared\BaseInstanceThread.cs" />
     <Compile Include="Components\Lua\Lua\LuaInstanceThread.DelayedExecution.cs" />
     <Compile Include="Components\Lua\Lua\InternalUtilLibrary.cs" />
@@ -301,7 +307,6 @@
     <Compile Include="Components\Internal\Services\EventSerdeService.cs" />
     <Compile Include="Components\Internal\Services\LuaService.cs" />
     <Compile Include="Components\Internal\ILuaContext.cs" />
-    <Compile Include="Components\WinFormUI\Plugins\WinFormUIPlugin.cs" />
     <Compile Include="Shared\EventHandlerArgs.cs" />
     <Compile Include="Components\IRacing\Events\IIRacingSessionState.cs" />
     <Compile Include="Components\IRacing\Events\IRacingCarPosition.cs" />

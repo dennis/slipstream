@@ -22,6 +22,7 @@ namespace Slipstream.Components.WinFormUI.Forms
     {
         private Thread? EventHandlerThread;
         private readonly IEventBus EventBus;
+        private readonly string InstanceId;
         private readonly IInternalEventFactory InternalEventFactory;
         private readonly IUIEventFactory UIEventFactory;
         private readonly IPlaybackEventFactory PlaybackEventFactory;
@@ -33,8 +34,9 @@ namespace Slipstream.Components.WinFormUI.Forms
         private readonly IEventHandlerController EventHandler;
         private bool ShuttingDown = false;
 
-        public MainWindow(IInternalEventFactory internalEventFactory, IUIEventFactory uiEventFactory, IPlaybackEventFactory playbackEventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, IEventHandlerController eventHandlerController)
+        public MainWindow(string instanceId, IInternalEventFactory internalEventFactory, IUIEventFactory uiEventFactory, IPlaybackEventFactory playbackEventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, IEventHandlerController eventHandlerController)
         {
+            InstanceId = instanceId;
             InternalEventFactory = internalEventFactory;
             UIEventFactory = uiEventFactory;
             PlaybackEventFactory = playbackEventFactory;

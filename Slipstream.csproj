@@ -208,7 +208,11 @@
     <Compile Include="Components\AppilcationUpdate\Events\ApplicationUpdateCommandCheckLatestVersion.cs" />
     <Compile Include="Components\AppilcationUpdate\Events\ApplicationUpdateLatestVersionChanged.cs" />
     <Compile Include="Components\AppilcationUpdate\IApplicationUpdateEventFactory.cs" />
-    <Compile Include="Components\AppilcationUpdate\Plugins\ApplicationUpdatePlugin.cs" />
+    <Compile Include="Components\AppilcationUpdate\Lua\ApplicationUpdateInstanceThread.cs" />
+    <Compile Include="Components\AppilcationUpdate\Lua\ApplicationUpdateLuaLibrary.cs" />
+    <Compile Include="Components\AppilcationUpdate\Lua\ApplicationUpdateReference.cs" />
+    <Compile Include="Components\AppilcationUpdate\Lua\IApplicationUpdateInstanceThread.cs" />
+    <Compile Include="Components\AppilcationUpdate\Lua\IApplicationUpdateReference.cs" />
     <Compile Include="Components\Audio\Lua\AudioLuaLibrary.cs" />
     <Compile Include="Components\Audio\Lua\AudioLuaReference.cs" />
     <Compile Include="Components\Audio\Lua\AudioInstanceThread.cs" />
@@ -499,6 +503,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Components\AppilcationUpdate\Plugins\" />
     <Folder Include="Components\Discord\Plugins\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

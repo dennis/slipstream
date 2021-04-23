@@ -1,7 +1,8 @@
-﻿namespace Slipstream.Components.IRacing.Lua
+﻿using Slipstream.Shared.Lua;
+
+namespace Slipstream.Components.IRacing.Lua
 {
-    public interface IIRacingInstanceThread
+    public interface IIRacingInstanceThread : ILuaInstanceThread
     {
-        void Start();
     }
 }

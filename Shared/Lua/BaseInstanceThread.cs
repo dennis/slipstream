@@ -4,7 +4,7 @@ using Serilog;
 using System;
 using System.Threading;
 
-namespace Slipstream.Shared
+namespace Slipstream.Shared.Lua
 {
     public abstract class BaseInstanceThread : IDisposable
     {

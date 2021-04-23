@@ -1,7 +1,7 @@
 ﻿#nullable enable
 
 using Autofac;
-using Slipstream.Shared;
+using Slipstream.Shared.Lua;
 using System;
 
 namespace Slipstream.Components.Discord.Lua

@@ -1,7 +1,7 @@
 ﻿using Serilog;
 using Slipstream.Components.IRacing.GameState;
-using Slipstream.Components.IRacing.Trackers;
 using Slipstream.Shared;
+using Slipstream.Shared.Lua;
 using System.Threading;
 
 namespace Slipstream.Components.IRacing.Lua
@@ -37,25 +37,28 @@ namespace Slipstream.Components.IRacing.Lua
 
             var mapper = new Mapper(new StateFactory());
 
-            var state = mapper.GetState();
-
-            if (state != null)
+            while (!Stopping)
             {
-                if (PublishRawState)
-                {
-                    EventBus.PublishEvent(IRacingEventFactory.CreateIRacingRaw(state));
-                }
+                var state = mapper.GetState();
 
-                dataTrackers.Handle(state);
-            }
-            else
-            {
-                if (dataTrackers.Connected)
+                if (state != null)
                 {
-                    dataTrackers.Connected = false;
-                    EventBus.PublishEvent(IRacingEventFactory.CreateIRacingDisconnected());
+                    if (PublishRawState)
+                    {
+                        EventBus.PublishEvent(IRacingEventFactory.CreateIRacingRaw(state));
+                    }
+
+                    dataTrackers.Handle(state);
                 }
-                Thread.Sleep(5000);
+                else
+                {
+                    if (dataTrackers.Connected)
+                    {
+                        dataTrackers.Connected = false;
+                        EventBus.PublishEvent(IRacingEventFactory.CreateIRacingDisconnected());
+                    }
+                    Thread.Sleep(5000);
+                }
             }
         }
     }

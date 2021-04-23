@@ -1,7 +1,8 @@
-﻿namespace Slipstream.Components.AppilcationUpdate.Lua
+﻿using Slipstream.Shared.Lua;
+
+namespace Slipstream.Components.AppilcationUpdate.Lua
 {
-    internal interface IApplicationUpdateInstanceThread
+    public interface IApplicationUpdateInstanceThread : ILuaInstanceThread
     {
-        void Start();
     }
 }

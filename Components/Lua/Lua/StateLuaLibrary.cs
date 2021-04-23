@@ -2,7 +2,7 @@
 
 using NLua;
 using Slipstream.Components.Internal;
-using Slipstream.Shared;
+using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.Lua.Lua
 {

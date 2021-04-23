@@ -1,22 +1,15 @@
 ﻿#nullable enable
 
 using Autofac;
-using NLua;
-using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
+using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.IRacing.Lua
 {
-    public class IRacingLuaLibrary : ILuaLibrary
+    public class IRacingLuaLibrary : SingletonLuaLibrary<IIRacingInstanceThread, IIRacingReference>
     {
-        public string Name => "api/iracing";
-
         public static DictionaryValidator ConfigurationValidator { get; }
-
-        private readonly object Lock = new object();
-        private readonly ILifetimeScope LifetimeScope;
-        private IIRacingInstanceThread? Instance;
 
         static IRacingLuaLibrary()
         {
@@ -25,39 +18,18 @@ namespace Slipstream.Components.IRacing.Lua
                 .PermitBool("send_raw_state");
         }
 
-        public IRacingLuaLibrary(ILifetimeScope scope)
-        {
-            LifetimeScope = scope;
-        }
-
-        public void Dispose()
+        public IRacingLuaLibrary(ILifetimeScope scope) : base(ConfigurationValidator, scope)
         {
         }
 
-        public ILuaReference? instance(LuaTable cfgTable)
+        protected override IIRacingInstanceThread CreateInstance(ILifetimeScope scope, Parameters cfg)
         {
-            var cfg = Parameters.From(cfgTable);
-
-            ConfigurationValidator.Validate(cfg);
-
             var instanceId = cfg.Extract<string>("id");
             var publishRawState = cfg.ExtractOrDefault("send_raw_state", false);
 
-            lock (Lock)
-            {
-                if (Instance == null)
-                {
-                    Instance = LifetimeScope.Resolve<IIRacingInstanceThread>(
-                        new NamedParameter("instanceId", instanceId),
-                        new NamedParameter("publishRawState", publishRawState)
-                    );
-
-                    Instance.Start();
-                }
-            }
-
-            return LifetimeScope.Resolve<IIRacingReference>(
-                new NamedParameter("instanceId", instanceId)
+            return LifetimeScope.Resolve<IIRacingInstanceThread>(
+                new NamedParameter("instanceId", instanceId),
+                new NamedParameter("publishRawState", publishRawState)
             );
         }
     }

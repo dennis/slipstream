@@ -9,6 +9,7 @@ using Serilog;
 using Slipstream.Components.Audio.EventHandler;
 using Slipstream.Components.Audio.Events;
 using Slipstream.Shared;
+using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.Audio.Lua
 {

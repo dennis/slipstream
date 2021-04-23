@@ -6,6 +6,7 @@ using Serilog;
 using Slipstream.Components.Discord.EventHandler;
 using Slipstream.Components.Discord.Events;
 using Slipstream.Shared;
+using Slipstream.Shared.Lua;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;

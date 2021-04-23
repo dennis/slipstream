@@ -9,7 +9,7 @@ namespace Slipstream.Components.AppilcationUpdate.Events
 
         public ulong Uptime { get; set; }
 
-        public string LatestVersion { get; set; }
+        public string LatestVersion { get; set; } = string.Empty;
 
         public override bool Equals(object obj)
         {

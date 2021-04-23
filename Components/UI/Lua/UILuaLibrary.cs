@@ -2,7 +2,7 @@
 
 using Autofac;
 using NLua;
-using Slipstream.Shared;
+using Slipstream.Shared.Lua;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
 

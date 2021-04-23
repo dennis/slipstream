@@ -1,7 +1,8 @@
-﻿namespace Slipstream.Components.Twitch.Lua
+﻿using Slipstream.Shared.Lua;
+
+namespace Slipstream.Components.Twitch.Lua
 {
-    public interface ITwitchLuaInstanceThread
+    public interface ITwitchLuaInstanceThread : ILuaInstanceThread
     {
-        void Start();
     }
 }

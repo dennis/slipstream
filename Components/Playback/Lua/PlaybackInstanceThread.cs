@@ -3,6 +3,7 @@
 using Slipstream.Components.Internal;
 using Slipstream.Components.Playback.Events;
 using Slipstream.Shared;
+using Slipstream.Shared.Lua;
 using System.IO;
 using System.Threading;
 

@@ -1,9 +1,10 @@
 ﻿#nullable enable
 
+using Slipstream.Shared.Lua;
+
 namespace Slipstream.Components.Playback.Lua
 {
-    public interface IPlaybackInstanceThread
+    public interface IPlaybackInstanceThread : ILuaInstanceThread
     {
-        void Start();
     }
 }

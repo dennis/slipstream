@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Slipstream.Backend;
 
-namespace Slipstream.Shared
+namespace Slipstream.Shared.Lua
 {
     public class LuaLibraryRepository : ILuaLibraryRepository
     {

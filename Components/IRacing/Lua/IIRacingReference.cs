@@ -1,9 +1,4 @@
-﻿using Slipstream.Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.IRacing.Lua
 {

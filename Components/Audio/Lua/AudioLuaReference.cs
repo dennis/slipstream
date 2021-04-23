@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using Slipstream.Shared;
+using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.Audio.Lua
 {

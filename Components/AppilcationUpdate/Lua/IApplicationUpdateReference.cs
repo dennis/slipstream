@@ -1,4 +1,4 @@
-﻿using Slipstream.Shared;
+﻿using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.AppilcationUpdate.Lua
 {

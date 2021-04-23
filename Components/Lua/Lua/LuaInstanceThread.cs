@@ -2,8 +2,8 @@
 
 using NLua;
 using Serilog;
-using Slipstream.Components.Internal;
 using Slipstream.Shared;
+using Slipstream.Shared.Lua;
 using System;
 using System.Collections.Generic;
 using System.IO;

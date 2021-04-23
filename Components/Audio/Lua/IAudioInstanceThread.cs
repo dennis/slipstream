@@ -1,11 +1,11 @@
 ﻿#nullable enable
 
+using Slipstream.Shared.Lua;
 using System;
 
 namespace Slipstream.Components.Audio.Lua
 {
-    public interface IAudioInstanceThread : IDisposable
+    public interface IAudioInstanceThread : ILuaInstanceThread, IDisposable
     {
-        void Start();
     }
 }

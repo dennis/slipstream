@@ -1,23 +1,15 @@
 ﻿#nullable enable
 
 using Autofac;
-using NLua;
-using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
-using System.Collections.Generic;
-using System.Diagnostics;
+using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.Discord.Lua
 {
-    public class DiscordLuaLibrary : ILuaLibrary
+    public class DiscordLuaLibrary : CommodityLuaLibrary<IDiscordInstanceThread, DiscordLuaReference>
     {
         private static readonly DictionaryValidator ConfigurationValidator;
-        private readonly ILifetimeScope LifetimeScope;
-        private readonly object Lock = new object();
-        private readonly Dictionary<string, IDiscordInstanceThread> Instances = new Dictionary<string, IDiscordInstanceThread>();
-
-        public string Name => "api/discord";
 
         static DiscordLuaLibrary()
         {
@@ -26,45 +18,19 @@ namespace Slipstream.Components.Discord.Lua
                 .RequireString("token");
         }
 
-        public DiscordLuaLibrary(ILifetimeScope scope)
-        {
-            LifetimeScope = scope;
-        }
-
-        public void Dispose()
+        public DiscordLuaLibrary(ILifetimeScope scope) : base(ConfigurationValidator, scope)
         {
         }
 
-        public ILuaReference? instance(LuaTable cfgTable)
+        protected override IDiscordInstanceThread CreateInstance(ILifetimeScope scope, Parameters cfg)
         {
-            var cfg = Parameters.From(cfgTable);
-
-            ConfigurationValidator.Validate(cfg);
-
             var instanceId = cfg.Extract<string>("id");
             var token = cfg.Extract<string>("token");
 
-            lock (Lock)
-            {
-                Debug.WriteLine($"Creating instance for '{Name}' with id '{instanceId}'");
-
-                if (!Instances.TryGetValue(instanceId, out IDiscordInstanceThread value))
-                {
-                    Debug.WriteLine($"Creating {nameof(IDiscordInstanceThread)} for instanceId '{instanceId}'");
-
-                    var service = LifetimeScope.Resolve<IDiscordInstanceThread>(
-                        new NamedParameter("instanceId", instanceId),
-                        new NamedParameter("token", token)
-                    );
-
-                    Instances.Add(instanceId, service);
-                    service.Start();
-                }
-
-                return LifetimeScope.Resolve<DiscordLuaReference>(
-                    new NamedParameter("instanceId", instanceId)
-                );
-            }
+            return scope.Resolve<IDiscordInstanceThread>(
+                new NamedParameter("instanceId", instanceId),
+                new NamedParameter("token", token)
+            );
         }
     }
 }

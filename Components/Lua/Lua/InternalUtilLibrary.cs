@@ -3,10 +3,11 @@
 using NLua;
 using Slipstream.Components.Internal;
 using Slipstream.Shared;
+using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.Lua.Lua
 {
-    public class InternalLuaLibrary : ILuaLibrary
+    public class InternalLuaLibrary
     {
         private readonly IEventBus EventBus;
         private readonly IInternalEventFactory EventFactory;

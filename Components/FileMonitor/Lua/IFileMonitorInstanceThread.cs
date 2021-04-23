@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.FileMonitor.Lua
 {
-    public interface IFileMonitorInstanceThread : IDisposable
+    public interface IFileMonitorInstanceThread : ILuaInstanceThread
     {
-        void Start();
     }
 }

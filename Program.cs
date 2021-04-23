@@ -84,17 +84,17 @@ namespace Slipstream
                 .InstancePerDependency();
 
             // Lua related classes
-            builder.RegisterType<LuaLibraryRepository>().As<ILuaLibraryRepository>().SingleInstance();
+            builder.RegisterType<Shared.Lua.LuaLibraryRepository>().As<Shared.Lua.ILuaLibraryRepository>().SingleInstance();
             builder.RegisterAssemblyTypes(typeof(Program).Assembly)
-                .Where(t => t.IsAssignableTo<ILuaLibrary>())
+                .Where(t => t.IsAssignableTo<Shared.Lua.ILuaLibrary>())
                 .Where(t => !t.IsAbstract)
-                .As<ILuaLibrary>()
+                .As<Shared.Lua.ILuaLibrary>()
                 .AsSelf()
                 .InstancePerDependency();
             builder.RegisterAssemblyTypes(typeof(Program).Assembly)
-                .Where(t => t.IsAssignableTo<ILuaReference>())
+                .Where(t => t.IsAssignableTo<Shared.Lua.ILuaReference>())
                 .Where(t => !t.IsAbstract)
-                .As<ILuaReference>()
+                .As<Shared.Lua.ILuaReference>()
                 .AsSelf()
                 .InstancePerDependency();
 
@@ -112,8 +112,8 @@ namespace Slipstream
             builder.RegisterType<Components.Playback.Lua.PlaybackLuaReference>().As<Components.Playback.Lua.IPlaybackLuaReference>().InstancePerDependency();
             builder.RegisterType<Components.Twitch.Lua.TwitchLuaInstanceThread>().As<Components.Twitch.Lua.ITwitchLuaInstanceThread>().InstancePerDependency();
             builder.RegisterType<Components.Twitch.Lua.TwitchLuaReference>().As<Components.Twitch.Lua.ITwitchLuaReference>().InstancePerDependency();
-            builder.RegisterType<Components.WinFormUI.Lua.WinFormInstanceThread>().As<Components.WinFormUI.Lua.IWinFormInstanceThread>().InstancePerDependency();
-            builder.RegisterType<Components.WinFormUI.Lua.WinFormReference>().As<Components.WinFormUI.Lua.IWinFormReference>().InstancePerDependency();
+            builder.RegisterType<Components.WinFormUI.Lua.WinFormUIInstanceThread>().As<Components.WinFormUI.Lua.IWinFormUIInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.WinFormUI.Lua.WinFormUIReference>().As<Components.WinFormUI.Lua.IWinFormUIReference>().InstancePerDependency();
             builder.RegisterType<Components.AppilcationUpdate.Lua.ApplicationUpdateInstanceThread>().As<Components.AppilcationUpdate.Lua.IApplicationUpdateInstanceThread>().InstancePerDependency();
             builder.RegisterType<Components.AppilcationUpdate.Lua.ApplicationUpdateReference>().As<Components.AppilcationUpdate.Lua.IApplicationUpdateReference>().InstancePerDependency();
         }

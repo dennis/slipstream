@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Slipstream.Shared
+namespace Slipstream.Shared.Lua
 {
     public interface ILuaReference : IDisposable
     {

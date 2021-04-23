@@ -3,11 +3,12 @@ using Slipstream.Components.Playback;
 using Slipstream.Components.UI;
 using Slipstream.Components.WinFormUI.Forms;
 using Slipstream.Shared;
+using Slipstream.Shared.Lua;
 using System.Windows.Forms;
 
 namespace Slipstream.Components.WinFormUI.Lua
 {
-    public class WinFormInstanceThread : BaseInstanceThread, IWinFormInstanceThread
+    public class WinFormUIInstanceThread : BaseInstanceThread, IWinFormUIInstanceThread
     {
         private readonly IApplicationVersionService ApplicationVersionService;
         private readonly IEventBus EventBus;
@@ -16,7 +17,7 @@ namespace Slipstream.Components.WinFormUI.Lua
         private readonly IPlaybackEventFactory PlaybackEventFactory;
         private readonly IUIEventFactory UIEventFactory;
 
-        public WinFormInstanceThread(
+        public WinFormUIInstanceThread(
             string instanceId,
             Serilog.ILogger logger,
             IInternalEventFactory eventFactory,

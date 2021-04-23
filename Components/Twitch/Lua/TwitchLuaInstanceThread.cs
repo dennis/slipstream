@@ -1,13 +1,11 @@
 ﻿#nullable enable
 
 using Slipstream.Shared;
+using Slipstream.Shared.Lua;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;

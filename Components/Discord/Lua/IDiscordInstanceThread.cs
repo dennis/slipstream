@@ -1,10 +1,10 @@
 ﻿#nullable enable
 
+using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.Discord.Lua
 {
-    internal interface IDiscordInstanceThread
+    public interface IDiscordInstanceThread : ILuaInstanceThread
     {
-        void Start();
     }
 }

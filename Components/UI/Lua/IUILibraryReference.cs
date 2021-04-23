@@ -1,6 +1,6 @@
 ﻿using Serilog;
-using Slipstream.Components.UI;
 using Slipstream.Shared;
+using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.UI.Lua
 {

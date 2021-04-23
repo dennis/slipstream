@@ -1,4 +1,4 @@
-﻿namespace Slipstream.Shared
+﻿namespace Slipstream.Shared.Lua
 {
     public interface ILuaLibraryRepository
     {

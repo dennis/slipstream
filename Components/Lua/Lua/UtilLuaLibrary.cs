@@ -4,6 +4,7 @@ using NLua;
 using Serilog;
 using Slipstream.Components.Internal;
 using Slipstream.Shared;
+using Slipstream.Shared.Lua;
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;

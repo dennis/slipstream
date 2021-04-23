@@ -1,4 +1,7 @@
-﻿using Slipstream.Shared;
+﻿#nullable enable
+
+using Slipstream.Shared;
+using Slipstream.Shared.Lua;
 using Squirrel;
 using System.Diagnostics;
 using System.Linq;
@@ -70,7 +73,7 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
 
             using var updateManager = CreateUpdateManager();
 
-            if (updateManager.IsInstalledApp)
+            if (updateManager?.IsInstalledApp == true)
             {
                 Logger.Information($"Installed application: auto update enabled {Thread.CurrentThread.ManagedThreadId}");
 
@@ -84,7 +87,7 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
             }
         }
 
-        private UpdateManager CreateUpdateManager()
+        private UpdateManager? CreateUpdateManager()
         {
             if (string.IsNullOrEmpty(UpdateLocation))
             {
@@ -108,6 +111,9 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
             Logger.Information("Auto update, checking lastest version");
             using var updateManager = CreateUpdateManager();
 
+            if (updateManager == null)
+                return;
+
             var canUpdate = await updateManager.CheckForUpdate();
 
             if (canUpdate.ReleasesToApply.Any())
@@ -124,6 +130,8 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
         private async Task OnApplicationVersionChanged()
         {
             using var updateManager = CreateUpdateManager();
+            if (updateManager == null)
+                return;
             await DoAppUpdates(updateManager);
         }
 

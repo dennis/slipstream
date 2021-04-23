@@ -1,38 +1,29 @@
 ﻿#nullable enable
 
+using Autofac;
 using NLua;
-using Slipstream.Components.Internal;
-using Slipstream.Shared;
 using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.Lua.Lua
 {
-    public class InternalLuaLibrary
+    public class InternalLuaLibrary : ILuaLibrary
     {
-        private readonly IEventBus EventBus;
-        private readonly IInternalEventFactory EventFactory;
+        private readonly ILifetimeScope LifetimeScope;
 
         public string Name => "api/internal";
 
-        public InternalLuaLibrary(IEventBus eventBus, IInternalEventFactory eventFactory)
+        public InternalLuaLibrary(ILifetimeScope scope)
         {
-            EventBus = eventBus;
-            EventFactory = eventFactory;
+            LifetimeScope = scope;
         }
 
         public void Dispose()
         {
         }
 
-        public ILuaReference? instance(LuaTable cfg)
+        public ILuaReference? instance(LuaTable luaTable)
         {
-            return null;
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
-        public void shutdown()
-        {
-            EventBus.PublishEvent(EventFactory.CreateInternalCommandShutdown());
+            return LifetimeScope.Resolve<InternalLuaReference>();
         }
     }
 }

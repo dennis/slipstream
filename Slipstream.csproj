@@ -211,6 +211,9 @@
     <Compile Include="Components\AppilcationUpdate\Lua\ApplicationUpdateInstanceThread.cs" />
     <Compile Include="Components\AppilcationUpdate\Lua\ApplicationUpdateLuaLibrary.cs" />
     <Compile Include="Components\AppilcationUpdate\Lua\ApplicationUpdateReference.cs" />
+    <Compile Include="Components\Lua\Lua\InternalLuaReference.cs" />
+    <Compile Include="Components\Lua\Lua\StateLuaReference.cs" />
+    <Compile Include="Components\Lua\Lua\UtilLuaReference.cs" />
     <Compile Include="Shared\Lua\BaseLuaLibrary.cs" />
     <Compile Include="Shared\Lua\CommodityLuaLibrary.cs" />
     <Compile Include="Components\AppilcationUpdate\Lua\IApplicationUpdateInstanceThread.cs" />

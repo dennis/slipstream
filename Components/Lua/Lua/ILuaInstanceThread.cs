@@ -6,6 +6,8 @@ namespace Slipstream.Components.Lua.Lua
     {
         void Start();
 
+        void Join();
+
         void Stop();
     }
 }

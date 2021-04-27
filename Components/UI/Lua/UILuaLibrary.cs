@@ -8,7 +8,7 @@ using Slipstream.Shared.Helpers.StrongParameters.Validators;
 
 namespace Slipstream.Components.UI.Lua
 {
-    public class UILuaLibrary : ILuaLibrary
+    public class UILuaLibrary : ILuaLibraryAutoRegistration
     {
         private readonly ILifetimeScope LifetimeScope;
         private static readonly DictionaryValidator ConfigurationValidator;
@@ -44,6 +44,10 @@ namespace Slipstream.Components.UI.Lua
                 new NamedParameter("instanceId", instanceId),
                 new NamedParameter("prefix", prefix)
             );
+        }
+
+        public void ReferenceDropped(ILuaReference _)
+        {
         }
     }
 }

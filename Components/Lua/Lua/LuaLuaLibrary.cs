@@ -30,6 +30,10 @@ namespace Slipstream.Components.Lua.Lua
             LifetimeScope = scope;
         }
 
+        internal void ReferenceDrop(LuaLuaReference _)
+        {
+        }
+
         public void Dispose()
         {
         }
@@ -53,20 +57,33 @@ namespace Slipstream.Components.Lua.Lua
                 if (!Instances.TryGetValue(instanceId, out ILuaInstanceThread serviceThread))
                 {
                     var newServiceThread = LifetimeScope.Resolve<ILuaInstanceThread>(
+                        new NamedParameter("luaLibrary", this),
                         new NamedParameter("instanceId", instanceId),
                         new NamedParameter("filePath", filePath)
                     );
 
-                    newServiceThread.Start();
-
                     Instances.Add(instanceId, newServiceThread);
+
+                    newServiceThread.Start();
                 }
             }
 
             return LifetimeScope.Resolve<ILuaLuaReference>(
+                new NamedParameter("luaLibrary", this),
                 new NamedParameter("instanceId", instanceId),
                 new NamedParameter("serviceThread", Instances[instanceId])
             );
+        }
+
+        public void InstanceStopped(string instanceId)
+        {
+            lock (Lock)
+            {
+                if (Instances.ContainsKey(instanceId))
+                {
+                    Instances.Remove(instanceId);
+                }
+            }
         }
     }
 }

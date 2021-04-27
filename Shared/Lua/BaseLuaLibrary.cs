@@ -4,13 +4,12 @@ using Autofac;
 using NLua;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Slipstream.Shared.Lua
 {
-    // As opposed to SingletonLuaLibrary, we got CommidityLuaLibrary. This creates instances, one for each unique index
-
-    public abstract class BaseLuaLibrary<TInstance, TReference> : ILuaLibrary
+    public abstract class BaseLuaLibrary<TInstance, TReference> : ILuaLibraryAutoRegistration
         where TInstance : ILuaInstanceThread
         where TReference : ILuaReference
     {
@@ -18,16 +17,37 @@ namespace Slipstream.Shared.Lua
         protected readonly DictionaryValidator Validator;
         protected readonly ILifetimeScope LifetimeScope;
 
+        private class InstanceContainer<T>
+        {
+            public T Instance { get; set; }
+            public int RefCount = 0;
+
+            public InstanceContainer(T instance)
+            {
+                Instance = instance;
+            }
+        }
+
+        private readonly Dictionary<string, InstanceContainer<TInstance>> Instances = new Dictionary<string, InstanceContainer<TInstance>>();
+
         // LuaLibrary from class name and use that
         public string Name => $"api/{GetType().Name.Replace("LuaLibrary", "").ToLower()}";
 
-        public BaseLuaLibrary(DictionaryValidator validator, ILifetimeScope lifetimeScope)
+        protected BaseLuaLibrary(DictionaryValidator validator, ILifetimeScope lifetimeScope)
         {
             Validator = validator;
             LifetimeScope = lifetimeScope;
         }
 
-        public abstract void Dispose();
+        public void Dispose()
+        {
+            foreach (var thread in Instances)
+            {
+                Debug.WriteLine($"[{thread.Key}] Disposing");
+                thread.Value.Instance.Dispose();
+            }
+            Instances.Clear();
+        }
 
         public ILuaReference? instance(LuaTable cfgTable)
         {
@@ -39,18 +59,58 @@ namespace Slipstream.Shared.Lua
 
             lock (Lock)
             {
-                Debug.WriteLine($"Creating instance for '{Name}' with id '{instanceId}'");
-
                 HandleInstance(instanceId, cfg);
 
+                Debug.Assert(Instances.ContainsKey(instanceId));
+                var container = Instances[instanceId];
+
+                container.RefCount++;
+
                 return LifetimeScope.Resolve<TReference>(
-                    new NamedParameter("instanceId", instanceId)
+                    new NamedParameter("instanceId", instanceId),
+                    new NamedParameter("luaLibrary", this)
                 );
             }
         }
 
         protected abstract TInstance CreateInstance(ILifetimeScope scope, Parameters cfg);
 
-        protected abstract void HandleInstance(string instanceId, Parameters cfg);
+        protected void HandleInstance(string instanceId, Parameters cfg)
+        {
+            if (!Instances.ContainsKey(instanceId))
+            {
+                Debug.WriteLine($"[{instanceId}] Creating instance {GetType().Name}");
+
+                var instance = CreateInstance(LifetimeScope, cfg);
+                Instances.Add(instanceId, new InstanceContainer<TInstance>(instance));
+                instance.Start();
+            }
+        }
+
+        public void ReferenceDropped(ILuaReference luaReference)
+        {
+            lock (Lock)
+            {
+                var instanceId = luaReference.InstanceId;
+
+                if (Instances.TryGetValue(instanceId, out InstanceContainer<TInstance> container))
+                {
+                    container.RefCount--;
+
+                    if (container.RefCount == 0)
+                    {
+                        Instances.Remove(luaReference.InstanceId);
+                        container.Instance.Stop();
+                        container.Instance.Dispose();
+
+                        Debug.WriteLine($"[{instanceId}] Not referenced anymore, stopped");
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine($"***** ERROR - LuaReference '{instanceId}' points to an non-existing instance *****");
+                }
+            }
+        }
     }
 }

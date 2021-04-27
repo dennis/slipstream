@@ -5,6 +5,7 @@ using Slipstream.Components.Internal.Events;
 using Slipstream.Components.Playback;
 using Slipstream.Components.UI;
 using Slipstream.Components.UI.Events;
+using Slipstream.Components.WinFormUI.Lua;
 using Slipstream.Properties;
 using Slipstream.Shared;
 
@@ -22,7 +23,7 @@ namespace Slipstream.Components.WinFormUI.Forms
     {
         private Thread? EventHandlerThread;
         private readonly IEventBus EventBus;
-        private readonly string InstanceId;
+        private readonly WinFormUIInstanceThread Instance;
         private readonly IInternalEventFactory InternalEventFactory;
         private readonly IUIEventFactory UIEventFactory;
         private readonly IPlaybackEventFactory PlaybackEventFactory;
@@ -34,9 +35,9 @@ namespace Slipstream.Components.WinFormUI.Forms
         private readonly IEventHandlerController EventHandler;
         private bool ShuttingDown = false;
 
-        public MainWindow(string instanceId, IInternalEventFactory internalEventFactory, IUIEventFactory uiEventFactory, IPlaybackEventFactory playbackEventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, IEventHandlerController eventHandlerController)
+        public MainWindow(WinFormUIInstanceThread instance, IInternalEventFactory internalEventFactory, IUIEventFactory uiEventFactory, IPlaybackEventFactory playbackEventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, IEventHandlerController eventHandlerController)
         {
-            InstanceId = instanceId;
+            Instance = instance;
             InternalEventFactory = internalEventFactory;
             UIEventFactory = uiEventFactory;
             PlaybackEventFactory = playbackEventFactory;
@@ -119,6 +120,12 @@ namespace Slipstream.Components.WinFormUI.Forms
             }
 
             AppendMessages(allMesssages);
+
+            if (Instance.IsStopping())
+            {
+                ShuttingDown = true;
+                ExecuteSecure(() => Application.Exit());
+            }
         }
 
         #region EventHandlerThread methods

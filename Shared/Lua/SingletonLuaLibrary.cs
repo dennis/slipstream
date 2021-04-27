@@ -3,7 +3,6 @@
 using Autofac;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
-using System.Diagnostics;
 
 namespace Slipstream.Shared.Lua
 {
@@ -11,26 +10,16 @@ namespace Slipstream.Shared.Lua
         where TInstance : ILuaInstanceThread
         where TReference : ILuaReference
     {
-        private ILuaInstanceThread? Instance = null;
-
-        public SingletonLuaLibrary(DictionaryValidator validator, ILifetimeScope lifetimeScope) : base(validator, lifetimeScope)
+        protected SingletonLuaLibrary(DictionaryValidator validator, ILifetimeScope lifetimeScope) : base(validator, lifetimeScope)
         {
         }
 
-        public override void Dispose()
+        new protected void HandleInstance(string _, Parameters cfg)
         {
-            Instance?.Dispose();
-        }
+            // Force instanceId to be "singleton", so we never get more than one
+            cfg["instanceId"] = "singleton";
 
-        protected override void HandleInstance(string instanceId, Parameters cfg)
-        {
-            if (Instance == null)
-            {
-                Debug.WriteLine($"Creating {GetType().Name} for instanceId '{instanceId}' [singleton]");
-
-                Instance = CreateInstance(LifetimeScope, cfg);
-                Instance?.Start();
-            }
+            base.HandleInstance("singleton", cfg);
         }
     }
 }

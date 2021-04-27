@@ -10,7 +10,7 @@ namespace Slipstream.Shared.Lua
 
         public LuaLibraryRepository(ILifetimeScope scope)
         {
-            foreach (var type in scope.GetImplementingTypes<ILuaLibrary>())
+            foreach (var type in scope.GetImplementingTypes<ILuaLibraryAutoRegistration>())
             {
                 LuaLibraries.Add((ILuaLibrary)scope.Resolve(type));
 

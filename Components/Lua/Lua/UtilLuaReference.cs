@@ -15,15 +15,20 @@ namespace Slipstream.Components.Lua.Lua
     {
         private readonly IEventSerdeService EventSerdeService;
         private readonly ILogger Logger;
+        private readonly UtilLuaLibrary LuaLibrary;
+        public string InstanceId { get; }
 
-        public UtilLuaReference(IEventSerdeService eventSerdeService, ILogger logger)
+        public UtilLuaReference(string instanceId, UtilLuaLibrary luaLibrary, IEventSerdeService eventSerdeService, ILogger logger)
         {
+            InstanceId = instanceId;
+            LuaLibrary = luaLibrary;
             EventSerdeService = eventSerdeService;
             Logger = logger;
         }
 
         public void Dispose()
         {
+            LuaLibrary.ReferenceDropped(this);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]

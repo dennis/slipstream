@@ -2,11 +2,12 @@
 
 using Autofac;
 using NLua;
+using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.Lua.Lua
 {
-    public class InternalLuaLibrary : ILuaLibrary
+    public class InternalLuaLibrary : ILuaLibraryAutoRegistration
     {
         private readonly ILifetimeScope LifetimeScope;
 
@@ -21,9 +22,19 @@ namespace Slipstream.Components.Lua.Lua
         {
         }
 
-        public ILuaReference? instance(LuaTable luaTable)
+        public ILuaReference? instance(LuaTable cfgTable)
         {
-            return LifetimeScope.Resolve<InternalLuaReference>();
+            var cfg = Parameters.From(cfgTable);
+            var instanceId = cfg.Extract<string>("id");
+
+            return LifetimeScope.Resolve<StateLuaReference>(
+                new NamedParameter("instanceId", instanceId),
+                new NamedParameter("luaLibrary", this)
+            );
+        }
+
+        public void ReferenceDropped(ILuaReference luaReference)
+        {
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Slipstream.Shared.Lua
 {
-    public abstract class BaseInstanceThread : IDisposable
+    public abstract class BaseInstanceThread : ILuaInstanceThread
     {
         private readonly Thread ServiceThread;
         protected readonly string InstanceId;
@@ -19,14 +19,21 @@ namespace Slipstream.Shared.Lua
             Logger = logger;
             ServiceThread = new Thread(new ThreadStart(ThreadMain))
             {
-                Name = GetType().Name + " " + instanceId
+                Name = GetType().Name + " " + instanceId,
             };
         }
 
         private void ThreadMain()
         {
             Logger.Debug($"Starting {GetType().Name } {InstanceId}");
-            Main();
+            try
+            {
+                Main();
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Exception in {GetType().Name} {InstanceId}: {e.Message}");
+            }
             Logger.Debug($"Stopping {GetType().Name } {InstanceId}");
         }
 
@@ -35,6 +42,16 @@ namespace Slipstream.Shared.Lua
         public void Start()
         {
             ServiceThread.Start();
+        }
+
+        public void Stop()
+        {
+            Stopping = true;
+        }
+
+        public void Join()
+        {
+            ServiceThread.Join();
         }
 
         public void Dispose()

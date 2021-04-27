@@ -6,15 +6,20 @@ namespace Slipstream.Components.IRacing.Lua
     {
         private readonly IEventBus EventBus;
         private readonly IIRacingEventFactory EventFactory;
+        private readonly IRacingLuaLibrary LuaLibrary;
+        public string InstanceId { get; }
 
-        public IRacingReference(IEventBus eventBus, IIRacingEventFactory eventFactory)
+        public IRacingReference(string instanceId, IRacingLuaLibrary luaLibrary, IEventBus eventBus, IIRacingEventFactory eventFactory)
         {
             EventBus = eventBus;
             EventFactory = eventFactory;
+            LuaLibrary = luaLibrary;
+            InstanceId = instanceId;
         }
 
         public void Dispose()
         {
+            LuaLibrary.ReferenceDropped(this);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]

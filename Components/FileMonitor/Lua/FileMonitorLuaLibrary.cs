@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Slipstream.Components.FileMonitor.Lua
 {
-    public class FileMonitorLuaLibrary : CommodityLuaLibrary<IFileMonitorInstanceThread, IFileMonitorLuaReference>
+    public class FileMonitorLuaLibrary : BaseLuaLibrary<IFileMonitorInstanceThread, IFileMonitorLuaReference>
     {
         private static readonly DictionaryValidator ConfigurationValidator;
 

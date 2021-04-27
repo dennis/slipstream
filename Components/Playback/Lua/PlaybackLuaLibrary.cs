@@ -7,7 +7,7 @@ using Slipstream.Shared.Helpers.StrongParameters.Validators;
 
 namespace Slipstream.Components.Playback.Lua
 {
-    public class PlaybackLuaLibrary : CommodityLuaLibrary<IPlaybackInstanceThread, IPlaybackLuaReference>
+    public class PlaybackLuaLibrary : BaseLuaLibrary<IPlaybackInstanceThread, IPlaybackLuaReference>
     {
         private static readonly DictionaryValidator ConfigurationValidator;
 

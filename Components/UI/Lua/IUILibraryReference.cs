@@ -10,9 +10,13 @@ namespace Slipstream.Components.UI.Lua
         private readonly IUIEventFactory EventFactory;
         private readonly ILogger Logger;
         private readonly string Prefix;
+        private readonly UILuaLibrary LuaLibrary;
+        public string InstanceId { get; }
 
-        public IUILibraryReference(string instanceId, string prefix, IEventBus eventBus, IUIEventFactory eventFactory, ILogger logger)
+        public IUILibraryReference(UILuaLibrary luaLibrary, string instanceId, string prefix, IEventBus eventBus, IUIEventFactory eventFactory, ILogger logger)
         {
+            LuaLibrary = luaLibrary;
+            InstanceId = instanceId;
             EventBus = eventBus;
             EventFactory = eventFactory;
             Logger = logger;
@@ -39,6 +43,7 @@ namespace Slipstream.Components.UI.Lua
 
         public void Dispose()
         {
+            LuaLibrary.ReferenceDropped(this);
         }
     }
 }

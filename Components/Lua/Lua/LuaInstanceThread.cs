@@ -6,6 +6,7 @@ using Slipstream.Shared;
 using Slipstream.Shared.Lua;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -19,76 +20,95 @@ namespace Slipstream.Components.Lua.Lua
         private readonly ILuaLibraryRepository Repository;
         private readonly IEventBusSubscription Subscription;
         private readonly IEventHandlerController EventHandlerController;
+        private readonly LuaLuaLibrary LuaLibrary;
+        private readonly List<ILuaReference> CreatedReferences = new List<ILuaReference>();
         private readonly IDictionary<string, DelayedExecution> DebounceDelayedFunctions = new Dictionary<string, DelayedExecution>();
         private readonly IDictionary<string, DelayedExecution> WaitDelayedFunctions = new Dictionary<string, DelayedExecution>();
         private readonly string FileName = "";
-        private readonly LuaFunction? HandleFunc;
         private ulong LastLuaGC;
 
-        public LuaInstanceThread(string instanceId, string filePath, ILogger logger, ILuaLibraryRepository repository, IEventBusSubscription subscription, IEventHandlerController eventHandlerController) : base(instanceId, logger)
+        public LuaInstanceThread(string instanceId, string filePath, LuaLuaLibrary luaLibrary, ILogger logger, ILuaLibraryRepository repository, IEventBusSubscription subscription, IEventHandlerController eventHandlerController) : base(instanceId, logger)
         {
             FileName = filePath;
             Repository = repository;
             Subscription = subscription;
             EventHandlerController = eventHandlerController;
+            LuaLibrary = luaLibrary;
 
             SetupLua(Lua);
+        }
+
+        protected override void Main()
+        {
+            LuaFunction? handleFunc = null;
 
             try
             {
                 lock (Lock)
                 {
                     // Fix paths, so we can require() files relative to where the script is located
-                    var scriptPath = Path.GetDirectoryName(filePath).Replace("\\", "\\\\");
+                    var scriptPath = Path.GetDirectoryName(FileName).Replace("\\", "\\\\");
                     Lua.DoString($"package.path = \"{scriptPath}\\\\?.lua;\" .. package.path;");
 
-                    Lua.DoFile(filePath);
+                    Lua.DoFile(FileName);
 
-                    HandleFunc = Lua["handle"] as NLua.LuaFunction;
+                    handleFunc = Lua["handle"] as NLua.LuaFunction;
                 }
             }
             catch (Exception e)
             {
                 Logger.Error(e, "{fileName} errored: {message}", FileName, e.Message);
             }
-        }
 
-        protected override void Main()
-        {
-            var internalEventHandler = EventHandlerController.Get<Internal.EventHandler.Internal>();
-            internalEventHandler.OnInternalShutdown += (_, _e) => Stopping = true;
-
-            while (!Stopping)
+            // If we have no HandleFunc defined, then just exit as this script will never do anything
+            if (handleFunc == null && WaitDelayedFunctions.Count == 0 && DebounceDelayedFunctions.Count == 0)
             {
-                var @event = Subscription.NextEvent(100);
+                Logger.Warning("{fileName} got no handle(), no wait() nor debounce() functions. Stopping", FileName);
+            }
+            else
+            {
 
-                if (@event != null)
+                var internalEventHandler = EventHandlerController.Get<Internal.EventHandler.Internal>();
+                internalEventHandler.OnInternalShutdown += (_, _e) => Stopping = true;
+
+                while (!Stopping)
                 {
-                    EventHandlerController.HandleEvent(@event);
+                    var @event = Subscription.NextEvent(100);
 
-                    try
+                    if (@event != null)
                     {
-                        lock (Lock)
-                        {
-                            HandleFunc?.Call(@event);
+                        EventHandlerController.HandleEvent(@event);
 
-                            // Perform GC in Lua approx every second
-                            if (@event.Uptime - LastLuaGC > 1000)
+                        try
+                        {
+                            lock (Lock)
                             {
-                                LastLuaGC = @event.Uptime;
-                                Lua.DoString("collectgarbage()");
+                                handleFunc?.Call(@event);
+
+                                // Perform GC in Lua approx every second
+                                if (@event.Uptime - LastLuaGC > 1000)
+                                {
+                                    LastLuaGC = @event.Uptime;
+                                    Lua.DoString("collectgarbage()");
+                                }
                             }
                         }
+                        catch (Exception e)
+                        {
+                            Logger.Error(e, "{fileName} errored while invoking handle(): {message}", FileName, e.Message);
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        Logger.Error(e, "{fileName} errored while invoking handle(): {message}", FileName, e.Message);
-                    }
-                }
 
-                HandleDelayedExecution(WaitDelayedFunctions);
-                HandleDelayedExecution(DebounceDelayedFunctions);
+                    HandleDelayedExecution(WaitDelayedFunctions);
+                    HandleDelayedExecution(DebounceDelayedFunctions);
+                }
             }
+
+
+            Debug.WriteLine($"[{FileName}] Stopping. Clearning up {CreatedReferences.Count} references");
+            CreatedReferences.Clear();
+
+            LuaLibrary.InstanceStopped(InstanceId);
         }
 
         private void SetupLua(NLua.Lua lua)
@@ -112,6 +132,12 @@ end
 
 function debounce(a, b, c); {hiddenSelf}:debounce(a, b, c); end
 function wait(a, b, c); {hiddenSelf}:wait(a, b, c); end
+
+-- internal slipstream stuff
+SS = {{
+    instance_id = ""{InstanceId.Replace("\\", "\\\\")}"",
+    file = ""{FileName.Replace("\\", "\\\\")}""
+}}
 ");
         }
 
@@ -123,11 +149,22 @@ function wait(a, b, c); {hiddenSelf}:wait(a, b, c); end
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
-        public ILuaLibrary require(string name)
+        public ILuaLibrary? require(string name)
         {
             lock (Lock)
             {
-                return Repository.Get(name);
+                var i = Repository.Get(name);
+                if (i == null)
+                    return null;
+                return new LuaLibraryInstanceTracker(i, this);
+            }
+        }
+
+        private void ReferenceCreated(ILuaReference inst)
+        {
+            lock (Lock)
+            {
+                CreatedReferences.Add(inst);
             }
         }
 
@@ -152,11 +189,6 @@ function wait(a, b, c); {hiddenSelf}:wait(a, b, c); end
                         WaitDelayedFunctions[name] = new DelayedExecution(func, DateTime.Now.AddSeconds(duration));
                 }
             }
-        }
-
-        public void Stop()
-        {
-            Stopping = true;
         }
 
         private void HandleDelayedExecution(IDictionary<string, DelayedExecution> functions)

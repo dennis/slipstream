@@ -7,14 +7,15 @@ namespace Slipstream.Components.Audio.Lua
 {
     public class AudioLuaReference : ILuaReference
     {
-        private readonly string InstanceId;
         private readonly IEventBus EventBus;
         private readonly IAudioEventFactory EventFactory;
-
+        private readonly AudioLuaLibrary LuaLibrary;
         private float Volume = 1.0f;
+        public string InstanceId { get; }
 
-        public AudioLuaReference(string instanceId, IEventBus eventBus, IAudioEventFactory eventFactory)
+        public AudioLuaReference(AudioLuaLibrary luaLibrary, string instanceId, IEventBus eventBus, IAudioEventFactory eventFactory)
         {
+            LuaLibrary = luaLibrary;
             InstanceId = instanceId;
             EventBus = eventBus;
             EventFactory = eventFactory;
@@ -52,6 +53,7 @@ namespace Slipstream.Components.Audio.Lua
 
         public void Dispose()
         {
+            LuaLibrary.ReferenceDropped(this);
         }
     }
 }

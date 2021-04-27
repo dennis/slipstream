@@ -47,8 +47,6 @@ namespace Slipstream.Components.FileMonitor.Lua
             var internalEventHandler = EventHandlerController.Get<Internal.EventHandler.Internal>();
             internalEventHandler.OnInternalShutdown += (_, _e) => Stopping = true;
 
-            Logger.Debug($"Starting {nameof(FileMonitorInstanceThread)} {InstanceId}");
-
             while (!Stopping)
             {
                 IEvent? @event = Subscription.NextEvent(100);
@@ -58,8 +56,6 @@ namespace Slipstream.Components.FileMonitor.Lua
                     EventHandlerController.HandleEvent(@event);
                 }
             }
-
-            Logger.Debug($"Stopping {nameof(FileMonitorInstanceThread)} {InstanceId}");
         }
 
         private void WatcherOnRenamed(RenamedEventArgs e)

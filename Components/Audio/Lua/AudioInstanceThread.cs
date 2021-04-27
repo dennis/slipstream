@@ -17,7 +17,6 @@ namespace Slipstream.Components.Audio.Lua
     {
         private readonly SpeechSynthesizer Synthesizer = new SpeechSynthesizer();
         private readonly string Path;
-        private readonly Thread ServiceThead;
         private readonly IEventHandlerController EventHandlerController;
         private readonly IEventBusSubscription Subscription;
         private readonly IAudioEventFactory EventFactory;
@@ -28,7 +27,6 @@ namespace Slipstream.Components.Audio.Lua
         {
             Path = path;
             Subscription = eventBusSubscription;
-            ServiceThead = new Thread(new ThreadStart(Main));
             EventHandlerController = eventHandlerController;
             EventFactory = audioEventFactory;
             EventBus = eventBus;
@@ -54,8 +52,6 @@ namespace Slipstream.Components.Audio.Lua
             var internalEventHandler = EventHandlerController.Get<Internal.EventHandler.Internal>();
             internalEventHandler.OnInternalShutdown += (_, _e) => Stopping = true;
 
-            Logger.Debug($"Starting {nameof(AudioInstanceThread)} {InstanceId}");
-
             while (!Stopping)
             {
                 IEvent? @event = Subscription.NextEvent(100);
@@ -65,8 +61,6 @@ namespace Slipstream.Components.Audio.Lua
                     EventHandlerController.HandleEvent(@event);
                 }
             }
-
-            Logger.Debug($"Stopping {nameof(AudioInstanceThread)} {InstanceId}");
         }
 
         private void OnAudioCommandSetOutputDevice(AudioCommandSetOutputDevice @event)
@@ -132,7 +126,7 @@ namespace Slipstream.Components.Audio.Lua
             OutputDevice.Init(stream);
             OutputDevice.Volume = volume;
             OutputDevice.Play();
-            while (OutputDevice.PlaybackState == PlaybackState.Playing)
+            while (OutputDevice.PlaybackState == PlaybackState.Playing && !Stopping)
             {
                 Thread.Sleep(100);
             }

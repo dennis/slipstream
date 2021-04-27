@@ -88,7 +88,7 @@ namespace Slipstream
             builder.RegisterAssemblyTypes(typeof(Program).Assembly)
                 .Where(t => t.IsAssignableTo<Shared.Lua.ILuaLibrary>())
                 .Where(t => !t.IsAbstract)
-                .As<Shared.Lua.ILuaLibrary>()
+                .As<Shared.Lua.ILuaLibraryAutoRegistration>()
                 .AsSelf()
                 .InstancePerDependency();
             builder.RegisterAssemblyTypes(typeof(Program).Assembly)

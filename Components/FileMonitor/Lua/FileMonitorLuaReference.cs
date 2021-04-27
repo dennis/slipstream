@@ -4,15 +4,17 @@ namespace Slipstream.Components.FileMonitor.Lua
 {
     public class FileMonitorLuaReference : IFileMonitorLuaReference
     {
-        private readonly string InstanceId;
         private readonly IEventBus EventBus;
         private readonly IFileMonitorEventFactory EventFactory;
+        private readonly FileMonitorLuaLibrary LuaLibrary;
+        public string InstanceId { get; }
 
-        public FileMonitorLuaReference(string instanceId, IEventBus eventBus, IFileMonitorEventFactory eventFactory)
+        public FileMonitorLuaReference(string instanceId, FileMonitorLuaLibrary luaLibrary, IEventBus eventBus, IFileMonitorEventFactory eventFactory)
         {
             InstanceId = instanceId;
             EventBus = eventBus;
             EventFactory = eventFactory;
+            LuaLibrary = luaLibrary;
         }
 
         public void scan()
@@ -22,6 +24,7 @@ namespace Slipstream.Components.FileMonitor.Lua
 
         public void Dispose()
         {
+            LuaLibrary.ReferenceDropped(this);
         }
     }
 }

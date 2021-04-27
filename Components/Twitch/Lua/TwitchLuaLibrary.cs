@@ -5,9 +5,9 @@ using Slipstream.Shared.Helpers.StrongParameters.Validators;
 
 namespace Slipstream.Components.Twitch.Lua
 {
-    public class TwitchLuaLibrary : CommodityLuaLibrary<ITwitchLuaInstanceThread, ITwitchLuaReference>
+    public class TwitchLuaLibrary : BaseLuaLibrary<ITwitchLuaInstanceThread, ITwitchLuaReference>
     {
-        private static DictionaryValidator ConfigurationValidator;
+        private static readonly DictionaryValidator ConfigurationValidator;
 
         static TwitchLuaLibrary()
         {

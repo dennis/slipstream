@@ -7,7 +7,7 @@ using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.Discord.Lua
 {
-    public class DiscordLuaLibrary : CommodityLuaLibrary<IDiscordInstanceThread, DiscordLuaReference>
+    public class DiscordLuaLibrary : BaseLuaLibrary<IDiscordInstanceThread, DiscordLuaReference>
     {
         private static readonly DictionaryValidator ConfigurationValidator;
 

@@ -5,6 +5,7 @@ using Slipstream.Components.Internal.Events;
 using Slipstream.Components.Lua.Lua;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
+using Slipstream.Shared.Lua;
 using System;
 using System.IO;
 
@@ -17,11 +18,11 @@ namespace Slipstream.Backend
         private readonly IInternalEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly IPluginManager PluginManager;
-        private readonly IEventBusSubscription Subscription;
         private readonly IPluginFactory PluginFactory;
         private readonly ILogger Logger;
         private readonly IEventHandlerController EventHandlerController;
-        private bool Stopped = false;
+        private readonly ILuaLuaLibrary? LuaLuaLibrary;
+        private readonly ILuaLuaReference? InitLuaScript;
 
         public Engine(
             ILogger logger,
@@ -30,7 +31,7 @@ namespace Slipstream.Backend
             IPluginFactory pluginFactory,
             IPluginManager pluginManager,
             IEventHandlerController eventHandlerController,
-            ILuaLuaLibrary luaLuaController
+            ILuaLibraryRepository luaLibraryRepository
         )
         {
             EventFactory = eventFactory;
@@ -39,15 +40,13 @@ namespace Slipstream.Backend
             PluginManager = pluginManager;
             Logger = logger;
             EventHandlerController = eventHandlerController;
-
-            Subscription = EventBus.RegisterListener();
+            LuaLuaLibrary = luaLibraryRepository.Get("api/lua") as LuaLuaLibrary;
 
             var internalEventHandler = EventHandlerController.Get<Slipstream.Components.Internal.EventHandler.Internal>();
 
             internalEventHandler.OnInternalCommandPluginRegister += (_, e) => OnCommandPluginRegister(e);
             internalEventHandler.OnInternalCommandPluginUnregister += (_, e) => OnCommandPluginUnregister(e);
             internalEventHandler.OnInternalCommandPluginStates += (_, e) => OnCommandPluginStates(e);
-            internalEventHandler.OnInternalCommandShutdown += (_, e) => OnInternalCommandShutdown(e);
 
             // Plugins..
             {
@@ -60,17 +59,11 @@ namespace Slipstream.Backend
                 }
 
                 Logger.Information("Loading {initcfg}", initFilename);
-                luaLuaController.instance("init.lua", "init.lua");
+                InitLuaScript = LuaLuaLibrary?.instance("init.lua", "init.lua") as ILuaLuaReference;
             }
 
             // Tell Plugins that we're live - this will make eventbus distribute events
             EventBus.Enabled = true;
-        }
-
-        private void OnInternalCommandShutdown(InternalCommandShutdown _)
-        {
-            EventBus.PublishEvent(EventFactory.CreateInternalShutdown());
-            Stopped = true;
         }
 
         private void CreateInitLua(string initFilename)
@@ -118,10 +111,7 @@ namespace Slipstream.Backend
 
         public void Start()
         {
-            while (!Stopped)
-            {
-                EventHandlerController.HandleEvent(Subscription.NextEvent(10));
-            }
+            InitLuaScript?.join();
         }
 
         public void Dispose()

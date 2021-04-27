@@ -6,5 +6,6 @@ namespace Slipstream.Shared.Lua
 {
     public interface ILuaReference : IDisposable
     {
+        public string InstanceId { get; }
     }
 }

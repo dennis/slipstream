@@ -7,7 +7,7 @@ using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.Audio.Lua
 {
-    public class AudioLuaLibrary : CommodityLuaLibrary<IAudioInstanceThread, AudioLuaReference>
+    public class AudioLuaLibrary : BaseLuaLibrary<IAudioInstanceThread, AudioLuaReference>
     {
         public static DictionaryValidator ConfigurationValidator { get; }
 

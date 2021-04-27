@@ -212,10 +212,10 @@
     <Compile Include="Components\AppilcationUpdate\Lua\ApplicationUpdateLuaLibrary.cs" />
     <Compile Include="Components\AppilcationUpdate\Lua\ApplicationUpdateReference.cs" />
     <Compile Include="Components\Lua\Lua\InternalLuaReference.cs" />
+    <Compile Include="Components\Lua\Lua\LuaInstanceThread.LuaLibraryInstanceTracker.cs" />
     <Compile Include="Components\Lua\Lua\StateLuaReference.cs" />
     <Compile Include="Components\Lua\Lua\UtilLuaReference.cs" />
     <Compile Include="Shared\Lua\BaseLuaLibrary.cs" />
-    <Compile Include="Shared\Lua\CommodityLuaLibrary.cs" />
     <Compile Include="Components\AppilcationUpdate\Lua\IApplicationUpdateInstanceThread.cs" />
     <Compile Include="Components\AppilcationUpdate\Lua\IApplicationUpdateReference.cs" />
     <Compile Include="Shared\Lua\ILuaInstanceThread.cs" />
@@ -431,6 +431,7 @@
     <Compile Include="Components\Lua\EventHandler\Lua.cs" />
     <Compile Include="Components\Twitch\EventHandler\Twitch.cs" />
     <Compile Include="Components\UI\EventHandler\UIEventHandler.cs" />
+    <Compile Include="Shared\Lua\ILuaLibraryAutoRegistration.cs" />
     <Compile Include="Shared\Lua\ILuaLibrary.cs" />
     <Compile Include="Shared\Lua\ILuaLibraryRepository.cs" />
     <Compile Include="Shared\Lua\ILuaReference.cs" />

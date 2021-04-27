@@ -7,7 +7,7 @@ using Slipstream.Shared.Helpers.StrongParameters.Validators;
 
 namespace Slipstream.Components.WinFormUI.Lua
 {
-    public class WinFormUILuaLibrary : CommodityLuaLibrary<IWinFormUIInstanceThread, IWinFormUIReference>
+    public class WinFormUILuaLibrary : BaseLuaLibrary<IWinFormUIInstanceThread, IWinFormUIReference>
     {
         public static DictionaryValidator ConfigurationValidator { get; }
 

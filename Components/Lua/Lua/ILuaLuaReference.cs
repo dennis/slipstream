@@ -4,5 +4,6 @@ namespace Slipstream.Components.Lua.Lua
 {
     public interface ILuaLuaReference : ILuaReference
     {
+        void join();
     }
 }

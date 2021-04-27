@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Slipstream.Components.AppilcationUpdate.Lua
 {
-    public class ApplicationUpdateLuaLibrary : CommodityLuaLibrary<IApplicationUpdateInstanceThread, IApplicationUpdateReference>
+    public class ApplicationUpdateLuaLibrary : BaseLuaLibrary<IApplicationUpdateInstanceThread, IApplicationUpdateReference>
     {
         private static readonly DictionaryValidator ConfigurationValidator;
 
@@ -29,8 +29,6 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
             var instanceId = cfg.Extract<string>("id");
             var updateLocation = cfg.Extract<string>("location");
             var prerelease = cfg.ExtractOrDefault("prerelease", false);
-
-            Debug.WriteLine($"Creating IAudioServiceThread for instanceId '{instanceId}'");
 
             return scope.Resolve<IApplicationUpdateInstanceThread>(
                 new NamedParameter("instanceId", instanceId),

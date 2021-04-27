@@ -38,13 +38,19 @@ namespace Slipstream.Components.WinFormUI.Lua
         protected override void Main()
         {
             Application.Run(new MainWindow(
-                InstanceId,
+                this,
                 InternalEventFactory,
                 UIEventFactory,
                 PlaybackEventFactory,
                 EventBus,
                 ApplicationVersionService,
                 EventHandlerController));
+        }
+
+        // Expose Protected variable for MainWindow to see and react on
+        internal bool IsStopping()
+        {
+            return Stopping;
         }
     }
 }

@@ -7,5 +7,7 @@ namespace Slipstream.Shared.Lua
     public interface ILuaInstanceThread : IDisposable
     {
         void Start();
+
+        void Stop();
     }
 }

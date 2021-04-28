@@ -30,9 +30,6 @@ namespace Slipstream.Components.Playback.Lua
             playback.OnPlaybackCommandInjectEvents += (s, e) => OnPlaybackCommandInjectEvents(e);
             playback.OnPlaybackCommandSaveEvents += (s, e) => OnPlaybackCommandSaveEvents(e);
 
-            var internalEventHandler = EventHandlerController.Get<Internal.EventHandler.Internal>();
-            internalEventHandler.OnInternalShutdown += (_, _e) => Stopping = true;
-
             while (!Stopping)
             {
                 IEvent? @event = Subscription.NextEvent(100);

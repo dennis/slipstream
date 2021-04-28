@@ -67,10 +67,6 @@ namespace Slipstream.Components.Lua.Lua
             }
             else
             {
-
-                var internalEventHandler = EventHandlerController.Get<Internal.EventHandler.Internal>();
-                internalEventHandler.OnInternalShutdown += (_, _e) => Stopping = true;
-
                 while (!Stopping)
                 {
                     var @event = Subscription.NextEvent(100);
@@ -103,7 +99,6 @@ namespace Slipstream.Components.Lua.Lua
                     HandleDelayedExecution(DebounceDelayedFunctions);
                 }
             }
-
 
             Debug.WriteLine($"[{FileName}] Stopping. Clearning up {CreatedReferences.Count} references");
             CreatedReferences.Clear();

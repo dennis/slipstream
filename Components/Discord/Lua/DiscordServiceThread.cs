@@ -39,8 +39,6 @@ namespace Slipstream.Components.Discord.Lua
         {
             var eventHandler = EventHandlerController.Get<DiscordEventHandler>();
             eventHandler.OnDiscordCommandSendMessage += (_, e) => OnDiscordCommandSendMessage(e);
-            var internalEventHandler = EventHandlerController.Get<Internal.EventHandler.Internal>();
-            internalEventHandler.OnInternalShutdown += (_, _e) => Stopping = true;
 
             Logger.Debug($"Starting {nameof(DiscordServiceThread)} {InstanceId}");
 

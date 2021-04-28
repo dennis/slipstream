@@ -35,11 +35,6 @@ namespace Slipstream.Components.Internal.EventFactory
             return new InternalPluginState { Id = pluginId, PluginName = pluginName, DisplayName = displayName, PluginStatus = pluginStatus.ToString() };
         }
 
-        public InternalShutdown CreateInternalShutdown()
-        {
-            return new InternalShutdown();
-        }
-
         public InternalCommandShutdown CreateInternalCommandShutdown()
         {
             return new InternalCommandShutdown();

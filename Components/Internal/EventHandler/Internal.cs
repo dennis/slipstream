@@ -16,8 +16,6 @@ namespace Slipstream.Components.Internal.EventHandler
 
         public event EventHandler<InternalPluginState>? OnInternalPluginState;
 
-        public event EventHandler<InternalShutdown>? OnInternalShutdown;
-
         public event EventHandler<InternalCommandShutdown>? OnInternalCommandShutdown;
 
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)
@@ -28,7 +26,6 @@ namespace Slipstream.Components.Internal.EventHandler
                 InternalCommandPluginUnregister tev => OnEvent(OnInternalCommandPluginUnregister, tev),
                 InternalPluginState tev => OnEvent(OnInternalPluginState, tev),
                 InternalCommandPluginStates tev => OnEvent(OnInternalCommandPluginStates, tev),
-                InternalShutdown tev => OnEvent(OnInternalShutdown, tev),
                 InternalCommandShutdown tev => OnEvent(OnInternalCommandShutdown, tev),
                 _ => IEventHandler.HandledStatus.NotMine,
             };

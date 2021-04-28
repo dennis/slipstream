@@ -49,9 +49,6 @@ namespace Slipstream.Components.Audio.Lua
             audioEventHandler.OnAudioCommandSendDevices += (_, e) => OnAudioCommandSendDevices(e);
             audioEventHandler.OnAudioCommandSetOutputDevice += (_, e) => OnAudioCommandSetOutputDevice(e);
 
-            var internalEventHandler = EventHandlerController.Get<Internal.EventHandler.Internal>();
-            internalEventHandler.OnInternalShutdown += (_, _e) => Stopping = true;
-
             while (!Stopping)
             {
                 IEvent? @event = Subscription.NextEvent(100);

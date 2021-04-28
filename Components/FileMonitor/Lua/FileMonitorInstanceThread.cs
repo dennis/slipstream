@@ -44,8 +44,6 @@ namespace Slipstream.Components.FileMonitor.Lua
         {
             var fileMonitor = EventHandlerController.Get<EventHandler.FileMonitor>();
             fileMonitor.OnFileMonitorCommandScan += (s, e) => ScanExistingFiles();
-            var internalEventHandler = EventHandlerController.Get<Internal.EventHandler.Internal>();
-            internalEventHandler.OnInternalShutdown += (_, _e) => Stopping = true;
 
             while (!Stopping)
             {

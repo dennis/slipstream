@@ -138,7 +138,6 @@ namespace Slipstream.Components.WinFormUI.Forms
             var uiEventHandler = EventHandler.Get<Components.UI.EventHandler.UIEventHandler>();
 
             internalEventHandler.OnInternalPluginState += (_, e) => EventHandler_OnInternalPluginState(e);
-            internalEventHandler.OnInternalShutdown += (_, e) => EventHandler_OnInteralShutdown(e);
             uiEventHandler.OnUICommandWriteToConsole += (_, e) => PendingMessages.Add($"{DateTime.Now:s} {e.Message}");
             uiEventHandler.OnUICommandCreateButton += (_, e) => EventHandler_OnUICommandCreateButton(e);
             uiEventHandler.OnUICommandDeleteButton += (_, e) => EventHandler_OnUICommandDeleteButton(e);
@@ -150,12 +149,6 @@ namespace Slipstream.Components.WinFormUI.Forms
             {
                 EventHandler.HandleEvent(EventBusSubscription?.NextEvent());
             }
-        }
-
-        private void EventHandler_OnInteralShutdown(InternalShutdown _)
-        {
-            ShuttingDown = true;
-            ExecuteSecure(() => Application.Exit());
         }
 
         private void EventHandler_OnUICommandCreateButton(UICommandCreateButton @event)

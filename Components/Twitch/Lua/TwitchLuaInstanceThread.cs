@@ -59,9 +59,6 @@ namespace Slipstream.Components.Twitch.Lua
             twitchEventHandler.OnTwitchCommandSendMessage += (_, e) => SendMessage(e.Message);
             twitchEventHandler.OnTwitchCommandSendWhisper += (_, e) => SendWhisper(e.To, e.Message);
 
-            var internalEventHandler = EventHandlerController.Get<Internal.EventHandler.Internal>();
-            internalEventHandler.OnInternalShutdown += (_, _e) => Stopping = true;
-
             while (!Stopping)
             {
                 IEvent? @event = Subscription.NextEvent(100);

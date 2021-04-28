@@ -32,9 +32,6 @@ namespace Slipstream.Components.IRacing.Lua
             iracingEventHandler.OnIRacingCommandSendSessionState += (s, e) => dataTrackers.SendSessionState = true;
             iracingEventHandler.OnIRacingCommandSendRaceFlags += (s, e) => dataTrackers.SendRaceFlags = true;
 
-            var internalEventHandler = EventHandlerController.Get<Internal.EventHandler.Internal>();
-            internalEventHandler.OnInternalShutdown += (_, _e) => Stopping = true;
-
             var mapper = new Mapper(new StateFactory());
 
             while (!Stopping)

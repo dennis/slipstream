@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using NLua;
+using NLua.Exceptions;
 using Serilog;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
@@ -54,50 +55,56 @@ namespace Slipstream.Components.Lua.Lua
 
                     handleFunc = Lua["handle"] as NLua.LuaFunction;
                 }
+
+                // If we have no HandleFunc defined, then just exit as this script will never do anything
+                if (handleFunc == null && WaitDelayedFunctions.Count == 0 && DebounceDelayedFunctions.Count == 0)
+                {
+                    Logger.Warning("{fileName} got no handle(), no wait() nor debounce() functions. Stopping", FileName);
+                }
+                else
+                {
+                    while (!Stopping)
+                    {
+                        var @event = Subscription.NextEvent(100);
+
+                        if (@event != null)
+                        {
+                            EventHandlerController.HandleEvent(@event);
+
+                            try
+                            {
+                                lock (Lock)
+                                {
+                                    handleFunc?.Call(@event);
+
+                                    // Perform GC in Lua approx every second
+                                    if (@event.Uptime - LastLuaGC > 1000)
+                                    {
+                                        LastLuaGC = @event.Uptime;
+                                        Lua.DoString("collectgarbage()");
+                                    }
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Logger.Error(e, "{fileName} errored while invoking handle(): {message}", FileName, e.Message);
+                            }
+                        }
+
+                        HandleDelayedExecution(WaitDelayedFunctions);
+                        HandleDelayedExecution(DebounceDelayedFunctions);
+                    }
+                }
+            }
+            catch (LuaScriptException e)
+            {
+                string message = e.InnerException?.Message ?? e.Message;
+
+                Logger.Error(e, "{source} errored: {message}", e.Source, message);
             }
             catch (Exception e)
             {
                 Logger.Error(e, "{fileName} errored: {message}", FileName, e.Message);
-            }
-
-            // If we have no HandleFunc defined, then just exit as this script will never do anything
-            if (handleFunc == null && WaitDelayedFunctions.Count == 0 && DebounceDelayedFunctions.Count == 0)
-            {
-                Logger.Warning("{fileName} got no handle(), no wait() nor debounce() functions. Stopping", FileName);
-            }
-            else
-            {
-                while (!Stopping)
-                {
-                    var @event = Subscription.NextEvent(100);
-
-                    if (@event != null)
-                    {
-                        EventHandlerController.HandleEvent(@event);
-
-                        try
-                        {
-                            lock (Lock)
-                            {
-                                handleFunc?.Call(@event);
-
-                                // Perform GC in Lua approx every second
-                                if (@event.Uptime - LastLuaGC > 1000)
-                                {
-                                    LastLuaGC = @event.Uptime;
-                                    Lua.DoString("collectgarbage()");
-                                }
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            Logger.Error(e, "{fileName} errored while invoking handle(): {message}", FileName, e.Message);
-                        }
-                    }
-
-                    HandleDelayedExecution(WaitDelayedFunctions);
-                    HandleDelayedExecution(DebounceDelayedFunctions);
-                }
             }
 
             Debug.WriteLine($"[{FileName}] Stopping. Clearning up {CreatedReferences.Count} references");

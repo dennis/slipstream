@@ -199,10 +199,7 @@
     <Compile Include="Backend\EventBus.cs" />
     <Compile Include="Backend\EventBusSubscription.cs" />
     <Compile Include="Backend\IEngine.cs" />
-    <Compile Include="Backend\IPluginFactory.cs" />
-    <Compile Include="Backend\IPluginManager.cs" />
     <Compile Include="Backend\LifetimeScopeExtensions.cs" />
-    <Compile Include="Backend\PluginManager.cs" />
     <Compile Include="Components\AppilcationUpdate\EventFactory\ApplicationUpdateEventFactory.cs" />
     <Compile Include="Components\AppilcationUpdate\EventHandler\ApplicationUpdateEventHandler.cs" />
     <Compile Include="Components\AppilcationUpdate\Events\ApplicationUpdateCommandCheckLatestVersion.cs" />
@@ -279,7 +276,6 @@
     <Compile Include="Components\IRacing\Trackers\Trackers.cs" />
     <Compile Include="Components\IRacing\Trackers\TrackInfoTracker.cs" />
     <Compile Include="Components\IRacing\Trackers\WeatherTracker.cs" />
-    <Compile Include="Components\Lua\CapturingEventBus.cs" />
     <Compile Include="Components\Lua\Lua\ILuaInstanceThread.cs" />
     <Compile Include="Components\Lua\Lua\ILuaLuaLibrary.cs" />
     <Compile Include="Components\Playback\Lua\IPlaybackInstanceThread.cs" />
@@ -303,19 +299,13 @@
     <Compile Include="Components\Lua\Lua\InternalUtilLibrary.cs" />
     <Compile Include="Components\Lua\Lua\StateLuaLibrary.cs" />
     <Compile Include="Components\Lua\Lua\UtilLuaLibrary.cs" />
-    <Compile Include="Components\Lua\Plugins\LuaManagerPlugin.cs" />
     <Compile Include="Components\Lua\Lua\ILuaLuaReference.cs" />
     <Compile Include="Components\Lua\Lua\LuaInstanceThread.cs" />
     <Compile Include="Components\Lua\Lua\LuaLuaLibrary.cs" />
     <Compile Include="Components\Lua\Lua\LuaLuaReference.cs" />
-    <Compile Include="Components\ILuaGlue.cs" />
-    <Compile Include="Components\BasePlugin.cs" />
     <Compile Include="Components\Internal\IEventSerdeService.cs" />
-    <Compile Include="Components\Internal\ILuaService.cs" />
     <Compile Include="Components\Internal\IStateService.cs" />
     <Compile Include="Components\Internal\Services\EventSerdeService.cs" />
-    <Compile Include="Components\Internal\Services\LuaService.cs" />
-    <Compile Include="Components\Internal\ILuaContext.cs" />
     <Compile Include="Shared\EventHandlerArgs.cs" />
     <Compile Include="Components\IRacing\Events\IIRacingSessionState.cs" />
     <Compile Include="Components\IRacing\Events\IRacingCarPosition.cs" />
@@ -335,8 +325,6 @@
     <Compile Include="Shared\Helpers\StrongParameters\StrongParametersException.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Validators\DictionaryValidator.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Parameters.cs" />
-    <Compile Include="Components\Internal\Services\LuaContext.cs" />
-    <Compile Include="Components\Internal\Services\LuaException.cs" />
     <Compile Include="Shared\Helpers\StrongParameters\Validators\StringValidator.cs" />
     <Compile Include="Components\Internal\Services\StateService.cs" />
     <Compile Include="GlobalSuppressions2.cs" />
@@ -355,7 +343,6 @@
     <Compile Include="Components\FileMonitor\Events\FileMonitorCommandScan.cs" />
     <Compile Include="Components\FileMonitor\Events\FileMonitorScanCompleted.cs" />
     <Compile Include="Components\Lua\Events\LuaCommandDeduplicateEvents.cs" />
-    <Compile Include="Components\Internal\Events\InternalCommandPluginStates.cs" />
     <Compile Include="Components\IRacing\Events\IRacingCommandSendTrackInfo.cs" />
     <Compile Include="Components\IRacing\Events\IRacingCommandSendSessionState.cs" />
     <Compile Include="Components\IRacing\Events\IRacingCommandSendRaceFlags.cs" />
@@ -388,9 +375,7 @@
     <Compile Include="Components\IRacing\Events\IRacingRaceFlags.cs" />
     <Compile Include="Components\IRacing\Events\IRacingCarInfo.cs" />
     <Compile Include="Components\IRacing\Events\IRacingWeatherInfo.cs" />
-    <Compile Include="Components\Lua\Plugins\LuaPlugin.cs" />
     <Compile Include="Components\IRacing\Events\IRacingTrackInfo.cs" />
-    <Compile Include="Backend\PluginWorker.cs" />
     <Compile Include="Shared\EventHandlerController.cs" />
     <Compile Include="Components\FileMonitor\Events\FileMonitorFileChanged.cs" />
     <Compile Include="Components\FileMonitor\Events\FileMonitorFileDeleted.cs" />
@@ -398,8 +383,6 @@
     <Compile Include="Components\FileMonitor\Events\FileMonitorFileCreated.cs" />
     <Compile Include="Components\IRacing\Events\IRacingDisconnected.cs" />
     <Compile Include="Components\IRacing\Events\IRacingConnected.cs" />
-    <Compile Include="Components\Internal\Events\InternalCommandPluginUnregister.cs" />
-    <Compile Include="Components\Internal\Events\InternalCommandPluginRegister.cs" />
     <Compile Include="Components\Twitch\Events\TwitchCommandSendMessage.cs" />
     <Compile Include="Components\Twitch\Events\TwitchDisconnected.cs" />
     <Compile Include="Components\Twitch\Events\TwitchConnected.cs" />
@@ -409,14 +392,11 @@
     <Compile Include="Shared\IApplicationVersionService.cs" />
     <Compile Include="Shared\IEventBus.cs" />
     <Compile Include="Shared\IEventBusSubscription.cs" />
-    <Compile Include="Components\Internal\Events\InternalPluginState.cs" />
     <Compile Include="Backend\Engine.cs" />
-    <Compile Include="Components\IPlugin.cs" />
     <Compile Include="Shared\IEvent.cs" />
     <Compile Include="Shared\IEventHandler.cs" />
     <Compile Include="Shared\IEventHandlerController.cs" />
     <Compile Include="Shared\IEventProducer.cs" />
-    <Compile Include="Backend\Worker.cs" />
     <Compile Include="Components\WinFormUI\Forms\MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -47,7 +47,7 @@ Plays a wav/mp3 file relative to the audio directory (as set in the construction
 
 ```lua
 local audio = require("api/audio"):instance(config)
-audio:play("AudioPlugin", "ding-sound-effect.mp3", 1.0)
+audio:play("ding-sound-effect.mp3")
 ```
 
 This function is implemented using `AudioCommandPlay`.

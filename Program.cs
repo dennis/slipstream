@@ -47,8 +47,6 @@ namespace Slipstream
             builder.Register(scope => scope.Resolve<IEventBus>().RegisterListener()).As<IEventBusSubscription>().InstancePerDependency();
             builder.RegisterType<Backend.Engine>().As<Backend.IEngine>().SingleInstance();
             builder.RegisterType<EventSerdeService>().As<IEventSerdeService>().SingleInstance();
-            builder.RegisterType<Backend.PluginManager>().As<Backend.IPluginManager>().As<Backend.IPluginFactory>().SingleInstance();
-            builder.RegisterType<LuaService>().As<ILuaService>().InstancePerDependency();
             builder.RegisterType<Shared.ApplicationVersionService>().As<Shared.IApplicationVersionService>().SingleInstance();
             builder.RegisterType<PopulateSink>().SingleInstance();
             builder.Register(c => new StateService(c.Resolve<ILogger>(), Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Slipstream\state.txt")).As<IStateService>().SingleInstance();
@@ -74,14 +72,6 @@ namespace Slipstream
                 .AsImplementedInterfaces()
                 .SingleInstance();
             builder.RegisterType<EventHandlerController>().As<IEventHandlerController>().InstancePerDependency();
-
-            // Plugins
-            builder.RegisterAssemblyTypes(typeof(Program).Assembly)
-                .Where(t => t.IsAssignableTo<Components.IPlugin>())
-                .Where(t => !t.IsAbstract)
-                .As<Components.IPlugin>()
-                .AsSelf()
-                .InstancePerDependency();
 
             // Lua related classes
             builder.RegisterType<Shared.Lua.LuaLibraryRepository>().As<Shared.Lua.ILuaLibraryRepository>().SingleInstance();

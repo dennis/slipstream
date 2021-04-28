@@ -1,10 +1,7 @@
-﻿using Newtonsoft.Json.Linq;
-using Serilog;
+﻿using Serilog;
 using Slipstream.Components.Internal;
-using Slipstream.Components.Internal.Events;
 using Slipstream.Components.Lua.Lua;
 using Slipstream.Shared;
-using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Lua;
 using System;
 using System.IO;
@@ -15,40 +12,22 @@ namespace Slipstream.Backend
 {
     internal class Engine : IEngine, IDisposable
     {
-        private readonly IInternalEventFactory EventFactory;
         private readonly IEventBus EventBus;
-        private readonly IPluginManager PluginManager;
-        private readonly IPluginFactory PluginFactory;
         private readonly ILogger Logger;
-        private readonly IEventHandlerController EventHandlerController;
         private readonly ILuaLuaLibrary? LuaLuaLibrary;
         private readonly ILuaLuaReference? InitLuaScript;
 
         public Engine(
             ILogger logger,
-            IInternalEventFactory eventFactory,
             IEventBus eventBus,
-            IPluginFactory pluginFactory,
-            IPluginManager pluginManager,
-            IEventHandlerController eventHandlerController,
             ILuaLibraryRepository luaLibraryRepository
         )
         {
-            EventFactory = eventFactory;
             EventBus = eventBus;
-            PluginFactory = pluginFactory;
-            PluginManager = pluginManager;
             Logger = logger;
-            EventHandlerController = eventHandlerController;
             LuaLuaLibrary = luaLibraryRepository.Get("api/lua") as LuaLuaLibrary;
 
-            var internalEventHandler = EventHandlerController.Get<Slipstream.Components.Internal.EventHandler.Internal>();
-
-            internalEventHandler.OnInternalCommandPluginRegister += (_, e) => OnCommandPluginRegister(e);
-            internalEventHandler.OnInternalCommandPluginUnregister += (_, e) => OnCommandPluginUnregister(e);
-            internalEventHandler.OnInternalCommandPluginStates += (_, e) => OnCommandPluginStates(e);
-
-            // Plugins..
+            // init.lua..
             {
                 const string initFilename = "init.lua";
 
@@ -62,7 +41,7 @@ namespace Slipstream.Backend
                 InitLuaScript = LuaLuaLibrary?.instance("init.lua", "init.lua") as ILuaLuaReference;
             }
 
-            // Tell Plugins that we're live - this will make eventbus distribute events
+            // We're live - this will make eventbus distribute events
             EventBus.Enabled = true;
         }
 
@@ -76,39 +55,6 @@ namespace Slipstream.Backend
             File.WriteAllText(initFilename, initLuaContent);
         }
 
-        private void OnCommandPluginStates(InternalCommandPluginStates _)
-        {
-            PluginManager.ForAllPluginsExecute(
-                (a) => EventBus.PublishEvent(
-                    EventFactory.CreateInternalPluginState(a.Id, a.Name, a.DisplayName, IInternalEventFactory.PluginStatusEnum.Registered)
-            ));
-        }
-
-        private void OnCommandPluginUnregister(InternalCommandPluginUnregister ev)
-        {
-            PluginManager.UnregisterPlugin(ev.Id);
-        }
-
-        public void UnregisterSubscription(IEventBusSubscription subscription)
-        {
-            EventBus.UnregisterSubscription(subscription);
-        }
-
-        private void OnCommandPluginRegister(InternalCommandPluginRegister ev)
-        {
-            JObject a = JObject.Parse(ev.Configuration);
-            Parameters configuration = Parameters.From(a);
-
-            try
-            {
-                PluginManager.RegisterPlugin(PluginFactory.CreatePlugin(ev.Id, ev.PluginName, configuration));
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, $"Failed creating plugin '{ev.Id}' ('{ev.PluginName}'): {e}");
-            }
-        }
-
         public void Start()
         {
             InitLuaScript?.join();
@@ -116,7 +62,10 @@ namespace Slipstream.Backend
 
         public void Dispose()
         {
-            PluginManager.Dispose();
+        }
+
+        public void UnregisterSubscription(IEventBusSubscription subscription)
+        {
         }
     }
 }

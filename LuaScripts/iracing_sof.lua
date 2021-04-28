@@ -1,5 +1,10 @@
 -- Implements a "!sof" command for twitch users to see the current strength-of-field
+-- Before using this, edit lib/config.lua
+
+local cfg = require("lib/config")
 local common = require("lib/common")
+local iracing = require("api/iracing"):instance(cfg.iracing)
+local twitch = require("api/twitch"):instance(cfg.twitch)
 
 local cars = {}
 

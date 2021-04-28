@@ -5,8 +5,13 @@
 	- "!ir" - shows IRating/License for current category of the session (road, dirt, dirtoval, dirtroad)
 	- "!ir <road|dirt|dirtroad|oval>" - show of another category than current
 
+	Before using this, edit lib/config.lua
 --]]
 
+local cfg = require("lib/config")
+local iracing = require("api/iracing"):instance(cfg.iracing)
+local twitch = require("api/twitch"):instance(cfg.twitch)
+local state = require("api/state"):instance(cfg.state)
 local common = require("lib/common")
 
 local session_category = ""
@@ -65,7 +70,7 @@ handlers.TwitchReceivedMessage = function(event)
 	elseif msg == "!ir road" or msg == "!ir oval" or msg == "!ir dirtoval" or msg == "!ir dirtroad" then
 		local requested_category = string.sub(msg, 5, string.len(msg))
 		show_irating(requested_category)
-	else
+	elseif string.sub(msg, 1, 4) == "!ir " then
 		output("Use !ir|!ir road|!ir oval|!ir dirtoval|!ir dirtroad")
 	end
 end

@@ -1,40 +1,31 @@
 ﻿-- This file is auto generated upon startup, if it doesnt exist. So if you
 -- ever break it, just rename/delete it, and a new working one is created.
 -- There is no auto-reloading of this file - it is only evaluated at startup
-print "Initializing"
 
--- Monitors for new versions of the application and raise events for it
-register_plugin({plugin_name = "ApplicationUpdatePlugin", updateLocation="https://github.com/dennis/slipstream", prerelease=true})
+local lua = require("api/lua")
+local lua_loader = "SlipstreamLuaLoader"
 
--- Delivers IRacing events as they happen
--- register_plugin({ plugin_name = "IRacingPlugin"})
+local function ends_with(str, ending)
+   return ending == "" or str:sub(-#ending) == ending
+end
 
---Connects to Twitch(via the values provided in Settings) and provide
---a way to sende and receive twitch messages.Generate a token here: https://twitchapps.com/tmi/
--- register_plugin({ plugin_name = "TwitchPlugin", twitch_username = "<username>", twitch_token = "<token>", twitch_channel = "<channel>"})
+function handle(e)
+	if e.EventType == "FileMonitorFileCreated" and e.InstanceId == lua_loader and ends_with(e.FilePath, ".lua") then
+		lua:instance({id = e.FilePath, file = e.FilePath})
+	elseif e.EventType == "FileMonitorFileChanged" and e.InstanceId == lua_loader and ends_with(e.FilePath, ".lua") then
+		lua:instance({id = e.FilePath, file = e.FilePath}):stop()
+		wait(e.FilePath, function()
+			lua:instance({id = e.FilePath, file = e.FilePath})
+		end, 1)
+	elseif e.EventType == "FileMonitorFileRenamed" and e.InstanceId == lua_loader then
+		if ends_with(e.OldFilePath, ".lua") then lua:instance({id = e.OldFilePath, file = e.OldFilePath}):stop() end
+		if ends_with(e.FilePath, ".lua") then lua:instance({id = e.FilePath, file = e.FilePath}) end
+	elseif e.EventType == "FileMonitorFileDeleted" and e.InstanceId == lua_loader and ends_with(e.FilePath, ".lua") then
+		lua:instance({id = e.FilePath, file = e.FilePath}):stop()
+	elseif e.EventType == "InternalCommandShutdown" then
+		lua:instance({id = SS.instance_id, file = SS.file}):stop()
+	end
+end
 
---Only one of these may be active at a time.ReceiverPlugin listens
--- for TCP connections, while Transmitter will send the events it sees
---to the destination. Both are configured as Txrx in Settings.
--- register_plugin({ plugin_name = "TransmitterPlugin", ip = " < yourip > ", port = < yourport >})
--- register_plugin({ plugin_name = "ReceiverPlugin", ip = " < yourip > ", port = < yourport >})
-
---LuaManagerPlugin listens for FileMonitorPlugin events and acts on them.
--- It will only act on files ending with.lua, which it launches
--- a LuaPlugin for. If the file is modified, it will take down the plugin and
--- launch a new one with the same file.If files are moved out of the directory
--- it is consider as if it were deleted. Deleted files are taken down.
-register_plugin({ plugin_name = "LuaManagerPlugin"})
-
--- This will monitor the Script directory and sends out events
--- every time a file is created, renamed, modified or deleted
-require("api/filemonitor"):instance({ id = "internal", paths = { "Scripts" } }):scan();
-
---Provides save / replay of events. Please be careful if you use this.There is
- --not much filtering, so RegisterPlugin / Unregister plugins will actually make
---slipstream perform these actions
-register_plugin({ plugin_name = "PlaybackPlugin"})
-
--- UI to show console output
-register_plugin({ plugin_name = "UIPlugin"})
-register_plugin({ plugin_name = "WinFormUIPlugin"})
+require("api/filemonitor"):instance({ id = lua_loader, paths = { "Scripts" } }):scan()
+require("api/winformui"):instance({id = "winformui"})

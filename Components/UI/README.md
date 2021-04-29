@@ -5,6 +5,23 @@ console
 
 ## Lua
 
+
+<details><summary>Construction</summary><br />
+
+```lua
+local ui = require("api/ui"):instance(config)
+```
+
+This will construct an instance of `api/ui` or return an existing instance with 
+the same `id` if one exists.
+
+`config` is the initial configuration of the instance if one needs to be created. It is a table with one or more keys as defined below.
+
+| Parameter   | Type          | Default    | Description                    |
+| :---------- | :-----------: | :--------: | :----------------------------- |
+| id          | string        |            | Mandatory: Id of this instance |
+</details>
+
 <details><summary>ui:print(message)</summary><br />
 Writes a string to the log shown in the UI.
 

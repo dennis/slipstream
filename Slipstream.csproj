@@ -435,9 +435,8 @@
     <None Include="Components\Audio\README.md" />
     <None Include="Components\Discord\README.md" />
     <None Include="Components\FileMonitor\README.md" />
-    <None Include="Components\Internal\README.md" />
-    <None Include="Components\IRacing\README.md" />
     <None Include="Components\Lua\README.md" />
+    <None Include="Components\IRacing\README.md" />
     <Compile Include="Components\Playback\Lua\PlaybackLuaLibrary.cs" />
     <None Include="Components\Playback\README.md" />
     <None Include="Components\README.md" />

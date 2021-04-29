@@ -1,6 +1,6 @@
 ﻿# Audio
 
-This component provides lua function to play wave/mp3 audio files or text-to-speech.
+This component provides a lua library to play wave/mp3 audio files or text-to-speech.
 
 ## Lua
 
@@ -13,7 +13,8 @@ local audio = require("api/audio"):instance(config)
 This will construct an instance of `api/audio` or return an existing instance with 
 the same `id` if one exists.
 
-`config` is the initial configuration of the instance if one needs to be created. It is a table with one or more keys as defined below.
+`config` is the initial configuration of the instance if one needs to be created. 
+It is a table with one or more keys as defined below.
 
 | Parameter   | Type          | Default    | Description                    |
 | :---------- | :-----------: | :--------: | :----------------------------- |
@@ -101,83 +102,6 @@ default audio output, but can be changed via this.
 | volume     | number 0..1 | 0 is muted, 1 is full volume |
 
 The volume is only set for the current instance. If you have another
-script using the same instance that volume will not be changed.
-
-See `audio:send_devices()` to get events describing the devices available.
-</details>
-
-## Events
-
-<details><summary>AudioCommandPlay</summary><br />
-Requests a mp3/wave files to be played. Filename is relative to the audio directory.
-
-| Name            | Type    | Description                                                       |
-|:----------------|:-------:|:------------------------------------------------------------------|
-| EventType       | string  | `AudioCommandPlay` (constant)                                     |
-| Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
-| InstanceId      | string  | Which instance should act                                         |
-| Filename        | string  | Filename to play, relative to the audio directory                 |
-| Volume          | numeric | Value from 0 .. 1, being from muted (0) to full volume (1)        |
-
-
-**JSON Example:** 
-`{"EventType": "AudioCommandPlay", "Uptime":299, "InstanceId": "AudioDefault", "Filename": "Ding-sound-effect.mp3", "Volume": 1}`
-</details>
-
-<details><summary>AudioCommandSay</summary><br />
-Request message to read out loud using Windows text-to-speech
-
-| Name            | Type    | Description                                                       |
-|:----------------|:-------:|:------------------------------------------------------------------|
-| EventType       | string  | `AudioCommandSay` (constant)                                      |
-| Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
-| InstanceId      | string  | Which instance should act                                         |
-| Message         | string  | Text to speak                                                     |
-| Volume          | numeric | Value from 0 .. 1, being from muted (0) to full volume (1)        |
-
-**JSON Example:** 
-`{"EventType": "AudioCommandSay", "Uptime":299,  "InstanceId": "AudioDefault",  "Message": "Slipstream ready",  "Volume": 0.800000012}`
-</details>
-
-<details><summary>AudioCommandSendDevices</summary><br />
-
-Send known devices via `AudioOutputDevice`.
-
-| Name              | Type      | Description                                                       |
-| :---------------- | :-------: | :-------------------------------------                            |
-| EventType         | string    | `AudioCommandSendDevices` (constant)                              |
-| Uptime            | integer   | Time of when the message was sent via Eventbus (in milliseconds). |
-| InstanceId        | string    | Which instance should act                                         |
-
-**JSON Example:** 
-`{"EventType":"AudioCommandSendDevices","InstanceId":"AudioDefault"}`
-</details>
-
-<details><summary>AudioCommandSetOutputDevice</summary><br />
-
-| Name            | Type    | Description                                                       |
-|:----------------|:-------:|:------------------------------------------------------------------|
-| EventType       | string  | `AudioCommandSetOutputDevice` (constant)                          |
-| Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
-| InstanceId      | string  | Which instance should act                                         |
-| DeviceIdx       | int     | DeviceIdx to use for this plugin                                  |
-
-**JSON Example:** 
-`{"EventType":"AudioCommandSetOutputDevice","InstanceId":"AudioDefault","DeviceIdx":2}`
-</details>
-
-<details><summary>AudioOutputDevice</summary><br />
-
-A output device found. Note: Device with DeviceIdx -1 is the default device.
-
-| Name            | Type    | Description                                                       |
-|:----------------|:-------:|:------------------------------------------------------------------|
-| EventType       | string  | `AudioOutputDevice` (constant)                                    |
-| Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
-| InstanceId      | string  | Which instance should act                                         |
-| Product         | string  | Product as returned by Windows                                    |
-| DeviceIdx       | int     | Device index, use this for selecting the device                   |
-
-**JSON Example:** 
-`{"EventType":"AudioOutputDevice","InstanceId":"AudioDefault","Product":"Microsoft Sound Mapper","DeviceIdx":-1}`
+script using the same instance that volume will not be changed for that
+script.
 </details>

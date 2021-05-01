@@ -63,8 +63,6 @@ namespace Slipstream.Components.Lua.Lua
                     );
 
                     Instances.Add(instanceId, newServiceThread);
-
-                    newServiceThread.Start();
                 }
             }
 

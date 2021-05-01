@@ -39,6 +39,7 @@ namespace Slipstream.Backend
 
                 Logger.Information("Loading {initcfg}", initFilename);
                 InitLuaScript = LuaLuaLibrary?.instance("init.lua", "init.lua") as ILuaLuaReference;
+                InitLuaScript?.start();
             }
 
             // We're live - this will make eventbus distribute events

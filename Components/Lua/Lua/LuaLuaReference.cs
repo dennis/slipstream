@@ -15,10 +15,19 @@ namespace Slipstream.Components.Lua.Lua
             ServiceThread = serviceThread;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
+        public void start()
+        {
+            ServiceThread.Start();
+        }
+
         public void stop()
         {
             ServiceThread.Stop();
+        }
+
+        public void restart()
+        {
+            ServiceThread.Restart();
         }
 
         public void Dispose()
@@ -26,7 +35,6 @@ namespace Slipstream.Components.Lua.Lua
             LuaLibrary.ReferenceDrop(this);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
         public void join()
         {
             ServiceThread.Join();

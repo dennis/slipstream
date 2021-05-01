@@ -16,7 +16,6 @@ namespace Slipstream.Components.Lua.Lua
     public partial class LuaInstanceThread : BaseInstanceThread, ILuaInstanceThread
     {
         private readonly Object Lock = new object();
-        private readonly NLua.Lua Lua = new NLua.Lua();
         private static readonly Random random = new Random();
         private readonly ILuaLibraryRepository Repository;
         private readonly IEventBusSubscription Subscription;
@@ -26,6 +25,7 @@ namespace Slipstream.Components.Lua.Lua
         private readonly IDictionary<string, DelayedExecution> DebounceDelayedFunctions = new Dictionary<string, DelayedExecution>();
         private readonly IDictionary<string, DelayedExecution> WaitDelayedFunctions = new Dictionary<string, DelayedExecution>();
         private readonly string FileName = "";
+        private NLua.Lua Lua = new NLua.Lua();
         private ulong LastLuaGC;
 
         public LuaInstanceThread(string instanceId, string filePath, LuaLuaLibrary luaLibrary, ILogger logger, ILuaLibraryRepository repository, IEventBusSubscription subscription, IEventHandlerController eventHandlerController) : base(instanceId, logger)
@@ -35,31 +35,18 @@ namespace Slipstream.Components.Lua.Lua
             Subscription = subscription;
             EventHandlerController = eventHandlerController;
             LuaLibrary = luaLibrary;
-
-            SetupLua(Lua);
         }
 
         protected override void Main()
         {
-            LuaFunction? handleFunc = null;
-
             try
             {
-                lock (Lock)
-                {
-                    // Fix paths, so we can require() files relative to where the script is located
-                    var scriptPath = Path.GetDirectoryName(FileName).Replace("\\", "\\\\");
-                    Lua.DoString($"package.path = \"{scriptPath}\\\\?.lua;\" .. package.path;");
-
-                    Lua.DoFile(FileName);
-
-                    handleFunc = Lua["handle"] as NLua.LuaFunction;
-                }
+                var handleFunc = LoadFile();
 
                 // If we have no HandleFunc defined, then just exit as this script will never do anything
                 if (handleFunc == null && WaitDelayedFunctions.Count == 0 && DebounceDelayedFunctions.Count == 0)
                 {
-                    Logger.Warning("{fileName} got no handle(), no wait() nor debounce() functions. Stopping", FileName);
+                    Logger.Warning("{fileName} got no handle(), wait() nor debounce() functions. Stopping", FileName);
                 }
                 else
                 {
@@ -111,6 +98,23 @@ namespace Slipstream.Components.Lua.Lua
             CreatedReferences.Clear();
 
             LuaLibrary.InstanceStopped(InstanceId);
+        }
+
+        private LuaFunction? LoadFile()
+        {
+            lock (Lock)
+            {
+                Lua = new NLua.Lua();
+                SetupLua(Lua);
+
+                // Fix paths, so we can require() files relative to where the script is located
+                var scriptPath = Path.GetDirectoryName(FileName).Replace("\\", "\\\\");
+                Lua.DoString($"package.path = \"{scriptPath}\\\\?.lua;\" .. package.path;");
+
+                Lua.DoFile(FileName);
+
+                return Lua["handle"] as NLua.LuaFunction;
+            }
         }
 
         private void SetupLua(NLua.Lua lua)

@@ -12,6 +12,7 @@ namespace Slipstream.Shared.Lua
         protected readonly string InstanceId;
         protected readonly ILogger Logger;
         protected volatile bool Stopping = false;
+        protected volatile bool AutoStart = false;
 
         protected BaseInstanceThread(string instanceId, ILogger logger)
         {
@@ -35,29 +36,53 @@ namespace Slipstream.Shared.Lua
                 Logger.Error($"Exception in {GetType().Name} {InstanceId}: {e.Message}");
             }
             Logger.Debug($"Stopping {GetType().Name } {InstanceId}");
+
+            if (AutoStart)
+            {
+                AutoStart = false;
+                Stopping = false;
+                ThreadMain();
+            }
         }
 
         protected abstract void Main();
 
         public void Start()
         {
-            ServiceThread.Start();
+            if (ServiceThread?.ThreadState == ThreadState.Unstarted || ServiceThread?.ThreadState == ThreadState.Stopped)
+                ServiceThread.Start();
         }
 
         public void Stop()
         {
-            Stopping = true;
+            if (ServiceThread?.IsAlive == true)
+                Stopping = true;
+        }
+
+        public void Restart()
+        {
+            if (ServiceThread?.IsAlive == true)
+            {
+                Stop();
+                AutoStart = true;
+            }
+            else
+            {
+                Start();
+            }
         }
 
         public void Join()
         {
-            ServiceThread.Join();
+            if (ServiceThread?.IsAlive == true)
+                ServiceThread.Join();
         }
 
         public void Dispose()
         {
             Stopping = true;
-            ServiceThread?.Join();
+            if (ServiceThread?.IsAlive == true)
+                ServiceThread?.Join();
         }
     }
 }

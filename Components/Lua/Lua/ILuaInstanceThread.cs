@@ -9,5 +9,7 @@ namespace Slipstream.Components.Lua.Lua
         void Join();
 
         void Stop();
+
+        void Restart();
     }
 }

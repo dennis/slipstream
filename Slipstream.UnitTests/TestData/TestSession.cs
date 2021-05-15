@@ -1,4 +1,4 @@
-﻿using Slipstream.Components.IRacing.Plugins.GameState;
+﻿using Slipstream.Components.IRacing.GameState;
 
 namespace Slipstream.UnitTests.TestData
 {

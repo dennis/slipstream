@@ -1,51 +1,52 @@
 ﻿-- This file is auto generated upon startup, if it doesnt exist. So if you
 -- ever break it, just rename/delete it, and a new working one is created.
 -- There is no auto-reloading of this file - it is only evaluated at startup
-print "Initializing"
 
--- Monitors for new versions of the application and raise events for it
-register_plugin({plugin_name = "ApplicationUpdatePlugin", updateLocation="https://github.com/dennis/slipstream", prerelease=true})
+local lua_loader = "SlipstreamLuaLoader"
+local lua = require("api/lua")
 
--- Listens for samples to play or text to speek. Disabling this will mute all
--- sounds. You can add optional argument "output" to device which device to use.
--- Make a small lua script with `audio: send_devices("AudioPlugin")` and look at
--- the incoming `AudioOutputDevice` events.The device index is the value you
--- want to use for the value for "output"
-register_plugin({plugin_name = "AudioPlugin"})
+local function ends_with(str, ending)
+	return ending == "" or str:sub(-#ending) == ending
+end
 
--- Delivers IRacing events as they happen
-register_plugin({ plugin_name = "IRacingPlugin"})
+local lua_scripts = {
+	scripts = {},
 
---Connects to Twitch(via the values provided in Settings) and provide
---a way to sende and receive twitch messages.Generate a token here: https://twitchapps.com/tmi/
---register_plugin({ plugin_name = "TwitchPlugin", twitch_username = "<username>", twitch_token = "<token>", twitch_channel = "<channel>"})
+	start = function(self, file)
+		if not self.scripts[file] then
+			self.scripts[file] = lua:instance({id = file, file = file})
+			self.scripts[file]:start()
+		else
+			self.scripts[file]:restart()
+		end
+	end,
 
---Connect to Discord to receive and send messages.
---You need a bot account that can be created here https://discord.com/developers/applications
---register_plugin({ plugin_name = "DiscordPlugin", token = "<token>"})
+	stop = function(self, file)
+		if self.scripts[file] then
+			self.scripts[file]:stop()
+		end
+	end
+}
 
---Only one of these may be active at a time.ReceiverPlugin listens
--- for TCP connections, while Transmitter will send the events it sees
---to the destination. Both are configured as Txrx in Settings.
--- register_plugin({ plugin_name = "TransmitterPlugin", ip = " < yourip > ", port = < yourport >})
---register_plugin({ plugin_name = "ReceiverPlugin", ip = " < yourip > ", port = < yourport >})
+function handle(e)
+	print(e.EventType)
+	if e.EventType == "FileMonitorFileCreated" and e.InstanceId == lua_loader and ends_with(e.FilePath, ".lua") then
+		lua_scripts:start(e.FilePath)
+	elseif e.EventType == "FileMonitorFileChanged" and e.InstanceId == lua_loader and ends_with(e.FilePath, ".lua") then
+		lua_scripts:start(e.FilePath)
+	elseif e.EventType == "FileMonitorFileRenamed" and e.InstanceId == lua_loader then
+		if ends_with(e.OldFilePath, ".lua") then
+			lua_scripts:stop(e.OldFilePath)
+		end
+		if ends_with(e.FilePath, ".lua") then
+			lua_scripts:start(e.FilePath)
+		end
+	elseif e.EventType == "FileMonitorFileDeleted" and e.InstanceId == lua_loader and ends_with(e.FilePath, ".lua") then
+		lua_scripts:stop(e.FilePath)
+	elseif e.EventType == "InternalCommandShutdown" then
+		lua:instance({id = SS.instance_id, file = SS.file}):stop()
+	end
+end
 
---LuaManagerPlugin listens for FileMonitorPlugin events and acts on them.
--- It will only act on files ending with.lua, which it launches
--- a LuaPlugin for. If the file is modified, it will take down the plugin and
--- launch a new one with the same file.If files are moved out of the directory
--- it is consider as if it were deleted. Deleted files are taken down.
-register_plugin({ plugin_name = "LuaManagerPlugin"})
-
---FileMonitorPlugin monitors the script directory and sends out events
--- every time a file is created, renamed, modified or deleted
-register_plugin({ plugin_name = "FileMonitorPlugin"})
-
---Provides save / replay of events. Please be careful if you use this.There is
- --not much filtering, so RegisterPlugin / Unregister plugins will actually make
---slipstream perform these actions
-register_plugin({ plugin_name = "PlaybackPlugin"})
-
--- UI to show console output
-register_plugin({ plugin_name = "UIPlugin"})
-register_plugin({ plugin_name = "WinFormUIPlugin"})
+require("api/filemonitor"):instance({ id = lua_loader, paths = { "Scripts" } }):scan()
+require("api/winformui"):instance({id = "winformui"})

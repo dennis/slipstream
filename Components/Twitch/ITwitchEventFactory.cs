@@ -6,22 +6,22 @@ namespace Slipstream.Components.Twitch
 {
     public interface ITwitchEventFactory
     {
-        TwitchCommandSendMessage CreateTwitchCommandSendMessage(string message);
+        TwitchCommandSendMessage CreateTwitchCommandSendMessage(string instanceId, string message);
 
-        TwitchConnected CreateTwitchConnected();
+        TwitchConnected CreateTwitchConnected(string instanceId);
 
-        TwitchDisconnected CreateTwitchDisconnected();
+        TwitchDisconnected CreateTwitchDisconnected(string instanceId);
 
-        TwitchReceivedMessage CreateTwitchReceivedMessage(string from, string message, bool moderator, bool subscriber, bool vip, bool broadcaster);
+        TwitchReceivedMessage CreateTwitchReceivedMessage(string instanceId, string from, string message, bool moderator, bool subscriber, bool vip, bool broadcaster);
 
-        TwitchReceivedWhisper CreateTwitchReceivedWhisper(string from, string message);
+        TwitchReceivedWhisper CreateTwitchReceivedWhisper(string instanceId, string from, string message);
 
-        TwitchCommandSendWhisper CreateTwitchCommandSendWhisper(string to, string message);
+        TwitchCommandSendWhisper CreateTwitchCommandSendWhisper(string instanceId, string to, string message);
 
-        TwitchUserSubscribed CreateTwitchUserSubscribed(string name, string message, string subscriptionPlan, long cumulativeMonths, long streakMonths, string systemMessage);
+        TwitchUserSubscribed CreateTwitchUserSubscribed(string instanceId, string name, string message, string subscriptionPlan, long cumulativeMonths, long streakMonths, string systemMessage);
 
-        TwitchGiftedSubscription CreateTwitchGiftedSubscription(string gifter, string subscriptionPlan, string recipient, string systemMessage);
+        TwitchGiftedSubscription CreateTwitchGiftedSubscription(string instanceId, string gifter, string subscriptionPlan, string recipient, string systemMessage);
 
-        TwitchRaided CreateTwitchRaided(string name, int viewerCount);
+        TwitchRaided CreateTwitchRaided(string instanceId, string name, int viewerCount);
     }
 }

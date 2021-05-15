@@ -42,7 +42,7 @@ common.with_cooldown = function(name, duration, f)
 
 			disabled = true
 
-			core:wait(name, enabler, duration);
+			wait(name, enabler, duration);
 		end
 	end
 end

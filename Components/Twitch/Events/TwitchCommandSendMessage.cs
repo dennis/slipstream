@@ -8,15 +8,15 @@ namespace Slipstream.Components.Twitch.Events
     public class TwitchCommandSendMessage : IEvent
     {
         public string EventType => "TwitchCommandSendMessage";
-        public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
+        public string InstanceId { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
 
         public override bool Equals(object? obj)
         {
             return obj is TwitchCommandSendMessage message &&
                    EventType == message.EventType &&
-                   ExcludeFromTxrx == message.ExcludeFromTxrx &&
+                   InstanceId == message.InstanceId &&
                    Message == message.Message;
         }
 
@@ -24,7 +24,7 @@ namespace Slipstream.Components.Twitch.Events
         {
             int hashCode = 1904577466;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
-            hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(InstanceId);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Message);
             return hashCode;
         }

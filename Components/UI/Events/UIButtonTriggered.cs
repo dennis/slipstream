@@ -6,7 +6,6 @@ namespace Slipstream.Components.UI.Events
     public class UIButtonTriggered : IEvent
     {
         public string EventType => "UIButtonTriggered";
-        public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
         public string Text { get; set; } = "INVALID-NAME";
 
@@ -14,7 +13,6 @@ namespace Slipstream.Components.UI.Events
         {
             return obj is UIButtonTriggered triggered &&
                    EventType == triggered.EventType &&
-                   ExcludeFromTxrx == triggered.ExcludeFromTxrx &&
                    Text == triggered.Text;
         }
 
@@ -22,7 +20,6 @@ namespace Slipstream.Components.UI.Events
         {
             int hashCode = 25878420;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
-            hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Text);
             return hashCode;
         }

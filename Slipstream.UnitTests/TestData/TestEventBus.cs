@@ -1,7 +1,7 @@
 ﻿using Slipstream.Shared;
 using System.Collections.Generic;
 
-namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
+namespace Slipstream.UnitTests.Components.IRacing.Trackers
 {
     public class TestEventBus : IEventBus
     {

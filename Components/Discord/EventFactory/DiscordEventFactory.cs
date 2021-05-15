@@ -4,30 +4,38 @@ namespace Slipstream.Components.Discord.EventFactory
 {
     internal class DiscordEventFactory : IDiscordEventFactory
     {
-        public DiscordCommandSendMessage CreateDiscordCommandSendMessage(ulong channelId, string message, bool tts)
+        public DiscordCommandSendMessage CreateDiscordCommandSendMessage(string instanceId, ulong channelId, string message, bool tts)
         {
             return new DiscordCommandSendMessage
             {
+                InstanceId = instanceId,
                 ChannelId = channelId,
                 Message = message,
                 TextToSpeech = tts
             };
         }
 
-        public DiscordConnected CreateDiscordConnected()
+        public DiscordConnected CreateDiscordConnected(string instanceId)
         {
-            return new DiscordConnected();
+            return new DiscordConnected
+            {
+                InstanceId = instanceId
+            };
         }
 
-        public DiscordDisconnected CreateDiscordDisconnected()
+        public DiscordDisconnected CreateDiscordDisconnected(string instanceId)
         {
-            return new DiscordDisconnected();
+            return new DiscordDisconnected
+            {
+                InstanceId = instanceId,
+            };
         }
 
-        public DiscordMessageReceived CreateDiscordMessageReceived(ulong fromId, string from, ulong channelId, string channel, string message)
+        public DiscordMessageReceived CreateDiscordMessageReceived(string instanceId, ulong fromId, string from, ulong channelId, string channel, string message)
         {
             return new DiscordMessageReceived
             {
+                InstanceId = instanceId,
                 FromId = fromId,
                 From = from,
                 ChannelId = channelId,

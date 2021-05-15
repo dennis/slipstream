@@ -1,10 +1,10 @@
 ﻿#nullable enable
 
 using Slipstream.Components.Internal;
-using Slipstream.Components.Internal.Events;
 using Slipstream.Components.Playback;
 using Slipstream.Components.UI;
 using Slipstream.Components.UI.Events;
+using Slipstream.Components.WinFormUI.Lua;
 using Slipstream.Properties;
 using Slipstream.Shared;
 
@@ -22,19 +22,19 @@ namespace Slipstream.Components.WinFormUI.Forms
     {
         private Thread? EventHandlerThread;
         private readonly IEventBus EventBus;
+        private readonly WinFormUIInstanceThread Instance;
         private readonly IInternalEventFactory InternalEventFactory;
         private readonly IUIEventFactory UIEventFactory;
         private readonly IPlaybackEventFactory PlaybackEventFactory;
         private IEventBusSubscription? EventBusSubscription;
         private readonly BlockingCollection<string> PendingMessages = new BlockingCollection<string>();
-        private readonly IDictionary<string, ToolStripMenuItem> MenuPluginItems = new Dictionary<string, ToolStripMenuItem>();
         private readonly IDictionary<string, Button> LuaButtons = new Dictionary<string, Button>();
-        private readonly string CleanTitle;
         private readonly IEventHandlerController EventHandler;
         private bool ShuttingDown = false;
 
-        public MainWindow(IInternalEventFactory internalEventFactory, IUIEventFactory uiEventFactory, IPlaybackEventFactory playbackEventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, IEventHandlerController eventHandlerController)
+        public MainWindow(WinFormUIInstanceThread instance, IInternalEventFactory internalEventFactory, IUIEventFactory uiEventFactory, IPlaybackEventFactory playbackEventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, IEventHandlerController eventHandlerController)
         {
+            Instance = instance;
             InternalEventFactory = internalEventFactory;
             UIEventFactory = uiEventFactory;
             PlaybackEventFactory = playbackEventFactory;
@@ -46,7 +46,6 @@ namespace Slipstream.Components.WinFormUI.Forms
             InitializeComponent();
 
             Text += " v" + applicationVersionService.Version;
-            CleanTitle = Text;
 
             Load += MainWindow_Load;
             FormClosing += MainWindow_FormClosing;
@@ -117,6 +116,12 @@ namespace Slipstream.Components.WinFormUI.Forms
             }
 
             AppendMessages(allMesssages);
+
+            if (Instance.IsStopping())
+            {
+                ShuttingDown = true;
+                ExecuteSecure(() => Application.Exit());
+            }
         }
 
         #region EventHandlerThread methods
@@ -128,25 +133,14 @@ namespace Slipstream.Components.WinFormUI.Forms
             var internalEventHandler = EventHandler.Get<Components.Internal.EventHandler.Internal>();
             var uiEventHandler = EventHandler.Get<Components.UI.EventHandler.UIEventHandler>();
 
-            internalEventHandler.OnInternalPluginState += (_, e) => EventHandler_OnInternalPluginState(e);
-            internalEventHandler.OnInternalShutdown += (_, e) => EventHandler_OnInteralShutdown(e);
             uiEventHandler.OnUICommandWriteToConsole += (_, e) => PendingMessages.Add($"{DateTime.Now:s} {e.Message}");
             uiEventHandler.OnUICommandCreateButton += (_, e) => EventHandler_OnUICommandCreateButton(e);
             uiEventHandler.OnUICommandDeleteButton += (_, e) => EventHandler_OnUICommandDeleteButton(e);
-
-            // Request full state of all known plugins, so we get any that might be started before "us"
-            EventBus.PublishEvent(InternalEventFactory.CreateInternalCommandPluginStates());
 
             while (true)
             {
                 EventHandler.HandleEvent(EventBusSubscription?.NextEvent());
             }
-        }
-
-        private void EventHandler_OnInteralShutdown(InternalShutdown _)
-        {
-            ShuttingDown = true;
-            ExecuteSecure(() => Application.Exit());
         }
 
         private void EventHandler_OnUICommandCreateButton(UICommandCreateButton @event)
@@ -183,68 +177,6 @@ namespace Slipstream.Components.WinFormUI.Forms
                 ButtonFlowLayoutPanel.Controls.Remove(LuaButtons[@event.Text]);
                 LuaButtons.Remove(@event.Text);
             });
-        }
-
-        private void EventHandler_OnInternalPluginState(InternalPluginState e)
-        {
-            if (e.PluginStatus != "Unregistered" && !MenuPluginItems.ContainsKey(e.Id))
-            {
-                var item = new ToolStripMenuItem
-                {
-                    Checked = true,
-                    CheckState = CheckState.Unchecked,
-                    Name = e.Id.ToString(),
-                    Size = new System.Drawing.Size(180, 22),
-                    Text = e.DisplayName
-                };
-                MenuPluginItems.Add(e.Id, item);
-
-                ExecuteSecure(() => PluginsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { item }));
-            }
-
-            switch (e.PluginStatus)
-            {
-                case "Registered":
-                    switch (e.Id)
-                    {
-                        case "TransmitterPlugin":
-                            ExecuteSecure(() => Text = $"{CleanTitle} <<< transmitting >>>");
-                            break;
-
-                        case "ReceiverPlugin":
-                            ExecuteSecure(() => Text = $"{CleanTitle} <<< receiving >>>");
-                            break;
-
-                        case "PlaybackPlugin":
-                            ExecuteSecure(() =>
-                            {
-                                LoadEventsToolStripMenuItem.Visible = true;
-                                SaveEventsToFileToolStripMenuItem.Visible = true;
-                            });
-                            break;
-                    }
-                    break;
-
-                case "Unregistered":
-                    {
-                        if (MenuPluginItems.ContainsKey(e.Id))
-                        {
-                            var item = MenuPluginItems[e.Id];
-                            MenuPluginItems.Remove(e.Id);
-
-                            ExecuteSecure(() => PluginsToolStripMenuItem.DropDownItems.Remove(item));
-                        }
-
-                        switch (e.Id)
-                        {
-                            case "TransmitterPlugin":
-                            case "ReceiverPlugin":
-                                ExecuteSecure(() => Text = CleanTitle);
-                                break;
-                        }
-                    }
-                    break;
-            }
         }
 
         #endregion EventHandlerThread methods

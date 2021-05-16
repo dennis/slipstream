@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Slipstream.Components.AppilcationUpdate.Lua
 {
-    public class ApplicationUpdateLuaLibrary : BaseLuaLibrary<IApplicationUpdateInstanceThread, IApplicationUpdateReference>
+    public class ApplicationUpdateLuaLibrary : SingletonLuaLibrary<IApplicationUpdateInstanceThread, IApplicationUpdateReference>
     {
         private static readonly DictionaryValidator ConfigurationValidator;
 

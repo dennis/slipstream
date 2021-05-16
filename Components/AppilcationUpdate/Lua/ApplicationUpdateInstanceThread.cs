@@ -2,11 +2,14 @@
 
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
-using Squirrel;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
+using AutoUpdaterDotNET;
+using System.Reflection;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using System;
+using System.IO;
+using System.Net;
 
 namespace Slipstream.Components.AppilcationUpdate.Lua
 {
@@ -16,8 +19,10 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
         private readonly IApplicationUpdateEventFactory ApplicationUpdateEventFactory;
         private readonly IEventBus EventBus;
         private readonly IEventBusSubscription Subscription;
+        private readonly IApplicationVersionService ApplicationVersionService;
         private readonly string UpdateLocation;
         private readonly bool Prerelease;
+        private UpdateInfoEventArgs? LastUpdateInfoEventArgs;
 
         public ApplicationUpdateInstanceThread(
             string instanceId,
@@ -27,7 +32,9 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
             IEventHandlerController eventHandlerController,
             IApplicationUpdateEventFactory applicationUpdateEventFactory,
             IEventBus eventBus,
-            IEventBusSubscription subscription) : base(instanceId, logger)
+            IEventBusSubscription subscription,
+            IApplicationVersionService applicationVersionService
+            ) : base(instanceId, logger)
         {
             UpdateLocation = location;
             Prerelease = prerelease;
@@ -35,19 +42,79 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
             ApplicationUpdateEventFactory = applicationUpdateEventFactory;
             EventBus = eventBus;
             Subscription = subscription;
+            ApplicationVersionService = applicationVersionService;
+        }
+
+        private void AutoUpdaterOnParseUpdateInfoEvent(ParseUpdateInfoEventArgs args)
+        {
+            // We're expecting a github endpoint, returning a JSON of what is available on the release page.
+            // see https://api.github.com/repos/dennis/slipstream/releases
+            // We will always use the latest version and check if that differs from the installed version
+            // When looking for which asset to download, we'll just download the first .exe file we find.
+
+            // AutoUpdaterDotNET also features UI, giving a dialog box that asks user if they want to update,
+            // skip or remind later. But to utilize this, we need to be doing this from the UI thread.
+            // It might make sense to move it to WinForm?
+
+            if (!(JsonConvert.DeserializeObject(args.RemoteData) is JArray json))
+            {
+                Logger.Information("Auto update, can't read json returned from update server");
+                return;
+            }
+
+            static string GetVersionFromTag(string tag) => tag.Remove(0, tag.IndexOf('v') + 1);
+
+            var latestRelease = json[0];
+            if (latestRelease == null)
+            {
+                Logger.Information("Auto update, didn't find any information for last version");
+                return;
+            }
+
+            if (!(latestRelease["tag_name"] is JValue newestRelease))
+            {
+                Logger.Information("Auto update, can't read newest version information");
+                return;
+            }
+
+            var newestReleaseStr = newestRelease.Value as string;
+            var CurrentVersion = GetVersionFromTag(newestReleaseStr!);
+            var ChangelogUrl = string.Empty;
+
+            if (!(latestRelease["assets"] is JArray assets))
+            {
+                Logger.Information("Auto update, no assets found");
+                return;
+            }
+
+            foreach (var asset in assets)
+            {
+                if (asset["browser_download_url"] is JValue downloadUrl && downloadUrl.Value is string downloadUrlStr && downloadUrlStr.EndsWith(".exe"))
+                {
+                    args.UpdateInfo = new UpdateInfoEventArgs
+                    {
+                        CurrentVersion = CurrentVersion,
+                        ChangelogURL = ChangelogUrl,
+                        DownloadURL = downloadUrlStr
+                    };
+
+                    break;
+                }
+            }
         }
 
         protected override void Main()
         {
-            if (Debugger.IsAttached)
-            {
-                Logger.Information("Auto update is disabled when a Debugger is attached");
-                return;
-            }
-
             Logger.Information($"Auto update, updating from {UpdateLocation}, prerelease: {Prerelease} {Thread.CurrentThread.ManagedThreadId}");
 
-            Init();
+            AutoUpdater.HttpUserAgent = $"{Assembly.GetExecutingAssembly().GetName().Name} v{ApplicationVersionService.Version}";
+            AutoUpdater.ParseUpdateInfoEvent += AutoUpdaterOnParseUpdateInfoEvent;
+            AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckFOrUpdateEvent;
+            AutoUpdater.PersistenceProvider = new JsonFilePersistenceProvider(Path.Combine(Environment.CurrentDirectory, "autoupdate.json"));
+
+            var applicationUpdate = EventHandlerController.Get<EventHandler.ApplicationUpdateEventHandler>();
+            applicationUpdate.OnApplicationUpdateCommandCheckLatestVersion += (s, e) => CheckForAppUpdates();
+            applicationUpdate.OnApplicationUpdateLatestVersionChanged += (s, e) => OnApplicationVersionChanged();
 
             while (!Stopping)
             {
@@ -60,83 +127,63 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
             }
         }
 
-        private void Init()
+        private void OnApplicationVersionChanged()
         {
-            if (string.IsNullOrEmpty(UpdateLocation))
-            {
-                Logger.Information("Auto update is disabled, no update location specified");
-                return;
-            }
-
-            using var updateManager = CreateUpdateManager();
-
-            if (updateManager?.IsInstalledApp == true)
-            {
-                Logger.Information($"Installed application: auto update enabled {Thread.CurrentThread.ManagedThreadId}");
-
-                var applicationUpdate = EventHandlerController.Get<EventHandler.ApplicationUpdateEventHandler>();
-
-                applicationUpdate.OnApplicationUpdateCommandCheckLatestVersion += async (s, e) => await CheckForAppUpdates();
-                applicationUpdate.OnApplicationUpdateLatestVersionChanged += async (s, e) => await OnApplicationVersionChanged();
-
-                // Send update event to check for update at startup
-                EventBus.PublishEvent(ApplicationUpdateEventFactory.CreateApplicationUpdateCommandCheckLatestVersion());
-            }
-        }
-
-        private UpdateManager? CreateUpdateManager()
-        {
-            if (string.IsNullOrEmpty(UpdateLocation))
-            {
-                return null;
-            }
-
-            var isGitHub = UpdateLocation.StartsWith("https://github.com");
-
-            if (isGitHub)
-            {
-                var asyncUpdateManager = UpdateManager.GitHubUpdateManager(UpdateLocation, prerelease: Prerelease);
-                asyncUpdateManager.Wait();
-                return asyncUpdateManager.Result;
-            }
-
-            return new UpdateManager(UpdateLocation);
-        }
-
-        private async Task CheckForAppUpdates()
-        {
-            Logger.Information("Auto update, checking lastest version");
-            using var updateManager = CreateUpdateManager();
-
-            if (updateManager == null)
+            if (LastUpdateInfoEventArgs == null)
                 return;
 
-            var canUpdate = await updateManager.CheckForUpdate();
-
-            if (canUpdate.ReleasesToApply.Any())
+            try
             {
-                Logger.Information("Auto update, new version available, raising the event");
-                EventBus.PublishEvent(ApplicationUpdateEventFactory.CreateApplicationUpdateLatestVersionChanged(canUpdate.FutureReleaseEntry.Version.ToString()));
+                if (AutoUpdater.DownloadUpdate(LastUpdateInfoEventArgs))
+                {
+                    Logger.Information("Auto update: Updated version. Restart to use it");
+                }
+                else
+                {
+                    Logger.Information("Auto update cancelled");
+                }
+            }
+            catch (Exception exception)
+            {
+                Logger.Error("Auto update error: " + exception.Message);
+            }
+
+            LastUpdateInfoEventArgs = null;
+        }
+
+        private void AutoUpdaterOnCheckFOrUpdateEvent(UpdateInfoEventArgs args)
+        {
+            if (args.Error == null)
+            {
+                if (args.IsUpdateAvailable)
+                {
+                    Logger.Information($"Auto update, new version {args.CurrentVersion} available. You are using version {args.InstalledVersion}.");
+
+                    LastUpdateInfoEventArgs = args;
+
+                    EventBus.PublishEvent(ApplicationUpdateEventFactory.CreateApplicationUpdateLatestVersionChanged(args.CurrentVersion));
+                }
+                else
+                {
+                    Logger.Information("Auto update, no update available");
+                }
             }
             else
             {
-                Logger.Information($"Auto update, no update available {Thread.CurrentThread.ManagedThreadId}");
+                if (args.Error is WebException)
+                {
+                    Logger.Error("Auto update, can't reach update server");
+                }
+                else
+                {
+                    Logger.Error("Auto update error: " + args.Error.Message);
+                }
             }
         }
 
-        private async Task OnApplicationVersionChanged()
+        private void CheckForAppUpdates()
         {
-            using var updateManager = CreateUpdateManager();
-            if (updateManager == null)
-                return;
-            await DoAppUpdates(updateManager);
-        }
-
-        private async Task DoAppUpdates(UpdateManager updateManager)
-        {
-            Logger.Information("Auto updating to the latest version");
-            var releaseInfo = await updateManager.UpdateApp();
-            Logger.Information($"Auto update, update completed for {releaseInfo.Version}");
+            AutoUpdater.Start(UpdateLocation);
         }
     }
 }

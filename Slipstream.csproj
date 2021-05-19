@@ -208,6 +208,15 @@
     <Compile Include="Components\AppilcationUpdate\Lua\ApplicationUpdateInstanceThread.cs" />
     <Compile Include="Components\AppilcationUpdate\Lua\ApplicationUpdateLuaLibrary.cs" />
     <Compile Include="Components\AppilcationUpdate\Lua\ApplicationUpdateReference.cs" />
+    <Compile Include="Components\IRacing\Events\IRacingCommandPitChangeLeftRearTyre.cs" />
+    <Compile Include="Components\IRacing\Events\IRacingCommandPitRequestFastRepair.cs" />
+    <Compile Include="Components\IRacing\Events\IRacingCommandPitClearTyresChange.cs" />
+    <Compile Include="Components\IRacing\Events\IRacingCommandPitChangeRightRearTyre.cs" />
+    <Compile Include="Components\IRacing\Events\IRacingCommandPitChangeRightFrontTyre.cs" />
+    <Compile Include="Components\IRacing\Events\IRacingCommandPitChangeLeftFrontTyre.cs" />
+    <Compile Include="Components\IRacing\Events\IRacingCommandPitAddFuel.cs" />
+    <Compile Include="Components\IRacing\Events\IRacingCommandPitCleanWindshield.cs" />
+    <Compile Include="Components\IRacing\Events\IRacingCommandPitClearAll.cs" />
     <Compile Include="Components\Lua\Lua\InternalLuaReference.cs" />
     <Compile Include="Components\Lua\Lua\LuaInstanceThread.LuaLibraryInstanceTracker.cs" />
     <Compile Include="Components\Lua\Lua\StateLuaReference.cs" />
@@ -256,7 +265,7 @@
     <Compile Include="Components\IRacing\GameState\Session.cs" />
     <Compile Include="Components\IRacing\GameState\SessionFlags.cs" />
     <Compile Include="Components\IRacing\GameState\State.cs" />
-    <Compile Include="Components\IRacing\GameState\Mapper.cs" />
+    <Compile Include="Components\IRacing\GameState\IRacingFacade.cs" />
     <Compile Include="Components\IRacing\GameState\StateFactory.cs" />
     <Compile Include="Components\IRacing\Models\LapState.cs" />
     <Compile Include="Components\IRacing\Models\CarState.cs" />

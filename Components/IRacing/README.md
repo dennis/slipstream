@@ -101,3 +101,94 @@ This function publishes `IRacingCommandSendRaceFlags` event, that is handled by 
 
 This function is aliased as ``iracing_send_race_flags`` (deprecated)
 </details>
+
+
+### Pitstop actions
+
+<details><summary>iracing:pit_clear_all()</summary><br />
+Clear all pit checkboxes
+
+```lua
+iracing:pit_clear_all()
+```
+</details>
+
+<details><summary>iracing:pit_clear_tyres_change(kpa)</summary><br />
+Clear tire pit checkboxes tire, optionally specifying the pressure in KPa or pass '0' to use existing pressure
+
+```lua
+iracing:pit_clear_tyres_change(0)
+```
+</details>
+
+<details><summary>iracing:pit_clear_tyres()</summary><br />
+Add fuel
+
+```lua
+iracing:pit_clear_tyres()
+```
+</details
+
+<details><summary>iracing:pit_request_fast_repair()</summary><br />
+Request fast repair
+
+```lua
+iracing:pit_request_fast_repair()
+```
+</details>
+
+<details><summary>iracing:pit_add_fuel(liters)</summary><br />
+Add fuel
+
+```lua
+iracing:pit_add_fuel(30)
+```
+</details>
+
+<details><summary>iracing:pit_change_left_front_tyre(kpa)</summary><br />
+Change the left front tire, optionally specifying the pressure in KPa or pass '0' to use existing pressure
+
+```lua
+iracing:pit_change_left_front_tyre(0)
+```
+</details>
+
+<details><summary>iracing:pit_change_right_front_tyre(kpa)</summary><br />
+Change the right front tire, optionally specifying the pressure in KPa or pass '0' to use existing pressure
+
+```lua
+iracing:pit_change_right_front_tyre(0)
+```
+</details>
+
+<details><summary>iracing:pit_change_left_rear_tyre(kpa)</summary><br />
+Change the left rear tire, optionally specifying the pressure in KPa or pass '0' to use existing pressure
+
+```lua
+iracing:pit_change_left_rear_tyre(0)
+```
+</details>
+
+<details><summary>iracing:pit_change_right_rear_tyre(kpa)</summary><br />
+Change the right rear tire, optionally specifying the pressure in KPa or pass '0' to use existing pressure
+
+```lua
+iracing:pit_change_right_rear_tyre(0)
+```
+</details>
+
+<details><summary>iracing:pit_change_right_rear_tyre(kpa)</summary><br />
+Change the right rear tire, optionally specifying the pressure in KPa or pass '0' to use existing pressure
+
+```lua
+iracing:pit_change_right_rear_tyre(0)
+```
+</details>
+
+<details><summary>iracing:pit_clean_windshield()</summary><br />
+Clean the winshield, using one tear off
+
+```lua
+iracing:pit_clean_windshield()
+```
+</details>

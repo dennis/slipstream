@@ -12,18 +12,28 @@ namespace Slipstream.Components.IRacing.Lua
         private readonly IEventBus EventBus;
         private readonly IIRacingEventFactory IRacingEventFactory;
         private readonly IEventHandlerController EventHandlerController;
+        private readonly IEventBusSubscription Subscription;
 
-        public IRacingInstanceThread(string instanceId, bool publishRawState, ILogger logger, IEventBus eventBus, IIRacingEventFactory eventFactory, IEventHandlerController eventHandlerController) : base(instanceId, logger)
+        public IRacingInstanceThread(
+            string instanceId,
+            bool publishRawState,
+            ILogger logger,
+            IEventBus eventBus,
+            IIRacingEventFactory eventFactory,
+            IEventHandlerController eventHandlerController,
+            IEventBusSubscription eventBusSubscription) : base(instanceId, logger)
         {
             PublishRawState = publishRawState;
             EventBus = eventBus;
             IRacingEventFactory = eventFactory;
             EventHandlerController = eventHandlerController;
+            Subscription = eventBusSubscription;
         }
 
         protected override void Main()
         {
             var dataTrackers = new Trackers.Trackers(EventBus, IRacingEventFactory);
+            var iracing = new IRacingFacade(new StateFactory());
 
             var iracingEventHandler = EventHandlerController.Get<EventHandler.IRacing>();
             iracingEventHandler.OnIRacingCommandSendCarInfo += (s, e) => dataTrackers.SendCarInfo = true;
@@ -31,12 +41,19 @@ namespace Slipstream.Components.IRacing.Lua
             iracingEventHandler.OnIRacingCommandSendWeatherInfo += (s, e) => dataTrackers.SendWeatherInfo = true;
             iracingEventHandler.OnIRacingCommandSendSessionState += (s, e) => dataTrackers.SendSessionState = true;
             iracingEventHandler.OnIRacingCommandSendRaceFlags += (s, e) => dataTrackers.SendRaceFlags = true;
-
-            var mapper = new Mapper(new StateFactory());
+            iracingEventHandler.OnIRacingCommandPitClearAll += (s, e) => iracing.PitClearAll();
+            iracingEventHandler.OnIRacingCommandPitClearTyresChange += (s, e) => iracing.PitClearTyreChange();
+            iracingEventHandler.OnIRacingCommandPitRequestFastRepair += (s, e) => iracing.PitRequestFastRepair();
+            iracingEventHandler.OnIRacingCommandPitAddFuel += (s, e) => iracing.PitAddFuel(e.AddLiters);
+            iracingEventHandler.OnIRacingCommandPitChangeLeftFrontTyre += (s, e) => iracing.PitChangeLeftFrontTyre(e.Kpa);
+            iracingEventHandler.OnIRacingCommandPitChangeLeftRearTyre += (s, e) => iracing.PitChangeLeftRearTyre(e.Kpa);
+            iracingEventHandler.OnIRacingCommandPitChangeRightFrontTyre += (s, e) => iracing.PitChangeRightFrontTyre(e.Kpa);
+            iracingEventHandler.OnIRacingCommandPitChangeRightRearTyre += (s, e) => iracing.PitChangeRightRearTyre(e.Kpa);
+            iracingEventHandler.OnIRacingCommandPitCleanWindshield += (s, e) => iracing.PitCleanWindshield();
 
             while (!Stopping)
             {
-                var state = mapper.GetState();
+                var state = iracing.GetState();
 
                 if (state != null)
                 {
@@ -55,6 +72,13 @@ namespace Slipstream.Components.IRacing.Lua
                         EventBus.PublishEvent(IRacingEventFactory.CreateIRacingDisconnected());
                     }
                     Thread.Sleep(5000);
+                }
+
+                IEvent? @event = Subscription.NextEvent(5);
+
+                if (@event != null)
+                {
+                    EventHandlerController.HandleEvent(@event);
                 }
             }
         }

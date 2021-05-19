@@ -8,9 +8,9 @@ namespace Slipstream.Shared.Lua
 {
     public abstract class BaseInstanceThread : ILuaInstanceThread
     {
-        private readonly Thread ServiceThread;
         protected readonly string InstanceId;
         protected readonly ILogger Logger;
+        private Thread ServiceThread;
         protected volatile bool Stopping = false;
         protected volatile bool AutoStart = false;
 
@@ -18,9 +18,14 @@ namespace Slipstream.Shared.Lua
         {
             InstanceId = instanceId;
             Logger = logger;
+            SetupThread();
+        }
+
+        private void SetupThread()
+        {
             ServiceThread = new Thread(new ThreadStart(ThreadMain))
             {
-                Name = GetType().Name + " " + instanceId,
+                Name = GetType().Name + " " + InstanceId,
             };
         }
 
@@ -49,8 +54,16 @@ namespace Slipstream.Shared.Lua
 
         public void Start()
         {
-            if (ServiceThread?.ThreadState == ThreadState.Unstarted || ServiceThread?.ThreadState == ThreadState.Stopped)
+            if (ServiceThread?.ThreadState == ThreadState.Unstarted)
+            {
                 ServiceThread.Start();
+            }
+            else if (ServiceThread?.ThreadState == ThreadState.Stopped)
+            {
+                // We need to recreate it
+                SetupThread();
+                ServiceThread.Start();
+            }
         }
 
         public void Stop()

@@ -207,5 +207,11 @@ namespace Slipstream.Components.WinFormUI.Forms
         {
             Process.Start(".");
         }
+
+        private void TestEventsMenuItem_Click(object sender, EventArgs e)
+        {
+            EventTestWindow etw = new EventTestWindow(EventBus);
+            etw.Show(this);
+        }
     }
 }

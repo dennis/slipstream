@@ -2,6 +2,7 @@
 
 using Slipstream.Shared;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Slipstream.Components.Twitch.Events
 {
@@ -9,12 +10,26 @@ namespace Slipstream.Components.Twitch.Events
     {
         public string EventType => "TwitchReceivedMessage";
         public ulong Uptime { get; set; }
+        
+        [Description("InstanceId used for a Twitch connection")]
         public string InstanceId { get; set; } = string.Empty;
+
+        [Description("User that sent the message")]
         public string From { get; set; } = string.Empty;
+
+        [Description("Message body")]
         public string Message { get; set; } = string.Empty;
+
+        [Description("True if the user is a moderator")]
         public bool Moderator { get; set; }
+
+        [Description("True if the user is a subscriber")]
         public bool Subscriber { get; set; }
+
+        [Description("True if the user is a VIP")]
         public bool Vip { get; set; }
+
+        [Description("True if the user is the broadcaster")]
         public bool Broadcaster { get; set; }
 
         public override bool Equals(object? obj)

@@ -43,6 +43,8 @@
             this.LogMessageUpdateTimer = new System.Windows.Forms.Timer(this.components);
             this.SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.TestEventsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -63,6 +65,7 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileToolStripMenuItem,
             this.PluginsToolStripMenuItem,
+            this.ToolsMenuItem,
             this.HelpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -123,7 +126,7 @@
             // OpenDataDirectoryToolStripMenuItem
             // 
             this.OpenDataDirectoryToolStripMenuItem.Name = "OpenDataDirectoryToolStripMenuItem";
-            this.OpenDataDirectoryToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.OpenDataDirectoryToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.OpenDataDirectoryToolStripMenuItem.Text = "Open Data Directory";
             this.OpenDataDirectoryToolStripMenuItem.Click += new System.EventHandler(this.OpenDataDirectoryToolStripMenuItem_Click);
             // 
@@ -168,6 +171,22 @@
             this.OpenFileDialog.DefaultExt = "mjson";
             this.OpenFileDialog.Filter = "Event files|*.mjson|All files|*.*";
             // 
+            // ToolsMenuItem
+            // 
+            this.ToolsMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.TestEventsMenuItem});
+            this.ToolsMenuItem.Name = "ToolsMenuItem";
+            this.ToolsMenuItem.Size = new System.Drawing.Size(46, 20);
+            this.ToolsMenuItem.Text = "Tools";
+            // 
+            // TestEventsMenuItem
+            // 
+            this.TestEventsMenuItem.Name = "TestEventsMenuItem";
+            this.TestEventsMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.TestEventsMenuItem.Text = "&Test Events";
+            this.TestEventsMenuItem.ToolTipText = "Allows users to send test events to test scripts";
+            this.TestEventsMenuItem.Click += new System.EventHandler(this.TestEventsMenuItem_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -201,6 +220,8 @@
         private System.Windows.Forms.SaveFileDialog SaveFileDialog;
         private System.Windows.Forms.OpenFileDialog OpenFileDialog;
         private System.Windows.Forms.ToolStripMenuItem LoadEventsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ToolsMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem TestEventsMenuItem;
     }
 }
 

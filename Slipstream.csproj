@@ -306,10 +306,6 @@
     <Compile Include="Components\Internal\IEventSerdeService.cs" />
     <Compile Include="Components\Internal\IStateService.cs" />
     <Compile Include="Components\Internal\Services\EventSerdeService.cs" />
-    <Compile Include="Components\Txrx\ITxrxService.cs" />
-    <Compile Include="Components\Internal\Services\LuaService.cs" />
-    <Compile Include="Components\Internal\ILuaContext.cs" />
-    <Compile Include="Components\UI\Plugins\InternalPlugin.cs" />
     <Compile Include="Components\WinFormUI\Forms\EventTestWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -318,7 +314,6 @@
     </Compile>
     <Compile Include="Components\WinFormUI\Models\EventInfoModel.cs" />
     <Compile Include="Components\WinFormUI\Models\EventPropertyInfoModel.cs" />
-    <Compile Include="Components\WinFormUI\Plugins\WinFormUIPlugin.cs" />
     <Compile Include="Components\WinFormUI\Services\EventDataService.cs" />
     <Compile Include="Shared\EventHandlerArgs.cs" />
     <Compile Include="Components\IRacing\Events\IIRacingSessionState.cs" />

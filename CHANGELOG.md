@@ -2,6 +2,9 @@
 
 ## Next version
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.7.0...main)
+  - IRacing: Adds pit-stop lua functions: pit_clear_all(), pit_clear_tyres(), 
+    pit_fast_repair(), pit_add_fuel(), pit_change_(left|right)_(front|rear)_tyre()
+    and pit_clean_windshield()
 
 ## [0.7.0](https://github.com/dennis/slipstream/releases/tag/v0.7.0) (2021-04-30)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.6.0...v0.7.0)

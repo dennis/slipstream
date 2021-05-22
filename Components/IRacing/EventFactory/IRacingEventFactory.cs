@@ -456,5 +456,65 @@ namespace Slipstream.Components.IRacing.EventFactory
                 NewCarsBehind = newCarsBehind,
             };
         }
+
+        public IRacingCommandPitChangeLeftFrontTyre CreateIRacingCommandPitChangeLeftFrontTyre(int kpa)
+        {
+            return new IRacingCommandPitChangeLeftFrontTyre
+            {
+                Kpa = kpa
+            };
+        }
+
+        public IRacingCommandPitChangeRightFrontTyre CreateIRacingCommandPitChangeRightFrontTyre(int kpa)
+        {
+            return new IRacingCommandPitChangeRightFrontTyre
+            {
+                Kpa = kpa
+            };
+        }
+
+        public IRacingCommandPitChangeLeftRearTyre CreateIRacingCommandPitChangeLeftRearTyre(int kpa)
+        {
+            return new IRacingCommandPitChangeLeftRearTyre
+            {
+                Kpa = kpa
+            };
+        }
+
+        public IRacingCommandPitChangeRightRearTyre CreateIRacingCommandPitChangeRightRearTyre(int kpa)
+        {
+            return new IRacingCommandPitChangeRightRearTyre
+            {
+                Kpa = kpa
+            };
+        }
+
+        public IRacingCommandPitClearAll CreateIRacingCommandPitClearAll()
+        {
+            return new IRacingCommandPitClearAll();
+        }
+
+        public IRacingCommandPitClearTyresChange CreateIRacingCommandPitClearTyresChange()
+        {
+            return new IRacingCommandPitClearTyresChange();
+        }
+
+        public IRacingCommandPitRequestFastRepair CreateIRacingCommandPitRequestFastRepair()
+        {
+            return new IRacingCommandPitRequestFastRepair();
+        }
+
+        public IRacingCommandPitAddFuel CreateIRacingCommandPitAddFuel(int addLiters)
+        {
+            return new IRacingCommandPitAddFuel
+            {
+                AddLiters = addLiters
+            };
+        }
+
+        public IRacingCommandPitCleanWindshield CreateIRacingCommandPitCleanWindshield()
+        {
+            return new IRacingCommandPitCleanWindshield();
+        }
     }
 }

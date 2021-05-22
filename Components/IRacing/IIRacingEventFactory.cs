@@ -179,5 +179,23 @@ namespace Slipstream.Components.IRacing
         IRacingRaw CreateIRacingRaw(IState state);
 
         IRacingTrackPosition CreateIRacingTrackPosition(double sessionTime, long carIdx, bool localUser, int currentPositionInRace, int currentPositionInClass, int previousPositionInRace, int previousPositionInClass, int[] newCarsAhead, int[] newCarsBehind);
+
+        IRacingCommandPitChangeLeftFrontTyre CreateIRacingCommandPitChangeLeftFrontTyre(int kpa);
+
+        IRacingCommandPitChangeRightFrontTyre CreateIRacingCommandPitChangeRightFrontTyre(int kpa);
+
+        IRacingCommandPitChangeLeftRearTyre CreateIRacingCommandPitChangeLeftRearTyre(int kpa);
+
+        IRacingCommandPitChangeRightRearTyre CreateIRacingCommandPitChangeRightRearTyre(int kpa);
+
+        IRacingCommandPitClearAll CreateIRacingCommandPitClearAll();
+
+        IRacingCommandPitClearTyresChange CreateIRacingCommandPitClearTyresChange();
+
+        IRacingCommandPitRequestFastRepair CreateIRacingCommandPitRequestFastRepair();
+
+        IRacingCommandPitAddFuel CreateIRacingCommandPitAddFuel(int addLiters);
+
+        IRacingCommandPitCleanWindshield CreateIRacingCommandPitCleanWindshield();
     }
 }

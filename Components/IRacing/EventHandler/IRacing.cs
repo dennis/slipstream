@@ -58,6 +58,24 @@ namespace Slipstream.Components.IRacing.EventHandler
 
         public event EventHandler<IRacingTrackPosition>? OnIRacingTrackPosition;
 
+        public event EventHandler<IRacingCommandPitChangeLeftFrontTyre>? OnIRacingCommandPitChangeLeftFrontTyre;
+
+        public event EventHandler<IRacingCommandPitChangeRightFrontTyre>? OnIRacingCommandPitChangeRightFrontTyre;
+
+        public event EventHandler<IRacingCommandPitChangeLeftRearTyre>? OnIRacingCommandPitChangeLeftRearTyre;
+
+        public event EventHandler<IRacingCommandPitChangeRightRearTyre>? OnIRacingCommandPitChangeRightRearTyre;
+
+        public event EventHandler<IRacingCommandPitClearAll>? OnIRacingCommandPitClearAll;
+
+        public event EventHandler<IRacingCommandPitClearTyresChange>? OnIRacingCommandPitClearTyresChange;
+
+        public event EventHandler<IRacingCommandPitAddFuel>? OnIRacingCommandPitAddFuel;
+
+        public event EventHandler<IRacingCommandPitRequestFastRepair>? OnIRacingCommandPitRequestFastRepair;
+
+        public event EventHandler<IRacingCommandPitCleanWindshield>? OnIRacingCommandPitCleanWindshield;
+
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)
         {
             return @event switch
@@ -87,6 +105,15 @@ namespace Slipstream.Components.IRacing.EventHandler
                 IRacingRaw tev => OnEvent(OnIRacingRaw, tev),
                 IRacingTowed tev => OnEvent(OnIRacingTowed, tev),
                 IRacingTrackPosition tev => OnEvent(OnIRacingTrackPosition, tev),
+                IRacingCommandPitChangeLeftFrontTyre tev => OnEvent(OnIRacingCommandPitChangeLeftFrontTyre, tev),
+                IRacingCommandPitChangeRightFrontTyre tev => OnEvent(OnIRacingCommandPitChangeRightFrontTyre, tev),
+                IRacingCommandPitChangeLeftRearTyre tev => OnEvent(OnIRacingCommandPitChangeLeftRearTyre, tev),
+                IRacingCommandPitChangeRightRearTyre tev => OnEvent(OnIRacingCommandPitChangeRightRearTyre, tev),
+                IRacingCommandPitClearAll tev => OnEvent(OnIRacingCommandPitClearAll, tev),
+                IRacingCommandPitClearTyresChange tev => OnEvent(OnIRacingCommandPitClearTyresChange, tev),
+                IRacingCommandPitAddFuel tev => OnEvent(OnIRacingCommandPitAddFuel, tev),
+                IRacingCommandPitRequestFastRepair tev => OnEvent(OnIRacingCommandPitRequestFastRepair, tev),
+                IRacingCommandPitCleanWindshield tev => OnEvent(OnIRacingCommandPitCleanWindshield, tev),
                 _ => IEventHandler.HandledStatus.NotMine,
             };
         }

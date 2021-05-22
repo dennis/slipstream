@@ -27,7 +27,7 @@ namespace Slipstream.Components.Discord.Plugins
             ConfigurationValidator = new DictionaryValidator().RequireString("token");
         }
 
-        public DiscordPlugin(IEventHandlerController eventHandlerController, string pluginId, IEventBus eventBus, IDiscordEventFactory eventFactory, Parameters configuration) : base(eventHandlerController, pluginId, "DiscordPlugin", "DiscordPlugin", true)
+        public DiscordPlugin(IEventHandlerController eventHandlerController, string id, IEventBus eventBus, IDiscordEventFactory eventFactory, Parameters configuration) : base(eventHandlerController, id, "DiscordPlugin", "DiscordPlugin", true)
         {
             ConfigurationValidator.Validate(configuration);
 

@@ -4,12 +4,12 @@ namespace Slipstream.Components.Discord
 {
     public interface IDiscordEventFactory
     {
-        DiscordCommandSendMessage CreateDiscordCommandSendMessage(ulong channelId, string message, bool tts);
+        DiscordCommandSendMessage CreateDiscordCommandSendMessage(string instanceId, ulong channelId, string message, bool tts);
 
-        DiscordConnected CreateDiscordConnected();
+        DiscordConnected CreateDiscordConnected(string instanceId);
 
-        DiscordDisconnected CreateDiscordDisconnected();
+        DiscordDisconnected CreateDiscordDisconnected(string instanceId);
 
-        DiscordMessageReceived CreateDiscordMessageReceived(ulong fromId, string from, ulong channelId, string channel, string message);
+        DiscordMessageReceived CreateDiscordMessageReceived(string instanceId, ulong fromId, string from, ulong channelId, string channel, string message);
     }
 }

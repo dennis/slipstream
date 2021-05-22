@@ -6,7 +6,6 @@ namespace Slipstream.Components.Playback.Events
     public class PlaybackCommandSaveEvents : IEvent
     {
         public string EventType => "PlaybackCommandSaveEvents";
-        public bool ExcludeFromTxrx => true;
         public ulong Uptime { get; set; }
         public string Filename { get; set; } = string.Empty;
 
@@ -14,7 +13,6 @@ namespace Slipstream.Components.Playback.Events
         {
             return obj is PlaybackCommandSaveEvents events &&
                    EventType == events.EventType &&
-                   ExcludeFromTxrx == events.ExcludeFromTxrx &&
                    Filename == events.Filename;
         }
 
@@ -22,7 +20,6 @@ namespace Slipstream.Components.Playback.Events
         {
             int hashCode = -1549740322;
             hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(EventType);
-            hashCode = (hashCode * -1521134295) + ExcludeFromTxrx.GetHashCode();
             hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Filename);
             return hashCode;
         }

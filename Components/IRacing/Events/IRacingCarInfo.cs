@@ -8,7 +8,6 @@ namespace Slipstream.Components.IRacing.Events
     public class IRacingCarInfo : IEvent
     {
         public string EventType => "IRacingCarInfo";
-        public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
         public double SessionTime { get; set; }
         public long CarIdx { get; set; }
@@ -28,7 +27,6 @@ namespace Slipstream.Components.IRacing.Events
         {
             return obj is IRacingCarInfo info &&
                    EventType == info.EventType &&
-                   ExcludeFromTxrx == info.ExcludeFromTxrx &&
                    SessionTime == info.SessionTime &&
                    CarIdx == info.CarIdx &&
                    CarNumber == info.CarNumber &&
@@ -48,7 +46,6 @@ namespace Slipstream.Components.IRacing.Events
         {
             int hashCode = 854757270;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
-            hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
             hashCode = hashCode * -1521134295 + SessionTime.GetHashCode();
             hashCode = hashCode * -1521134295 + CarIdx.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(CarNumber);

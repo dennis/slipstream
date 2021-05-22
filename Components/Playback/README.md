@@ -6,6 +6,22 @@ should edit). After doing so, you can load these into slipstream again.
 
 ## Lua
 
+<details><summary>Construction</summary><br />
+
+```lua
+local playback = require("api/playback"):instance(config)
+```
+
+This will construct an instance of `api/playback` or return an existing instance with 
+the same `id` if one exists.
+
+`config` is the initial configuration of the instance if one needs to be created. It is a table with one or more keys as defined below.
+
+| Parameter   | Type          | Default    | Description                    |
+| :---------- | :-----------: | :--------: | :----------------------------- |
+| id          | string        |            | Mandatory: Id of this instance |
+</details>
+
 <details><summary>playback:load(filename)</summary><br />
 Loads events from a file. Please note, that the events are not filtered, 
 so if there are events that disables or enables plugins, this will 
@@ -33,35 +49,4 @@ json file. Each line is a event, so you can remove whatever you don't need.
 ```lua
 playback:save("test.mjson")
 ```
-</details>
-
-## Events
-
-<details><summary>PlaybackCommandInjectEvents</summary><br />
-
-Requests that a filename is read and sent as events.
-
-
-| Name            | Type    | Description                           |
-|:----------------|:-------:|:--------------------------------------|
-| EventType       | string  | `TwitchCommandSendMessage` (constant) |
-| ExcludeFromTxrx | boolean | false (constant)                      |
-| Filename         | string  | Filename to read events from|
-
-**JSON Example:**
-`{"EventType":"PlaybackCommandInjectEvents","ExcludeFromTxrx":true,"Filename":"C:\\Users\\dennis\\Documents\\2021-01-14T17.53.52.mjson","Uptime":4818}`
-</details>
-
-<details><summary>PlaybackCommandSaveEvents</summary><br />
-
-Requests that events already seen, is stored in a file.
-
-| Name            | Type    | Description                           |
-|:----------------|:-------:|:--------------------------------------|
-| EventType       | string  | `TwitchCommandSendMessage` (constant) |
-| ExcludeFromTxrx | boolean | false (constant)                      |
-| Filename         | string  | Filename write events to|
-
-**JSON Example:**
-`{"EventType":"PlaybackSaveEvents","ExcludeFromTxrx":true,"Uptime":73571,"Filename":"C:\\Users\\dennis\\Documents\\2021-01-14T21.28.15.mjson"}`
 </details>

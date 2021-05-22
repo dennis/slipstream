@@ -1,4 +1,10 @@
+-- Adds "!track" twitch command that displays current track
+-- Before using this, edit lib/config.lua
+
+local cfg = require("lib/config")
 local common = require("lib/common")
+local iracing = require("api/iracing"):instance(cfg.iracing)
+local twitch = require("api/twitch"):instance(cfg.twitch)
 
 local track_name = nil
 local track_config = nil

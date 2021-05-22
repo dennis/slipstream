@@ -1,5 +1,5 @@
 ﻿using Slipstream.Components.IRacing;
-using Slipstream.Components.IRacing.Plugins.GameState;
+using Slipstream.Components.IRacing.GameState;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

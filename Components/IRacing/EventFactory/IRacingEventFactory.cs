@@ -1,5 +1,5 @@
 ﻿using Slipstream.Components.IRacing.Events;
-using Slipstream.Components.IRacing.Plugins.GameState;
+using Slipstream.Components.IRacing.GameState;
 using System;
 using static Slipstream.Components.IRacing.IIRacingEventFactory;
 

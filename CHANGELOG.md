@@ -1,7 +1,15 @@
 ﻿# Changelog
 
 ## Next version
-[Full Changelog](https://github.com/dennis/slipstream/compare/v0.5.0...main)
+[Full Changelog](https://github.com/dennis/slipstream/compare/v0.7.0...main)
+
+## [0.7.0](https://github.com/dennis/slipstream/releases/tag/v0.7.0) (2021-04-30)
+[Full Changelog](https://github.com/dennis/slipstream/compare/v0.6.0...v0.7.0)
+  - BREAKING CHANGE: Rearchitects how Slipstream exposes features to Lua. New init.lua required!
+    For more information look at commit 21070e613ac46950b7d1a8465e22f85b5355865f
+
+## [0.6.0](https://github.com/dennis/slipstream/releases/tag/v0.6.0) (2021-04-30)
+[Full Changelog](https://github.com/dennis/slipstream/compare/v0.5.0...v0.6.0)
   - adds WinFormUI component - containing the Slipstream UI. You need to add `register_plugin({ plugin_name = "WinFormUIPlugin"})
 ` to you `init.lua` to get it.
   - add `internal:shutdown()` lua function that quits the application

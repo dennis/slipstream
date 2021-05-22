@@ -8,7 +8,6 @@ namespace Slipstream.Components.IRacing.Events
     public class IRacingDriverIncident : IEvent
     {
         public string EventType => "IRacingDriverIncident";
-        public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
         public int DriverIncidentCount { get; set; }
         public int DriverIncidentDelta { get; set; }
@@ -21,7 +20,6 @@ namespace Slipstream.Components.IRacing.Events
         {
             return obj is IRacingDriverIncident incident &&
                    EventType == incident.EventType &&
-                   ExcludeFromTxrx == incident.ExcludeFromTxrx &&
                    DriverIncidentCount == incident.DriverIncidentCount &&
                    DriverIncidentDelta == incident.DriverIncidentDelta &&
                    TeamIncidentCount == incident.TeamIncidentCount &&
@@ -34,7 +32,6 @@ namespace Slipstream.Components.IRacing.Events
         {
             int hashCode = 1200671587;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
-            hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
             hashCode = hashCode * -1521134295 + DriverIncidentCount.GetHashCode();
             hashCode = hashCode * -1521134295 + DriverIncidentDelta.GetHashCode();
             hashCode = hashCode * -1521134295 + TeamIncidentCount.GetHashCode();

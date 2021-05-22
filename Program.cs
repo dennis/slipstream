@@ -44,10 +44,9 @@ namespace Slipstream
         private static void ConfigureServices(ContainerBuilder builder)
         {
             builder.RegisterType<Backend.EventBus>().As<Shared.IEventBus>().As<Shared.IEventProducer>().SingleInstance();
+            builder.Register(scope => scope.Resolve<IEventBus>().RegisterListener()).As<IEventBusSubscription>().InstancePerDependency();
             builder.RegisterType<Backend.Engine>().As<Backend.IEngine>().SingleInstance();
             builder.RegisterType<EventSerdeService>().As<IEventSerdeService>().SingleInstance();
-            builder.RegisterType<Backend.PluginManager>().As<Backend.IPluginManager>().As<Backend.IPluginFactory>().SingleInstance();
-            builder.RegisterType<LuaService>().As<ILuaService>().InstancePerDependency();
             builder.RegisterType<Shared.ApplicationVersionService>().As<Shared.IApplicationVersionService>().SingleInstance();
             builder.RegisterType<PopulateSink>().SingleInstance();
             builder.Register(c => new StateService(c.Resolve<ILogger>(), Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Slipstream\state.txt")).As<IStateService>().SingleInstance();
@@ -74,13 +73,39 @@ namespace Slipstream
                 .SingleInstance();
             builder.RegisterType<EventHandlerController>().As<IEventHandlerController>().InstancePerDependency();
 
-            // Plugins
+            // Lua related classes
+            builder.RegisterType<Shared.Lua.LuaLibraryRepository>().As<Shared.Lua.ILuaLibraryRepository>().SingleInstance();
             builder.RegisterAssemblyTypes(typeof(Program).Assembly)
-                .Where(t => t.IsAssignableTo<Components.IPlugin>())
+                .Where(t => t.IsAssignableTo<Shared.Lua.ILuaLibrary>())
                 .Where(t => !t.IsAbstract)
-                .As<Components.IPlugin>()
+                .As<Shared.Lua.ILuaLibraryAutoRegistration>()
                 .AsSelf()
                 .InstancePerDependency();
+            builder.RegisterAssemblyTypes(typeof(Program).Assembly)
+                .Where(t => t.IsAssignableTo<Shared.Lua.ILuaReference>())
+                .Where(t => !t.IsAbstract)
+                .As<Shared.Lua.ILuaReference>()
+                .AsSelf()
+                .InstancePerDependency();
+
+            builder.RegisterType<Components.Audio.Lua.AudioInstanceThread>().As<Components.Audio.Lua.IAudioInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.Discord.Lua.DiscordServiceThread>().As<Components.Discord.Lua.IDiscordInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.Discord.Lua.DiscordLuaChannelReference>().As<Components.Discord.Lua.IDiscordLuaChannelReference>().InstancePerDependency();
+            builder.RegisterType<Components.FileMonitor.Lua.FileMonitorInstanceThread>().As<Components.FileMonitor.Lua.IFileMonitorInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.FileMonitor.Lua.FileMonitorLuaReference>().As<Components.FileMonitor.Lua.IFileMonitorLuaReference>().InstancePerDependency();
+            builder.RegisterType<Components.Lua.Lua.LuaInstanceThread>().As<Components.Lua.Lua.ILuaInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.Lua.Lua.LuaLuaReference>().As<Components.Lua.Lua.ILuaLuaReference>().InstancePerDependency();
+            builder.Register(scope => scope.Resolve<Components.Lua.Lua.LuaLuaLibrary>()).As<Components.Lua.Lua.ILuaLuaLibrary>();
+            builder.RegisterType<Components.IRacing.Lua.IRacingInstanceThread>().As<Components.IRacing.Lua.IIRacingInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.IRacing.Lua.IRacingReference>().As<Components.IRacing.Lua.IIRacingReference>().InstancePerDependency();
+            builder.RegisterType<Components.Playback.Lua.PlaybackInstanceThread>().As<Components.Playback.Lua.IPlaybackInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.Playback.Lua.PlaybackLuaReference>().As<Components.Playback.Lua.IPlaybackLuaReference>().InstancePerDependency();
+            builder.RegisterType<Components.Twitch.Lua.TwitchLuaInstanceThread>().As<Components.Twitch.Lua.ITwitchLuaInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.Twitch.Lua.TwitchLuaReference>().As<Components.Twitch.Lua.ITwitchLuaReference>().InstancePerDependency();
+            builder.RegisterType<Components.WinFormUI.Lua.WinFormUIInstanceThread>().As<Components.WinFormUI.Lua.IWinFormUIInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.WinFormUI.Lua.WinFormUIReference>().As<Components.WinFormUI.Lua.IWinFormUIReference>().InstancePerDependency();
+            builder.RegisterType<Components.AppilcationUpdate.Lua.ApplicationUpdateInstanceThread>().As<Components.AppilcationUpdate.Lua.IApplicationUpdateInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.AppilcationUpdate.Lua.ApplicationUpdateReference>().As<Components.AppilcationUpdate.Lua.IApplicationUpdateReference>().InstancePerDependency();
         }
 
         private class PopulateSink

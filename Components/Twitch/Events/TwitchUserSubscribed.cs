@@ -6,8 +6,8 @@ namespace Slipstream.Components.Twitch.Events
     public class TwitchUserSubscribed : IEvent
     {
         public string EventType => "TwitchUserSubscribed";
-        public bool ExcludeFromTxrx => false;
         public ulong Uptime { get; set; }
+        public string InstanceId { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
         public string SystemMessage { get; set; } = string.Empty;
@@ -19,7 +19,7 @@ namespace Slipstream.Components.Twitch.Events
         {
             return obj is TwitchUserSubscribed subscribed &&
                    EventType == subscribed.EventType &&
-                   ExcludeFromTxrx == subscribed.ExcludeFromTxrx &&
+                   InstanceId == subscribed.InstanceId &&
                    Name == subscribed.Name &&
                    Message == subscribed.Message &&
                    SystemMessage == subscribed.SystemMessage &&
@@ -32,7 +32,7 @@ namespace Slipstream.Components.Twitch.Events
         {
             int hashCode = -1258448020;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
-            hashCode = hashCode * -1521134295 + ExcludeFromTxrx.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(InstanceId);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Message);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(SystemMessage);

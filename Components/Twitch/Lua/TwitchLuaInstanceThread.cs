@@ -91,6 +91,8 @@ namespace Slipstream.Components.Twitch.Lua
             {
                 ThrottleDurationStart = DateTime.UtcNow;
                 CommandCountWithinThrottleDuration = 0;
+
+                action.Invoke();
             }
             else
             {

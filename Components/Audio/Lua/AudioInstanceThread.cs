@@ -21,7 +21,7 @@ namespace Slipstream.Components.Audio.Lua
         private readonly IEventBusSubscription Subscription;
         private readonly IAudioEventFactory EventFactory;
         private readonly IEventBus EventBus;
-        private WaveOutEvent OutputDevice = new WaveOutEvent();
+        private int OutputDeviceNumber = -1;
 
         public AudioInstanceThread(string instanceId, int output, string path, IEventBusSubscription eventBusSubscription, IEventHandlerController eventHandlerController, IEventBus eventBus, IAudioEventFactory audioEventFactory, ILogger logger) : base(instanceId, logger)
         {
@@ -31,14 +31,7 @@ namespace Slipstream.Components.Audio.Lua
             EventFactory = audioEventFactory;
             EventBus = eventBus;
 
-            if (output == -1)
-            {
-                Synthesizer.SetOutputToDefaultAudioDevice();
-            }
-            else
-            {
-                OutputDevice = new WaveOutEvent() { DeviceNumber = output };
-            }
+            OutputDeviceNumber = output;
         }
 
         protected override void Main()
@@ -65,7 +58,7 @@ namespace Slipstream.Components.Audio.Lua
             if (@event.InstanceId != InstanceId)
                 return;
 
-            OutputDevice = new WaveOutEvent() { DeviceNumber = @event.DeviceIdx };
+            OutputDeviceNumber = @event.DeviceIdx;
         }
 
         private void OnAudioCommandSendDevices(AudioCommandSendDevices @event)
@@ -120,12 +113,22 @@ namespace Slipstream.Components.Audio.Lua
 
         private void Play(WaveStream stream, float volume)
         {
-            OutputDevice.Init(stream);
-            OutputDevice.Volume = volume;
-            OutputDevice.Play();
-            while (OutputDevice.PlaybackState == PlaybackState.Playing && !Stopping)
+            using var outputDevice = new WaveOutEvent { DeviceNumber = OutputDeviceNumber };
+            outputDevice.PlaybackStopped += PlaybackStoppedReceived;
+            outputDevice.Init(stream);
+            outputDevice.Volume = volume;
+            outputDevice.Play();
+            while (outputDevice.PlaybackState == PlaybackState.Playing && !Stopping)
             {
                 Thread.Sleep(100);
+            }
+        }
+
+        private void PlaybackStoppedReceived(object sender, StoppedEventArgs e)
+        {
+            if(e.Exception != null)
+            {
+                Logger.Error("Error playing audio: {Message}", e.Exception.Message);
             }
         }
     }

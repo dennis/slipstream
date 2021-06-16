@@ -4,6 +4,7 @@ using Slipstream.Components.UI;
 using Slipstream.Components.WinFormUI.Forms;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
+using System;
 using System.Windows.Forms;
 
 namespace Slipstream.Components.WinFormUI.Lua
@@ -35,6 +36,7 @@ namespace Slipstream.Components.WinFormUI.Lua
             PlaybackEventFactory = playbackEventFactory;
         }
 
+        [STAThreadAttribute]
         protected override void Main()
         {
             Application.Run(new MainWindow(

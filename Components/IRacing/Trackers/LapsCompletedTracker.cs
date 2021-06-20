@@ -77,10 +77,12 @@ namespace Slipstream.Components.IRacing.Trackers
 
                         if (localUser)
                         {
+                            lapState.FuelLeft = currentState.FuelLevel;
                             lapState.LastLapFuelDelta = currentState.FuelLevel - lapState.FuelLevelAtLapStart;
                         }
                         else
                         {
+                            lapState.FuelLeft = null;
                             lapState.LastLapFuelDelta = null;
                         }
 
@@ -108,6 +110,7 @@ namespace Slipstream.Components.IRacing.Trackers
                             lapTime: lapTime,
                             estimatedLapTime: estimatedLapTime,
                             lapsCompleted: lapsCompleted,
+                            fuelLeft: lapState.FuelLeft,
                             fuelDelta: lapState.LastLapFuelDelta,
                             localUser: localUser,
                             bestLap: car.BestLapNum == lapsCompleted

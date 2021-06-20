@@ -12,6 +12,7 @@
         public float? LastLapFuelDelta { get; set; }
         public int ConsecutiveNotInWorld { get; set; }
         public int LastSessionNum { get; set; }
+        public float? FuelLeft { get; internal set; }
 
         public void Clear()
         {

@@ -13,6 +13,7 @@ namespace Slipstream.Components.IRacing.Events
         public long CarIdx { get; set; }
         public bool LocalUser { get; set; }
         public double? Duration { get; set; }
+        public float? FuelLeft { get; set; }
 
         public override bool Equals(object? obj)
         {
@@ -21,7 +22,8 @@ namespace Slipstream.Components.IRacing.Events
                    SessionTime == exit.SessionTime &&
                    CarIdx == exit.CarIdx &&
                    LocalUser == exit.LocalUser &&
-                   Duration == exit.Duration;
+                   Duration == exit.Duration &&
+                   FuelLeft == exit.FuelLeft;
         }
 
         public override int GetHashCode()
@@ -32,6 +34,7 @@ namespace Slipstream.Components.IRacing.Events
             hashCode = hashCode * -1521134295 + CarIdx.GetHashCode();
             hashCode = hashCode * -1521134295 + LocalUser.GetHashCode();
             hashCode = hashCode * -1521134295 + Duration.GetHashCode();
+            hashCode = hashCode * -1521134295 + FuelLeft.GetHashCode();
             return hashCode;
         }
     }

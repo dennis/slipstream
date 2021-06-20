@@ -8,6 +8,7 @@
  - BUGFIX: Twitch messages would sometimes be dropped
  - Remove persisting the location and size of the Slipstream UI. It could end up
    placing the Window off-screen, making it hard to reach.
+ - IRacing: Add FuelLeft attribute to IRacingCompletedLap and IRacingPitExit
 
 ## [0.7.0](https://github.com/dennis/slipstream/releases/tag/v0.7.0) (2021-04-30)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.6.0...v0.7.0)

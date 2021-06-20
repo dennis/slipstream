@@ -15,6 +15,7 @@ namespace Slipstream.Components.IRacing.EventFactory
             double lapTime,
             bool estimatedLapTime,
             int lapsCompleted,
+            float? fuelLeft,
             float? fuelDelta,
             bool localUser,
             bool bestLap
@@ -27,6 +28,7 @@ namespace Slipstream.Components.IRacing.EventFactory
                 LapTime = lapTime,
                 EstimatedLapTime = estimatedLapTime,
                 LapsCompleted = lapsCompleted,
+                FuelLeft = fuelLeft,
                 FuelDelta = fuelDelta,
                 LocalUser = localUser,
                 BestLap = bestLap,
@@ -113,14 +115,15 @@ namespace Slipstream.Components.IRacing.EventFactory
             };
         }
 
-        public IRacingPitExit CreateIRacingPitExit(double sessionTime, long carIdx, bool localUser, double? duration)
+        public IRacingPitExit CreateIRacingPitExit(double sessionTime, long carIdx, bool localUser, double? duration, float? fuelLeft)
         {
             return new IRacingPitExit
             {
                 SessionTime = sessionTime,
                 CarIdx = carIdx,
                 LocalUser = localUser,
-                Duration = duration
+                Duration = duration,
+                FuelLeft = fuelLeft
             };
         }
 

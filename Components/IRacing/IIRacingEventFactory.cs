@@ -42,6 +42,7 @@ namespace Slipstream.Components.IRacing
             double lapTime,
             bool estimatedLapTime,
             int lapsCompleted,
+            float? fuelLeft,
             float? fuelDelta,
             bool localUser,
             bool bestLap
@@ -70,7 +71,7 @@ namespace Slipstream.Components.IRacing
 
         IRacingPitEnter CreateIRacingPitEnter(double sessionTime, long carIdx, bool localUser);
 
-        IRacingPitExit CreateIRacingPitExit(double sessionTime, long carIdx, bool localUser, double? duration);
+        IRacingPitExit CreateIRacingPitExit(double sessionTime, long carIdx, bool localUser, double? duration, float? fuelLeft);
 
         IRacingPitstopReport CreateIRacingPitstopReport(
             double sessionTime,

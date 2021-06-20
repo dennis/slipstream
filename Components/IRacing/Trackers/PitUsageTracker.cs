@@ -48,7 +48,20 @@ namespace Slipstream.Components.IRacing.Trackers
                         // If duration is zero, then the pitstop started before we joined
                         if (duration != null)
                         {
-                            EventBus.PublishEvent(EventFactory.CreateIRacingPitExit(sessionTime: now, carIdx: car.CarIdx, localUser: localUser, duration: duration));
+                            float? fuelLeft = null;
+
+                            if(localUser)
+                            {
+                                fuelLeft = currentState.FuelLevel;
+                            }
+
+                            EventBus.PublishEvent(EventFactory.CreateIRacingPitExit(
+                                sessionTime: now,
+                                carIdx: car.CarIdx,
+                                localUser: localUser,
+                                duration: duration,
+                                fuelLeft: fuelLeft
+                            ));
                             carState.PitEnteredAt = null;
 
                             if (localUser && car.LapsCompleted > 0)

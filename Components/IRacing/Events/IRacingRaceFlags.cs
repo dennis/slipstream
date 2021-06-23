@@ -1,12 +1,13 @@
 using Slipstream.Shared;
-using System.Collections.Generic;
 
 namespace Slipstream.Components.IRacing.Events
 {
     public class IRacingRaceFlags : IEvent
     {
-        public string EventType => "IRacingRaceFlags";
+        public string EventType => nameof(IRacingRaceFlags);
         public ulong Uptime { get; set; }
+        public IEventEnvelope Envelope { get; set; } = new EventEnvelope();
+        
         public double SessionTime { get; set; }
         public bool Black { get; set; }
         public bool Blue { get; set; }
@@ -62,71 +63,6 @@ namespace Slipstream.Components.IRacing.Events
                White == other.White &&
                Yellow == other.Yellow &&
                YellowWaving == other.YellowWaving;
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is IRacingRaceFlags flags &&
-                   EventType == flags.EventType &&
-                   SessionTime == flags.SessionTime &&
-                   Black == flags.Black &&
-                   Blue == flags.Blue &&
-                   Caution == flags.Caution &&
-                   CautionWaving == flags.CautionWaving &&
-                   Checkered == flags.Checkered &&
-                   Crossed == flags.Crossed &&
-                   Debris == flags.Debris &&
-                   Disqualify == flags.Disqualify &&
-                   FiveToGo == flags.FiveToGo &&
-                   Furled == flags.Furled &&
-                   Green == flags.Green &&
-                   GreenHeld == flags.GreenHeld &&
-                   OneLapToGreen == flags.OneLapToGreen &&
-                   RandomWaving == flags.RandomWaving &&
-                   Red == flags.Red &&
-                   Repair == flags.Repair &&
-                   Servicible == flags.Servicible &&
-                   StartGo == flags.StartGo &&
-                   StartHidden == flags.StartHidden &&
-                   StartReady == flags.StartReady &&
-                   StartSet == flags.StartSet &&
-                   TenToGo == flags.TenToGo &&
-                   White == flags.White &&
-                   Yellow == flags.Yellow &&
-                   YellowWaving == flags.YellowWaving;
-        }
-
-        public override int GetHashCode()
-        {
-            int hashCode = -1865722245;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
-            hashCode = hashCode * -1521134295 + SessionTime.GetHashCode();
-            hashCode = hashCode * -1521134295 + Black.GetHashCode();
-            hashCode = hashCode * -1521134295 + Blue.GetHashCode();
-            hashCode = hashCode * -1521134295 + Caution.GetHashCode();
-            hashCode = hashCode * -1521134295 + CautionWaving.GetHashCode();
-            hashCode = hashCode * -1521134295 + Checkered.GetHashCode();
-            hashCode = hashCode * -1521134295 + Crossed.GetHashCode();
-            hashCode = hashCode * -1521134295 + Debris.GetHashCode();
-            hashCode = hashCode * -1521134295 + Disqualify.GetHashCode();
-            hashCode = hashCode * -1521134295 + FiveToGo.GetHashCode();
-            hashCode = hashCode * -1521134295 + Furled.GetHashCode();
-            hashCode = hashCode * -1521134295 + Green.GetHashCode();
-            hashCode = hashCode * -1521134295 + GreenHeld.GetHashCode();
-            hashCode = hashCode * -1521134295 + OneLapToGreen.GetHashCode();
-            hashCode = hashCode * -1521134295 + RandomWaving.GetHashCode();
-            hashCode = hashCode * -1521134295 + Red.GetHashCode();
-            hashCode = hashCode * -1521134295 + Repair.GetHashCode();
-            hashCode = hashCode * -1521134295 + Servicible.GetHashCode();
-            hashCode = hashCode * -1521134295 + StartGo.GetHashCode();
-            hashCode = hashCode * -1521134295 + StartHidden.GetHashCode();
-            hashCode = hashCode * -1521134295 + StartReady.GetHashCode();
-            hashCode = hashCode * -1521134295 + StartSet.GetHashCode();
-            hashCode = hashCode * -1521134295 + TenToGo.GetHashCode();
-            hashCode = hashCode * -1521134295 + White.GetHashCode();
-            hashCode = hashCode * -1521134295 + Yellow.GetHashCode();
-            hashCode = hashCode * -1521134295 + YellowWaving.GetHashCode();
-            return hashCode;
         }
     }
 }

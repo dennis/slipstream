@@ -3,6 +3,7 @@ using Slipstream.Components.IRacing.EventFactory;
 using Slipstream.Components.IRacing.Events;
 using Slipstream.Components.IRacing.Models;
 using Slipstream.Components.IRacing.Trackers;
+using Slipstream.Shared;
 using Slipstream.UnitTests.Components.IRacing.Trackers;
 using Slipstream.UnitTests.TestData;
 using Xunit;
@@ -38,7 +39,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             // act
             var sut = new TowTracker(EventBus, EventFactory);
             foreach (var s in Builder.States)
-                sut.Handle(s, TrackerState);
+                sut.Handle(s, TrackerState, new EventEnvelope("sender"));
 
             // assert
             Assert.True(EventBus.Events.Count == 1);
@@ -68,7 +69,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             // act
             var sut = new TowTracker(EventBus, EventFactory);
             foreach (var s in Builder.States)
-                sut.Handle(s, TrackerState);
+                sut.Handle(s, TrackerState, new EventEnvelope("sender"));
 
             // assert
             Assert.True(EventBus.Events.Count == 2);

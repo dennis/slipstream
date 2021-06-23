@@ -25,7 +25,14 @@ namespace Slipstream.Components.Discord.Lua
         private DiscordClient? Client;
         private bool RequestConnect = true;
 
-        public DiscordServiceThread(string instanceId, string token, IEventBusSubscription eventBusSubscription, IEventHandlerController eventHandlerController, IEventBus eventBus, IDiscordEventFactory discordEventFactory, ILogger logger) : base(instanceId, logger)
+        public DiscordServiceThread(
+            string instanceId,
+            string token,
+            IEventBusSubscription eventBusSubscription,
+            IEventHandlerController eventHandlerController,
+            IEventBus eventBus,
+            IDiscordEventFactory discordEventFactory,
+            ILogger logger) : base(instanceId, logger, eventHandlerController)
         {
             Subscription = eventBusSubscription;
             EventHandlerController = eventHandlerController;
@@ -77,7 +84,7 @@ namespace Slipstream.Components.Discord.Lua
 
         private void OnDiscordCommandSendMessage(DiscordCommandSendMessage e)
         {
-            if (Client == null || e.InstanceId != InstanceId)
+            if (Client == null)
                 return;
 
             if (!DiscordChannelIdMap.ContainsKey(e.ChannelId))
@@ -92,13 +99,13 @@ namespace Slipstream.Components.Discord.Lua
 
         private Task Client_SocketClosed(DSharpPlus.EventArgs.SocketCloseEventArgs e)
         {
-            EventBus.PublishEvent(DiscordEventFactory.CreateDiscordDisconnected(InstanceId));
+            EventBus.PublishEvent(DiscordEventFactory.CreateDiscordDisconnected(InstanceEnvelope));
             return Task.CompletedTask;
         }
 
         private Task Client_Ready(DSharpPlus.EventArgs.ReadyEventArgs e)
         {
-            EventBus.PublishEvent(DiscordEventFactory.CreateDiscordConnected(InstanceId));
+            EventBus.PublishEvent(DiscordEventFactory.CreateDiscordConnected(InstanceEnvelope));
 
             if (Client == null)
                 return Task.CompletedTask;
@@ -112,7 +119,7 @@ namespace Slipstream.Components.Discord.Lua
                 return Task.CompletedTask;
 
             EventBus.PublishEvent(DiscordEventFactory.CreateDiscordMessageReceived(
-                instanceId: InstanceId,
+                envelope: InstanceEnvelope,
                 fromId: e.Author.Id,
                 from: e.Author.Username + "#" + e.Author.Discriminator,
                 channelId: e.Channel.Id,

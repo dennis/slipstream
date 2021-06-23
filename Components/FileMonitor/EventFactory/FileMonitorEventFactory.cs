@@ -1,39 +1,40 @@
 ﻿#nullable enable
 
 using Slipstream.Components.FileMonitor.Events;
+using Slipstream.Shared;
 
 namespace Slipstream.Components.FileMonitor.EventFactory
 {
     public class FileMonitorEventFactory : IFileMonitorEventFactory
     {
-        public FileMonitorFileChanged CreateFileMonitorFileChanged(string instanceId, string filePath)
+        public FileMonitorFileChanged CreateFileMonitorFileChanged(IEventEnvelope envelope, string filePath)
         {
-            return new FileMonitorFileChanged { InstanceId = instanceId, FilePath = filePath };
+            return new FileMonitorFileChanged { Envelope = envelope, FilePath = filePath };
         }
 
-        public FileMonitorFileCreated CreateFileMonitorFileCreated(string instanceId, string path)
+        public FileMonitorFileCreated CreateFileMonitorFileCreated(IEventEnvelope envelope, string path)
         {
-            return new FileMonitorFileCreated { InstanceId = instanceId, FilePath = path };
+            return new FileMonitorFileCreated { Envelope = envelope, FilePath = path };
         }
 
-        public FileMonitorFileDeleted CreateFileMonitorFileDeleted(string instanceId, string filePath)
+        public FileMonitorFileDeleted CreateFileMonitorFileDeleted(IEventEnvelope envelope, string filePath)
         {
-            return new FileMonitorFileDeleted { InstanceId = instanceId, FilePath = filePath };
+            return new FileMonitorFileDeleted { Envelope = envelope, FilePath = filePath };
         }
 
-        public FileMonitorFileRenamed CreateFileMonitorFileRenamed(string instanceId, string filePath, string oldFilePath)
+        public FileMonitorFileRenamed CreateFileMonitorFileRenamed(IEventEnvelope envelope, string filePath, string oldFilePath)
         {
-            return new FileMonitorFileRenamed { InstanceId = instanceId, FilePath = filePath, OldFilePath = oldFilePath };
+            return new FileMonitorFileRenamed { Envelope = envelope, FilePath = filePath, OldFilePath = oldFilePath };
         }
 
-        public FileMonitorCommandScan CreateFileMonitorCommandScan(string instanceId)
+        public FileMonitorCommandScan CreateFileMonitorCommandScan(IEventEnvelope envelope)
         {
-            return new FileMonitorCommandScan { InstanceId = instanceId };
+            return new FileMonitorCommandScan { Envelope = envelope };
         }
 
-        public FileMonitorScanCompleted CreateFileMonitorScanCompleted(string instanceId)
+        public FileMonitorScanCompleted CreateFileMonitorScanCompleted(IEventEnvelope envelope)
         {
-            return new FileMonitorScanCompleted();
+            return new FileMonitorScanCompleted { Envelope = envelope };
         }
     }
 }

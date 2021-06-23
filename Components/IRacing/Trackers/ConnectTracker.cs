@@ -16,13 +16,13 @@ namespace Slipstream.Components.IRacing.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope)
         {
             if (!state.Connected)
             {
                 state.FullReset();
 
-                EventBus.PublishEvent(EventFactory.CreateIRacingConnected());
+                EventBus.PublishEvent(EventFactory.CreateIRacingConnected(envelope));
 
                 state.Connected = true;
             }

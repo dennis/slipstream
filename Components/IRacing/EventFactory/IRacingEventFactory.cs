@@ -1,5 +1,6 @@
 ﻿using Slipstream.Components.IRacing.Events;
 using Slipstream.Components.IRacing.GameState;
+using Slipstream.Shared;
 using System;
 using static Slipstream.Components.IRacing.IIRacingEventFactory;
 
@@ -10,6 +11,7 @@ namespace Slipstream.Components.IRacing.EventFactory
     public class IRacingEventFactory : IIRacingEventFactory
     {
         public IRacingCompletedLap CreateIRacingCompletedLap(
+            IEventEnvelope envelope,
             double sessionTime,
             long carIdx,
             double lapTime,
@@ -23,6 +25,7 @@ namespace Slipstream.Components.IRacing.EventFactory
         {
             return new IRacingCompletedLap
             {
+                Envelope = envelope,
                 SessionTime = sessionTime,
                 CarIdx = carIdx,
                 LapTime = lapTime,
@@ -36,6 +39,7 @@ namespace Slipstream.Components.IRacing.EventFactory
         }
 
         public IRacingCarInfo CreateIRacingCarInfo(
+            IEventEnvelope envelope,
             double sessionTime,
             long carIdx,
             string carNumber,
@@ -52,6 +56,7 @@ namespace Slipstream.Components.IRacing.EventFactory
         {
             return new IRacingCarInfo
             {
+                Envelope = envelope,
                 SessionTime = sessionTime,
                 CarIdx = carIdx,
                 CarNumber = carNumber,
@@ -68,9 +73,12 @@ namespace Slipstream.Components.IRacing.EventFactory
             };
         }
 
-        public IRacingConnected CreateIRacingConnected()
+        public IRacingConnected CreateIRacingConnected(IEventEnvelope envelope)
         {
-            return new IRacingConnected();
+            return new IRacingConnected
+            {
+                Envelope = envelope,
+            };
         }
 
         private static string SessionCategoryToString(IRacingCategoryEnum category)
@@ -100,25 +108,27 @@ namespace Slipstream.Components.IRacing.EventFactory
             };
         }
 
-        public IRacingDisconnected CreateIRacingDisconnected()
+        public IRacingDisconnected CreateIRacingDisconnected(IEventEnvelope envelope)
         {
-            return new IRacingDisconnected();
+            return new IRacingDisconnected { Envelope = envelope };
         }
 
-        public IRacingPitEnter CreateIRacingPitEnter(double sessionTime, long carIdx, bool localUser)
+        public IRacingPitEnter CreateIRacingPitEnter(IEventEnvelope envelope, double sessionTime, long carIdx, bool localUser)
         {
             return new IRacingPitEnter
             {
+                Envelope = envelope,
                 SessionTime = sessionTime,
                 CarIdx = carIdx,
                 LocalUser = localUser
             };
         }
 
-        public IRacingPitExit CreateIRacingPitExit(double sessionTime, long carIdx, bool localUser, double? duration, float? fuelLeft)
+        public IRacingPitExit CreateIRacingPitExit(IEventEnvelope envelope, double sessionTime, long carIdx, bool localUser, double? duration, float? fuelLeft)
         {
             return new IRacingPitExit
             {
+                Envelope = envelope,
                 SessionTime = sessionTime,
                 CarIdx = carIdx,
                 LocalUser = localUser,
@@ -128,6 +138,7 @@ namespace Slipstream.Components.IRacing.EventFactory
         }
 
         public IRacingPitstopReport CreateIRacingPitstopReport(
+            IEventEnvelope envelope,
             double sessionTime,
             long carIdx,
             uint tempLFL,
@@ -160,6 +171,7 @@ namespace Slipstream.Components.IRacing.EventFactory
         {
             return new IRacingPitstopReport
             {
+                Envelope = envelope,
                 SessionTime = sessionTime,
                 CarIdx = carIdx,
 
@@ -202,6 +214,7 @@ namespace Slipstream.Components.IRacing.EventFactory
         }
 
         public IRacingRaceFlags CreateIRacingRaceFlags(
+            IEventEnvelope envelope,
             double sessionTime,
             bool black,
             bool blue,
@@ -232,6 +245,7 @@ namespace Slipstream.Components.IRacing.EventFactory
         {
             return new IRacingRaceFlags
             {
+                Envelope = envelope,
                 SessionTime = sessionTime,
                 Black = black,
                 Blue = blue,
@@ -263,6 +277,7 @@ namespace Slipstream.Components.IRacing.EventFactory
 
         public IRacingTrackInfo CreateIRacingTrackInfo
         (
+            IEventEnvelope envelope,
             long trackId,
             string trackLength,
             string trackDisplayName,
@@ -274,6 +289,7 @@ namespace Slipstream.Components.IRacing.EventFactory
         {
             return new IRacingTrackInfo
             {
+                Envelope = envelope,
                 TrackId = trackId,
                 TrackLength = trackLength,
                 TrackDisplayName = trackDisplayName,
@@ -286,6 +302,7 @@ namespace Slipstream.Components.IRacing.EventFactory
         }
 
         public IRacingWeatherInfo CreateIRacingWeatherInfo(
+            IEventEnvelope envelope,
             double sessionTime,
             Skies skies,
             float surfaceTemp,
@@ -296,6 +313,7 @@ namespace Slipstream.Components.IRacing.EventFactory
         {
             return new IRacingWeatherInfo
             {
+                Envelope = envelope,
                 SessionTime = sessionTime,
                 Skies = skies.ToString(),
                 SurfaceTemp = surfaceTemp,
@@ -306,35 +324,43 @@ namespace Slipstream.Components.IRacing.EventFactory
             };
         }
 
-        public IRacingCommandSendCarInfo CreateIRacingCommandSendCarInfo()
+        public IRacingCommandSendCarInfo CreateIRacingCommandSendCarInfo(IEventEnvelope envelope)
         {
-            return new IRacingCommandSendCarInfo();
+            return new IRacingCommandSendCarInfo { Envelope = envelope };
         }
 
-        public IRacingCommandSendTrackInfo CreateIRacingCommandSendTrackInfo()
+        public IRacingCommandSendTrackInfo CreateIRacingCommandSendTrackInfo(IEventEnvelope envelope)
         {
-            return new IRacingCommandSendTrackInfo();
+            return new IRacingCommandSendTrackInfo { Envelope = envelope };
         }
 
-        public IRacingCommandSendWeatherInfo CreateIRacingCommandSendWeatherInfo()
+        public IRacingCommandSendWeatherInfo CreateIRacingCommandSendWeatherInfo(IEventEnvelope envelope)
         {
-            return new IRacingCommandSendWeatherInfo();
+            return new IRacingCommandSendWeatherInfo { Envelope = envelope };
         }
 
-        public IRacingCommandSendSessionState CreateIRacingCommandSendSessionState()
+        public IRacingCommandSendSessionState CreateIRacingCommandSendSessionState(IEventEnvelope envelope)
         {
-            return new IRacingCommandSendSessionState();
+            return new IRacingCommandSendSessionState { Envelope = envelope };
         }
 
-        public IRacingCommandSendRaceFlags CreateIRacingCommandSendRaceFlags()
+        public IRacingCommandSendRaceFlags CreateIRacingCommandSendRaceFlags(IEventEnvelope envelope)
         {
-            return new IRacingCommandSendRaceFlags();
+            return new IRacingCommandSendRaceFlags { Envelope = envelope };
         }
 
-        public IRacingDriverIncident CreateIRacingDriverIncident(int driverIncidents, int driverIncidentsDelta, int teamIncidents, int teamIncidentsDelta, int myIncidents, int myIncidentsDelta)
+        public IRacingDriverIncident CreateIRacingDriverIncident(
+            IEventEnvelope envelope,
+            int driverIncidents,
+            int driverIncidentsDelta,
+            int teamIncidents,
+            int teamIncidentsDelta,
+            int myIncidents,
+            int myIncidentsDelta)
         {
             return new IRacingDriverIncident
             {
+                Envelope = envelope,
                 DriverIncidentCount = driverIncidents,
                 DriverIncidentDelta = driverIncidentsDelta,
                 TeamIncidentCount = teamIncidents,
@@ -344,10 +370,19 @@ namespace Slipstream.Components.IRacing.EventFactory
             };
         }
 
-        public IRacingPractice CreateIRacingPractice(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category)
+        public IRacingPractice CreateIRacingPractice(
+            IEventEnvelope envelope,
+            double sessionTime,
+            bool lapsLimited,
+            bool timeLimited,
+            double totalSessionTime,
+            int totalSessionLaps,
+            IRacingSessionStateEnum state,
+            IRacingCategoryEnum category)
         {
             return new IRacingPractice
             {
+                Envelope = envelope,
                 SessionTime = sessionTime,
                 LapsLimited = lapsLimited,
                 TimeLimited = timeLimited,
@@ -358,10 +393,20 @@ namespace Slipstream.Components.IRacing.EventFactory
             };
         }
 
-        public IRacingQualify CreateIRacingQualify(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category, bool openQualify)
+        public IRacingQualify CreateIRacingQualify(
+            IEventEnvelope envelope,
+            double sessionTime,
+            bool lapsLimited,
+            bool timeLimited,
+            double totalSessionTime,
+            int totalSessionLaps,
+            IRacingSessionStateEnum state,
+            IRacingCategoryEnum category,
+            bool openQualify)
         {
             return new IRacingQualify
             {
+                Envelope = envelope,
                 SessionTime = sessionTime,
                 LapsLimited = lapsLimited,
                 TimeLimited = timeLimited,
@@ -373,10 +418,19 @@ namespace Slipstream.Components.IRacing.EventFactory
             };
         }
 
-        public IRacingRace CreateIRacingRace(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category)
+        public IRacingRace CreateIRacingRace(
+            IEventEnvelope envelope,
+            double sessionTime,
+            bool lapsLimited,
+            bool timeLimited,
+            double totalSessionTime,
+            int totalSessionLaps,
+            IRacingSessionStateEnum state,
+            IRacingCategoryEnum category)
         {
             return new IRacingRace
             {
+                Envelope = envelope,
                 SessionTime = sessionTime,
                 LapsLimited = lapsLimited,
                 TimeLimited = timeLimited,
@@ -387,10 +441,19 @@ namespace Slipstream.Components.IRacing.EventFactory
             };
         }
 
-        public IRacingTesting CreateIRacingTesting(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category)
+        public IRacingTesting CreateIRacingTesting(
+            IEventEnvelope envelope,
+            double sessionTime,
+            bool lapsLimited,
+            bool timeLimited,
+            double totalSessionTime,
+            int totalSessionLaps,
+            IRacingSessionStateEnum state,
+            IRacingCategoryEnum category)
         {
             return new IRacingTesting
             {
+                Envelope = envelope,
                 SessionTime = sessionTime,
                 LapsLimited = lapsLimited,
                 TimeLimited = timeLimited,
@@ -401,10 +464,19 @@ namespace Slipstream.Components.IRacing.EventFactory
             };
         }
 
-        public IRacingWarmup CreateIRacingWarmup(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category)
+        public IRacingWarmup CreateIRacingWarmup(
+            IEventEnvelope envelope,
+            double sessionTime,
+            bool lapsLimited,
+            bool timeLimited,
+            double totalSessionTime,
+            int totalSessionLaps,
+            IRacingSessionStateEnum state,
+            IRacingCategoryEnum category)
         {
             return new IRacingWarmup
             {
+                Envelope = envelope,
                 SessionTime = sessionTime,
                 LapsLimited = lapsLimited,
                 TimeLimited = timeLimited,
@@ -415,10 +487,17 @@ namespace Slipstream.Components.IRacing.EventFactory
             };
         }
 
-        public IRacingCarPosition CreateIRacingCarPosition(double sessionTime, int carIdx, bool localUser, int positionInClass, int positionInRace)
+        public IRacingCarPosition CreateIRacingCarPosition(
+            IEventEnvelope envelope,
+            double sessionTime,
+            int carIdx,
+            bool localUser,
+            int positionInClass,
+            int positionInRace)
         {
             return new IRacingCarPosition
             {
+                Envelope = envelope,
                 SessionTime = sessionTime,
                 CarIdx = carIdx,
                 LocalUser = localUser,
@@ -427,27 +506,40 @@ namespace Slipstream.Components.IRacing.EventFactory
             };
         }
 
-        public IRacingRaw CreateIRacingRaw(IState state)
+        public IRacingRaw CreateIRacingRaw(IEventEnvelope envelope, IState state)
         {
             return new IRacingRaw
             {
+                Envelope = envelope,
                 CurrentState = state
             };
         }
 
-        public IRacingTowed CreateIRacingTowed(double sessionTime, float remainingTowTime)
+        public IRacingTowed CreateIRacingTowed(IEventEnvelope envelope, double sessionTime, float remainingTowTime)
         {
             return new IRacingTowed
             {
+                Envelope = envelope,
                 SessionTime = sessionTime,
                 RemainingTowTime = remainingTowTime,
             };
         }
 
-        public IRacingTrackPosition CreateIRacingTrackPosition(double sessionTime, long carIdx, bool localUser, int currentPositionInRace, int currentPositionInClass, int previousPositionInRace, int previousPositionInClass, int[] newCarsAhead, int[] newCarsBehind)
+        public IRacingTrackPosition CreateIRacingTrackPosition(
+            IEventEnvelope envelope,
+            double sessionTime,
+            long carIdx,
+            bool localUser,
+            int currentPositionInRace,
+            int currentPositionInClass,
+            int previousPositionInRace,
+            int previousPositionInClass,
+            int[] newCarsAhead,
+            int[] newCarsBehind)
         {
             return new IRacingTrackPosition
             {
+                Envelope = envelope,
                 SessionTime = sessionTime,
                 CarIdx = carIdx,
                 LocalUser = localUser,
@@ -460,64 +552,69 @@ namespace Slipstream.Components.IRacing.EventFactory
             };
         }
 
-        public IRacingCommandPitChangeLeftFrontTyre CreateIRacingCommandPitChangeLeftFrontTyre(int kpa)
+        public IRacingCommandPitChangeLeftFrontTyre CreateIRacingCommandPitChangeLeftFrontTyre(IEventEnvelope envelope, int kpa)
         {
             return new IRacingCommandPitChangeLeftFrontTyre
             {
+                Envelope = envelope,
                 Kpa = kpa
             };
         }
 
-        public IRacingCommandPitChangeRightFrontTyre CreateIRacingCommandPitChangeRightFrontTyre(int kpa)
+        public IRacingCommandPitChangeRightFrontTyre CreateIRacingCommandPitChangeRightFrontTyre(IEventEnvelope envelope, int kpa)
         {
             return new IRacingCommandPitChangeRightFrontTyre
             {
+                Envelope = envelope,
                 Kpa = kpa
             };
         }
 
-        public IRacingCommandPitChangeLeftRearTyre CreateIRacingCommandPitChangeLeftRearTyre(int kpa)
+        public IRacingCommandPitChangeLeftRearTyre CreateIRacingCommandPitChangeLeftRearTyre(IEventEnvelope envelope, int kpa)
         {
             return new IRacingCommandPitChangeLeftRearTyre
             {
+                Envelope = envelope,
                 Kpa = kpa
             };
         }
 
-        public IRacingCommandPitChangeRightRearTyre CreateIRacingCommandPitChangeRightRearTyre(int kpa)
+        public IRacingCommandPitChangeRightRearTyre CreateIRacingCommandPitChangeRightRearTyre(IEventEnvelope envelope, int kpa)
         {
             return new IRacingCommandPitChangeRightRearTyre
             {
+                Envelope = envelope,
                 Kpa = kpa
             };
         }
 
-        public IRacingCommandPitClearAll CreateIRacingCommandPitClearAll()
+        public IRacingCommandPitClearAll CreateIRacingCommandPitClearAll(IEventEnvelope envelope)
         {
-            return new IRacingCommandPitClearAll();
+            return new IRacingCommandPitClearAll { Envelope = envelope };
         }
 
-        public IRacingCommandPitClearTyresChange CreateIRacingCommandPitClearTyresChange()
+        public IRacingCommandPitClearTyresChange CreateIRacingCommandPitClearTyresChange(IEventEnvelope envelope)
         {
-            return new IRacingCommandPitClearTyresChange();
+            return new IRacingCommandPitClearTyresChange { Envelope = envelope };
         }
 
-        public IRacingCommandPitRequestFastRepair CreateIRacingCommandPitRequestFastRepair()
+        public IRacingCommandPitRequestFastRepair CreateIRacingCommandPitRequestFastRepair(IEventEnvelope envelope)
         {
-            return new IRacingCommandPitRequestFastRepair();
+            return new IRacingCommandPitRequestFastRepair { Envelope = envelope };
         }
 
-        public IRacingCommandPitAddFuel CreateIRacingCommandPitAddFuel(int addLiters)
+        public IRacingCommandPitAddFuel CreateIRacingCommandPitAddFuel(IEventEnvelope envelope, int addLiters)
         {
             return new IRacingCommandPitAddFuel
             {
+                Envelope = envelope,
                 AddLiters = addLiters
             };
         }
 
-        public IRacingCommandPitCleanWindshield CreateIRacingCommandPitCleanWindshield()
+        public IRacingCommandPitCleanWindshield CreateIRacingCommandPitCleanWindshield(IEventEnvelope envelope)
         {
-            return new IRacingCommandPitCleanWindshield();
+            return new IRacingCommandPitCleanWindshield { Envelope = envelope };
         }
     }
 }

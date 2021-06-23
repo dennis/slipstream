@@ -17,7 +17,7 @@ namespace Slipstream.Components.IRacing.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope)
         {
             foreach (var car in currentState.Cars)
             {
@@ -35,7 +35,11 @@ namespace Slipstream.Components.IRacing.Trackers
                     var now = currentState.SessionTime;
                     if (onPitRoad)
                     {
-                        EventBus.PublishEvent(EventFactory.CreateIRacingPitEnter(sessionTime: now, carIdx: car.CarIdx, localUser: localUser));
+                        EventBus.PublishEvent(EventFactory.CreateIRacingPitEnter(
+                            envelope: envelope,
+                            sessionTime: now,
+                            carIdx: car.CarIdx,
+                            localUser: localUser));
                         carState.PitEnteredAt = currentState.SessionTime;
                     }
                     else
@@ -56,6 +60,7 @@ namespace Slipstream.Components.IRacing.Trackers
                             }
 
                             EventBus.PublishEvent(EventFactory.CreateIRacingPitExit(
+                                envelope: envelope,
                                 sessionTime: now,
                                 carIdx: car.CarIdx,
                                 localUser: localUser,
@@ -67,6 +72,7 @@ namespace Slipstream.Components.IRacing.Trackers
                             if (localUser && car.LapsCompleted > 0)
                             {
                                 var status = EventFactory.CreateIRacingPitstopReport(
+                                    envelope: envelope,
                                     sessionTime: now,
                                     carIdx: car.CarIdx,
 

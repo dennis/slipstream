@@ -15,10 +15,11 @@ namespace Slipstream.Components.IRacing.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope)
         {
             var weatherInfo = EventFactory.CreateIRacingWeatherInfo
             (
+                envelope: envelope,
                 sessionTime: currentState.SessionTime,
                 skies: (Skies)(int)currentState.Skies,
                 surfaceTemp: currentState.TrackTempCrew,

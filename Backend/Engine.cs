@@ -38,7 +38,7 @@ namespace Slipstream.Backend
                 }
 
                 Logger.Information("Loading {initcfg}", initFilename);
-                InitLuaScript = LuaLuaLibrary?.instance("init.lua", "init.lua") as ILuaLuaReference;
+                InitLuaScript = LuaLuaLibrary?.LoadLuaFile("init.lua", "init.lua", "init.lua") as ILuaLuaReference;
                 InitLuaScript?.start();
             }
 

@@ -10,11 +10,13 @@ namespace Slipstream.Components.Lua.Lua
         private readonly IStateService StateService;
         private readonly StateLuaLibrary LuaLibrary;
         public string InstanceId { get; }
+        public string LuaScriptInstanceId { get; }
 
-        public StateLuaReference(StateLuaLibrary luaLibrary, string instanceId, IStateService stateService)
+        public StateLuaReference(StateLuaLibrary luaLibrary, string instanceId, string luaScriptInstanceId, IStateService stateService)
         {
             LuaLibrary = luaLibrary;
             InstanceId = instanceId;
+            LuaScriptInstanceId = luaScriptInstanceId;
             StateService = stateService;
         }
 

@@ -1,15 +1,16 @@
 ﻿using Slipstream.Components.Discord.Events;
+using Slipstream.Shared;
 
 namespace Slipstream.Components.Discord
 {
     public interface IDiscordEventFactory
     {
-        DiscordCommandSendMessage CreateDiscordCommandSendMessage(string instanceId, ulong channelId, string message, bool tts);
+        DiscordCommandSendMessage CreateDiscordCommandSendMessage(IEventEnvelope envelope, ulong channelId, string message, bool tts);
 
-        DiscordConnected CreateDiscordConnected(string instanceId);
+        DiscordConnected CreateDiscordConnected(IEventEnvelope envelope);
 
-        DiscordDisconnected CreateDiscordDisconnected(string instanceId);
+        DiscordDisconnected CreateDiscordDisconnected(IEventEnvelope envelope);
 
-        DiscordMessageReceived CreateDiscordMessageReceived(string instanceId, ulong fromId, string from, ulong channelId, string channel, string message);
+        DiscordMessageReceived CreateDiscordMessageReceived(IEventEnvelope envelope, ulong fromId, string from, ulong channelId, string channel, string message);
     }
 }

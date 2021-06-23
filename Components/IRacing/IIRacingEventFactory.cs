@@ -1,5 +1,6 @@
 ﻿using Slipstream.Components.IRacing.Events;
 using Slipstream.Components.IRacing.GameState;
+using Slipstream.Shared;
 
 #nullable enable
 
@@ -37,6 +38,7 @@ namespace Slipstream.Components.IRacing
         }
 
         IRacingCompletedLap CreateIRacingCompletedLap(
+            IEventEnvelope envelope,
             double sessionTime,
             long carIdx,
             double lapTime,
@@ -48,9 +50,10 @@ namespace Slipstream.Components.IRacing
             bool bestLap
         );
 
-        IRacingTowed CreateIRacingTowed(double sessionTime, float remainingTowTime);
+        IRacingTowed CreateIRacingTowed(IEventEnvelope envelope, double sessionTime, float remainingTowTime);
 
         IRacingCarInfo CreateIRacingCarInfo(
+            IEventEnvelope envelope,
             double sessionTime,
             long carIdx,
             string carNumber,
@@ -65,15 +68,16 @@ namespace Slipstream.Components.IRacing
             bool localUser,
             bool spectator);
 
-        IRacingConnected CreateIRacingConnected();
+        IRacingConnected CreateIRacingConnected(IEventEnvelope envelope);
 
-        IRacingDisconnected CreateIRacingDisconnected();
+        IRacingDisconnected CreateIRacingDisconnected(IEventEnvelope envelope);
 
-        IRacingPitEnter CreateIRacingPitEnter(double sessionTime, long carIdx, bool localUser);
+        IRacingPitEnter CreateIRacingPitEnter(IEventEnvelope envelope, double sessionTime, long carIdx, bool localUser);
 
-        IRacingPitExit CreateIRacingPitExit(double sessionTime, long carIdx, bool localUser, double? duration, float? fuelLeft);
+        IRacingPitExit CreateIRacingPitExit(IEventEnvelope envelope, double sessionTime, long carIdx, bool localUser, double? duration, float? fuelLeft);
 
         IRacingPitstopReport CreateIRacingPitstopReport(
+            IEventEnvelope envelope,
             double sessionTime,
             long carIdx,
             uint tempLFL,
@@ -105,6 +109,7 @@ namespace Slipstream.Components.IRacing
             double duration);
 
         IRacingRaceFlags CreateIRacingRaceFlags(
+            IEventEnvelope envelope,
             double sessionTime,
             bool black,
             bool blue,
@@ -133,8 +138,8 @@ namespace Slipstream.Components.IRacing
             bool yellowWaving
         );
 
-        IRacingTrackInfo CreateIRacingTrackInfo
-        (
+        IRacingTrackInfo CreateIRacingTrackInfo(
+            IEventEnvelope envelope,
             long trackId,
             string trackLength,
             string trackDisplayName,
@@ -145,6 +150,7 @@ namespace Slipstream.Components.IRacing
             string trackType);
 
         IRacingWeatherInfo CreateIRacingWeatherInfo(
+            IEventEnvelope envelope,
             double sessionTime,
             Skies skies,
             float surfaceTemp,
@@ -153,50 +159,50 @@ namespace Slipstream.Components.IRacing
             float relativeHumidity,
             float fogLevel);
 
-        IRacingCommandSendCarInfo CreateIRacingCommandSendCarInfo();
+        IRacingCommandSendCarInfo CreateIRacingCommandSendCarInfo(IEventEnvelope envelope);
 
-        IRacingCommandSendTrackInfo CreateIRacingCommandSendTrackInfo();
+        IRacingCommandSendTrackInfo CreateIRacingCommandSendTrackInfo(IEventEnvelope envelope);
 
-        IRacingCommandSendWeatherInfo CreateIRacingCommandSendWeatherInfo();
+        IRacingCommandSendWeatherInfo CreateIRacingCommandSendWeatherInfo(IEventEnvelope envelope);
 
-        IRacingCommandSendSessionState CreateIRacingCommandSendSessionState();
+        IRacingCommandSendSessionState CreateIRacingCommandSendSessionState(IEventEnvelope envelope);
 
-        IRacingCommandSendRaceFlags CreateIRacingCommandSendRaceFlags();
+        IRacingCommandSendRaceFlags CreateIRacingCommandSendRaceFlags(IEventEnvelope envelope);
 
-        IRacingDriverIncident CreateIRacingDriverIncident(int driverIncidents, int driverIncidentsDelta, int teamIncidents, int teamIncidentsDelta, int myIncidents, int myIncidentsDelta);
+        IRacingDriverIncident CreateIRacingDriverIncident(IEventEnvelope envelope, int driverIncidents, int driverIncidentsDelta, int teamIncidents, int teamIncidentsDelta, int myIncidents, int myIncidentsDelta);
 
-        IRacingPractice CreateIRacingPractice(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category);
+        IRacingPractice CreateIRacingPractice(IEventEnvelope envelope, double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category);
 
-        IRacingQualify CreateIRacingQualify(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category, bool openQualify);
+        IRacingQualify CreateIRacingQualify(IEventEnvelope envelope, double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category, bool openQualify);
 
-        IRacingRace CreateIRacingRace(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category);
+        IRacingRace CreateIRacingRace(IEventEnvelope envelope, double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category);
 
-        IRacingTesting CreateIRacingTesting(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category);
+        IRacingTesting CreateIRacingTesting(IEventEnvelope envelope, double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category);
 
-        IRacingWarmup CreateIRacingWarmup(double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category);
+        IRacingWarmup CreateIRacingWarmup(IEventEnvelope envelope, double sessionTime, bool lapsLimited, bool timeLimited, double totalSessionTime, int totalSessionLaps, IRacingSessionStateEnum state, IRacingCategoryEnum category);
 
-        IRacingCarPosition CreateIRacingCarPosition(double sessionTime, int carIdx, bool localUser, int positionInClass, int positionInRace);
+        IRacingCarPosition CreateIRacingCarPosition(IEventEnvelope envelope, double sessionTime, int carIdx, bool localUser, int positionInClass, int positionInRace);
 
-        IRacingRaw CreateIRacingRaw(IState state);
+        IRacingRaw CreateIRacingRaw(IEventEnvelope envelope, IState state);
 
-        IRacingTrackPosition CreateIRacingTrackPosition(double sessionTime, long carIdx, bool localUser, int currentPositionInRace, int currentPositionInClass, int previousPositionInRace, int previousPositionInClass, int[] newCarsAhead, int[] newCarsBehind);
+        IRacingTrackPosition CreateIRacingTrackPosition(IEventEnvelope envelope, double sessionTime, long carIdx, bool localUser, int currentPositionInRace, int currentPositionInClass, int previousPositionInRace, int previousPositionInClass, int[] newCarsAhead, int[] newCarsBehind);
 
-        IRacingCommandPitChangeLeftFrontTyre CreateIRacingCommandPitChangeLeftFrontTyre(int kpa);
+        IRacingCommandPitChangeLeftFrontTyre CreateIRacingCommandPitChangeLeftFrontTyre(IEventEnvelope envelope, int kpa);
 
-        IRacingCommandPitChangeRightFrontTyre CreateIRacingCommandPitChangeRightFrontTyre(int kpa);
+        IRacingCommandPitChangeRightFrontTyre CreateIRacingCommandPitChangeRightFrontTyre(IEventEnvelope envelope, int kpa);
 
-        IRacingCommandPitChangeLeftRearTyre CreateIRacingCommandPitChangeLeftRearTyre(int kpa);
+        IRacingCommandPitChangeLeftRearTyre CreateIRacingCommandPitChangeLeftRearTyre(IEventEnvelope envelope, int kpa);
 
-        IRacingCommandPitChangeRightRearTyre CreateIRacingCommandPitChangeRightRearTyre(int kpa);
+        IRacingCommandPitChangeRightRearTyre CreateIRacingCommandPitChangeRightRearTyre(IEventEnvelope envelope, int kpa);
 
-        IRacingCommandPitClearAll CreateIRacingCommandPitClearAll();
+        IRacingCommandPitClearAll CreateIRacingCommandPitClearAll(IEventEnvelope envelope);
 
-        IRacingCommandPitClearTyresChange CreateIRacingCommandPitClearTyresChange();
+        IRacingCommandPitClearTyresChange CreateIRacingCommandPitClearTyresChange(IEventEnvelope envelope);
 
-        IRacingCommandPitRequestFastRepair CreateIRacingCommandPitRequestFastRepair();
+        IRacingCommandPitRequestFastRepair CreateIRacingCommandPitRequestFastRepair(IEventEnvelope envelope);
 
-        IRacingCommandPitAddFuel CreateIRacingCommandPitAddFuel(int addLiters);
+        IRacingCommandPitAddFuel CreateIRacingCommandPitAddFuel(IEventEnvelope envelope, int addLiters);
 
-        IRacingCommandPitCleanWindshield CreateIRacingCommandPitCleanWindshield();
+        IRacingCommandPitCleanWindshield CreateIRacingCommandPitCleanWindshield(IEventEnvelope envelope);
     }
 }

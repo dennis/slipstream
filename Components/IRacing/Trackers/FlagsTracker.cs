@@ -17,12 +17,13 @@ namespace Slipstream.Components.IRacing.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope)
         {
             var sessionFlags = currentState.SessionFlags;
 
             var @event = EventFactory.CreateIRacingRaceFlags
             (
+                envelope: envelope,
                 sessionTime: currentState.SessionTime,
                 black: sessionFlags.HasFlag(SessionFlags.Black),
                 blue: sessionFlags.HasFlag(SessionFlags.Blue),

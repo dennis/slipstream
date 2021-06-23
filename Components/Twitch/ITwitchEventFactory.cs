@@ -1,27 +1,28 @@
 ﻿#nullable enable
 
 using Slipstream.Components.Twitch.Events;
+using Slipstream.Shared;
 
 namespace Slipstream.Components.Twitch
 {
     public interface ITwitchEventFactory
     {
-        TwitchCommandSendMessage CreateTwitchCommandSendMessage(string instanceId, string message);
+        TwitchCommandSendMessage CreateTwitchCommandSendMessage(IEventEnvelope envelope, string message);
 
-        TwitchConnected CreateTwitchConnected(string instanceId);
+        TwitchConnected CreateTwitchConnected(IEventEnvelope envelope);
 
-        TwitchDisconnected CreateTwitchDisconnected(string instanceId);
+        TwitchDisconnected CreateTwitchDisconnected(IEventEnvelope envelope);
 
-        TwitchReceivedMessage CreateTwitchReceivedMessage(string instanceId, string from, string message, bool moderator, bool subscriber, bool vip, bool broadcaster);
+        TwitchReceivedMessage CreateTwitchReceivedMessage(IEventEnvelope envelope, string from, string message, bool moderator, bool subscriber, bool vip, bool broadcaster);
 
-        TwitchReceivedWhisper CreateTwitchReceivedWhisper(string instanceId, string from, string message);
+        TwitchReceivedWhisper CreateTwitchReceivedWhisper(IEventEnvelope envelope, string from, string message);
 
-        TwitchCommandSendWhisper CreateTwitchCommandSendWhisper(string instanceId, string to, string message);
+        TwitchCommandSendWhisper CreateTwitchCommandSendWhisper(IEventEnvelope envelope, string to, string message);
 
-        TwitchUserSubscribed CreateTwitchUserSubscribed(string instanceId, string name, string message, string subscriptionPlan, long cumulativeMonths, long streakMonths, string systemMessage);
+        TwitchUserSubscribed CreateTwitchUserSubscribed(IEventEnvelope envelope, string name, string message, string subscriptionPlan, long cumulativeMonths, long streakMonths, string systemMessage);
 
-        TwitchGiftedSubscription CreateTwitchGiftedSubscription(string instanceId, string gifter, string subscriptionPlan, string recipient, string systemMessage);
+        TwitchGiftedSubscription CreateTwitchGiftedSubscription(IEventEnvelope envelope, string gifter, string subscriptionPlan, string recipient, string systemMessage);
 
-        TwitchRaided CreateTwitchRaided(string instanceId, string name, int viewerCount);
+        TwitchRaided CreateTwitchRaided(IEventEnvelope envelope, string name, int viewerCount);
     }
 }

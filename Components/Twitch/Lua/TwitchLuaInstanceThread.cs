@@ -21,7 +21,7 @@ namespace Slipstream.Components.Twitch.Lua
         private readonly string TwitchToken;
         private readonly string TwitchUsername;
         private readonly string TwitchChannel;
-        private bool TwitchLog;
+        private readonly bool TwitchLog;
         private readonly ITwitchEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private readonly IEventBusSubscription Subscription;
@@ -40,7 +40,17 @@ namespace Slipstream.Components.Twitch.Lua
         private DateTime ThrottleDurationStart = DateTime.UtcNow;
         private int CommandCountWithinThrottleDuration = 0;
 
-        public TwitchLuaInstanceThread(string instanceId, string twitchToken, string twitchUsername, string twitchChannel, bool twitchLog, Serilog.ILogger logger, IEventHandlerController eventHandlerController, ITwitchEventFactory eventFactory, IEventBus eventBus, IEventBusSubscription eventBusSubscription) : base(instanceId, logger)
+        public TwitchLuaInstanceThread(
+            string instanceId,
+            string twitchToken,
+            string twitchUsername,
+            string twitchChannel,
+            bool twitchLog,
+            Serilog.ILogger logger,
+            IEventHandlerController eventHandlerController,
+            ITwitchEventFactory eventFactory,
+            IEventBus eventBus,
+            IEventBusSubscription eventBusSubscription) : base(instanceId, logger, eventHandlerController)
         {
             EventHandlerController = eventHandlerController;
             TwitchToken = twitchToken;
@@ -55,7 +65,6 @@ namespace Slipstream.Components.Twitch.Lua
         protected override void Main()
         {
             var twitchEventHandler = EventHandlerController.Get<EventHandler.Twitch>();
-
             twitchEventHandler.OnTwitchCommandSendMessage += (_, e) => SendMessage(e.Message);
             twitchEventHandler.OnTwitchCommandSendWhisper += (_, e) => SendWhisper(e.To, e.Message);
 
@@ -136,7 +145,7 @@ namespace Slipstream.Components.Twitch.Lua
 
             if (!AnnouncedConnected)
             {
-                EventBus.PublishEvent(EventFactory.CreateTwitchConnected(InstanceId));
+                EventBus.PublishEvent(EventFactory.CreateTwitchConnected(InstanceEnvelope));
                 AnnouncedConnected = true;
             }
 
@@ -154,7 +163,7 @@ namespace Slipstream.Components.Twitch.Lua
         {
             if (AnnouncedConnected)
             {
-                EventBus.PublishEvent(EventFactory.CreateTwitchDisconnected(InstanceId));
+                EventBus.PublishEvent(EventFactory.CreateTwitchDisconnected(InstanceEnvelope));
                 AnnouncedConnected = false;
             }
         }
@@ -212,7 +221,7 @@ namespace Slipstream.Components.Twitch.Lua
 
         private void OnRaidNotification(object sender, OnRaidNotificationArgs e)
         {
-            var @event = EventFactory.CreateTwitchRaided(InstanceId, e.RaidNotification.DisplayName, int.Parse(e.RaidNotification.MsgParamViewerCount));
+            var @event = EventFactory.CreateTwitchRaided(InstanceEnvelope, e.RaidNotification.DisplayName, int.Parse(e.RaidNotification.MsgParamViewerCount));
 
             EventBus.PublishEvent(@event);
         }
@@ -220,7 +229,7 @@ namespace Slipstream.Components.Twitch.Lua
         private void OnReSubscriber(object sender, OnReSubscriberArgs e)
         {
             var @event = EventFactory.CreateTwitchUserSubscribed(
-                instanceId: InstanceId,
+                envelope: InstanceEnvelope,
                 name: e.ReSubscriber.DisplayName,
                 message: e.ReSubscriber.ResubMessage,
                 subscriptionPlan: e.ReSubscriber.SubscriptionPlan.ToString(),
@@ -234,7 +243,7 @@ namespace Slipstream.Components.Twitch.Lua
         private void OnNewSubscriber(object sender, OnNewSubscriberArgs e)
         {
             var @event = EventFactory.CreateTwitchUserSubscribed(
-                instanceId: InstanceId,
+                envelope: InstanceEnvelope,
                 name: e.Subscriber.DisplayName,
                 message: e.Subscriber.ResubMessage,
                 subscriptionPlan: e.Subscriber.SubscriptionPlan.ToString(),
@@ -278,7 +287,7 @@ namespace Slipstream.Components.Twitch.Lua
             }
 
             var @event = EventFactory.CreateTwitchGiftedSubscription(
-                instanceId: InstanceId,
+                envelope: InstanceEnvelope,
                 gifter: gifter,
                 subscriptionPlan: e.GiftedSubscription.MsgParamSubPlan.ToString(),
                 recipient: e.GiftedSubscription.MsgParamRecipientDisplayName,
@@ -313,7 +322,7 @@ namespace Slipstream.Components.Twitch.Lua
             EventBus.PublishEvent(
                 EventFactory.CreateTwitchReceivedMessage
                 (
-                    instanceId: InstanceId,
+                    envelope: InstanceEnvelope,
                     from: chatMessage.DisplayName,
                     message: chatMessage.Message,
                     moderator: chatMessage.IsModerator,
@@ -328,7 +337,7 @@ namespace Slipstream.Components.Twitch.Lua
             var message = e.WhisperMessage;
 
             EventBus.PublishEvent(
-                EventFactory.CreateTwitchReceivedWhisper(InstanceId, message.DisplayName, message.Message)
+                EventFactory.CreateTwitchReceivedWhisper(InstanceEnvelope, message.DisplayName, message.Message)
             );
         }
     }

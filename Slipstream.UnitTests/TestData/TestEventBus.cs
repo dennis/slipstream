@@ -16,7 +16,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Trackers
             Events.Add(e);
         }
 
-        public IEventBusSubscription RegisterListener(bool fromBeginning = false)
+        public IEventBusSubscription RegisterListener(string instanceId, bool fromBeginning = false)
         {
             throw new System.NotImplementedException();
         }

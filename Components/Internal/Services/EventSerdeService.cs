@@ -26,6 +26,8 @@ namespace Slipstream.Components.Internal.Services
         {
             public string EventType { get; set; } = String.Empty;
             public ulong Uptime { get; set; }
+            public IEventEnvelope Envelope { get; set; } = new EventEnvelope();
+            
         }
 
         public IEvent? Deserialize(string json)

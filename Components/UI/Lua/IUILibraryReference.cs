@@ -4,19 +4,24 @@ using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.UI.Lua
 {
-    public class IUILibraryReference : ILuaReference
+    public class IUILibraryReference : BaseLuaReference, ILuaReference
     {
         private readonly IEventBus EventBus;
         private readonly IUIEventFactory EventFactory;
         private readonly ILogger Logger;
         private readonly string Prefix;
         private readonly UILuaLibrary LuaLibrary;
-        public string InstanceId { get; }
 
-        public IUILibraryReference(UILuaLibrary luaLibrary, string instanceId, string prefix, IEventBus eventBus, IUIEventFactory eventFactory, ILogger logger)
+        public IUILibraryReference(
+            UILuaLibrary luaLibrary,
+            string instanceId,
+            string luaScriptInstanceId,
+            string prefix,
+            IEventBus eventBus,
+            IUIEventFactory eventFactory,
+            ILogger logger) : base(instanceId, luaScriptInstanceId)
         {
             LuaLibrary = luaLibrary;
-            InstanceId = instanceId;
             EventBus = eventBus;
             EventFactory = eventFactory;
             Logger = logger;
@@ -32,16 +37,16 @@ namespace Slipstream.Components.UI.Lua
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
         public void create_button(string text)
         {
-            EventBus.PublishEvent(EventFactory.CreateUICommandCreateButton(text));
+            EventBus.PublishEvent(EventFactory.CreateUICommandCreateButton(Envelope, text));
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
         public void delete_button(string text)
         {
-            EventBus.PublishEvent(EventFactory.CreateUICommandDeleteButton(text));
+            EventBus.PublishEvent(EventFactory.CreateUICommandDeleteButton(Envelope, text));
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             LuaLibrary.ReferenceDropped(this);
         }

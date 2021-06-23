@@ -2,6 +2,7 @@
 
 using Autofac;
 using NLua;
+using Slipstream.Components.Internal;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ namespace Slipstream.Shared.Lua
         protected readonly object Lock = new object();
         protected readonly DictionaryValidator Validator;
         protected readonly ILifetimeScope LifetimeScope;
+        protected readonly IEventBus EventBus;
+        private readonly IInternalEventFactory InternalEventFactory;
 
         private class InstanceContainer<T>
         {
@@ -33,10 +36,12 @@ namespace Slipstream.Shared.Lua
         // LuaLibrary from class name and use that
         public string Name => $"api/{GetType().Name.Replace("LuaLibrary", "").ToLower()}";
 
-        protected BaseLuaLibrary(DictionaryValidator validator, ILifetimeScope lifetimeScope)
+        protected BaseLuaLibrary(DictionaryValidator validator, ILifetimeScope lifetimeScope, IEventBus eventBus, IInternalEventFactory eventFactory)
         {
             Validator = validator;
             LifetimeScope = lifetimeScope;
+            EventBus = eventBus;
+            InternalEventFactory = eventFactory;
         }
 
         public void Dispose()
@@ -49,7 +54,7 @@ namespace Slipstream.Shared.Lua
             Instances.Clear();
         }
 
-        public ILuaReference? instance(LuaTable cfgTable)
+        public ILuaReference? GetInstance(string luaScriptInstanceId, LuaTable cfgTable)
         {
             var cfg = Parameters.From(cfgTable);
 
@@ -59,7 +64,7 @@ namespace Slipstream.Shared.Lua
 
             lock (Lock)
             {
-                HandleInstance(instanceId, cfg);
+                HandleInstance(luaScriptInstanceId, instanceId, cfg);
 
                 Debug.Assert(Instances.ContainsKey(instanceId));
                 var container = Instances[instanceId];
@@ -67,6 +72,7 @@ namespace Slipstream.Shared.Lua
                 container.RefCount++;
 
                 return LifetimeScope.Resolve<TReference>(
+                    new NamedParameter("luaScriptInstanceId", luaScriptInstanceId),
                     new NamedParameter("instanceId", instanceId),
                     new NamedParameter("luaLibrary", this)
                 );
@@ -75,7 +81,7 @@ namespace Slipstream.Shared.Lua
 
         protected abstract TInstance CreateInstance(ILifetimeScope scope, Parameters cfg);
 
-        protected void HandleInstance(string instanceId, Parameters cfg)
+        protected void HandleInstance(string luaScriptInstanceId, string instanceId, Parameters cfg)
         {
             if (!Instances.ContainsKey(instanceId))
             {
@@ -84,6 +90,10 @@ namespace Slipstream.Shared.Lua
                 var instance = CreateInstance(LifetimeScope, cfg);
                 Instances.Add(instanceId, new InstanceContainer<TInstance>(instance));
                 instance.Start();
+
+                var envelope = new EventEnvelope(luaScriptInstanceId).Add(instanceId);
+
+                EventBus.PublishEvent(InternalEventFactory.CreateInternalInstanceAddSubscription(envelope, luaScriptInstanceId));
             }
         }
 
@@ -110,6 +120,10 @@ namespace Slipstream.Shared.Lua
                 {
                     Debug.WriteLine($"***** ERROR - LuaReference '{instanceId}' points to an non-existing instance *****");
                 }
+
+                var envelope = new EventEnvelope(luaReference.LuaScriptInstanceId).Add(instanceId);
+
+                EventBus.PublishEvent(InternalEventFactory.CreateInternalInstanceRemoveSubscription(envelope, luaReference.LuaScriptInstanceId));
             }
         }
     }

@@ -53,7 +53,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             this.comboEvents.Name = "comboEvents";
             this.comboEvents.Size = new System.Drawing.Size(673, 21);
             this.comboEvents.TabIndex = 1;
-            this.comboEvents.SelectedIndexChanged += new System.EventHandler(this.comboEvents_SelectedIndexChanged);
+            this.comboEvents.SelectedIndexChanged += new System.EventHandler(this.ComboEvents_SelectedIndexChanged);
             // 
             // label1
             // 
@@ -79,7 +79,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             this.btnCreateEvent.TabIndex = 2;
             this.btnCreateEvent.Text = "Create Event";
             this.btnCreateEvent.UseVisualStyleBackColor = true;
-            this.btnCreateEvent.Click += new System.EventHandler(this.btnCreateEvent_Click);
+            this.btnCreateEvent.Click += new System.EventHandler(this.BtnCreateEvent_Click);
             // 
             // EventTestWindow
             // 

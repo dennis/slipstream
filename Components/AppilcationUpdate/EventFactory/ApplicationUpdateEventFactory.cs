@@ -1,19 +1,21 @@
 ﻿using Slipstream.Components.AppilcationUpdate.Events;
+using Slipstream.Shared;
 
 namespace Slipstream.Components.AppilcationUpdate.EventFactory
 {
     public class ApplicationUpdateEventFactory : IApplicationUpdateEventFactory
     {
-        public ApplicationUpdateCommandCheckLatestVersion CreateApplicationUpdateCommandCheckLatestVersion()
+        public ApplicationUpdateCommandCheckLatestVersion CreateApplicationUpdateCommandCheckLatestVersion(IEventEnvelope envelope)
         {
-            return new ApplicationUpdateCommandCheckLatestVersion();
+            return new ApplicationUpdateCommandCheckLatestVersion { Envelope = envelope };
         }
 
-        public ApplicationUpdateLatestVersionChanged CreateApplicationUpdateLatestVersionChanged(string version)
+        public ApplicationUpdateLatestVersionChanged CreateApplicationUpdateLatestVersionChanged(IEventEnvelope envelope, string version)
         {
             return new ApplicationUpdateLatestVersionChanged
             {
-                LatestVersion = version
+                Envelope = envelope,
+                LatestVersion = version,
             };
         }
     }

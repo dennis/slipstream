@@ -9,10 +9,12 @@ namespace Slipstream.Backend
     {
         private readonly BlockingCollection<IEvent> Events = new BlockingCollection<IEvent>();
         private readonly IEventBus EventBus;
+        public readonly string InstanceId;
 
-        public EventBusSubscription(IEventBus eventBus)
+        public EventBusSubscription(IEventBus eventBus, string instanceId)
         {
             EventBus = eventBus;
+            InstanceId = instanceId;
         }
 
         public void Add(IEvent ev)
@@ -36,10 +38,8 @@ namespace Slipstream.Backend
             {
                 return ev;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
     }
 }

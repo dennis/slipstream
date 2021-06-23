@@ -1,17 +1,17 @@
 ﻿#nullable enable
 
+using Slipstream.Shared.Lua;
+
 namespace Slipstream.Components.Lua.Lua
 {
-    public class LuaLuaReference : ILuaLuaReference
+    public class LuaLuaReference : BaseLuaReference, ILuaLuaReference
     {
         private readonly ILuaInstanceThread ServiceThread;
         private readonly LuaLuaLibrary LuaLibrary;
-        public string InstanceId { get; }
 
-        public LuaLuaReference(LuaLuaLibrary luaLibrary, string instanceId, ILuaInstanceThread serviceThread)
+        public LuaLuaReference(LuaLuaLibrary luaLibrary, string instanceId, string luaScriptInstanceId, ILuaInstanceThread serviceThread) : base(instanceId, luaScriptInstanceId)
         {
             LuaLibrary = luaLibrary;
-            InstanceId = instanceId;
             ServiceThread = serviceThread;
         }
 
@@ -30,7 +30,7 @@ namespace Slipstream.Components.Lua.Lua
             ServiceThread.Restart();
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             LuaLibrary.ReferenceDrop(this);
         }

@@ -1,4 +1,5 @@
 ﻿using Slipstream.Components.Twitch.Events;
+using Slipstream.Shared;
 
 #nullable enable
 
@@ -6,30 +7,30 @@ namespace Slipstream.Components.Twitch.EventFactory
 {
     public class TwitchEventFactory : ITwitchEventFactory
     {
-        public TwitchCommandSendMessage CreateTwitchCommandSendMessage(string instanceId, string message)
+        public TwitchCommandSendMessage CreateTwitchCommandSendMessage(IEventEnvelope envelope, string message)
         {
             return new TwitchCommandSendMessage
             {
-                InstanceId = instanceId,
+                Envelope = envelope,
                 Message = message
             };
         }
 
-        public TwitchConnected CreateTwitchConnected(string instanceId)
+        public TwitchConnected CreateTwitchConnected(IEventEnvelope envelope)
         {
-            return new TwitchConnected { InstanceId = instanceId };
+            return new TwitchConnected { Envelope = envelope };
         }
 
-        public TwitchDisconnected CreateTwitchDisconnected(string instanceId)
+        public TwitchDisconnected CreateTwitchDisconnected(IEventEnvelope envelope)
         {
-            return new TwitchDisconnected { InstanceId = instanceId };
+            return new TwitchDisconnected { Envelope = envelope };
         }
 
-        public TwitchReceivedMessage CreateTwitchReceivedMessage(string instanceId, string from, string message, bool moderator, bool subscriber, bool vip, bool broadcaster)
+        public TwitchReceivedMessage CreateTwitchReceivedMessage(IEventEnvelope envelope, string from, string message, bool moderator, bool subscriber, bool vip, bool broadcaster)
         {
             return new TwitchReceivedMessage
             {
-                InstanceId = instanceId,
+                Envelope = envelope,
                 From = from,
                 Message = message,
                 Moderator = moderator,
@@ -39,31 +40,31 @@ namespace Slipstream.Components.Twitch.EventFactory
             };
         }
 
-        public TwitchReceivedWhisper CreateTwitchReceivedWhisper(string instanceId, string from, string message)
+        public TwitchReceivedWhisper CreateTwitchReceivedWhisper(IEventEnvelope envelope, string from, string message)
         {
             return new TwitchReceivedWhisper
             {
-                InstanceId = instanceId,
+                Envelope = envelope,
                 From = from,
                 Message = message
             };
         }
 
-        public TwitchCommandSendWhisper CreateTwitchCommandSendWhisper(string instanceId, string to, string message)
+        public TwitchCommandSendWhisper CreateTwitchCommandSendWhisper(IEventEnvelope envelope, string to, string message)
         {
             return new TwitchCommandSendWhisper
             {
-                InstanceId = instanceId,
+                Envelope = envelope,
                 To = to,
                 Message = message
             };
         }
 
-        public TwitchUserSubscribed CreateTwitchUserSubscribed(string instanceId, string name, string message, string subscriptionPlan, long cumulativeMonths, long streakMonths, string systemMessage)
+        public TwitchUserSubscribed CreateTwitchUserSubscribed(IEventEnvelope envelope, string name, string message, string subscriptionPlan, long cumulativeMonths, long streakMonths, string systemMessage)
         {
             return new TwitchUserSubscribed
             {
-                InstanceId = instanceId,
+                Envelope = envelope,
                 Name = name,
                 Message = message,
                 SystemMessage = systemMessage,
@@ -73,11 +74,11 @@ namespace Slipstream.Components.Twitch.EventFactory
             };
         }
 
-        public TwitchGiftedSubscription CreateTwitchGiftedSubscription(string instanceId, string gifter, string subscriptionPlan, string recipient, string systemMessage)
+        public TwitchGiftedSubscription CreateTwitchGiftedSubscription(IEventEnvelope envelope, string gifter, string subscriptionPlan, string recipient, string systemMessage)
         {
             return new TwitchGiftedSubscription
             {
-                InstanceId = instanceId,
+                Envelope = envelope,
                 Gifter = gifter,
                 SubscriptionPlan = subscriptionPlan,
                 Recipient = recipient,
@@ -85,11 +86,11 @@ namespace Slipstream.Components.Twitch.EventFactory
             };
         }
 
-        public TwitchRaided CreateTwitchRaided(string instanceId, string name, int viewerCount)
+        public TwitchRaided CreateTwitchRaided(IEventEnvelope envelope, string name, int viewerCount)
         {
             return new TwitchRaided
             {
-                InstanceId = instanceId,
+                Envelope = envelope,
                 Name = name,
                 ViewerCount = viewerCount,
             };

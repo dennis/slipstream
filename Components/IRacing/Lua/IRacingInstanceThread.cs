@@ -21,7 +21,7 @@ namespace Slipstream.Components.IRacing.Lua
             IEventBus eventBus,
             IIRacingEventFactory eventFactory,
             IEventHandlerController eventHandlerController,
-            IEventBusSubscription eventBusSubscription) : base(instanceId, logger)
+            IEventBusSubscription eventBusSubscription) : base(instanceId, logger, eventHandlerController)
         {
             PublishRawState = publishRawState;
             EventBus = eventBus;
@@ -59,17 +59,17 @@ namespace Slipstream.Components.IRacing.Lua
                 {
                     if (PublishRawState)
                     {
-                        EventBus.PublishEvent(IRacingEventFactory.CreateIRacingRaw(state));
+                        EventBus.PublishEvent(IRacingEventFactory.CreateIRacingRaw(InstanceEnvelope, state));
                     }
 
-                    dataTrackers.Handle(state);
+                    dataTrackers.Handle(state, InstanceEnvelope);
                 }
                 else
                 {
                     if (dataTrackers.Connected)
                     {
                         dataTrackers.Connected = false;
-                        EventBus.PublishEvent(IRacingEventFactory.CreateIRacingDisconnected());
+                        EventBus.PublishEvent(IRacingEventFactory.CreateIRacingDisconnected(InstanceEnvelope));
                     }
                     Thread.Sleep(5000);
                 }

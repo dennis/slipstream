@@ -16,12 +16,13 @@ namespace Slipstream.Components.IRacing.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope)
         {
             if (state.SendTrackInfo)
             {
                 EventBus.PublishEvent(EventFactory.CreateIRacingTrackInfo
                 (
+                    envelope: envelope,
                     trackId: currentState.TrackId,
                     trackLength: currentState.TrackLength,
                     trackDisplayName: currentState.TrackDisplayName,

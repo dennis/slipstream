@@ -15,7 +15,7 @@ namespace Slipstream.Components.Lua.EventFactory
             EventSerdeService = eventSerdeService;
         }
 
-        public LuaCommandDeduplicateEvents CreateLuaCommandDeduplicateEvents(IEvent[] events)
+        public LuaCommandDeduplicateEvents CreateLuaCommandDeduplicateEvents(IEventEnvelope envelope, IEvent[] events)
         {
             string json = "";
 
@@ -26,6 +26,7 @@ namespace Slipstream.Components.Lua.EventFactory
 
             return new LuaCommandDeduplicateEvents
             {
+                Envelope = envelope,
                 Events = json
             };
         }

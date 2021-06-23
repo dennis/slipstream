@@ -18,7 +18,7 @@ namespace Slipstream.Components.IRacing.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope)
         {
             var towTime = currentState.PlayerCarTowTime;
 
@@ -30,6 +30,7 @@ namespace Slipstream.Components.IRacing.Trackers
                     BeingTowed = true;
 
                     EventBus.PublishEvent(EventFactory.CreateIRacingTowed(
+                        envelope: envelope,
                         sessionTime: currentState.SessionTime,
                         remainingTowTime: towTime
                     ));

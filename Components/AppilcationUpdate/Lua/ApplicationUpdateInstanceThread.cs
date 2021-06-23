@@ -34,7 +34,7 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
             IEventBus eventBus,
             IEventBusSubscription subscription,
             IApplicationVersionService applicationVersionService
-            ) : base(instanceId, logger)
+            ) : base(instanceId, logger, eventHandlerController)
         {
             UpdateLocation = location;
             Prerelease = prerelease;
@@ -161,7 +161,7 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
 
                     LastUpdateInfoEventArgs = args;
 
-                    EventBus.PublishEvent(ApplicationUpdateEventFactory.CreateApplicationUpdateLatestVersionChanged(args.CurrentVersion));
+                    EventBus.PublishEvent(ApplicationUpdateEventFactory.CreateApplicationUpdateLatestVersionChanged(InstanceEnvelope, args.CurrentVersion));
                 }
                 else
                 {

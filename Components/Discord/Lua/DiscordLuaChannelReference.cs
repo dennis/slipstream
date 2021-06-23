@@ -1,30 +1,33 @@
 ﻿using Slipstream.Shared;
+using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.Discord.Lua
 {
-    public class DiscordLuaChannelReference : IDiscordLuaChannelReference
+    public class DiscordLuaChannelReference : BaseLuaReference, IDiscordLuaChannelReference
     {
-        private readonly string InstanceId;
         private readonly ulong ChannelId;
         private readonly IEventBus EventBus;
         private readonly IDiscordEventFactory EventFactory;
 
-        public DiscordLuaChannelReference(string instanceId, long channelId, IEventBus eventBus, IDiscordEventFactory eventFactory)
+        public DiscordLuaChannelReference(string instanceId, string luaScriptInstanceId, long channelId, IEventBus eventBus, IDiscordEventFactory eventFactory) : base(instanceId, luaScriptInstanceId)
         {
-            InstanceId = instanceId;
             ChannelId = (ulong)channelId;
             EventBus = eventBus;
             EventFactory = eventFactory;
         }
 
+        public override void Dispose()
+        {
+        }
+
         public void send_message(string message)
         {
-            EventBus.PublishEvent(EventFactory.CreateDiscordCommandSendMessage(InstanceId, ChannelId, message, false));
+            EventBus.PublishEvent(EventFactory.CreateDiscordCommandSendMessage(Envelope, ChannelId, message, false));
         }
 
         public void send_message_tts(string message)
         {
-            EventBus.PublishEvent(EventFactory.CreateDiscordCommandSendMessage(InstanceId, ChannelId, message, true));
+            EventBus.PublishEvent(EventFactory.CreateDiscordCommandSendMessage(Envelope, ChannelId, message, true));
         }
     }
 }

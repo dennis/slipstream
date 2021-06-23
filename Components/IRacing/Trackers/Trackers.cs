@@ -32,10 +32,10 @@ namespace Slipstream.Components.IRacing.Trackers
             DataTrackers.Add(new TrackPositionTracker(eventBus, eventFactory));
         }
 
-        public void Handle(GameState.IState currentState)
+        public void Handle(GameState.IState currentState, IEventEnvelope envelope)
         {
             foreach (var t in DataTrackers)
-                t.Handle(currentState, TrackerState);
+                t.Handle(currentState, TrackerState, envelope);
         }
     }
 }

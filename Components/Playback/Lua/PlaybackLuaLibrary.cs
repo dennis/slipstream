@@ -4,6 +4,8 @@ using Autofac;
 using Slipstream.Shared.Lua;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
+using Slipstream.Shared;
+using Slipstream.Components.Internal;
 
 namespace Slipstream.Components.Playback.Lua
 {
@@ -17,7 +19,7 @@ namespace Slipstream.Components.Playback.Lua
                 .RequireString("id");
         }
 
-        public PlaybackLuaLibrary(ILifetimeScope scope) : base(ConfigurationValidator, scope)
+        public PlaybackLuaLibrary(ILifetimeScope scope, IEventBus eventBus, IInternalEventFactory eventFactory) : base(ConfigurationValidator, scope, eventBus, eventFactory)
         {
         }
 

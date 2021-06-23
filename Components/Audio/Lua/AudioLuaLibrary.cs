@@ -1,6 +1,8 @@
 ﻿#nullable enable
 
 using Autofac;
+using Slipstream.Components.Internal;
+using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using Slipstream.Shared.Lua;
@@ -19,7 +21,7 @@ namespace Slipstream.Components.Audio.Lua
                 .PermitLong("output");
         }
 
-        public AudioLuaLibrary(ILifetimeScope scope) : base(ConfigurationValidator, scope)
+        public AudioLuaLibrary(ILifetimeScope scope, IEventBus eventBus, IInternalEventFactory eventFactory) : base(ConfigurationValidator, scope, eventBus, eventFactory)
         {
         }
 
@@ -29,10 +31,13 @@ namespace Slipstream.Components.Audio.Lua
             var outputDeviceIdx = cfg.ExtractOrDefault("output", -1);
             var path = cfg.ExtractOrDefault("path", "Audio");
 
+            var subscription = EventBus.RegisterListener(instanceId);
+
             return scope.Resolve<IAudioInstanceThread>(
                new NamedParameter("instanceId", instanceId),
                new NamedParameter("output", outputDeviceIdx),
-               new NamedParameter("path", path)
+               new NamedParameter("path", path),
+               new TypedParameter(typeof(IEventBusSubscription), subscription)
            );
         }
     }

@@ -3,6 +3,7 @@ using Slipstream.Components.IRacing.EventFactory;
 using Slipstream.Components.IRacing.Events;
 using Slipstream.Components.IRacing.Models;
 using Slipstream.Components.IRacing.Trackers;
+using Slipstream.Shared;
 using Slipstream.UnitTests.TestData;
 using Xunit;
 
@@ -32,7 +33,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Trackers
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
             foreach (var s in Builder.States)
-                sut.Handle(s, TrackerState);
+                sut.Handle(s, TrackerState, new EventEnvelope("sender"));
 
             // assert
             Assert.True(TrackerState.Laps.Count == 1);
@@ -58,7 +59,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Trackers
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
             foreach (var s in Builder.States)
-                sut.Handle(s, TrackerState);
+                sut.Handle(s, TrackerState, new EventEnvelope("sender"));
 
             // assert
             Assert.True(TrackerState.Laps[0].OurLapTimeMeasurement == NOW - LAP_STARTED_AT);
@@ -86,7 +87,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Trackers
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
             foreach (var s in Builder.States)
-                sut.Handle(s, TrackerState);
+                sut.Handle(s, TrackerState, new EventEnvelope("sender"));
 
             // assert
             Assert.False(TrackerState.Laps[0].PendingLapTime);
@@ -111,7 +112,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Trackers
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
             foreach (var s in Builder.States)
-                sut.Handle(s, TrackerState);
+                sut.Handle(s, TrackerState, new EventEnvelope("sender"));
 
             // assert
             Assert.True(TrackerState.Laps.Count == 1);
@@ -136,7 +137,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Trackers
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
             foreach (var s in Builder.States)
-                sut.Handle(s, TrackerState);
+                sut.Handle(s, TrackerState, new EventEnvelope("sender"));
 
             // assert
             Assert.False(TrackerState.Laps[0].PendingLapTime);
@@ -169,7 +170,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Trackers
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
             foreach (var s in Builder.States)
-                sut.Handle(s, TrackerState);
+                sut.Handle(s, TrackerState, new EventEnvelope("sender"));
 
             // assert
             Assert.Empty(EventBus.Events);
@@ -190,7 +191,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Trackers
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
             foreach (var s in Builder.States)
-                sut.Handle(s, TrackerState);
+                sut.Handle(s, TrackerState, new EventEnvelope("sender"));
 
             // assert
             Assert.False(TrackerState.Laps[0].PendingLapTime);
@@ -217,7 +218,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Trackers
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
             foreach (var s in Builder.States)
-                sut.Handle(s, TrackerState);
+                sut.Handle(s, TrackerState, new EventEnvelope("sender"));
 
             // assert
             Assert.False(TrackerState.Laps[0].TimingEnabled);
@@ -236,7 +237,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Trackers
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
             foreach (var s in Builder.States)
-                sut.Handle(s, TrackerState);
+                sut.Handle(s, TrackerState, new EventEnvelope("sender"));
 
             // assert
             Assert.True(TrackerState.Laps[0].TimingEnabled);
@@ -259,7 +260,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Trackers
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
             foreach (var s in Builder.States)
-                sut.Handle(s, TrackerState);
+                sut.Handle(s, TrackerState, new EventEnvelope("sender"));
 
             // assert
             Assert.True(TrackerState.Laps[0].OurLapTimeMeasurement == 0);
@@ -285,7 +286,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Trackers
             // act
             var sut = new LapsCompletedTracker(EventBus, EventFactory);
             foreach (var s in Builder.States)
-                sut.Handle(s, TrackerState);
+                sut.Handle(s, TrackerState, new EventEnvelope("sender"));
 
             // assert
             Assert.False(TrackerState.Laps[0].PendingLapTime);

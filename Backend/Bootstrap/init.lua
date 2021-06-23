@@ -30,18 +30,18 @@ local lua_scripts = {
 
 function handle(e)
 	print(e.EventType)
-	if e.EventType == "FileMonitorFileCreated" and e.InstanceId == lua_loader and ends_with(e.FilePath, ".lua") then
+	if e.EventType == "FileMonitorFileCreated" and  e.Envelope.Sender == lua_loader and ends_with(e.FilePath, ".lua") then
 		lua_scripts:start(e.FilePath)
-	elseif e.EventType == "FileMonitorFileChanged" and e.InstanceId == lua_loader and ends_with(e.FilePath, ".lua") then
+	elseif e.EventType == "FileMonitorFileChanged"  e.Envelope.Sender == lua_loader and ends_with(e.FilePath, ".lua") then
 		lua_scripts:start(e.FilePath)
-	elseif e.EventType == "FileMonitorFileRenamed" and e.InstanceId == lua_loader then
+	elseif e.EventType == "FileMonitorFileRenamed" and  e.Envelope.Sender == lua_loader then
 		if ends_with(e.OldFilePath, ".lua") then
 			lua_scripts:stop(e.OldFilePath)
 		end
 		if ends_with(e.FilePath, ".lua") then
 			lua_scripts:start(e.FilePath)
 		end
-	elseif e.EventType == "FileMonitorFileDeleted" and e.InstanceId == lua_loader and ends_with(e.FilePath, ".lua") then
+	elseif e.EventType == "FileMonitorFileDeleted" and  e.Envelope.Sender == lua_loader and ends_with(e.FilePath, ".lua") then
 		lua_scripts:stop(e.FilePath)
 	elseif e.EventType == "InternalCommandShutdown" then
 		lua:instance({id = SS.instance_id, file = SS.file}):stop()

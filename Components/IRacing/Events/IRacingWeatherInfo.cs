@@ -2,14 +2,15 @@
 
 using Slipstream.Shared;
 using System;
-using System.Collections.Generic;
 
 namespace Slipstream.Components.IRacing.Events
 {
     public class IRacingWeatherInfo : IEvent
     {
-        public string EventType => "IRacingWeatherInfo";
+        public string EventType => nameof(IRacingWeatherInfo);
         public ulong Uptime { get; set; }
+        public IEventEnvelope Envelope { get; set; } = new EventEnvelope();
+        
         public double SessionTime { get; set; }
         public string Skies { get; set; } = string.Empty;
         public float SurfaceTemp { get; set; }
@@ -28,33 +29,6 @@ namespace Slipstream.Components.IRacing.Events
                 Math.Abs(other.RelativeHumidity - RelativeHumidity) < 0.1 &&
                 Math.Abs(other.FogLevel - FogLevel) < 0.1
             );
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return obj is IRacingWeatherInfo info &&
-                   EventType == info.EventType &&
-                   SessionTime == info.SessionTime &&
-                   Skies == info.Skies &&
-                   SurfaceTemp == info.SurfaceTemp &&
-                   AirTemp == info.AirTemp &&
-                   AirPressure == info.AirPressure &&
-                   RelativeHumidity == info.RelativeHumidity &&
-                   FogLevel == info.FogLevel;
-        }
-
-        public override int GetHashCode()
-        {
-            int hashCode = 1373460440;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
-            hashCode = hashCode * -1521134295 + SessionTime.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Skies);
-            hashCode = hashCode * -1521134295 + SurfaceTemp.GetHashCode();
-            hashCode = hashCode * -1521134295 + AirTemp.GetHashCode();
-            hashCode = hashCode * -1521134295 + AirPressure.GetHashCode();
-            hashCode = hashCode * -1521134295 + RelativeHumidity.GetHashCode();
-            hashCode = hashCode * -1521134295 + FogLevel.GetHashCode();
-            return hashCode;
         }
     }
 }

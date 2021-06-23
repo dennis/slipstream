@@ -16,7 +16,7 @@ namespace Slipstream.Components.IRacing.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope)
         {
             foreach (var car in currentState.Cars)
             {
@@ -28,6 +28,7 @@ namespace Slipstream.Components.IRacing.Trackers
 
                 // TODO: Also add: DriverIncidentCount, TeamIncidentCount
                 var @event = EventFactory.CreateIRacingCarInfo(
+                    envelope: envelope,
                     sessionTime: currentState.SessionTime,
                     carIdx: car.CarIdx,
                     carNumber: car.CarNumber,

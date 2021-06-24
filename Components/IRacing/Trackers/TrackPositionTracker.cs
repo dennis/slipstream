@@ -456,5 +456,9 @@ namespace Slipstream.Components.IRacing.Trackers
         {
             //System.Diagnostics.Debug.WriteLine(str);
         }
+
+        public void Request(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope, IIRacingDataTracker.RequestType request)
+        {
+        }
     }
 }

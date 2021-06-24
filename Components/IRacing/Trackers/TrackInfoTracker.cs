@@ -1,4 +1,5 @@
-﻿using Slipstream.Components.IRacing.Models;
+﻿using Slipstream.Components.IRacing.GameState;
+using Slipstream.Components.IRacing.Models;
 using Slipstream.Shared;
 
 #nullable enable
@@ -16,7 +17,7 @@ namespace Slipstream.Components.IRacing.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope)
+        public void Handle(IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope)
         {
             if (state.SendTrackInfo)
             {
@@ -35,6 +36,14 @@ namespace Slipstream.Components.IRacing.Trackers
 
                 state.SendTrackInfo = false;
             }
+        }
+
+        public void Request(IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope, IIRacingDataTracker.RequestType request)
+        {
+            if (request != IIRacingDataTracker.RequestType.TrackInfo)
+                return;
+
+            Handle(currentState, state, envelope);
         }
     }
 }

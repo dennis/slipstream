@@ -21,30 +21,12 @@ namespace Slipstream.Components.IRacing.Trackers
 
         public void Handle(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope)
         {
-            var sessionData = currentState.CurrentSession;
             var sessionType = currentState.SessionType;
-            var sessionTime = currentState.SessionTime;
-
-            var category = currentState.RaceCategory;
             var sessionState = currentState.SessionState;
-            var lapsLimited = sessionData.LapsLimited;
-            var timeLimited = sessionData.TimeLimited;
-            var totalSessionTime = sessionData.TotalSessionTime;
-            var totalSessionLaps = sessionData.TotalSessionLaps;
 
-            if (sessionType != state.LastSessionType || sessionState != state.LastSessionState || state.SendSessionState)
+            if (sessionType != state.LastSessionType || sessionState != state.LastSessionState)
             {
-                IIRacingSessionState @event =
-                   sessionType switch
-                   {
-                       IRacingSessionTypeEnum.Practice => EventFactory.CreateIRacingPractice(envelope: envelope, sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionState, category: category),
-                       IRacingSessionTypeEnum.OpenQualify => EventFactory.CreateIRacingQualify(envelope: envelope, sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionState, category: category, openQualify: true),
-                       IRacingSessionTypeEnum.LoneQualify => EventFactory.CreateIRacingQualify(envelope: envelope, sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionState, category: category, openQualify: false),
-                       IRacingSessionTypeEnum.OfflineTesting => EventFactory.CreateIRacingTesting(envelope: envelope, sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionState, category: category),
-                       IRacingSessionTypeEnum.Race => EventFactory.CreateIRacingRace(envelope: envelope, sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionState, category: category),
-                       IRacingSessionTypeEnum.Warmup => EventFactory.CreateIRacingWarmup(envelope: envelope, sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionState, category: category),
-                       _ => throw new NotImplementedException(),
-                   };
+                IIRacingSessionState @event = GenerateEvent(currentState, envelope);
 
                 EventBus.PublishEvent(@event);
 
@@ -65,8 +47,44 @@ namespace Slipstream.Components.IRacing.Trackers
 
                 state.LastSessionType = sessionType;
                 state.LastSessionState = sessionState;
-                state.SendSessionState = false;
             }
+        }
+
+        private IIRacingSessionState GenerateEvent(GameState.IState currentState, IEventEnvelope envelope)
+        {
+            var sessionType = currentState.SessionType;
+            var sessionState = currentState.SessionState;
+            var sessionData = currentState.CurrentSession;
+            var sessionTime = currentState.SessionTime;
+
+            var category = currentState.RaceCategory;
+            var lapsLimited = sessionData.LapsLimited;
+            var timeLimited = sessionData.TimeLimited;
+            var totalSessionTime = sessionData.TotalSessionTime;
+            var totalSessionLaps = sessionData.TotalSessionLaps;
+
+            IIRacingSessionState @event =
+               sessionType switch
+               {
+                   IRacingSessionTypeEnum.Practice => EventFactory.CreateIRacingPractice(envelope: envelope, sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionState, category: category),
+                   IRacingSessionTypeEnum.OpenQualify => EventFactory.CreateIRacingQualify(envelope: envelope, sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionState, category: category, openQualify: true),
+                   IRacingSessionTypeEnum.LoneQualify => EventFactory.CreateIRacingQualify(envelope: envelope, sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionState, category: category, openQualify: false),
+                   IRacingSessionTypeEnum.OfflineTesting => EventFactory.CreateIRacingTesting(envelope: envelope, sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionState, category: category),
+                   IRacingSessionTypeEnum.Race => EventFactory.CreateIRacingRace(envelope: envelope, sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionState, category: category),
+                   IRacingSessionTypeEnum.Warmup => EventFactory.CreateIRacingWarmup(envelope: envelope, sessionTime: sessionTime, lapsLimited: lapsLimited, timeLimited: timeLimited, totalSessionTime: totalSessionTime, totalSessionLaps: totalSessionLaps, state: sessionState, category: category),
+                   _ => throw new NotImplementedException(),
+               };
+            return @event;
+        }
+
+        public void Request(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope, IIRacingDataTracker.RequestType request)
+        {
+            if (request != IIRacingDataTracker.RequestType.SessionState)
+                return;
+
+            IIRacingSessionState @event = GenerateEvent(currentState, envelope);
+
+            EventBus.PublishEvent(@event);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Slipstream.Components.IRacing.GameState;
+﻿using Slipstream.Components.IRacing.Events;
+using Slipstream.Components.IRacing.GameState;
 using Slipstream.Components.IRacing.Models;
 using Slipstream.Shared;
 
@@ -19,9 +20,30 @@ namespace Slipstream.Components.IRacing.Trackers
 
         public void Handle(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope)
         {
+            IRacingRaceFlags @event = GenerateEvent(currentState, envelope);
+
+            if (state.LastRaceFlags?.DifferentTo(@event) != true)
+            {
+                if (@event.Green)
+                {
+                    // We can trust timings
+                    foreach (var info in state.CarsTracked)
+                    {
+                        // Just start
+                        info.Value.LapStartNotSeen = false;
+                    }
+                }
+
+                EventBus.PublishEvent(@event);
+                state.LastRaceFlags = @event;
+            }
+        }
+
+        private IRacingRaceFlags GenerateEvent(IState currentState, IEventEnvelope envelope)
+        {
             var sessionFlags = currentState.SessionFlags;
 
-            var @event = EventFactory.CreateIRacingRaceFlags
+            return EventFactory.CreateIRacingRaceFlags
             (
                 envelope: envelope,
                 sessionTime: currentState.SessionTime,
@@ -51,23 +73,15 @@ namespace Slipstream.Components.IRacing.Trackers
                 yellow: sessionFlags.HasFlag(SessionFlags.Yellow),
                 yellowWaving: sessionFlags.HasFlag(SessionFlags.YellowWaving)
             );
+        }
 
-            if (state.LastRaceFlags?.DifferentTo(@event) != true || state.SendRaceFlags)
-            {
-                if (@event.Green)
-                {
-                    // We can trust timings
-                    foreach (var info in state.CarsTracked)
-                    {
-                        // Just start
-                        info.Value.LapStartNotSeen = false;
-                    }
-                }
+        public void Request(IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope, IIRacingDataTracker.RequestType request)
+        {
+            if (request != IIRacingDataTracker.RequestType.RaceFlags)
+                return;
 
-                EventBus.PublishEvent(@event);
-                state.LastRaceFlags = @event;
-                state.SendRaceFlags = false;
-            }
+            IRacingRaceFlags @event = GenerateEvent(currentState, envelope);
+            EventBus.PublishEvent(@event);
         }
     }
 }

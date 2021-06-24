@@ -1,4 +1,5 @@
-﻿using Slipstream.Components.IRacing.Models;
+﻿using Slipstream.Components.IRacing.GameState;
+using Slipstream.Components.IRacing.Models;
 using Slipstream.Shared;
 using System.Diagnostics;
 
@@ -40,6 +41,11 @@ namespace Slipstream.Components.IRacing.Trackers
             {
                 BeingTowed = false;
             }
+        }
+
+
+        public void Request(IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope, IIRacingDataTracker.RequestType request)
+        {
         }
     }
 }

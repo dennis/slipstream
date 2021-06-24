@@ -45,5 +45,9 @@ namespace Slipstream.Components.IRacing.Trackers
                 state.LastPositionInRace[car.CarIdx] = positionInRace;
             }
         }
+
+        public void Request(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope, IIRacingDataTracker.RequestType request)
+        {
+        }
     }
 }

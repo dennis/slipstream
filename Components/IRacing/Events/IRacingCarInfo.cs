@@ -7,7 +7,7 @@ namespace Slipstream.Components.IRacing.Events
     public class IRacingCarInfo : IEvent
     {
         public string EventType => nameof(IRacingCarInfo);
-        public ulong Uptime { get; set; }
+        
         public IEventEnvelope Envelope { get; set; } = new EventEnvelope();
         
         public double SessionTime { get; set; }

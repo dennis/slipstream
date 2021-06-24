@@ -72,9 +72,9 @@ namespace Slipstream.Components.Lua.Lua
                                     handleFunc?.Call(@event);
 
                                     // Perform GC in Lua approx every second
-                                    if (@event.Uptime - LastLuaGC > 1000)
+                                    if (@event.Envelope.Uptime - LastLuaGC > 1000)
                                     {
-                                        LastLuaGC = @event.Uptime;
+                                        LastLuaGC = @event.Envelope.Uptime;
                                         Lua.DoString("collectgarbage()");
                                     }
                                 }

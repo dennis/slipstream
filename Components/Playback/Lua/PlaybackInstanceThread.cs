@@ -81,7 +81,8 @@ namespace Slipstream.Components.Playback.Lua
                     {
                         if (prevEvent != null)
                         {
-                            int duration = (int)(currentEvent.Uptime - prevEvent.Uptime);
+                            int duration = (int)(currentEvent.Envelope.Uptime - prevEvent.Envelope.Uptime);
+
                             if (duration > 0)
                             {
                                 Thread.Sleep(duration);

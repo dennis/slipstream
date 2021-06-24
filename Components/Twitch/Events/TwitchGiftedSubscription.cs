@@ -5,7 +5,7 @@ namespace Slipstream.Components.Twitch.Events
     public class TwitchGiftedSubscription : IEvent
     {
         public string EventType => nameof(TwitchGiftedSubscription);
-        public ulong Uptime { get; set; }
+        
         public IEventEnvelope Envelope { get; set; } = new EventEnvelope();
         
         public string Gifter { get; set; } = string.Empty;

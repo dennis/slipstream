@@ -7,7 +7,7 @@ namespace Slipstream.Components.IRacing.Events
     public class IRacingDriverIncident : IEvent
     {
         public string EventType => nameof(IRacingDriverIncident);
-        public ulong Uptime { get; set; }
+        
         public IEventEnvelope Envelope { get; set; } = new EventEnvelope();
         
         public int DriverIncidentCount { get; set; }

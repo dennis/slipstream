@@ -5,7 +5,7 @@ namespace Slipstream.Components.IRacing.Events
     public class IRacingWarmup : IIRacingSessionState
     {
         public string EventType => nameof(IRacingWarmup);
-        public ulong Uptime { get; set; }
+        
         public IEventEnvelope Envelope { get; set; } = new EventEnvelope();
         
         public double SessionTime { get; set; }

@@ -25,7 +25,7 @@ namespace Slipstream.Components.Internal.Services
         private class Meta : IEvent
         {
             public string EventType { get; set; } = String.Empty;
-            public ulong Uptime { get; set; }
+            
             public IEventEnvelope Envelope { get; set; } = new EventEnvelope();
             
         }

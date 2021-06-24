@@ -7,7 +7,7 @@ namespace Slipstream.Components.Internal.Events
     public class InternalInstanceAddSubscription : IEvent
     {
         public string EventType => nameof(InternalInstanceAddSubscription);
-        public ulong Uptime { get; set; }
+        
         public IEventEnvelope Envelope { get; set; } = new EventEnvelope();
         
         public string InstanceId { get; set; } = string.Empty;

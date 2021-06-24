@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using System;
 using System.Collections.Generic;
 
 namespace Slipstream.Shared
@@ -8,6 +9,7 @@ namespace Slipstream.Shared
     {
         public string Sender { get; }
         public string[]? Recipients { get; set; }
+        public UInt64 Uptime { get; set; }
 
         public EventEnvelope()
         {

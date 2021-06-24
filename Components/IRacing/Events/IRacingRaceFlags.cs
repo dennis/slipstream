@@ -5,7 +5,7 @@ namespace Slipstream.Components.IRacing.Events
     public class IRacingRaceFlags : IEvent
     {
         public string EventType => nameof(IRacingRaceFlags);
-        public ulong Uptime { get; set; }
+        
         public IEventEnvelope Envelope { get; set; } = new EventEnvelope();
         
         public double SessionTime { get; set; }

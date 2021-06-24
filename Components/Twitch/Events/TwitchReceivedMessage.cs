@@ -8,7 +8,7 @@ namespace Slipstream.Components.Twitch.Events
     public class TwitchReceivedMessage : IEvent
     {
         public string EventType => nameof(TwitchReceivedMessage);
-        public ulong Uptime { get; set; }
+        
         public IEventEnvelope Envelope { get; set; } = new EventEnvelope();
         
 

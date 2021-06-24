@@ -5,7 +5,7 @@ namespace Slipstream.Components.Discord.Events
     public class DiscordCommandSendMessage : IEvent
     {
         public string EventType => nameof(DiscordCommandSendMessage);
-        public ulong Uptime { get; set; }
+        
         public IEventEnvelope Envelope { get; set; } = new EventEnvelope();
         
         public ulong ChannelId { get; set; }

@@ -7,7 +7,7 @@ namespace Slipstream.Components.Audio.Events
         public string EventType => nameof(AudioCommandSetOutputDevice);
         public IEventEnvelope Envelope { get; set; } = new EventEnvelope();
         
-        public ulong Uptime { get; set; }
+        
         public int DeviceIdx { get; set; } = -1;
     }
 }

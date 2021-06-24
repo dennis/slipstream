@@ -35,7 +35,7 @@ namespace Slipstream.Backend
 
         public void PublishEvent(IEvent e)
         {
-            e.Uptime = Uptime() - StartedAt;
+            e.Envelope.Uptime = Uptime() - StartedAt;
 
             lock (Events)
             {

@@ -1,6 +1,8 @@
 ﻿#nullable enable
 
 using Autofac;
+using Slipstream.Components.Internal;
+using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using Slipstream.Shared.Lua;
@@ -18,7 +20,7 @@ namespace Slipstream.Components.Discord.Lua
                 .RequireString("token");
         }
 
-        public DiscordLuaLibrary(ILifetimeScope scope) : base(ConfigurationValidator, scope)
+        public DiscordLuaLibrary(ILifetimeScope scope, IEventBus eventBus, IInternalEventFactory eventFactory) : base(ConfigurationValidator, scope, eventBus, eventFactory)
         {
         }
 

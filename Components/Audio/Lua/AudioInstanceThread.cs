@@ -23,7 +23,7 @@ namespace Slipstream.Components.Audio.Lua
         private readonly IEventBus EventBus;
         private int OutputDeviceNumber = -1;
 
-        public AudioInstanceThread(string instanceId, int output, string path, IEventBusSubscription eventBusSubscription, IEventHandlerController eventHandlerController, IEventBus eventBus, IAudioEventFactory audioEventFactory, ILogger logger) : base(instanceId, logger)
+        public AudioInstanceThread(string instanceId, int output, string path, IEventBusSubscription eventBusSubscription, IEventHandlerController eventHandlerController, IEventBus eventBus, IAudioEventFactory audioEventFactory, ILogger logger) : base(instanceId, logger, eventHandlerController)
         {
             Path = path;
             Subscription = eventBusSubscription;
@@ -55,30 +55,21 @@ namespace Slipstream.Components.Audio.Lua
 
         private void OnAudioCommandSetOutputDevice(AudioCommandSetOutputDevice @event)
         {
-            if (@event.InstanceId != InstanceId)
-                return;
-
             OutputDeviceNumber = @event.DeviceIdx;
         }
 
         private void OnAudioCommandSendDevices(AudioCommandSendDevices @event)
         {
-            if (@event.InstanceId != InstanceId)
-                return;
-
             for (int n = -1; n < WaveOut.DeviceCount; n++)
             {
                 var caps = WaveOut.GetCapabilities(n);
 
-                EventBus.PublishEvent(EventFactory.CreateAudioOutputDevice(InstanceId, caps.ProductName, n));
+                EventBus.PublishEvent(EventFactory.CreateAudioOutputDevice(InstanceEnvelope, caps.ProductName, n));
             }
         }
 
         private void OnAudioCommandPlay(AudioCommandPlay @event)
         {
-            if (@event.InstanceId != InstanceId)
-                return;
-
             var filename = @event.Filename;
             var volume = @event.Volume;
             var filePath = System.IO.Path.Combine(Path, filename);
@@ -97,9 +88,6 @@ namespace Slipstream.Components.Audio.Lua
 
         private void OnAudioCommandSay(AudioCommandSay @event)
         {
-            if (@event.InstanceId != InstanceId)
-                return;
-
             using var stream = new MemoryStream();
 
             Synthesizer.SetOutputToWaveStream(stream);

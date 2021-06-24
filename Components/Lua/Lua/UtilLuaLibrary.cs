@@ -22,12 +22,13 @@ namespace Slipstream.Components.Lua.Lua
         {
         }
 
-        public ILuaReference? instance(LuaTable cfgTable)
+        public ILuaReference? GetInstance(string luaScriptInstanceId, LuaTable cfgTable)
         {
             var cfg = Parameters.From(cfgTable);
             var instanceId = cfg.Extract<string>("id");
 
             return LifetimeScope.Resolve<UtilLuaReference>(
+                new NamedParameter("luaScriptInstanceId", luaScriptInstanceId),
                 new NamedParameter("instanceId", instanceId),
                 new NamedParameter("luaLibrary", this)
             );

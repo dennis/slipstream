@@ -5,18 +5,16 @@ using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.Audio.Lua
 {
-    public class AudioLuaReference : ILuaReference
+    public class AudioLuaReference : BaseLuaReference
     {
         private readonly IEventBus EventBus;
         private readonly IAudioEventFactory EventFactory;
         private readonly AudioLuaLibrary LuaLibrary;
         private float Volume = 1.0f;
-        public string InstanceId { get; }
 
-        public AudioLuaReference(AudioLuaLibrary luaLibrary, string instanceId, IEventBus eventBus, IAudioEventFactory eventFactory)
+        public AudioLuaReference(AudioLuaLibrary luaLibrary, string instanceId, string luaScriptInstanceId, IEventBus eventBus, IAudioEventFactory eventFactory) : base(instanceId, luaScriptInstanceId)
         {
             LuaLibrary = luaLibrary;
-            InstanceId = instanceId;
             EventBus = eventBus;
             EventFactory = eventFactory;
         }
@@ -24,25 +22,25 @@ namespace Slipstream.Components.Audio.Lua
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
         public void say(string message)
         {
-            EventBus.PublishEvent(EventFactory.CreateAudioCommandSay(InstanceId, message, Volume));
+            EventBus.PublishEvent(EventFactory.CreateAudioCommandSay(Envelope, message, Volume));
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
         public void play(string filename)
         {
-            EventBus.PublishEvent(EventFactory.CreateAudioCommandPlay(InstanceId, filename, Volume));
+            EventBus.PublishEvent(EventFactory.CreateAudioCommandPlay(Envelope, filename, Volume));
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
         public void send_devices()
         {
-            EventBus.PublishEvent(EventFactory.CreateAudioCommandSendDevices(InstanceId));
+            EventBus.PublishEvent(EventFactory.CreateAudioCommandSendDevices(Envelope));
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
         public void set_output(int deviceIdx)
         {
-            EventBus.PublishEvent(EventFactory.CreateAudioCommandSetOutputDevice(InstanceId, deviceIdx));
+            EventBus.PublishEvent(EventFactory.CreateAudioCommandSetOutputDevice(Envelope, deviceIdx));
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
@@ -51,7 +49,7 @@ namespace Slipstream.Components.Audio.Lua
             Volume = volume;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             LuaLibrary.ReferenceDropped(this);
         }

@@ -1,17 +1,17 @@
-﻿namespace Slipstream.Components.WinFormUI.Lua
+﻿using Slipstream.Shared.Lua;
+
+namespace Slipstream.Components.WinFormUI.Lua
 {
-    public class WinFormUIReference : IWinFormUIReference
+    public class WinFormUIReference : BaseLuaReference, IWinFormUIReference
     {
         public WinFormUILuaLibrary LuaLibrary { get; }
-        public string InstanceId { get; }
 
-        public WinFormUIReference(string instanceId, WinFormUILuaLibrary luaLibrary)
+        public WinFormUIReference(string instanceId, string luaScriptInstanceId, WinFormUILuaLibrary luaLibrary) : base(instanceId, luaScriptInstanceId)
         {
             LuaLibrary = luaLibrary;
-            InstanceId = instanceId;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             LuaLibrary.ReferenceDropped(this);
         }

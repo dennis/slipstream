@@ -16,7 +16,13 @@ namespace Slipstream.Components.Playback.Lua
         private readonly IEventSerdeService EventSerdeService;
         private readonly IEventBusSubscription Subscription;
 
-        public PlaybackInstanceThread(string instanceId, Serilog.ILogger logger, IEventBus eventBus, IEventHandlerController eventHandlerController, IEventSerdeService eventSerdeService, IEventBusSubscription eventBusSubscription) : base(instanceId, logger)
+        public PlaybackInstanceThread(
+            string instanceId,
+            Serilog.ILogger logger,
+            IEventBus eventBus,
+            IEventHandlerController eventHandlerController,
+            IEventSerdeService eventSerdeService,
+            IEventBusSubscription eventBusSubscription) : base(instanceId, logger, eventHandlerController)
         {
             EventBus = eventBus;
             EventHandlerController = eventHandlerController;
@@ -43,7 +49,7 @@ namespace Slipstream.Components.Playback.Lua
 
         private void OnPlaybackCommandSaveEvents(PlaybackCommandSaveEvents @event)
         {
-            var subscription = EventBus.RegisterListener(fromBeginning: true);
+            var subscription = EventBus.RegisterListener(InstanceId, fromBeginning: true);
 
             using var streamWriter = new StreamWriter(@event.Filename)
             {
@@ -75,7 +81,8 @@ namespace Slipstream.Components.Playback.Lua
                     {
                         if (prevEvent != null)
                         {
-                            int duration = (int)(currentEvent.Uptime - prevEvent.Uptime);
+                            int duration = (int)(currentEvent.Envelope.Uptime - prevEvent.Envelope.Uptime);
+
                             if (duration > 0)
                             {
                                 Thread.Sleep(duration);

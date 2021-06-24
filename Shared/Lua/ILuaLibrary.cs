@@ -9,7 +9,6 @@ namespace Slipstream.Shared.Lua
     {
         string Name { get; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
-        ILuaReference? instance(LuaTable cfg);
+        ILuaReference? GetInstance(string luaScriptInstanceId, LuaTable cfg);
     }
 }

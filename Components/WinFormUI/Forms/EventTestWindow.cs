@@ -27,14 +27,16 @@ namespace Slipstream.Components.WinFormUI.Forms
 
         private async Task SetEvents(ComboBox comboEvents)
         {
-            var bindingSource = new BindingSource();
-            bindingSource.DataSource = await EventDataService.FindEvents((e) => !e.Properties.Any(p => p.IsComplex));
+            var bindingSource = new BindingSource
+            {
+                DataSource = await EventDataService.FindEvents((e) => !e.Properties.Any(p => p.IsComplex))
+            };
 
             comboEvents.DataSource = bindingSource;
             comboEvents.DisplayMember = "Name";
         }
 
-        private void comboEvents_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboEvents_SelectedIndexChanged(object sender, EventArgs e)
         {
             var selectedItem = ((ComboBox)sender).SelectedItem;
             selectedEvent = selectedItem as EventInfoModel;
@@ -75,7 +77,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             return panelControl;
         }
 
-        private void btnCreateEvent_Click(object sender, EventArgs e)
+        private void BtnCreateEvent_Click(object sender, EventArgs e)
         {
             var eventType = selectedEvent;
 

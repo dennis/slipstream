@@ -1,6 +1,7 @@
 ﻿using Slipstream.Components.IRacing.Models;
 using Slipstream.Shared;
 using System.Collections.Generic;
+using static Slipstream.Components.IRacing.Trackers.IIRacingDataTracker;
 
 namespace Slipstream.Components.IRacing.Trackers
 {
@@ -9,11 +10,6 @@ namespace Slipstream.Components.IRacing.Trackers
         private readonly IRacingDataTrackerState TrackerState = new IRacingDataTrackerState();
         private readonly List<IIRacingDataTracker> DataTrackers = new List<IIRacingDataTracker>();
 
-        public bool SendCarInfo { get => TrackerState.SendCarInfo; set => TrackerState.SendCarInfo = value; }
-        public bool SendTrackInfo { get => TrackerState.SendTrackInfo; set => TrackerState.SendTrackInfo = value; }
-        public bool SendWeatherInfo { get => TrackerState.SendWeatherInfo; set => TrackerState.SendWeatherInfo = value; }
-        public bool SendSessionState { get => TrackerState.SendSessionState; set => TrackerState.SendSessionState = value; }
-        public bool SendRaceFlags { get => TrackerState.SendRaceFlags; set => TrackerState.SendRaceFlags = value; }
         public bool Connected { get => TrackerState.Connected; set => TrackerState.Connected = value; }
 
         public Trackers(IEventBus eventBus, IIRacingEventFactory eventFactory)
@@ -32,10 +28,16 @@ namespace Slipstream.Components.IRacing.Trackers
             DataTrackers.Add(new TrackPositionTracker(eventBus, eventFactory));
         }
 
-        public void Handle(GameState.IState currentState)
+        public void Handle(GameState.IState currentState, IEventEnvelope envelope)
         {
             foreach (var t in DataTrackers)
-                t.Handle(currentState, TrackerState);
+                t.Handle(currentState, TrackerState, envelope);
+        }
+
+        public void Request(GameState.IState currentState, IEventEnvelope envelope, RequestType type)
+        {
+            foreach (var t in DataTrackers)
+                t.Request(currentState, TrackerState, envelope, type);
         }
     }
 }

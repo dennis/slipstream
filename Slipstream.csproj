@@ -193,6 +193,9 @@
     <Compile Include="Components\AppilcationUpdate\Lua\ApplicationUpdateInstanceThread.cs" />
     <Compile Include="Components\AppilcationUpdate\Lua\ApplicationUpdateLuaLibrary.cs" />
     <Compile Include="Components\AppilcationUpdate\Lua\ApplicationUpdateReference.cs" />
+    <Compile Include="Shared\Lua\BaseLuaReference.cs" />
+    <Compile Include="Components\Internal\Events\InternalInstanceAddSubscription.cs" />
+    <Compile Include="Components\Internal\Events\InternalInstanceRemoveSubscription.cs" />
     <Compile Include="Components\IRacing\Events\IRacingCommandPitChangeLeftRearTyre.cs" />
     <Compile Include="Components\IRacing\Events\IRacingCommandPitRequestFastRepair.cs" />
     <Compile Include="Components\IRacing\Events\IRacingCommandPitClearTyresChange.cs" />
@@ -206,6 +209,8 @@
     <Compile Include="Components\Lua\Lua\LuaInstanceThread.LuaLibraryInstanceTracker.cs" />
     <Compile Include="Components\Lua\Lua\StateLuaReference.cs" />
     <Compile Include="Components\Lua\Lua\UtilLuaReference.cs" />
+    <Compile Include="Shared\EventEnvelope.cs" />
+    <Compile Include="Shared\IEventEnvelope.cs" />
     <Compile Include="Shared\Lua\BaseLuaLibrary.cs" />
     <Compile Include="Components\AppilcationUpdate\Lua\IApplicationUpdateInstanceThread.cs" />
     <Compile Include="Components\AppilcationUpdate\Lua\IApplicationUpdateReference.cs" />

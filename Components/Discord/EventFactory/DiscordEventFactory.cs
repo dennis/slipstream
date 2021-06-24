@@ -1,41 +1,42 @@
 ﻿using Slipstream.Components.Discord.Events;
+using Slipstream.Shared;
 
 namespace Slipstream.Components.Discord.EventFactory
 {
     internal class DiscordEventFactory : IDiscordEventFactory
     {
-        public DiscordCommandSendMessage CreateDiscordCommandSendMessage(string instanceId, ulong channelId, string message, bool tts)
+        public DiscordCommandSendMessage CreateDiscordCommandSendMessage(IEventEnvelope envelope, ulong channelId, string message, bool tts)
         {
             return new DiscordCommandSendMessage
             {
-                InstanceId = instanceId,
+                Envelope = envelope,
                 ChannelId = channelId,
                 Message = message,
                 TextToSpeech = tts
             };
         }
 
-        public DiscordConnected CreateDiscordConnected(string instanceId)
+        public DiscordConnected CreateDiscordConnected(IEventEnvelope envelope)
         {
             return new DiscordConnected
             {
-                InstanceId = instanceId
+                Envelope = envelope,
             };
         }
 
-        public DiscordDisconnected CreateDiscordDisconnected(string instanceId)
+        public DiscordDisconnected CreateDiscordDisconnected(IEventEnvelope envelope)
         {
             return new DiscordDisconnected
             {
-                InstanceId = instanceId,
+                Envelope = envelope,
             };
         }
 
-        public DiscordMessageReceived CreateDiscordMessageReceived(string instanceId, ulong fromId, string from, ulong channelId, string channel, string message)
+        public DiscordMessageReceived CreateDiscordMessageReceived(IEventEnvelope envelope, ulong fromId, string from, ulong channelId, string channel, string message)
         {
             return new DiscordMessageReceived
             {
-                InstanceId = instanceId,
+                Envelope = envelope,
                 FromId = fromId,
                 From = from,
                 ChannelId = channelId,

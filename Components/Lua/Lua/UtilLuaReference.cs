@@ -17,10 +17,12 @@ namespace Slipstream.Components.Lua.Lua
         private readonly ILogger Logger;
         private readonly UtilLuaLibrary LuaLibrary;
         public string InstanceId { get; }
+        public string LuaScriptInstanceId { get; }
 
-        public UtilLuaReference(string instanceId, UtilLuaLibrary luaLibrary, IEventSerdeService eventSerdeService, ILogger logger)
+        public UtilLuaReference(string instanceId, string luaScriptInstanceId, UtilLuaLibrary luaLibrary, IEventSerdeService eventSerdeService, ILogger logger)
         {
             InstanceId = instanceId;
+            LuaScriptInstanceId = luaScriptInstanceId;
             LuaLibrary = luaLibrary;
             EventSerdeService = eventSerdeService;
             Logger = logger;

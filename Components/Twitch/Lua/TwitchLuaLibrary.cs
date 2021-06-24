@@ -2,6 +2,8 @@
 using Slipstream.Shared.Lua;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
+using Slipstream.Shared;
+using Slipstream.Components.Internal;
 
 namespace Slipstream.Components.Twitch.Lua
 {
@@ -19,7 +21,7 @@ namespace Slipstream.Components.Twitch.Lua
                 .PermitBool("log");
         }
 
-        public TwitchLuaLibrary(ILifetimeScope scope) : base(ConfigurationValidator, scope)
+        public TwitchLuaLibrary(ILifetimeScope scope, IEventBus eventBus, IInternalEventFactory eventFactory) : base(ConfigurationValidator, scope, eventBus, eventFactory)
         {
         }
 
@@ -31,12 +33,15 @@ namespace Slipstream.Components.Twitch.Lua
             var twitchChannel = cfg.Extract<string>("channel");
             var twitchLog = cfg.ExtractOrDefault("log", false);
 
+            var subscription = EventBus.RegisterListener(instanceId);
+
             return scope.Resolve<ITwitchLuaInstanceThread>(
                 new NamedParameter("instanceId", instanceId),
                 new NamedParameter("twitchToken", twitchToken),
                 new NamedParameter("twitchUsername", twitchUsername),
                 new NamedParameter("twitchChannel", twitchChannel),
-                new NamedParameter("twitchLog", twitchLog)
+                new NamedParameter("twitchLog", twitchLog),
+                new TypedParameter(typeof(IEventBusSubscription), subscription)
             );
         }
     }

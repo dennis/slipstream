@@ -2,6 +2,7 @@
 
 using Autofac;
 using NLua;
+using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using Slipstream.Shared.Lua;
@@ -17,6 +18,7 @@ namespace Slipstream.Components.Lua.Lua
         private readonly object Lock = new object();
         private readonly Dictionary<string, ILuaInstanceThread> Instances = new Dictionary<string, ILuaInstanceThread>();
         private readonly ILifetimeScope LifetimeScope;
+        private readonly IEventBus EventBus;
 
         static LuaLuaLibrary()
         {
@@ -25,9 +27,10 @@ namespace Slipstream.Components.Lua.Lua
                 .RequireString("file");
         }
 
-        public LuaLuaLibrary(ILifetimeScope scope)
+        public LuaLuaLibrary(ILifetimeScope scope, IEventBus eventBus)
         {
             LifetimeScope = scope;
+            EventBus = eventBus;
         }
 
         internal void ReferenceDrop(LuaLuaReference _)
@@ -38,7 +41,7 @@ namespace Slipstream.Components.Lua.Lua
         {
         }
 
-        public ILuaReference? instance(LuaTable cfgTable)
+        public ILuaReference? GetInstance(string _, LuaTable cfgTable)
         {
             var cfg = Parameters.From(cfgTable);
 
@@ -47,19 +50,21 @@ namespace Slipstream.Components.Lua.Lua
             var instanceId = cfg.Extract<string>("id");
             var filePath = cfg.Extract<string>("file");
 
-            return instance(instanceId, filePath);
+            return LoadLuaFile(instanceId, instanceId, filePath);
         }
 
-        public ILuaReference instance(string instanceId, string filePath)
+        public ILuaReference LoadLuaFile(string luaScriptInstanceId, string instanceId, string filePath)
         {
             lock (Lock)
             {
                 if (!Instances.TryGetValue(instanceId, out ILuaInstanceThread serviceThread))
                 {
+                    var subscription = EventBus.RegisterListener(instanceId);
                     var newServiceThread = LifetimeScope.Resolve<ILuaInstanceThread>(
                         new NamedParameter("luaLibrary", this),
                         new NamedParameter("instanceId", instanceId),
-                        new NamedParameter("filePath", filePath)
+                        new NamedParameter("filePath", filePath),
+                        new TypedParameter(typeof(IEventBusSubscription), subscription)
                     );
 
                     Instances.Add(instanceId, newServiceThread);
@@ -69,6 +74,7 @@ namespace Slipstream.Components.Lua.Lua
             return LifetimeScope.Resolve<ILuaLuaReference>(
                 new NamedParameter("luaLibrary", this),
                 new NamedParameter("instanceId", instanceId),
+                new NamedParameter("luaScriptInstanceId", luaScriptInstanceId),
                 new NamedParameter("serviceThread", Instances[instanceId])
             );
         }

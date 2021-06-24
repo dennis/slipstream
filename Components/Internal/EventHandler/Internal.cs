@@ -9,12 +9,16 @@ namespace Slipstream.Components.Internal.EventHandler
     internal class Internal : IEventHandler
     {
         public event EventHandler<InternalCommandShutdown>? OnInternalCommandShutdown;
+        public event EventHandler<InternalInstanceAddSubscription>? OnInternalInstanceAddSubscription;
+        public event EventHandler<InternalInstanceRemoveSubscription>? OnInternalInstanceRemoveSubscription;
 
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)
         {
             return @event switch
             {
                 InternalCommandShutdown tev => OnEvent(OnInternalCommandShutdown, tev),
+                InternalInstanceAddSubscription tev => OnEvent(OnInternalInstanceAddSubscription, tev),
+                InternalInstanceRemoveSubscription tev => OnEvent(OnInternalInstanceRemoveSubscription, tev),
                 _ => IEventHandler.HandledStatus.NotMine,
             };
         }

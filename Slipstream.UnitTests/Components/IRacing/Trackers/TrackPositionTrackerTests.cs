@@ -7,6 +7,7 @@ using System.Linq;
 using Slipstream.UnitTests.TestData;
 using Xunit;
 using Slipstream.UnitTests.Components.IRacing.Trackers;
+using Slipstream.Shared;
 
 namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
 {
@@ -51,7 +52,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             // act
             var sut = new TrackPositionTracker(EventBus, EventFactory);
             foreach (var s in Builder.States)
-                sut.Handle(s, TrackerState);
+                sut.Handle(s, TrackerState, new EventEnvelope("sender"));
 
             // assert
             Assert.True(EventBus.Events.Count == 2);

@@ -1,4 +1,5 @@
-﻿using Slipstream.Components.IRacing.Models;
+﻿using Slipstream.Components.IRacing.GameState;
+using Slipstream.Components.IRacing.Models;
 using Slipstream.Shared;
 
 #nullable enable
@@ -16,7 +17,7 @@ namespace Slipstream.Components.IRacing.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope)
         {
             int driverIncidents = currentState.DriverIncidentCount;
             var driverIncidentDelta = driverIncidents - state.DriverState_.DriverIncidentCount;
@@ -34,6 +35,7 @@ namespace Slipstream.Components.IRacing.Trackers
                 state.DriverState_.MyIncidentCount = myIncidents;
 
                 EventBus.PublishEvent(EventFactory.CreateIRacingDriverIncident(
+                    envelope: envelope,
                     driverIncidents: driverIncidents,
                     driverIncidentsDelta: driverIncidentDelta,
                     teamIncidents: teamIncidents,
@@ -42,6 +44,10 @@ namespace Slipstream.Components.IRacing.Trackers
                     myIncidentsDelta: myIncidentsDelta
                 ));
             }
+        }
+
+        public void Request(IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope, IIRacingDataTracker.RequestType request)
+        {
         }
     }
 }

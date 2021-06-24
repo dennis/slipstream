@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using Serilog;
+using Slipstream.Components.Internal.EventHandler;
 using System;
 using System.Threading;
 
@@ -10,14 +11,21 @@ namespace Slipstream.Shared.Lua
     {
         protected readonly string InstanceId;
         protected readonly ILogger Logger;
-        private Thread ServiceThread;
+        private Thread? ServiceThread;
         protected volatile bool Stopping = false;
         protected volatile bool AutoStart = false;
+        protected IEventEnvelope InstanceEnvelope;
 
-        protected BaseInstanceThread(string instanceId, ILogger logger)
+        protected BaseInstanceThread(string instanceId, ILogger logger, IEventHandlerController eventHandlerController)
         {
             InstanceId = instanceId;
             Logger = logger;
+            InstanceEnvelope = new EventEnvelope(instanceId);
+
+            var internalHandler = eventHandlerController.Get<Internal>();
+            internalHandler.OnInternalInstanceAddSubscription += (_, e) => InstanceEnvelope = InstanceEnvelope.Add(e.InstanceId);
+            internalHandler.OnInternalInstanceRemoveSubscription += (_, e) => InstanceEnvelope = InstanceEnvelope.Remove(e.InstanceId);
+
             SetupThread();
         }
 

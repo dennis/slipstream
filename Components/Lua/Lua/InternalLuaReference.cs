@@ -11,14 +11,19 @@ namespace Slipstream.Components.Lua.Lua
         private readonly IEventBus EventBus;
         private readonly IInternalEventFactory EventFactory;
         private readonly InternalLuaLibrary LuaLibrary;
-        public string InstanceId { get; }
+        private readonly IEventEnvelope Envelope;
 
-        public InternalLuaReference(InternalLuaLibrary luaLibrary, string instanceId, IEventBus eventBus, IInternalEventFactory eventFactory)
+        public string InstanceId { get; }
+        public string LuaScriptInstanceId { get; }
+
+        public InternalLuaReference(InternalLuaLibrary luaLibrary, string instanceId, string luaScriptInstanceId, IEventBus eventBus, IInternalEventFactory eventFactory)
         {
             InstanceId = instanceId;
+            LuaScriptInstanceId = luaScriptInstanceId;
             EventBus = eventBus;
             EventFactory = eventFactory;
             LuaLibrary = luaLibrary;
+            Envelope = new EventEnvelope(luaScriptInstanceId).Add(instanceId);
         }
 
         public void Dispose()
@@ -29,7 +34,7 @@ namespace Slipstream.Components.Lua.Lua
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
         public void shutdown()
         {
-            EventBus.PublishEvent(EventFactory.CreateInternalCommandShutdown());
+            EventBus.PublishEvent(EventFactory.CreateInternalCommandShutdown(Envelope));
         }
     }
 }

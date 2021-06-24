@@ -5,16 +5,13 @@ using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.Discord.Lua
 {
-    public class DiscordLuaReference : ILuaReference
+    public class DiscordLuaReference : BaseLuaReference, ILuaReference
     {
         private readonly ILifetimeScope LifetimeScope;
         private readonly DiscordLuaLibrary LuaLibrary;
 
-        public string InstanceId { get; }
-
-        public DiscordLuaReference(string instanceId, DiscordLuaLibrary luaLibrary, ILifetimeScope lifetimeScope)
+        public DiscordLuaReference(string instanceId, string luaScriptInstanceId, DiscordLuaLibrary luaLibrary, ILifetimeScope lifetimeScope) : base(instanceId, luaScriptInstanceId)
         {
-            InstanceId = instanceId;
             LifetimeScope = lifetimeScope;
             LuaLibrary = luaLibrary;
         }
@@ -27,7 +24,7 @@ namespace Slipstream.Components.Discord.Lua
                 new NamedParameter("channelId", channelId));
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             LuaLibrary.ReferenceDropped(this);
         }

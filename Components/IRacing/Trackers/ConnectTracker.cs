@@ -1,4 +1,5 @@
-﻿using Slipstream.Components.IRacing.Models;
+﻿using Slipstream.Components.IRacing.GameState;
+using Slipstream.Components.IRacing.Models;
 using Slipstream.Shared;
 
 #nullable enable
@@ -16,16 +17,20 @@ namespace Slipstream.Components.IRacing.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope)
         {
             if (!state.Connected)
             {
                 state.FullReset();
 
-                EventBus.PublishEvent(EventFactory.CreateIRacingConnected());
+                EventBus.PublishEvent(EventFactory.CreateIRacingConnected(envelope));
 
                 state.Connected = true;
             }
+        }
+
+        public void Request(IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope, IIRacingDataTracker.RequestType request)
+        {
         }
     }
 }

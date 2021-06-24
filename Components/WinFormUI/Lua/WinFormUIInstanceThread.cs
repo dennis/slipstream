@@ -26,7 +26,7 @@ namespace Slipstream.Components.WinFormUI.Lua
             IApplicationVersionService applicationVersionService,
             IEventHandlerController eventHandlerController,
             IUIEventFactory uiEventFactory,
-            IPlaybackEventFactory playbackEventFactory) : base(instanceId, logger)
+            IPlaybackEventFactory playbackEventFactory) : base(instanceId, logger, eventHandlerController)
         {
             InternalEventFactory = eventFactory;
             EventBus = eventBus;
@@ -40,6 +40,8 @@ namespace Slipstream.Components.WinFormUI.Lua
         protected override void Main()
         {
             Application.Run(new MainWindow(
+                InstanceId,
+                InstanceEnvelope,
                 this,
                 InternalEventFactory,
                 UIEventFactory,

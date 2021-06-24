@@ -1,4 +1,6 @@
-﻿using Slipstream.Components.IRacing.Models;
+﻿using Slipstream.Components.IRacing.Events;
+using Slipstream.Components.IRacing.GameState;
+using Slipstream.Components.IRacing.Models;
 using Slipstream.Shared;
 using static Slipstream.Components.IRacing.IIRacingEventFactory;
 
@@ -15,10 +17,23 @@ namespace Slipstream.Components.IRacing.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope)
         {
-            var weatherInfo = EventFactory.CreateIRacingWeatherInfo
+            IRacingWeatherInfo weatherInfo = GenerateEvent(currentState, envelope);
+
+            if (state.LastWeatherInfo == null || weatherInfo.DifferentTo(state.LastWeatherInfo))
+            {
+                EventBus.PublishEvent(weatherInfo);
+
+                state.LastWeatherInfo = weatherInfo;
+            }
+        }
+
+        private IRacingWeatherInfo GenerateEvent(IState currentState, IEventEnvelope envelope)
+        {
+            return EventFactory.CreateIRacingWeatherInfo
             (
+                envelope: envelope,
                 sessionTime: currentState.SessionTime,
                 skies: (Skies)(int)currentState.Skies,
                 surfaceTemp: currentState.TrackTempCrew,
@@ -27,14 +42,15 @@ namespace Slipstream.Components.IRacing.Trackers
                 relativeHumidity: currentState.RelativeHumidity,
                 fogLevel: currentState.FogLevel
             );
+        }
 
-            if (state.LastWeatherInfo == null || weatherInfo.DifferentTo(state.LastWeatherInfo) || state.SendWeatherInfo)
-            {
-                EventBus.PublishEvent(weatherInfo);
+        public void Request(IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope, IIRacingDataTracker.RequestType request)
+        {
+            if (request != IIRacingDataTracker.RequestType.WeatherInfo)
+                return;
 
-                state.LastWeatherInfo = weatherInfo;
-                state.SendWeatherInfo = false;
-            }
+            IRacingWeatherInfo weatherInfo = GenerateEvent(currentState, envelope);
+            EventBus.PublishEvent(weatherInfo);
         }
     }
 }

@@ -22,6 +22,8 @@ namespace Slipstream.Components.WinFormUI.Forms
     {
         private Thread? EventHandlerThread;
         private readonly IEventBus EventBus;
+        private readonly IEventEnvelope Envelope;
+        private readonly string InstanceId;
         private readonly WinFormUIInstanceThread Instance;
         private readonly IInternalEventFactory InternalEventFactory;
         private readonly IUIEventFactory UIEventFactory;
@@ -32,16 +34,17 @@ namespace Slipstream.Components.WinFormUI.Forms
         private readonly IEventHandlerController EventHandler;
         private bool ShuttingDown = false;
 
-        public MainWindow(WinFormUIInstanceThread instance, IInternalEventFactory internalEventFactory, IUIEventFactory uiEventFactory, IPlaybackEventFactory playbackEventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, IEventHandlerController eventHandlerController)
+        public MainWindow(string instanceId, IEventEnvelope envelope, WinFormUIInstanceThread instance, IInternalEventFactory internalEventFactory, IUIEventFactory uiEventFactory, IPlaybackEventFactory playbackEventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, IEventHandlerController eventHandlerController)
         {
+            InstanceId = instanceId;
             Instance = instance;
             InternalEventFactory = internalEventFactory;
             UIEventFactory = uiEventFactory;
             PlaybackEventFactory = playbackEventFactory;
-
             EventHandler = eventHandlerController;
-
             EventBus = eventBus;
+            Envelope = envelope;
+
 
             InitializeComponent();
 
@@ -58,7 +61,7 @@ namespace Slipstream.Components.WinFormUI.Forms
                 // Just request we want to shut down. We'll receive an InternalShutdown if we
                 // actually will shut down
 
-                EventBus.PublishEvent(InternalEventFactory.CreateInternalCommandShutdown());
+                EventBus.PublishEvent(InternalEventFactory.CreateInternalCommandShutdown(Envelope));
                 e.Cancel = true;
 
                 return;
@@ -73,7 +76,7 @@ namespace Slipstream.Components.WinFormUI.Forms
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
-            EventBusSubscription = EventBus.RegisterListener(fromBeginning: true);
+            EventBusSubscription = EventBus.RegisterListener(InstanceId, fromBeginning: true);
             EventHandlerThread = new Thread(new ThreadStart(this.EventListenerMain));
             EventHandlerThread.Start();
         }
@@ -143,7 +146,7 @@ namespace Slipstream.Components.WinFormUI.Forms
                 b.Click += (s, e) =>
                 {
                     if (s is Button b)
-                        EventBus.PublishEvent(UIEventFactory.CreateUIButtonTriggered(b.Text));
+                        EventBus.PublishEvent(UIEventFactory.CreateUIButtonTriggered(Envelope, b.Text));
                 };
 
                 LuaButtons.Add(@event.Text, b);
@@ -168,7 +171,7 @@ namespace Slipstream.Components.WinFormUI.Forms
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EventBus.PublishEvent(InternalEventFactory.CreateInternalCommandShutdown());
+            EventBus.PublishEvent(InternalEventFactory.CreateInternalCommandShutdown(Envelope));
         }
 
         private void SaveEventsToFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -176,7 +179,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             SaveFileDialog.FileName = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
             if (SaveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                EventBus.PublishEvent(PlaybackEventFactory.CreatePlaybackCommandSaveEvents(SaveFileDialog.FileName));
+                EventBus.PublishEvent(PlaybackEventFactory.CreatePlaybackCommandSaveEvents(Envelope, SaveFileDialog.FileName));
             }
         }
 
@@ -184,7 +187,7 @@ namespace Slipstream.Components.WinFormUI.Forms
         {
             if (OpenFileDialog.ShowDialog() == DialogResult.OK)
             {
-                EventBus.PublishEvent(PlaybackEventFactory.CreatePlaybackCommandInjectEvents(OpenFileDialog.FileName));
+                EventBus.PublishEvent(PlaybackEventFactory.CreatePlaybackCommandInjectEvents(Envelope, OpenFileDialog.FileName));
             }
         }
 

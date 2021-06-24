@@ -1,19 +1,20 @@
 ﻿#nullable enable
 
 using Slipstream.Components.Audio.Events;
+using Slipstream.Shared;
 
 namespace Slipstream.Components.Audio
 {
     public interface IAudioEventFactory
     {
-        AudioCommandPlay CreateAudioCommandPlay(string pluginId, string filename, float volume);
+        AudioCommandPlay CreateAudioCommandPlay(IEventEnvelope envelope, string filename, float volume);
 
-        AudioCommandSay CreateAudioCommandSay(string pluginId, string message, float volume);
+        AudioCommandSay CreateAudioCommandSay(IEventEnvelope envelope, string message, float volume);
 
-        AudioCommandSendDevices CreateAudioCommandSendDevices(string pluginId);
+        AudioCommandSendDevices CreateAudioCommandSendDevices(IEventEnvelope envelope);
 
-        AudioOutputDevice CreateAudioOutputDevice(string pluginId, string product, int deviceIdx);
+        AudioOutputDevice CreateAudioOutputDevice(IEventEnvelope envelope, string product, int deviceIdx);
 
-        AudioCommandSetOutputDevice CreateAudioCommandSetOutputDevice(string pluginId, int deviceIdx);
+        AudioCommandSetOutputDevice CreateAudioCommandSetOutputDevice(IEventEnvelope envelope, int deviceIdx);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Slipstream.Shared;
+﻿using Slipstream.Components.Internal;
+using Slipstream.Shared;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -13,10 +14,12 @@ namespace Slipstream.Backend
         private const int EVENT_DELETE_SIZE = 200; // when we hit EVENT_MAX_SIZE. How many elements should we remove?
         private volatile bool enabled = false;
         private readonly ulong StartedAt;
+        private readonly IEventSerdeService EventSerdeService;
 
-        public EventBus()
+        public EventBus(IEventSerdeService eventSerdeService)
         {
             StartedAt = Uptime();
+            EventSerdeService = eventSerdeService;
         }
 
         public bool Enabled
@@ -32,7 +35,7 @@ namespace Slipstream.Backend
 
         public void PublishEvent(IEvent e)
         {
-            e.Uptime = Uptime() - StartedAt;
+            e.Envelope.Uptime = Uptime() - StartedAt;
 
             lock (Events)
             {
@@ -49,10 +52,16 @@ namespace Slipstream.Backend
             {
                 if (enabled)
                 {
+                    var dbug = "";
                     foreach (var l in Listeners)
                     {
-                        l.Add(e);
+                        if (e.Envelope.ContainsRecipient(l.InstanceId))
+                        {
+                            dbug += " " + l.InstanceId;
+                            l.Add(e);
+                        }
                     }
+                    Debug.WriteLine("Delivery event " + EventSerdeService.Serialize(e) + " to: " + dbug);
                 }
                 else
                 {
@@ -61,9 +70,9 @@ namespace Slipstream.Backend
             }
         }
 
-        public IEventBusSubscription RegisterListener(bool fromStart = false)
+        public IEventBusSubscription RegisterListener(string instanceId, bool fromStart = false)
         {
-            var subscription = new EventBusSubscription(this);
+            var subscription = new EventBusSubscription(this, instanceId);
 
             lock (Listeners)
             {

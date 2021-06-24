@@ -28,7 +28,14 @@ namespace Slipstream.Components.Lua.Lua
         private NLua.Lua Lua = new NLua.Lua();
         private ulong LastLuaGC;
 
-        public LuaInstanceThread(string instanceId, string filePath, LuaLuaLibrary luaLibrary, ILogger logger, ILuaLibraryRepository repository, IEventBusSubscription subscription, IEventHandlerController eventHandlerController) : base(instanceId, logger)
+        public LuaInstanceThread(
+            string instanceId,
+            string filePath,
+            LuaLuaLibrary luaLibrary,
+            ILogger logger,
+            ILuaLibraryRepository repository,
+            IEventBusSubscription subscription,
+            IEventHandlerController eventHandlerController) : base(instanceId, logger, eventHandlerController)
         {
             FileName = filePath;
             Repository = repository;
@@ -65,9 +72,9 @@ namespace Slipstream.Components.Lua.Lua
                                     handleFunc?.Call(@event);
 
                                     // Perform GC in Lua approx every second
-                                    if (@event.Uptime - LastLuaGC > 1000)
+                                    if (@event.Envelope.Uptime - LastLuaGC > 1000)
                                     {
-                                        LastLuaGC = @event.Uptime;
+                                        LastLuaGC = @event.Envelope.Uptime;
                                         Lua.DoString("collectgarbage()");
                                     }
                                 }
@@ -155,14 +162,14 @@ SS = {{
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
-        public ILuaLibrary? require(string name)
+        public LuaLibraryInstanceTracker? require(string name)
         {
             lock (Lock)
             {
                 var i = Repository.Get(name);
                 if (i == null)
                     return null;
-                return new LuaLibraryInstanceTracker(i, this);
+                return new LuaLibraryInstanceTracker(i, this, InstanceId);
             }
         }
 

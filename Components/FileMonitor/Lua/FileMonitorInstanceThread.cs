@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using Serilog;
+using Slipstream.Components.FileMonitor.Events;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace Slipstream.Components.FileMonitor.Lua
         private readonly IEventBusSubscription Subscription;
         private readonly IEventHandlerController EventHandlerController;
 
-        public FileMonitorInstanceThread(string instanceId, string[] paths, IEventBus eventBus, IFileMonitorEventFactory eventFactory, IEventBusSubscription eventBusSubscription, IEventHandlerController eventHandlerController, ILogger logger) : base(instanceId, logger)
+        public FileMonitorInstanceThread(string instanceId, string[] paths, IEventBus eventBus, IFileMonitorEventFactory eventFactory, IEventBusSubscription eventBusSubscription, IEventHandlerController eventHandlerController, ILogger logger) : base(instanceId, logger, eventHandlerController)
         {
             EventBus = eventBus;
             EventFactory = eventFactory;
@@ -43,7 +44,7 @@ namespace Slipstream.Components.FileMonitor.Lua
         protected override void Main()
         {
             var fileMonitor = EventHandlerController.Get<EventHandler.FileMonitor>();
-            fileMonitor.OnFileMonitorCommandScan += (s, e) => ScanExistingFiles();
+            fileMonitor.OnFileMonitorCommandScan += (_, e) => ScanExistingFiles(e);
 
             while (!Stopping)
             {
@@ -58,22 +59,22 @@ namespace Slipstream.Components.FileMonitor.Lua
 
         private void WatcherOnRenamed(RenamedEventArgs e)
         {
-            EventBus.PublishEvent(EventFactory.CreateFileMonitorFileRenamed(InstanceId, e.FullPath, e.OldFullPath));
+            EventBus.PublishEvent(EventFactory.CreateFileMonitorFileRenamed(InstanceEnvelope, e.FullPath, e.OldFullPath));
         }
 
         private void WatcherOnDeleted(FileSystemEventArgs e)
         {
-            EventBus.PublishEvent(EventFactory.CreateFileMonitorFileDeleted(InstanceId, e.FullPath));
+            EventBus.PublishEvent(EventFactory.CreateFileMonitorFileDeleted(InstanceEnvelope, e.FullPath));
         }
 
         private void WatcherOnChanged(FileSystemEventArgs e)
         {
-            EventBus.PublishEvent(EventFactory.CreateFileMonitorFileChanged(InstanceId, e.FullPath));
+            EventBus.PublishEvent(EventFactory.CreateFileMonitorFileChanged(InstanceEnvelope, e.FullPath));
         }
 
         private void WatcherOnCreated(FileSystemEventArgs e)
         {
-            EventBus.PublishEvent(EventFactory.CreateFileMonitorFileCreated(InstanceId, e.FullPath));
+            EventBus.PublishEvent(EventFactory.CreateFileMonitorFileCreated(InstanceEnvelope, e.FullPath));
         }
 
         new public void Dispose()
@@ -86,17 +87,19 @@ namespace Slipstream.Components.FileMonitor.Lua
             }
         }
 
-        private void ScanExistingFiles()
+        private void ScanExistingFiles(FileMonitorCommandScan e)
         {
+            IEventEnvelope replyEnvelope = e.Envelope.Reply(InstanceId);
+
             foreach (var watcher in Watchers)
             {
                 foreach (var path in Directory.GetFiles(watcher.Path, "*.*"))
                 {
-                    EventBus.PublishEvent(EventFactory.CreateFileMonitorFileCreated(InstanceId, path));
+                    EventBus.PublishEvent(EventFactory.CreateFileMonitorFileCreated(replyEnvelope, path));
                 }
             }
 
-            EventBus.PublishEvent(EventFactory.CreateFileMonitorScanCompleted(InstanceId));
+            EventBus.PublishEvent(EventFactory.CreateFileMonitorScanCompleted(replyEnvelope));
         }
     }
 }

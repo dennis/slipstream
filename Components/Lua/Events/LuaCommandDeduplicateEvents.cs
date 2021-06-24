@@ -1,27 +1,13 @@
 ﻿using Slipstream.Shared;
-using System.Collections.Generic;
 
 namespace Slipstream.Components.Lua.Events
 {
     public class LuaCommandDeduplicateEvents : IEvent
     {
-        public string EventType => "LuaCommandDeduplicateEvents";
-        public ulong Uptime { get; set; }
+        public string EventType => nameof(LuaCommandDeduplicateEvents);
+        
+        public IEventEnvelope Envelope { get; set; } = new EventEnvelope();
+        
         public string Events { get; set; } = "";
-
-        public override bool Equals(object obj)
-        {
-            return obj is LuaCommandDeduplicateEvents events &&
-                   EventType == events.EventType &&
-                   Events == events.Events;
-        }
-
-        public override int GetHashCode()
-        {
-            int hashCode = -1012215078;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Events);
-            return hashCode;
-        }
     }
 }

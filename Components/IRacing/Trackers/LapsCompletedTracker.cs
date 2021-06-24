@@ -16,7 +16,7 @@ namespace Slipstream.Components.IRacing.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope)
         {
             var now = currentState.SessionTime;
 
@@ -105,6 +105,7 @@ namespace Slipstream.Components.IRacing.Trackers
                         }
 
                         var @event = EventFactory.CreateIRacingCompletedLap(
+                            envelope: envelope,
                             sessionTime: now,
                             carIdx: car.CarIdx,
                             lapTime: lapTime,
@@ -125,6 +126,10 @@ namespace Slipstream.Components.IRacing.Trackers
                     lapState.Location = car.Location;
                 }
             }
+        }
+
+        public void Request(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope, IIRacingDataTracker.RequestType request)
+        {
         }
     }
 }

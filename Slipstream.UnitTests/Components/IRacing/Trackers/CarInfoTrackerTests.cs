@@ -5,6 +5,7 @@ using Slipstream.Components.IRacing.Events;
 using Slipstream.Components.IRacing.GameState;
 using Slipstream.Components.IRacing.Models;
 using Slipstream.Components.IRacing.Trackers;
+using Slipstream.Shared;
 using Slipstream.UnitTests.TestData;
 using Xunit;
 
@@ -37,7 +38,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
             var sut = new CarInfoTracker(eventBusMock.Object, eventFactory);
 
             // act
-            sut.Handle(currentState, trackerDataState);
+            sut.Handle(currentState, trackerDataState, new EventEnvelope("sender"));
 
             // assert
             eventBusMock.Verify(eb => eb.PublishEvent(It.IsAny<IRacingCarInfo>()), Times.Once, "IRacingCarInfo event not raised");

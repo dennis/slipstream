@@ -1,17 +1,16 @@
 ﻿using Slipstream.Shared;
+using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.FileMonitor.Lua
 {
-    public class FileMonitorLuaReference : IFileMonitorLuaReference
+    public class FileMonitorLuaReference : BaseLuaReference, IFileMonitorLuaReference
     {
         private readonly IEventBus EventBus;
         private readonly IFileMonitorEventFactory EventFactory;
         private readonly FileMonitorLuaLibrary LuaLibrary;
-        public string InstanceId { get; }
 
-        public FileMonitorLuaReference(string instanceId, FileMonitorLuaLibrary luaLibrary, IEventBus eventBus, IFileMonitorEventFactory eventFactory)
+        public FileMonitorLuaReference(string instanceId, string luaScriptInstanceId, FileMonitorLuaLibrary luaLibrary, IEventBus eventBus, IFileMonitorEventFactory eventFactory) : base(instanceId, luaScriptInstanceId)
         {
-            InstanceId = instanceId;
             EventBus = eventBus;
             EventFactory = eventFactory;
             LuaLibrary = luaLibrary;
@@ -19,10 +18,10 @@ namespace Slipstream.Components.FileMonitor.Lua
 
         public void scan()
         {
-            EventBus.PublishEvent(EventFactory.CreateFileMonitorCommandScan(InstanceId));
+            EventBus.PublishEvent(EventFactory.CreateFileMonitorCommandScan(Envelope));
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             LuaLibrary.ReferenceDropped(this);
         }

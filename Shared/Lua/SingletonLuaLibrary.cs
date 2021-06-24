@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using Autofac;
+using Slipstream.Components.Internal;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
 
@@ -10,16 +11,16 @@ namespace Slipstream.Shared.Lua
         where TInstance : ILuaInstanceThread
         where TReference : ILuaReference
     {
-        protected SingletonLuaLibrary(DictionaryValidator validator, ILifetimeScope lifetimeScope) : base(validator, lifetimeScope)
+        protected SingletonLuaLibrary(DictionaryValidator validator, ILifetimeScope lifetimeScope, IEventBus eventBus, IInternalEventFactory eventFactory) : base(validator, lifetimeScope, eventBus, eventFactory)
         {
         }
 
-        new protected void HandleInstance(string _, Parameters cfg)
+        new protected void HandleInstance(string luaScriptInstanceId, string _, Parameters cfg)
         {
             // Force instanceId to be "singleton", so we never get more than one
             cfg["instanceId"] = "singleton";
 
-            base.HandleInstance("singleton", cfg);
+            base.HandleInstance(luaScriptInstanceId, "singleton", cfg);
         }
     }
 }

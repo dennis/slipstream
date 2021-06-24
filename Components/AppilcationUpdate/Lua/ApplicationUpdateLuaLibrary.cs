@@ -1,10 +1,11 @@
 ﻿#nullable enable
 
 using Autofac;
+using Slipstream.Components.Internal;
+using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using Slipstream.Shared.Lua;
-using System.Diagnostics;
 
 namespace Slipstream.Components.AppilcationUpdate.Lua
 {
@@ -20,7 +21,7 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
                 .PermitBool("prerelease");
         }
 
-        public ApplicationUpdateLuaLibrary(ILifetimeScope scope) : base(ConfigurationValidator, scope)
+        public ApplicationUpdateLuaLibrary(ILifetimeScope scope, IEventBus eventBus, IInternalEventFactory eventFactory) : base(ConfigurationValidator, scope, eventBus, eventFactory)
         {
         }
 

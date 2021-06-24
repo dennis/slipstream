@@ -1,23 +1,27 @@
 ﻿using Slipstream.Shared;
+using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.Twitch.Lua
 {
-    public class TwitchLuaReference : ITwitchLuaReference
+    public class TwitchLuaReference : BaseLuaReference, ITwitchLuaReference
     {
         private readonly IEventBus EventBus;
         private readonly ITwitchEventFactory EventFactory;
         private readonly TwitchLuaLibrary LuaLibrary;
-        public string InstanceId { get; }
 
-        public TwitchLuaReference(TwitchLuaLibrary luaLibrary, string instanceId, IEventBus eventBus, ITwitchEventFactory eventFactory)
+        public TwitchLuaReference(
+            TwitchLuaLibrary luaLibrary,
+            string instanceId,
+            string luaScriptInstanceId,
+            IEventBus eventBus,
+            ITwitchEventFactory eventFactory) : base(instanceId, luaScriptInstanceId)
         {
             LuaLibrary = luaLibrary;
-            InstanceId = instanceId;
             EventBus = eventBus;
             EventFactory = eventFactory;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             LuaLibrary.ReferenceDropped(this);
         }
@@ -25,13 +29,13 @@ namespace Slipstream.Components.Twitch.Lua
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
         public void send_channel_message(string message)
         {
-            EventBus.PublishEvent(EventFactory.CreateTwitchCommandSendMessage(InstanceId, message));
+            EventBus.PublishEvent(EventFactory.CreateTwitchCommandSendMessage(Envelope, message));
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
         public void send_whisper_message(string to, string message)
         {
-            EventBus.PublishEvent(EventFactory.CreateTwitchCommandSendWhisper(InstanceId, to, message));
+            EventBus.PublishEvent(EventFactory.CreateTwitchCommandSendWhisper(Envelope, to, message));
         }
     }
 }

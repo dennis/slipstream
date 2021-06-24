@@ -31,7 +31,7 @@ namespace Slipstream.Components.UI.Lua
         {
         }
 
-        public ILuaReference? instance(LuaTable cfgTable)
+        public ILuaReference? GetInstance(string luaScriptInstanceId, LuaTable cfgTable)
         {
             var cfg = Parameters.From(cfgTable);
 
@@ -41,6 +41,7 @@ namespace Slipstream.Components.UI.Lua
             var prefix = cfg.ExtractOrDefault("prefix", "");
 
             return LifetimeScope.Resolve<IUILibraryReference>(
+                new NamedParameter("luaScriptInstanceId", luaScriptInstanceId),
                 new NamedParameter("instanceId", instanceId),
                 new NamedParameter("prefix", prefix)
             );

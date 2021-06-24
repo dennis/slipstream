@@ -7,6 +7,6 @@ namespace Slipstream.Components.Lua
 {
     public interface ILuaEventFactory
     {
-        LuaCommandDeduplicateEvents CreateLuaCommandDeduplicateEvents(IEvent[] events);
+        LuaCommandDeduplicateEvents CreateLuaCommandDeduplicateEvents(IEventEnvelope envelope, IEvent[] events);
     }
 }

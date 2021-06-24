@@ -16,7 +16,7 @@ namespace Slipstream.Components.IRacing.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope)
         {
             foreach (var car in currentState.Cars)
             {
@@ -30,6 +30,7 @@ namespace Slipstream.Components.IRacing.Trackers
                         var localUser = currentState.DriverCarIdx == car.CarIdx;
 
                         var @event = EventFactory.CreateIRacingCarPosition(
+                            envelope: envelope,
                             sessionTime: currentState.SessionTime,
                             carIdx: car.CarIdx,
                             localUser: localUser,
@@ -43,6 +44,10 @@ namespace Slipstream.Components.IRacing.Trackers
                 state.LastPositionInClass[car.CarIdx] = positionInClass;
                 state.LastPositionInRace[car.CarIdx] = positionInRace;
             }
+        }
+
+        public void Request(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope, IIRacingDataTracker.RequestType request)
+        {
         }
     }
 }

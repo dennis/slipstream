@@ -97,7 +97,7 @@ namespace Slipstream.Components.IRacing.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope)
         {
             if (currentState.SessionNum != SessionNum)
             {
@@ -135,7 +135,7 @@ namespace Slipstream.Components.IRacing.Trackers
                 return;
 
             RecalculatePositions(currentState);
-            PublishEvents(currentState);
+            PublishEvents(currentState, envelope);
             ShowOverview(currentState);
         }
 
@@ -168,7 +168,7 @@ namespace Slipstream.Components.IRacing.Trackers
             }
         }
 
-        private void PublishEvents(GameState.IState currentState)
+        private void PublishEvents(GameState.IState currentState, IEventEnvelope envelope)
         {
             var time = currentState.SessionTime;
             var positionChanges = new List<PositionChange>();
@@ -224,6 +224,7 @@ namespace Slipstream.Components.IRacing.Trackers
 
                     EventBus.PublishEvent(
                         EventFactory.CreateIRacingTrackPosition(
+                            envelope: envelope,
                             sessionTime: time,
                             carIdx: change.CarIdx,
                             localUser: currentState.DriverCarIdx == change.CarIdx,
@@ -451,12 +452,13 @@ namespace Slipstream.Components.IRacing.Trackers
             }
         }
 
-#pragma warning disable IDE0060 // Remove unused parameter
-
-        private void Debug(string str)
-#pragma warning restore IDE0060 // Remove unused parameter
+        private void Debug(string _)
         {
             //System.Diagnostics.Debug.WriteLine(str);
+        }
+
+        public void Request(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope, IIRacingDataTracker.RequestType request)
+        {
         }
     }
 }

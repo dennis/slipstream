@@ -1,34 +1,35 @@
 ﻿#nullable enable
 
 using Slipstream.Components.Audio.Events;
+using Slipstream.Shared;
 
 namespace Slipstream.Components.Audio.EventFactory
 {
     public class AudioEventFactory : IAudioEventFactory
     {
-        public AudioCommandPlay CreateAudioCommandPlay(string instanceId, string filename, float volume)
+        public AudioCommandPlay CreateAudioCommandPlay(IEventEnvelope envelope, string filename, float volume)
         {
-            return new AudioCommandPlay { InstanceId = instanceId, Filename = filename, Volume = volume };
+            return new AudioCommandPlay { Envelope = envelope, Filename = filename, Volume = volume };
         }
 
-        public AudioCommandSay CreateAudioCommandSay(string instanceId, string message, float volume)
+        public AudioCommandSay CreateAudioCommandSay(IEventEnvelope envelope, string message, float volume)
         {
-            return new AudioCommandSay { InstanceId = instanceId, Message = message, Volume = volume };
+            return new AudioCommandSay { Envelope = envelope, Message = message, Volume = volume };
         }
 
-        public AudioCommandSendDevices CreateAudioCommandSendDevices(string instanceId)
+        public AudioCommandSendDevices CreateAudioCommandSendDevices(IEventEnvelope envelope)
         {
-            return new AudioCommandSendDevices { InstanceId = instanceId };
+            return new AudioCommandSendDevices { Envelope = envelope };
         }
 
-        public AudioOutputDevice CreateAudioOutputDevice(string instanceId, string product, int deviceIdx)
+        public AudioOutputDevice CreateAudioOutputDevice(IEventEnvelope envelope, string product, int deviceIdx)
         {
-            return new AudioOutputDevice { DeviceIdx = deviceIdx, InstanceId = instanceId, Product = product };
+            return new AudioOutputDevice { DeviceIdx = deviceIdx, Envelope = envelope, Product = product };
         }
 
-        public AudioCommandSetOutputDevice CreateAudioCommandSetOutputDevice(string instanceId, int deviceIdx)
+        public AudioCommandSetOutputDevice CreateAudioCommandSetOutputDevice(IEventEnvelope envelope, int deviceIdx)
         {
-            return new AudioCommandSetOutputDevice { InstanceId = instanceId, DeviceIdx = deviceIdx };
+            return new AudioCommandSetOutputDevice { Envelope = envelope, DeviceIdx = deviceIdx };
         }
     }
 }

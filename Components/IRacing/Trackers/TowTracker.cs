@@ -1,4 +1,5 @@
-﻿using Slipstream.Components.IRacing.Models;
+﻿using Slipstream.Components.IRacing.GameState;
+using Slipstream.Components.IRacing.Models;
 using Slipstream.Shared;
 using System.Diagnostics;
 
@@ -18,7 +19,7 @@ namespace Slipstream.Components.IRacing.Trackers
             EventFactory = eventFactory;
         }
 
-        public void Handle(GameState.IState currentState, IRacingDataTrackerState state)
+        public void Handle(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope)
         {
             var towTime = currentState.PlayerCarTowTime;
 
@@ -30,6 +31,7 @@ namespace Slipstream.Components.IRacing.Trackers
                     BeingTowed = true;
 
                     EventBus.PublishEvent(EventFactory.CreateIRacingTowed(
+                        envelope: envelope,
                         sessionTime: currentState.SessionTime,
                         remainingTowTime: towTime
                     ));
@@ -39,6 +41,11 @@ namespace Slipstream.Components.IRacing.Trackers
             {
                 BeingTowed = false;
             }
+        }
+
+
+        public void Request(IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope, IIRacingDataTracker.RequestType request)
+        {
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿#nullable enable
 
 using Autofac;
+using Slipstream.Components.Internal;
+using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using Slipstream.Shared.Lua;
@@ -21,7 +23,7 @@ namespace Slipstream.Components.FileMonitor.Lua
                 .RequireArray("paths", (a) => a.RequireString());
         }
 
-        public FileMonitorLuaLibrary(ILifetimeScope scope) : base(ConfigurationValidator, scope)
+        public FileMonitorLuaLibrary(ILifetimeScope scope, IEventBus eventBus, IInternalEventFactory eventFactory) : base(ConfigurationValidator, scope, eventBus, eventFactory)
         {
         }
 
@@ -30,8 +32,11 @@ namespace Slipstream.Components.FileMonitor.Lua
             string instanceId = cfg.Extract<String>("id");
             string[] paths = (cfg.Extract<Dictionary<dynamic, dynamic>>("paths").Values.Cast<string>()!).ToArray();
 
+            var subscription = EventBus.RegisterListener(instanceId);
+
             return scope.Resolve<IFileMonitorInstanceThread>(
                 new NamedParameter("instanceId", instanceId),
+                new TypedParameter(typeof(IEventBusSubscription), subscription),
                 new NamedParameter("paths", paths)
             );
         }

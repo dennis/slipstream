@@ -9,6 +9,10 @@
  - Remove persisting the location and size of the Slipstream UI. It could end up
    placing the Window off-screen, making it hard to reach.
  - IRacing: Add FuelLeft attribute to IRacingCompletedLap and IRacingPitExit
+ - Rearchitected events: Now events are directed to a one or more recipients. 
+   And only scripts using that instance will be notified of its events. Meaning,
+   you will not get IRacing events, if you don't have require("api/iracing"):instance(..)
+ - You need a new init.lua, so delete your existing init.lua to get a new one.
 
 ## [0.7.0](https://github.com/dennis/slipstream/releases/tag/v0.7.0) (2021-04-30)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.6.0...v0.7.0)

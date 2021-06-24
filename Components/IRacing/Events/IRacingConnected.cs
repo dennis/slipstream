@@ -1,24 +1,12 @@
 using Slipstream.Shared;
-using System.Collections.Generic;
 
 namespace Slipstream.Components.IRacing.Events
 {
     public class IRacingConnected : IEvent
     {
-        public string EventType => "IRacingConnected";
-        public ulong Uptime { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            return obj is IRacingConnected connected &&
-                   EventType == connected.EventType;
-        }
-
-        public override int GetHashCode()
-        {
-            int hashCode = -441302714;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EventType);
-            return hashCode;
-        }
+        public string EventType => nameof(IRacingConnected);
+        
+        public IEventEnvelope Envelope { get; set; } = new EventEnvelope();
+        
     }
 }

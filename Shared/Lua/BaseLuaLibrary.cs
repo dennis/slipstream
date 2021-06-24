@@ -91,10 +91,9 @@ namespace Slipstream.Shared.Lua
                 Instances.Add(instanceId, new InstanceContainer<TInstance>(instance));
                 instance.Start();
 
-                var envelope = new EventEnvelope(luaScriptInstanceId).Add(instanceId);
-
-                EventBus.PublishEvent(InternalEventFactory.CreateInternalInstanceAddSubscription(envelope, luaScriptInstanceId));
             }
+            var envelope = new EventEnvelope(luaScriptInstanceId).Add(instanceId);
+            EventBus.PublishEvent(InternalEventFactory.CreateInternalInstanceAddSubscription(envelope, luaScriptInstanceId));
         }
 
         public void ReferenceDropped(ILuaReference luaReference)

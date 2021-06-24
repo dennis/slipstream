@@ -12,6 +12,7 @@ local cfg = require("lib/config")
 local iracing = require("api/iracing"):instance(cfg.iracing)
 local twitch = require("api/twitch"):instance(cfg.twitch)
 local state = require("api/state"):instance(cfg.state)
+local ui = require("api/ui"):instance(cfg.ui)
 local common = require("lib/common")
 
 local session_category = ""

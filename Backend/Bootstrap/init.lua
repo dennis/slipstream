@@ -30,9 +30,9 @@ local lua_scripts = {
 
 function handle(e)
 	print(e.EventType)
-	if e.EventType == "FileMonitorFileCreated" and  e.Envelope.Sender == lua_loader and ends_with(e.FilePath, ".lua") then
+	if e.EventType == "FileMonitorFileCreated" and e.Envelope.Sender == lua_loader and ends_with(e.FilePath, ".lua") then
 		lua_scripts:start(e.FilePath)
-	elseif e.EventType == "FileMonitorFileChanged"  e.Envelope.Sender == lua_loader and ends_with(e.FilePath, ".lua") then
+	elseif e.EventType == "FileMonitorFileChanged" and e.Envelope.Sender == lua_loader and ends_with(e.FilePath, ".lua") then
 		lua_scripts:start(e.FilePath)
 	elseif e.EventType == "FileMonitorFileRenamed" and  e.Envelope.Sender == lua_loader then
 		if ends_with(e.OldFilePath, ".lua") then

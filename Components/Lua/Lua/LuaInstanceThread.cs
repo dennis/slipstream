@@ -3,6 +3,9 @@
 using NLua;
 using NLua.Exceptions;
 using Serilog;
+using Slipstream.Backend;
+using Slipstream.Components.Internal;
+using Slipstream.Components.Internal.EventFactory;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
 using System;
@@ -15,16 +18,31 @@ namespace Slipstream.Components.Lua.Lua
 {
     public partial class LuaInstanceThread : BaseInstanceThread, ILuaInstanceThread
     {
+        private class Dependency
+        {
+            public string InstanceId { get; }
+            public string LuaScriptInstanceId { get;  }
+
+            public Dependency(string instanceId, string luaScriptInstanceId)
+            {
+                InstanceId = instanceId;
+                LuaScriptInstanceId = luaScriptInstanceId;  
+            }
+        }
+
         private readonly Object Lock = new object();
         private static readonly Random random = new Random();
         private readonly ILuaLibraryRepository Repository;
         private readonly IEventBusSubscription Subscription;
         private readonly IEventHandlerController EventHandlerController;
         private readonly LuaLuaLibrary LuaLibrary;
+        private readonly IEventBus EventBus;
+        private readonly IInternalEventFactory InternalEventFactory;
         private readonly List<ILuaReference> CreatedReferences = new List<ILuaReference>();
         private readonly IDictionary<string, DelayedExecution> DebounceDelayedFunctions = new Dictionary<string, DelayedExecution>();
         private readonly IDictionary<string, DelayedExecution> WaitDelayedFunctions = new Dictionary<string, DelayedExecution>();
         private readonly string FileName = "";
+        private readonly List<Dependency> Dependencies = new List<Dependency>();
         private NLua.Lua Lua = new NLua.Lua();
         private ulong LastLuaGC;
 
@@ -35,13 +53,17 @@ namespace Slipstream.Components.Lua.Lua
             ILogger logger,
             ILuaLibraryRepository repository,
             IEventBusSubscription subscription,
-            IEventHandlerController eventHandlerController) : base(instanceId, logger, eventHandlerController)
+            IEventHandlerController eventHandlerController,
+            IEventBus eventBus,
+            IInternalEventFactory internalEventFactory) : base(instanceId, logger, eventHandlerController)
         {
             FileName = filePath;
             Repository = repository;
             Subscription = subscription;
             EventHandlerController = eventHandlerController;
             LuaLibrary = luaLibrary;
+            EventBus = eventBus;
+            InternalEventFactory = internalEventFactory;
         }
 
         protected override void Main()
@@ -105,6 +127,15 @@ namespace Slipstream.Components.Lua.Lua
             CreatedReferences.Clear();
 
             LuaLibrary.InstanceStopped(InstanceId);
+
+            foreach (var dependency in Dependencies)
+            {
+                var envelope = new EventEnvelope(InstanceId).Add(dependency.InstanceId);
+
+                EventBus.PublishEvent(InternalEventFactory.CreateInternalInstanceRemoveSubscription(envelope, dependency.LuaScriptInstanceId));
+            }
+
+            Dependencies.Clear();
         }
 
         private LuaFunction? LoadFile()
@@ -178,6 +209,21 @@ SS = {{
             lock (Lock)
             {
                 CreatedReferences.Add(inst);
+
+                if (inst == null)
+                    return;
+
+                var dependency = new Dependency(inst.InstanceId, inst.LuaScriptInstanceId);
+
+                if(!Dependencies.Contains(dependency))
+                {
+                    Debug.WriteLine($"[{InstanceId}] depends on {inst.InstanceId}");
+
+                    Dependencies.Add(dependency);
+
+                    var envelope = new EventEnvelope(InstanceId).Add(dependency.InstanceId);
+                    EventBus.PublishEvent(InternalEventFactory.CreateInternalInstanceAddSubscription(envelope, InstanceId));
+                }
             }
         }
 
@@ -221,6 +267,11 @@ SS = {{
                 functions.Remove(d.Key);
                 d.Value.Function.Call();
             }
+        }
+
+        public new void Dispose()
+        {
+            base.Dispose();
         }
     }
 }

@@ -90,10 +90,7 @@ namespace Slipstream.Shared.Lua
                 var instance = CreateInstance(LifetimeScope, cfg);
                 Instances.Add(instanceId, new InstanceContainer<TInstance>(instance));
                 instance.Start();
-
             }
-            var envelope = new EventEnvelope(luaScriptInstanceId).Add(instanceId);
-            EventBus.PublishEvent(InternalEventFactory.CreateInternalInstanceAddSubscription(envelope, luaScriptInstanceId));
         }
 
         public void ReferenceDropped(ILuaReference luaReference)
@@ -119,10 +116,6 @@ namespace Slipstream.Shared.Lua
                 {
                     Debug.WriteLine($"***** ERROR - LuaReference '{instanceId}' points to an non-existing instance *****");
                 }
-
-                var envelope = new EventEnvelope(luaReference.LuaScriptInstanceId).Add(instanceId);
-
-                EventBus.PublishEvent(InternalEventFactory.CreateInternalInstanceRemoveSubscription(envelope, luaReference.LuaScriptInstanceId));
             }
         }
     }

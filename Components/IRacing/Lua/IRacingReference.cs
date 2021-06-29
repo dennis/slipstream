@@ -7,18 +7,11 @@ namespace Slipstream.Components.IRacing.Lua
     {
         private readonly IEventBus EventBus;
         private readonly IIRacingEventFactory EventFactory;
-        private readonly IRacingLuaLibrary LuaLibrary;
 
-        public IRacingReference(string instanceId, string luaScriptInstanceId,  IRacingLuaLibrary luaLibrary, IEventBus eventBus, IIRacingEventFactory eventFactory) : base(instanceId, luaScriptInstanceId)
+        public IRacingReference(string instanceId, string luaScriptInstanceId, IEventBus eventBus, IIRacingEventFactory eventFactory) : base(instanceId, luaScriptInstanceId)
         {
             EventBus = eventBus;
             EventFactory = eventFactory;
-            LuaLibrary = luaLibrary;
-        }
-
-        public override void Dispose()
-        {
-            LuaLibrary.ReferenceDropped(this);
         }
 
         public void send_car_info()

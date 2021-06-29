@@ -8,21 +8,14 @@ namespace Slipstream.Components.Lua.Lua
     public class StateLuaReference : ILuaReference
     {
         private readonly IStateService StateService;
-        private readonly StateLuaLibrary LuaLibrary;
         public string InstanceId { get; }
         public string LuaScriptInstanceId { get; }
 
-        public StateLuaReference(StateLuaLibrary luaLibrary, string instanceId, string luaScriptInstanceId, IStateService stateService)
+        public StateLuaReference(string instanceId, string luaScriptInstanceId, IStateService stateService)
         {
-            LuaLibrary = luaLibrary;
             InstanceId = instanceId;
             LuaScriptInstanceId = luaScriptInstanceId;
             StateService = stateService;
-        }
-
-        public void Dispose()
-        {
-            LuaLibrary.ReferenceDropped(this);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]

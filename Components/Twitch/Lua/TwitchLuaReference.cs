@@ -7,23 +7,15 @@ namespace Slipstream.Components.Twitch.Lua
     {
         private readonly IEventBus EventBus;
         private readonly ITwitchEventFactory EventFactory;
-        private readonly TwitchLuaLibrary LuaLibrary;
 
         public TwitchLuaReference(
-            TwitchLuaLibrary luaLibrary,
             string instanceId,
             string luaScriptInstanceId,
             IEventBus eventBus,
             ITwitchEventFactory eventFactory) : base(instanceId, luaScriptInstanceId)
         {
-            LuaLibrary = luaLibrary;
             EventBus = eventBus;
             EventFactory = eventFactory;
-        }
-
-        public override void Dispose()
-        {
-            LuaLibrary.ReferenceDropped(this);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]

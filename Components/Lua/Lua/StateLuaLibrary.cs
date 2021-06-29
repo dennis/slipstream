@@ -33,9 +33,5 @@ namespace Slipstream.Components.Lua.Lua
                 new NamedParameter("luaLibrary", this)
             );
         }
-
-        public void ReferenceDropped(ILuaReference _)
-        {
-        }
     }
 }

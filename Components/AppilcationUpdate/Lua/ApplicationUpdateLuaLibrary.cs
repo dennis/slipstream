@@ -21,7 +21,7 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
                 .PermitBool("prerelease");
         }
 
-        public ApplicationUpdateLuaLibrary(ILifetimeScope scope, IEventBus eventBus, IInternalEventFactory eventFactory) : base(ConfigurationValidator, scope, eventBus, eventFactory)
+        public ApplicationUpdateLuaLibrary(ILifetimeScope scope, IEventBus eventBus) : base(ConfigurationValidator, scope, eventBus)
         {
         }
 

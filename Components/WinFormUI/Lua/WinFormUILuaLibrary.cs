@@ -5,7 +5,6 @@ using Slipstream.Shared.Lua;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using Slipstream.Shared;
-using Slipstream.Components.Internal;
 
 namespace Slipstream.Components.WinFormUI.Lua
 {
@@ -19,7 +18,7 @@ namespace Slipstream.Components.WinFormUI.Lua
                 .RequireString("id");
         }
 
-        public WinFormUILuaLibrary(ILifetimeScope scope, IEventBus eventBus, IInternalEventFactory eventFactory) : base(ConfigurationValidator, scope, eventBus, eventFactory)
+        public WinFormUILuaLibrary(ILifetimeScope scope, IEventBus eventBus) : base(ConfigurationValidator, scope, eventBus)
         {
         }
 

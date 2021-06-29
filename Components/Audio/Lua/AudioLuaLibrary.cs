@@ -21,7 +21,7 @@ namespace Slipstream.Components.Audio.Lua
                 .PermitLong("output");
         }
 
-        public AudioLuaLibrary(ILifetimeScope scope, IEventBus eventBus, IInternalEventFactory eventFactory) : base(ConfigurationValidator, scope, eventBus, eventFactory)
+        public AudioLuaLibrary(ILifetimeScope scope, IEventBus eventBus) : base(ConfigurationValidator, scope, eventBus)
         {
         }
 

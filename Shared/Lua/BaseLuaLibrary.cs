@@ -18,7 +18,6 @@ namespace Slipstream.Shared.Lua
         protected readonly DictionaryValidator Validator;
         protected readonly ILifetimeScope LifetimeScope;
         protected readonly IEventBus EventBus;
-        private readonly IInternalEventFactory InternalEventFactory;
 
         private class InstanceContainer<T>
         {
@@ -36,12 +35,11 @@ namespace Slipstream.Shared.Lua
         // LuaLibrary from class name and use that
         public string Name => $"api/{GetType().Name.Replace("LuaLibrary", "").ToLower()}";
 
-        protected BaseLuaLibrary(DictionaryValidator validator, ILifetimeScope lifetimeScope, IEventBus eventBus, IInternalEventFactory eventFactory)
+        protected BaseLuaLibrary(DictionaryValidator validator, ILifetimeScope lifetimeScope, IEventBus eventBus)
         {
             Validator = validator;
             LifetimeScope = lifetimeScope;
             EventBus = eventBus;
-            InternalEventFactory = eventFactory;
         }
 
         public void Dispose()
@@ -64,7 +62,7 @@ namespace Slipstream.Shared.Lua
 
             lock (Lock)
             {
-                HandleInstance(luaScriptInstanceId, instanceId, cfg);
+                HandleInstance(instanceId, cfg);
 
                 Debug.Assert(Instances.ContainsKey(instanceId));
                 var container = Instances[instanceId];
@@ -81,7 +79,7 @@ namespace Slipstream.Shared.Lua
 
         protected abstract TInstance CreateInstance(ILifetimeScope scope, Parameters cfg);
 
-        protected void HandleInstance(string luaScriptInstanceId, string instanceId, Parameters cfg)
+        protected void HandleInstance(string instanceId, Parameters cfg)
         {
             if (!Instances.ContainsKey(instanceId))
             {
@@ -90,32 +88,6 @@ namespace Slipstream.Shared.Lua
                 var instance = CreateInstance(LifetimeScope, cfg);
                 Instances.Add(instanceId, new InstanceContainer<TInstance>(instance));
                 instance.Start();
-            }
-        }
-
-        public void ReferenceDropped(ILuaReference luaReference)
-        {
-            lock (Lock)
-            {
-                var instanceId = luaReference.InstanceId;
-
-                if (Instances.TryGetValue(instanceId, out InstanceContainer<TInstance> container))
-                {
-                    container.RefCount--;
-
-                    if (container.RefCount == 0)
-                    {
-                        Instances.Remove(luaReference.InstanceId);
-                        container.Instance.Stop();
-                        container.Instance.Dispose();
-
-                        Debug.WriteLine($"[{instanceId}] Not referenced anymore, stopped");
-                    }
-                }
-                else
-                {
-                    Debug.WriteLine($"***** ERROR - LuaReference '{instanceId}' points to an non-existing instance *****");
-                }
             }
         }
     }

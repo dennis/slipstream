@@ -20,7 +20,7 @@ namespace Slipstream.Components.Discord.Lua
                 .RequireString("token");
         }
 
-        public DiscordLuaLibrary(ILifetimeScope scope, IEventBus eventBus, IInternalEventFactory eventFactory) : base(ConfigurationValidator, scope, eventBus, eventFactory)
+        public DiscordLuaLibrary(ILifetimeScope scope, IEventBus eventBus) : base(ConfigurationValidator, scope, eventBus)
         {
         }
 

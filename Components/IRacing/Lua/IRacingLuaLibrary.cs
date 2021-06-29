@@ -1,7 +1,6 @@
 ﻿#nullable enable
 
 using Autofac;
-using Slipstream.Components.Internal;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
@@ -20,7 +19,7 @@ namespace Slipstream.Components.IRacing.Lua
                 .PermitBool("send_raw_state");
         }
 
-        public IRacingLuaLibrary(ILifetimeScope scope, IEventBus eventBus, IInternalEventFactory eventFactory) : base(ConfigurationValidator, scope, eventBus, eventFactory)
+        public IRacingLuaLibrary(ILifetimeScope scope, IEventBus eventBus) : base(ConfigurationValidator, scope, eventBus)
         {
         }
 

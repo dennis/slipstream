@@ -8,7 +8,6 @@ namespace Slipstream.Shared.Lua
 
         public string InstanceId { get; }
         public string LuaScriptInstanceId { get; }
-        public abstract void Dispose();
 
         public BaseLuaReference(string instanceId, string luaScriptInstanceId)
         {

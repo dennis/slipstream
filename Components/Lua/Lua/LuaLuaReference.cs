@@ -7,11 +7,9 @@ namespace Slipstream.Components.Lua.Lua
     public class LuaLuaReference : BaseLuaReference, ILuaLuaReference
     {
         private readonly ILuaInstanceThread ServiceThread;
-        private readonly LuaLuaLibrary LuaLibrary;
 
-        public LuaLuaReference(LuaLuaLibrary luaLibrary, string instanceId, string luaScriptInstanceId, ILuaInstanceThread serviceThread) : base(instanceId, luaScriptInstanceId)
+        public LuaLuaReference(string instanceId, string luaScriptInstanceId, ILuaInstanceThread serviceThread) : base(instanceId, luaScriptInstanceId)
         {
-            LuaLibrary = luaLibrary;
             ServiceThread = serviceThread;
         }
 
@@ -28,11 +26,6 @@ namespace Slipstream.Components.Lua.Lua
         public void restart()
         {
             ServiceThread.Restart();
-        }
-
-        public override void Dispose()
-        {
-            LuaLibrary.ReferenceDrop(this);
         }
 
         public void join()

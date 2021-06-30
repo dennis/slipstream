@@ -16,10 +16,6 @@ namespace Slipstream.Components.Discord.Lua
             EventFactory = eventFactory;
         }
 
-        public override void Dispose()
-        {
-        }
-
         public void send_message(string message)
         {
             EventBus.PublishEvent(EventFactory.CreateDiscordCommandSendMessage(Envelope, ChannelId, message, false));

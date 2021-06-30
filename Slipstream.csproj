@@ -194,8 +194,8 @@
     <Compile Include="Components\AppilcationUpdate\Lua\ApplicationUpdateLuaLibrary.cs" />
     <Compile Include="Components\AppilcationUpdate\Lua\ApplicationUpdateReference.cs" />
     <Compile Include="Shared\Lua\BaseLuaReference.cs" />
-    <Compile Include="Components\Internal\Events\InternalInstanceAddSubscription.cs" />
-    <Compile Include="Components\Internal\Events\InternalInstanceRemoveSubscription.cs" />
+    <Compile Include="Components\Internal\Events\InternalAddDependency.cs" />
+    <Compile Include="Components\Internal\Events\InternalRemoveDependency.cs" />
     <Compile Include="Components\IRacing\Events\IRacingCommandPitChangeLeftRearTyre.cs" />
     <Compile Include="Components\IRacing\Events\IRacingCommandPitRequestFastRepair.cs" />
     <Compile Include="Components\IRacing\Events\IRacingCommandPitClearTyresChange.cs" />

@@ -8,7 +8,9 @@ namespace Slipstream.Components.Internal
     public interface IInternalEventFactory
     {
         InternalCommandShutdown CreateInternalCommandShutdown(IEventEnvelope envelope);
-        InternalInstanceAddSubscription CreateInternalInstanceAddSubscription(IEventEnvelope envelope, string instanceId);
-        InternalInstanceRemoveSubscription CreateInternalInstanceRemoveSubscription(IEventEnvelope envelope, string instanceId);
+
+        InternalAddDependency CreateInternalAddDependency(IEventEnvelope envelope, string instanceId);
+
+        InternalRemoveDependency CreateInternalRemoveDependency(IEventEnvelope envelope, string instanceId);
     }
 }

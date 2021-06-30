@@ -46,9 +46,5 @@ namespace Slipstream.Components.UI.Lua
                 new NamedParameter("prefix", prefix)
             );
         }
-
-        public void ReferenceDropped(ILuaReference _)
-        {
-        }
     }
 }

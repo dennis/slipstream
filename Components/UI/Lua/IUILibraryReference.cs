@@ -10,10 +10,8 @@ namespace Slipstream.Components.UI.Lua
         private readonly IUIEventFactory EventFactory;
         private readonly ILogger Logger;
         private readonly string Prefix;
-        private readonly UILuaLibrary LuaLibrary;
 
         public IUILibraryReference(
-            UILuaLibrary luaLibrary,
             string instanceId,
             string luaScriptInstanceId,
             string prefix,
@@ -21,7 +19,6 @@ namespace Slipstream.Components.UI.Lua
             IUIEventFactory eventFactory,
             ILogger logger) : base(instanceId, luaScriptInstanceId)
         {
-            LuaLibrary = luaLibrary;
             EventBus = eventBus;
             EventFactory = eventFactory;
             Logger = logger;
@@ -44,11 +41,6 @@ namespace Slipstream.Components.UI.Lua
         public void delete_button(string text)
         {
             EventBus.PublishEvent(EventFactory.CreateUICommandDeleteButton(Envelope, text));
-        }
-
-        public override void Dispose()
-        {
-            LuaLibrary.ReferenceDropped(this);
         }
     }
 }

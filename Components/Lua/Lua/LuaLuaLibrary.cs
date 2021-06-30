@@ -33,10 +33,6 @@ namespace Slipstream.Components.Lua.Lua
             EventBus = eventBus;
         }
 
-        internal void ReferenceDrop(LuaLuaReference _)
-        {
-        }
-
         public void Dispose()
         {
         }

@@ -2,7 +2,6 @@
 
 using Autofac;
 using NLua;
-using Slipstream.Components.Internal;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using System.Collections.Generic;
@@ -18,19 +17,7 @@ namespace Slipstream.Shared.Lua
         protected readonly DictionaryValidator Validator;
         protected readonly ILifetimeScope LifetimeScope;
         protected readonly IEventBus EventBus;
-
-        private class InstanceContainer<T>
-        {
-            public T Instance { get; set; }
-            public int RefCount = 0;
-
-            public InstanceContainer(T instance)
-            {
-                Instance = instance;
-            }
-        }
-
-        private readonly Dictionary<string, InstanceContainer<TInstance>> Instances = new Dictionary<string, InstanceContainer<TInstance>>();
+        private readonly Dictionary<string, TInstance> Instances = new Dictionary<string, TInstance>();
 
         // LuaLibrary from class name and use that
         public string Name => $"api/{GetType().Name.Replace("LuaLibrary", "").ToLower()}";
@@ -47,7 +34,7 @@ namespace Slipstream.Shared.Lua
             foreach (var thread in Instances)
             {
                 Debug.WriteLine($"[{thread.Key}] Disposing");
-                thread.Value.Instance.Dispose();
+                thread.Value.Dispose();
             }
             Instances.Clear();
         }
@@ -67,8 +54,6 @@ namespace Slipstream.Shared.Lua
                 Debug.Assert(Instances.ContainsKey(instanceId));
                 var container = Instances[instanceId];
 
-                container.RefCount++;
-
                 return LifetimeScope.Resolve<TReference>(
                     new NamedParameter("luaScriptInstanceId", luaScriptInstanceId),
                     new NamedParameter("instanceId", instanceId),
@@ -86,7 +71,7 @@ namespace Slipstream.Shared.Lua
                 Debug.WriteLine($"[{instanceId}] Creating instance {GetType().Name}");
 
                 var instance = CreateInstance(LifetimeScope, cfg);
-                Instances.Add(instanceId, new InstanceContainer<TInstance>(instance));
+                Instances.Add(instanceId, instance);
                 instance.Start();
             }
         }

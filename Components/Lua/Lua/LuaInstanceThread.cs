@@ -21,12 +21,12 @@ namespace Slipstream.Components.Lua.Lua
         private class Dependency
         {
             public string InstanceId { get; }
-            public string LuaScriptInstanceId { get;  }
+            public string LuaScriptInstanceId { get; }
 
             public Dependency(string instanceId, string luaScriptInstanceId)
             {
                 InstanceId = instanceId;
-                LuaScriptInstanceId = luaScriptInstanceId;  
+                LuaScriptInstanceId = luaScriptInstanceId;
             }
         }
 
@@ -38,7 +38,6 @@ namespace Slipstream.Components.Lua.Lua
         private readonly LuaLuaLibrary LuaLibrary;
         private readonly IEventBus EventBus;
         private readonly IInternalEventFactory InternalEventFactory;
-        private readonly List<ILuaReference> CreatedReferences = new List<ILuaReference>();
         private readonly IDictionary<string, DelayedExecution> DebounceDelayedFunctions = new Dictionary<string, DelayedExecution>();
         private readonly IDictionary<string, DelayedExecution> WaitDelayedFunctions = new Dictionary<string, DelayedExecution>();
         private readonly string FileName = "";
@@ -123,9 +122,6 @@ namespace Slipstream.Components.Lua.Lua
                 Logger.Error(e, "{fileName} errored: {message}", FileName, e.Message);
             }
 
-            Debug.WriteLine($"[{FileName}] Stopping. Clearning up {CreatedReferences.Count} references");
-            CreatedReferences.Clear();
-
             LuaLibrary.InstanceStopped(InstanceId);
 
             foreach (var dependency in Dependencies)
@@ -208,14 +204,12 @@ SS = {{
         {
             lock (Lock)
             {
-                CreatedReferences.Add(inst);
-
                 if (inst == null)
                     return;
 
                 var dependency = new Dependency(inst.InstanceId, inst.LuaScriptInstanceId);
 
-                if(!Dependencies.Contains(dependency))
+                if (!Dependencies.Contains(dependency))
                 {
                     Debug.WriteLine($"[{InstanceId}] depends on {inst.InstanceId}");
 

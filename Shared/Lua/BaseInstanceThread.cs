@@ -68,6 +68,8 @@ namespace Slipstream.Shared.Lua
             }
             else if (ServiceThread?.ThreadState == ThreadState.Stopped)
             {
+                Stopping = false;
+
                 // We need to recreate it
                 SetupThread();
                 ServiceThread.Start();

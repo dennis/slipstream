@@ -128,7 +128,7 @@ namespace Slipstream.Components.Lua.Lua
             {
                 var envelope = new EventEnvelope(InstanceId).Add(dependency.InstanceId);
 
-                EventBus.PublishEvent(InternalEventFactory.CreateInternalInstanceRemoveSubscription(envelope, dependency.LuaScriptInstanceId));
+                EventBus.PublishEvent(InternalEventFactory.CreateInternalRemoveDependency(envelope, dependency.LuaScriptInstanceId));
             }
 
             Dependencies.Clear();
@@ -216,7 +216,7 @@ SS = {{
                     Dependencies.Add(dependency);
 
                     var envelope = new EventEnvelope(InstanceId).Add(dependency.InstanceId);
-                    EventBus.PublishEvent(InternalEventFactory.CreateInternalInstanceAddSubscription(envelope, InstanceId));
+                    EventBus.PublishEvent(InternalEventFactory.CreateInternalAddDependency(envelope, InstanceId));
                 }
             }
         }

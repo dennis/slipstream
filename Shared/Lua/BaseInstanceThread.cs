@@ -23,8 +23,8 @@ namespace Slipstream.Shared.Lua
             InstanceEnvelope = new EventEnvelope(instanceId);
 
             var internalHandler = eventHandlerController.Get<Internal>();
-            internalHandler.OnInternalInstanceAddSubscription += (_, e) => InstanceEnvelope = InstanceEnvelope.Add(e.InstanceId);
-            internalHandler.OnInternalInstanceRemoveSubscription += (_, e) => InstanceEnvelope = InstanceEnvelope.Remove(e.InstanceId);
+            internalHandler.OnInternaAddDependency += (_, e) => InstanceEnvelope = InstanceEnvelope.Add(e.InstanceId);
+            internalHandler.OnInternalRemoveDependency += (_, e) => InstanceEnvelope = InstanceEnvelope.Remove(e.InstanceId);
 
             SetupThread();
         }

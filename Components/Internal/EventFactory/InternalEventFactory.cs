@@ -12,18 +12,18 @@ namespace Slipstream.Components.Internal.EventFactory
             return new InternalCommandShutdown { Envelope = envelope };
         }
 
-        public InternalInstanceAddSubscription CreateInternalInstanceAddSubscription(IEventEnvelope envelope, string instanceId)
+        public InternalAddDependency CreateInternalAddDependency(IEventEnvelope envelope, string instanceId)
         {
-            return new InternalInstanceAddSubscription
+            return new InternalAddDependency
             {
                 Envelope = envelope,
                 InstanceId = instanceId,
             };
         }
 
-        public InternalInstanceRemoveSubscription CreateInternalInstanceRemoveSubscription(IEventEnvelope envelope, string instanceId)
+        public InternalRemoveDependency CreateInternalRemoveDependency(IEventEnvelope envelope, string instanceId)
         {
-            return new InternalInstanceRemoveSubscription
+            return new InternalRemoveDependency
             {
                 Envelope = envelope,
                 InstanceId = instanceId,

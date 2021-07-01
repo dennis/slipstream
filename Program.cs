@@ -109,7 +109,7 @@ namespace Slipstream
 
         private class PopulateSink
         {
-            public PopulateSink(SlipstreamConsoleSink sink, IEventBus eventBus, Components.UI.IUIEventFactory uiEventFactory)
+            public PopulateSink(SlipstreamConsoleSink sink, IEventBus eventBus, Components.WinFormUI.IWinFormUIEventFactory uiEventFactory)
             {
                 sink.EventBus = eventBus;
                 sink.EventFactory = uiEventFactory;

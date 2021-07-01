@@ -2,12 +2,12 @@
 
 using Slipstream.Shared;
 
-namespace Slipstream.Components.UI.Events
+namespace Slipstream.Components.WinFormUI.Events
 {
-    public class UICommandWriteToConsole : IEvent
+    public class WinFormUICommandWriteToConsole : IEvent
     {
-        public string EventType => nameof(UICommandWriteToConsole);
-        
+        public string EventType => nameof(WinFormUICommandWriteToConsole);
+
         public IEventEnvelope Envelope { get; set; } = new EventEnvelope();
         public string? Message { get; set; }
     }

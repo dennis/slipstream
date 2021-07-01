@@ -2,10 +2,8 @@
 
 using Slipstream.Components.Internal;
 using Slipstream.Components.Playback;
-using Slipstream.Components.UI;
-using Slipstream.Components.UI.Events;
+using Slipstream.Components.WinFormUI.Events;
 using Slipstream.Components.WinFormUI.Lua;
-using Slipstream.Properties;
 using Slipstream.Shared;
 
 using System;
@@ -26,7 +24,7 @@ namespace Slipstream.Components.WinFormUI.Forms
         private readonly string InstanceId;
         private readonly WinFormUIInstanceThread Instance;
         private readonly IInternalEventFactory InternalEventFactory;
-        private readonly IUIEventFactory UIEventFactory;
+        private readonly IWinFormUIEventFactory UIEventFactory;
         private readonly IPlaybackEventFactory PlaybackEventFactory;
         private IEventBusSubscription? EventBusSubscription;
         private readonly BlockingCollection<string> PendingMessages = new BlockingCollection<string>();
@@ -34,7 +32,7 @@ namespace Slipstream.Components.WinFormUI.Forms
         private readonly IEventHandlerController EventHandler;
         private bool ShuttingDown = false;
 
-        public MainWindow(string instanceId, IEventEnvelope envelope, WinFormUIInstanceThread instance, IInternalEventFactory internalEventFactory, IUIEventFactory uiEventFactory, IPlaybackEventFactory playbackEventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, IEventHandlerController eventHandlerController)
+        public MainWindow(string instanceId, IEventEnvelope envelope, WinFormUIInstanceThread instance, IInternalEventFactory internalEventFactory, IWinFormUIEventFactory uiEventFactory, IPlaybackEventFactory playbackEventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, IEventHandlerController eventHandlerController)
         {
             InstanceId = instanceId;
             Instance = instance;
@@ -44,7 +42,6 @@ namespace Slipstream.Components.WinFormUI.Forms
             EventHandler = eventHandlerController;
             EventBus = eventBus;
             Envelope = envelope;
-
 
             InitializeComponent();
 
@@ -119,11 +116,11 @@ namespace Slipstream.Components.WinFormUI.Forms
             Debug.Assert(EventBusSubscription != null);
 
             var internalEventHandler = EventHandler.Get<Components.Internal.EventHandler.Internal>();
-            var uiEventHandler = EventHandler.Get<Components.UI.EventHandler.UIEventHandler>();
+            var uiEventHandler = EventHandler.Get<Components.WinFormUI.EventHandler.WinFormUIEventHandler>();
 
-            uiEventHandler.OnUICommandWriteToConsole += (_, e) => PendingMessages.Add($"{DateTime.Now:s} {e.Message}");
-            uiEventHandler.OnUICommandCreateButton += (_, e) => EventHandler_OnUICommandCreateButton(e);
-            uiEventHandler.OnUICommandDeleteButton += (_, e) => EventHandler_OnUICommandDeleteButton(e);
+            uiEventHandler.OnWinFormUICommandWriteToConsole += (_, e) => PendingMessages.Add($"{DateTime.Now:s} {e.Message}");
+            uiEventHandler.OnWinFormUICommandCreateButton += (_, e) => EventHandler_OnWinFormUICommandCreateButton(e);
+            uiEventHandler.OnWinFormUICommandDeleteButton += (_, e) => EventHandler_OnWinFormUICommandDeleteButton(e);
 
             while (true)
             {
@@ -131,7 +128,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             }
         }
 
-        private void EventHandler_OnUICommandCreateButton(UICommandCreateButton @event)
+        private void EventHandler_OnWinFormUICommandCreateButton(WinFormUICommandCreateButton @event)
         {
             ExecuteSecure(() =>
             {
@@ -146,7 +143,7 @@ namespace Slipstream.Components.WinFormUI.Forms
                 b.Click += (s, e) =>
                 {
                     if (s is Button b)
-                        EventBus.PublishEvent(UIEventFactory.CreateUIButtonTriggered(Envelope, b.Text));
+                        EventBus.PublishEvent(UIEventFactory.CreateWinFormUIButtonTriggered(Envelope, b.Text));
                 };
 
                 LuaButtons.Add(@event.Text, b);
@@ -155,7 +152,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             });
         }
 
-        private void EventHandler_OnUICommandDeleteButton(UICommandDeleteButton @event)
+        private void EventHandler_OnWinFormUICommandDeleteButton(WinFormUICommandDeleteButton @event)
         {
             ExecuteSecure(() =>
             {

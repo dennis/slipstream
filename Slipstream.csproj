@@ -219,7 +219,6 @@
     <Compile Include="Components\Audio\Lua\AudioLuaReference.cs" />
     <Compile Include="Components\Audio\Lua\AudioInstanceThread.cs" />
     <Compile Include="Components\Audio\Lua\IAudioInstanceThread.cs" />
-    <Compile Include="Components\UI\Lua\IUILibraryReference.cs" />
     <Compile Include="Components\IRacing\Constants.cs" />
     <Compile Include="Components\IRacing\Lua\IIRacingInstanceThread.cs" />
     <Compile Include="Components\Discord\EventFactory\DiscordEventFactory.cs" />
@@ -286,7 +285,6 @@
     <Compile Include="Components\Twitch\Lua\TwitchLuaInstanceThread.cs" />
     <Compile Include="Components\Twitch\Lua\TwitchLuaLibrary.cs" />
     <Compile Include="Components\Twitch\Lua\TwitchLuaReference.cs" />
-    <Compile Include="Components\UI\Lua\UILuaLibrary.cs" />
     <Compile Include="Components\WinFormUI\Lua\IWinFormUIInstanceThread.cs" />
     <Compile Include="Components\WinFormUI\Lua\IWinFormUIReference.cs" />
     <Compile Include="Components\WinFormUI\Lua\IWinFormUIInstance.cs" />
@@ -347,7 +345,7 @@
     <Compile Include="Components\Internal\IInternalEventFactory.cs" />
     <Compile Include="Components\Playback\IPlaybackEventFactory.cs" />
     <Compile Include="Components\Playback\EventFactory\PlaybackEventFactory.cs" />
-    <Compile Include="Components\UI\EventFactory\UIEventFactory.cs" />
+    <Compile Include="Components\WinFormUI\EventFactory\WinFormUIEventFactory.cs" />
     <Compile Include="Components\FileMonitor\Events\FileMonitorCommandScan.cs" />
     <Compile Include="Components\FileMonitor\Events\FileMonitorScanCompleted.cs" />
     <Compile Include="Components\Lua\Events\LuaCommandDeduplicateEvents.cs" />
@@ -360,9 +358,9 @@
     <Compile Include="Components\Twitch\Events\TwitchCommandSendWhisper.cs" />
     <Compile Include="Components\Twitch\Events\TwitchReceivedWhisper.cs" />
     <Compile Include="Components\Twitch\Events\TwitchReceivedMessage.cs" />
-    <Compile Include="Components\UI\Events\UIButtonTriggered.cs" />
-    <Compile Include="Components\UI\Events\UICommandDeleteButton.cs" />
-    <Compile Include="Components\UI\Events\UICommandCreateButton.cs" />
+    <Compile Include="Components\WinFormUI\Events\WinFormUIButtonTriggered.cs" />
+    <Compile Include="Components\WinFormUI\Events\WinFormUICommandDeleteButton.cs" />
+    <Compile Include="Components\WinFormUI\Events\UICommandCreateButton.cs" />
     <Compile Include="Components\FileMonitor\EventFactory\FileMonitorEventFactory.cs" />
     <Compile Include="Components\Audio\IAudioEventFactory.cs" />
     <Compile Include="Components\FileMonitor\IFileMonitorEventFactory.cs" />
@@ -371,7 +369,7 @@
     <Compile Include="Components\Internal\EventFactory\InternalEventFactory.cs" />
     <Compile Include="Components\IRacing\EventFactory\IRacingEventFactory.cs" />
     <Compile Include="Components\Twitch\ITwitchEventFactory.cs" />
-    <Compile Include="Components\UI\IUIEventFactory.cs" />
+    <Compile Include="Components\WinFormUI\IWinFormUIEventFactory.cs" />
     <Compile Include="Components\Lua\EventFactory\LuaEventFactory.cs" />
     <Compile Include="Components\Twitch\EventFactory\TwitchEventFactory.cs" />
     <Compile Include="Components\FileMonitor\EventHandler\FileMonitor.cs" />
@@ -396,7 +394,7 @@
     <Compile Include="Components\Twitch\Events\TwitchConnected.cs" />
     <Compile Include="Components\Audio\Events\AudioCommandPlay.cs" />
     <Compile Include="Components\Audio\Events\AudioCommandSay.cs" />
-    <Compile Include="Components\UI\Events\UICommandWriteToConsole.cs" />
+    <Compile Include="Components\WinFormUI\Events\WinFormUICommandWriteToConsole.cs" />
     <Compile Include="Shared\IApplicationVersionService.cs" />
     <Compile Include="Shared\IEventBus.cs" />
     <Compile Include="Shared\IEventBusSubscription.cs" />
@@ -417,7 +415,7 @@
     <Compile Include="Components\IRacing\EventHandler\IRacing.cs" />
     <Compile Include="Components\Lua\EventHandler\Lua.cs" />
     <Compile Include="Components\Twitch\EventHandler\Twitch.cs" />
-    <Compile Include="Components\UI\EventHandler\UIEventHandler.cs" />
+    <Compile Include="Components\WinFormUI\EventHandler\WinFormUIEventHandler.cs" />
     <Compile Include="Shared\Lua\ILuaLibraryAutoRegistration.cs" />
     <Compile Include="Shared\Lua\ILuaLibrary.cs" />
     <Compile Include="Shared\Lua\ILuaLibraryRepository.cs" />
@@ -452,7 +450,7 @@
     <None Include="Components\Playback\README.md" />
     <None Include="Components\README.md" />
     <None Include="Components\Twitch\README.md" />
-    <None Include="Components\UI\README.md" />
+    <None Include="Components\WinFormUI\README.md" />
     <None Include="docs\init.lua.md" />
     <None Include="docs\release-checklist.md" />
     <None Include="LuaScripts\iracing_ir.lua" />

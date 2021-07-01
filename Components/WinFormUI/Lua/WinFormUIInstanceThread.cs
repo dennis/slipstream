@@ -1,6 +1,5 @@
 ﻿using Slipstream.Components.Internal;
 using Slipstream.Components.Playback;
-using Slipstream.Components.UI;
 using Slipstream.Components.WinFormUI.Forms;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
@@ -16,7 +15,7 @@ namespace Slipstream.Components.WinFormUI.Lua
         private readonly IEventHandlerController EventHandlerController;
         private readonly IInternalEventFactory InternalEventFactory;
         private readonly IPlaybackEventFactory PlaybackEventFactory;
-        private readonly IUIEventFactory UIEventFactory;
+        private readonly IWinFormUIEventFactory UIEventFactory;
 
         public WinFormUIInstanceThread(
             string instanceId,
@@ -25,7 +24,7 @@ namespace Slipstream.Components.WinFormUI.Lua
             IEventBus eventBus,
             IApplicationVersionService applicationVersionService,
             IEventHandlerController eventHandlerController,
-            IUIEventFactory uiEventFactory,
+            IWinFormUIEventFactory uiEventFactory,
             IPlaybackEventFactory playbackEventFactory) : base(instanceId, logger, eventHandlerController)
         {
             InternalEventFactory = eventFactory;

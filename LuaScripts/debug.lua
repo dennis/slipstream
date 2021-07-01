@@ -8,10 +8,10 @@ Before using this, edit lib/config.lua
 
 local cfg = require("lib/config")
 local util = require("api/util"):instance(cfg.util)
-local ui = require("api/ui"):instance(cfg.ui)
+local ui = require("api/winformui"):instance(cfg.winformui)
 
 function handle(event)
-	if event.EventType ~= "UICommandWriteToConsole" then
+	if event.EventType ~= "WinFormUICommandWriteToConsole" then
 		ui:print(util:event_to_json(event))
 	end
 end

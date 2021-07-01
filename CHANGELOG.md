@@ -13,6 +13,8 @@
    And only scripts using that instance will be notified of its events. Meaning,
    you will not get IRacing events, if you don't have require("api/iracing"):instance(..)
  - You need a new init.lua, so delete your existing init.lua to get a new one.
+ - Merged UI components into WinFormUI. You need to change `require("api/ui")` to
+   `require("api/winformui")`
 
 ## [0.7.0](https://github.com/dennis/slipstream/releases/tag/v0.7.0) (2021-04-30)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.6.0...v0.7.0)

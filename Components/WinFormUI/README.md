@@ -1,4 +1,4 @@
-﻿# UI
+﻿# WinFormUI
 
 Very crude UI functionality. Adds/Removes buttons in the UI. Show text in
 console
@@ -9,10 +9,10 @@ console
 <details><summary>Construction</summary><br />
 
 ```lua
-local ui = require("api/ui"):instance(config)
+local ui = require("api/winformui"):instance(config)
 ```
 
-This will construct an instance of `api/ui` or return an existing instance with 
+This will construct an instance of `api/winformui` or return an existing instance with 
 the same `id` if one exists.
 
 `config` is the initial configuration of the instance if one needs to be created. It is a table with one or more keys as defined below.
@@ -33,7 +33,7 @@ Writes a string to the log shown in the UI.
 ui:print("Hello world")
 ```
 
-This function publishes `UICommandWriteToConsole` event, that is handled by
+This function publishes `WinFormUICommandWriteToConsole` event, that is handled by
 MainWindow.
 
 This function is aliased as ``print`` (deprecated)
@@ -50,7 +50,7 @@ Creates a button if it doesn't exist. If it does exist, it is ignored.
 ui:create_button("Hello UI")
 ```
 
-This function publishes `UICommandCreateButton` event, that is handled by
+This function publishes `WinFormUICommandCreateButton` event, that is handled by
 MainWindow. `UIButtonTriggered` events will be sent, if the button is pressed.
 
 This function is aliased as ``create_button`` (deprecated)
@@ -67,61 +67,61 @@ Deletes a button if it exists.
 ui:delete_button("Hello UI")
 ```
 
-This function publishes `UICommandDeleteButton` event, that is handled by MainWindow.
+This function publishes `WinFormUICommandDeleteButton` event, that is handled by MainWindow.
 
 This function is aliased as ``delete_button`` (deprecated)
 </details>
 
 ## Events
 
-<details><summary>UIButtonTriggered</summary><br />
+<details><summary>WinFormUIButtonTriggered</summary><br />
 Is sent every time a button is pressed
 
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
-| EventType       | string  | `UIButtonTriggered` (constant)                                    |
+| EventType       | string  | `WinFormUIButtonTriggered` (constant)                             |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | Text            | string  | Text of the button                                                |
 
 **JSON Example:**
-`{"EventType":"UIButtonTriggered","Uptime":1742,"Text":"Hello"}`
+`{"EventType":"WinFormUIButtonTriggered","Uptime":1742,"Text":"Hello"}`
 </details>
 
-<details><summary>UICommandCreateButton</summary><br />
+<details><summary>WinFormUICommandCreateButton</summary><br />
 Create a new button, unless it exists
 
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
-| EventType       | string  | `UICommandCreateButton` (constant)                                |
+| EventType       | string  | `WinFormUICommandCreateButton` (constant)                         |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | Text            | string  | Text of the button                                                |
 
 **JSON Example:**
-`{"EventType":"UICommandCreateButton","Uptime":1742,"Text":"Hello"}`
+`{"EventType":"WinFormUICommandCreateButton","Uptime":1742,"Text":"Hello"}`
 </details>
 
-<details><summary>UICommandDeleteButton</summary><br />
+<details><summary>WinFormUICommandDeleteButton</summary><br />
 Removes a button again, if it exists
 
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
-| EventType       | string  | `UICommandDeleteButton` (constant)                                |
+| EventType       | string  | `WinFormUICommandDeleteButton` (constant)                         |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | Text            | string  | Text of the button                                                |
 
 **JSON Example:**
-`{"EventType":"UICommandDeleteButton","Uptime":1742,"Text":"World"}`
+`{"EventType":"WinFormUICommandDeleteButton","Uptime":1742,"Text":"World"}`
 </details>
 
-<details><summary>UICommandWriteToConsole</summary><br />
+<details><summary>WinFormUICommandWriteToConsole</summary><br />
 Output something to the console.
 
 | Name            | Type    | Description                                                       |
 |:----------------|:-------:|:------------------------------------------------------------------|
-| EventType       | string  | `UICommandWriteToConsole` (constant)                              |
+| EventType       | string  | `WinFormUICommandWriteToConsole` (constant)                       |
 | Uptime          | integer | Time of when the message was sent via Eventbus (in milliseconds). |
 | Message         | string  | Message                                                           |
 
 **JSON Example:**
-`{"EventType":"UICommandWriteToConsole","Uptime":1742,"Message":"Hello World"}`
+`{"EventType":"WinFormUICommandWriteToConsole","Uptime":1742,"Message":"Hello World"}`
 </details>

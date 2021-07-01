@@ -2,7 +2,7 @@
 using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
-using Slipstream.Components.UI;
+using Slipstream.Components.WinFormUI;
 using Slipstream.Shared;
 
 #nullable enable
@@ -13,7 +13,7 @@ namespace Slipstream
     {
         private readonly object ThreadLock = new object();
         public IEventBus? EventBus { get; set; }
-        public IUIEventFactory? EventFactory { get; set; }
+        public IWinFormUIEventFactory? EventFactory { get; set; }
         public IEventEnvelope Envelope = new EventEnvelope("SlipstreamConsoleSink");
 
         public void Emit(LogEvent logEvent)
@@ -25,7 +25,7 @@ namespace Slipstream
             {
                 var message = logEvent.RenderMessage();
 
-                EventBus.PublishEvent(EventFactory.CreateUICommandWriteToConsole(Envelope, message));
+                EventBus.PublishEvent(EventFactory.CreateWinFormUICommandWriteToConsole(Envelope, message));
             }
         }
     }

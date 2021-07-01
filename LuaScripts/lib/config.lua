@@ -1,7 +1,7 @@
 ﻿local cfg = {
 	-- This does not need to be changed
 	util = { id = "util" },
-	ui = { id = "ui" },
+	winformui = { id = "winformui" },
 	iracing = { id = "iracing" },
 	state = { id = "state" },
 	audio = { id = "audio" },

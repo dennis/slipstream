@@ -40,7 +40,6 @@ namespace Slipstream.Components.WinFormUI.Lua
         {
             Application.Run(new MainWindow(
                 InstanceId,
-                InstanceEnvelope,
                 this,
                 InternalEventFactory,
                 UIEventFactory,

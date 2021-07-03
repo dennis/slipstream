@@ -1,5 +1,4 @@
-﻿using Slipstream.Components.Internal;
-using Slipstream.Shared;
+﻿using Slipstream.Shared;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -14,12 +13,10 @@ namespace Slipstream.Backend
         private const int EVENT_DELETE_SIZE = 200; // when we hit EVENT_MAX_SIZE. How many elements should we remove?
         private volatile bool enabled = false;
         private readonly ulong StartedAt;
-        private readonly IEventSerdeService EventSerdeService;
 
-        public EventBus(IEventSerdeService eventSerdeService)
+        public EventBus()
         {
             StartedAt = Uptime();
-            EventSerdeService = eventSerdeService;
         }
 
         public bool Enabled
@@ -52,16 +49,24 @@ namespace Slipstream.Backend
             {
                 if (enabled)
                 {
-                    var dbug = "";
                     foreach (var l in Listeners)
                     {
-                        if (e.Envelope.ContainsRecipient(l.InstanceId))
+                        bool applicable = false;
+
+                        foreach (var instanceId in l.InstanceIds)
                         {
-                            dbug += " " + l.InstanceId;
+                            if (e.Envelope.ContainsRecipient(instanceId))
+                            {
+                                applicable = true;
+                                break;
+                            }
+                        }
+
+                        if (applicable)
+                        {
                             l.Add(e);
                         }
                     }
-                    Debug.WriteLine("Delivery event " + EventSerdeService.Serialize(e) + " to: " + dbug);
                 }
                 else
                 {
@@ -82,7 +87,10 @@ namespace Slipstream.Backend
                     {
                         foreach (var e in Events)
                         {
-                            subscription.Add(e);
+                            if (e.Envelope.ContainsRecipient(instanceId))
+                            {
+                                subscription.Add(e);
+                            }
                         }
                     }
                 }
@@ -109,10 +117,7 @@ namespace Slipstream.Backend
                 enabled = true;
                 foreach (var e in PendingEvents)
                 {
-                    foreach (var l in Listeners)
-                    {
-                        l.Add(e);
-                    }
+                    PublishEvent(e);
                 }
 
                 PendingEvents.Clear();

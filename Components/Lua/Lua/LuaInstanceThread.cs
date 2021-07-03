@@ -3,9 +3,7 @@
 using NLua;
 using NLua.Exceptions;
 using Serilog;
-using Slipstream.Backend;
 using Slipstream.Components.Internal;
-using Slipstream.Components.Internal.EventFactory;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
 using System;

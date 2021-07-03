@@ -20,7 +20,6 @@ namespace Slipstream.Components.WinFormUI.Forms
     {
         private Thread? EventHandlerThread;
         private readonly IEventBus EventBus;
-        private readonly IEventEnvelope Envelope;
         private readonly string InstanceId;
         private readonly WinFormUIInstanceThread Instance;
         private readonly IInternalEventFactory InternalEventFactory;
@@ -31,8 +30,9 @@ namespace Slipstream.Components.WinFormUI.Forms
         private readonly IDictionary<string, Button> LuaButtons = new Dictionary<string, Button>();
         private readonly IEventHandlerController EventHandler;
         private bool ShuttingDown = false;
+        private IEventEnvelope Envelope;
 
-        public MainWindow(string instanceId, IEventEnvelope envelope, WinFormUIInstanceThread instance, IInternalEventFactory internalEventFactory, IWinFormUIEventFactory uiEventFactory, IPlaybackEventFactory playbackEventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, IEventHandlerController eventHandlerController)
+        public MainWindow(string instanceId, WinFormUIInstanceThread instance, IInternalEventFactory internalEventFactory, IWinFormUIEventFactory uiEventFactory, IPlaybackEventFactory playbackEventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, IEventHandlerController eventHandlerController)
         {
             InstanceId = instanceId;
             Instance = instance;
@@ -41,7 +41,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             PlaybackEventFactory = playbackEventFactory;
             EventHandler = eventHandlerController;
             EventBus = eventBus;
-            Envelope = envelope;
+            Envelope = new EventEnvelope(instanceId);
 
             InitializeComponent();
 
@@ -74,7 +74,10 @@ namespace Slipstream.Components.WinFormUI.Forms
         private void MainWindow_Load(object sender, EventArgs e)
         {
             EventBusSubscription = EventBus.RegisterListener(InstanceId, fromBeginning: true);
-            EventHandlerThread = new Thread(new ThreadStart(this.EventListenerMain));
+            EventHandlerThread = new Thread(new ThreadStart(this.EventListenerMain))
+            {
+                Name = "EventListenerMain"
+            };
             EventHandlerThread.Start();
         }
 
@@ -121,6 +124,12 @@ namespace Slipstream.Components.WinFormUI.Forms
             uiEventHandler.OnWinFormUICommandWriteToConsole += (_, e) => PendingMessages.Add($"{DateTime.Now:s} {e.Message}");
             uiEventHandler.OnWinFormUICommandCreateButton += (_, e) => EventHandler_OnWinFormUICommandCreateButton(e);
             uiEventHandler.OnWinFormUICommandDeleteButton += (_, e) => EventHandler_OnWinFormUICommandDeleteButton(e);
+
+            internalEventHandler.OnInternaAddDependency += (_, e) =>
+            {
+                Envelope = Envelope.Add(e.InstanceId);
+            };
+            internalEventHandler.OnInternalRemoveDependency += (_, e) => Envelope = Envelope.Remove(e.InstanceId);
 
             while (true)
             {

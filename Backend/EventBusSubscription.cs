@@ -1,5 +1,6 @@
 ﻿using Slipstream.Shared;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 #nullable enable
 
@@ -9,12 +10,12 @@ namespace Slipstream.Backend
     {
         private readonly BlockingCollection<IEvent> Events = new BlockingCollection<IEvent>();
         private readonly IEventBus EventBus;
-        public readonly string InstanceId;
+        public List<string> InstanceIds { get; set; } = new List<string>();
 
         public EventBusSubscription(IEventBus eventBus, string instanceId)
         {
             EventBus = eventBus;
-            InstanceId = instanceId;
+            InstanceIds.Add(instanceId);
         }
 
         public void Add(IEvent ev)
@@ -40,6 +41,16 @@ namespace Slipstream.Backend
             }
 
             return null;
+        }
+
+        public void AddImpersonate(string instanceId)
+        {
+            InstanceIds.Add(instanceId);
+        }
+
+        public void DeleteImpersonation(string instanceId)
+        {
+            InstanceIds.Remove(instanceId);
         }
     }
 }

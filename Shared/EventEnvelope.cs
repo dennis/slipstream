@@ -33,10 +33,10 @@ namespace Slipstream.Shared
         {
             var newRecipients = new List<string>();
 
-            if(Recipients != null)
+            if (Recipients != null)
             {
                 foreach (var r in Recipients)
-                { 
+                {
                     newRecipients.Add(r);
                 }
             }
@@ -53,7 +53,7 @@ namespace Slipstream.Shared
         {
             var newRecipients = new List<string>();
 
-            if(Recipients != null)
+            if (Recipients != null)
             {
                 foreach (var r in Recipients)
                 {

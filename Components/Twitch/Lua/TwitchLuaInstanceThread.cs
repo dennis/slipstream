@@ -72,17 +72,17 @@ namespace Slipstream.Components.Twitch.Lua
             {
                 IEvent? @event = Subscription.NextEvent(100);
 
+                if (@event != null)
+                {
+                    EventHandlerController.HandleEvent(@event);
+                }
+
                 if (RequestReconnect)
                 {
                     Disconnect();
                     Connect();
 
                     RequestReconnect = false;
-                }
-
-                if (@event != null)
-                {
-                    EventHandlerController.HandleEvent(@event);
                 }
             }
         }
@@ -270,7 +270,7 @@ namespace Slipstream.Components.Twitch.Lua
         private void OnDisconnect(object sender, OnDisconnectedEventArgs e)
         {
             AnnounceDisconnected();
-            RequestReconnect = true;
+            RequestReconnect = !Stopping;
         }
 
         private void OnError(object sender, OnErrorEventArgs e)

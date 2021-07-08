@@ -23,6 +23,7 @@ namespace Slipstream.Shared.Lua
             InstanceEnvelope = new EventEnvelope(instanceId);
 
             var internalHandler = eventHandlerController.Get<Internal>();
+            internalHandler.OnInternalCommandShutdown += (_, e) => Stopping = true;
             internalHandler.OnInternaAddDependency += (_, e) => InstanceEnvelope = InstanceEnvelope.Add(e.InstanceId);
             internalHandler.OnInternalRemoveDependency += (_, e) => InstanceEnvelope = InstanceEnvelope.Remove(e.InstanceId);
 
@@ -52,6 +53,8 @@ namespace Slipstream.Shared.Lua
 
             if (AutoStart)
             {
+                Logger.Debug($"Autostarting {GetType().Name } {InstanceId}");
+
                 AutoStart = false;
                 Stopping = false;
                 ThreadMain();

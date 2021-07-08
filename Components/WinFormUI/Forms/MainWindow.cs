@@ -31,6 +31,7 @@ namespace Slipstream.Components.WinFormUI.Forms
         private readonly IEventHandlerController EventHandler;
         private bool ShuttingDown = false;
         private IEventEnvelope Envelope;
+        private readonly IEventEnvelope BroadcastEnvelope;
 
         public MainWindow(string instanceId, WinFormUIInstanceThread instance, IInternalEventFactory internalEventFactory, IWinFormUIEventFactory uiEventFactory, IPlaybackEventFactory playbackEventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, IEventHandlerController eventHandlerController)
         {
@@ -42,6 +43,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             EventHandler = eventHandlerController;
             EventBus = eventBus;
             Envelope = new EventEnvelope(instanceId);
+            BroadcastEnvelope = new EventEnvelope(instanceId);
 
             InitializeComponent();
 
@@ -58,7 +60,7 @@ namespace Slipstream.Components.WinFormUI.Forms
                 // Just request we want to shut down. We'll receive an InternalShutdown if we
                 // actually will shut down
 
-                EventBus.PublishEvent(InternalEventFactory.CreateInternalCommandShutdown(Envelope));
+                EventBus.PublishEvent(InternalEventFactory.CreateInternalCommandShutdown(BroadcastEnvelope));
                 e.Cancel = true;
 
                 return;

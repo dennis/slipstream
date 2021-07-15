@@ -34,21 +34,21 @@ namespace Slipstream.Backend
         {
             e.Envelope.Uptime = Uptime() - StartedAt;
 
-            lock (Events)
-            {
-                if (Events.Count >= EVENT_MAX_SIZE)
-                {
-                    // Is there a better way for deleting x elements from the beginning?
-                    for (int i = 0; i < EVENT_DELETE_SIZE; i++)
-                        Events.RemoveAt(0);
-                }
-                Events.Add(e);
-            }
-
             lock (Listeners)
             {
                 if (enabled)
                 {
+                    lock (Events)
+                    {
+                        if (Events.Count >= EVENT_MAX_SIZE)
+                        {
+                            // Is there a better way for deleting x elements from the beginning?
+                            for (int i = 0; i < EVENT_DELETE_SIZE; i++)
+                                Events.RemoveAt(0);
+                        }
+                        Events.Add(e);
+                    }
+
                     foreach (var l in Listeners)
                     {
                         bool applicable = false;

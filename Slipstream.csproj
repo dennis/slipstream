@@ -58,8 +58,8 @@
     <Reference Include="Autofac, Version=6.2.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>packages\Autofac.6.2.0\lib\netstandard2.0\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="AutoUpdater.NET, Version=1.6.4.0, Culture=neutral, PublicKeyToken=501435c91b35f4bc, processorArchitecture=MSIL">
-      <HintPath>packages\Autoupdater.NET.Official.1.6.4\lib\net45\AutoUpdater.NET.dll</HintPath>
+    <Reference Include="AutoUpdater.NET, Version=1.7.0.0, Culture=neutral, PublicKeyToken=501435c91b35f4bc, processorArchitecture=MSIL">
+      <HintPath>packages\Autoupdater.NET.Official.1.7.0\lib\net45\AutoUpdater.NET.dll</HintPath>
     </Reference>
     <Reference Include="DSharpPlus, Version=3.2.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\DSharpPlus.3.2.3\lib\net47\DSharpPlus.dll</HintPath>
@@ -76,20 +76,20 @@
     <Reference Include="Microsoft.Win32.Registry, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Win32.Registry.5.0.0\lib\net461\Microsoft.Win32.Registry.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil, Version=0.11.3.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
-      <HintPath>packages\Mono.Cecil.0.11.3\lib\net40\Mono.Cecil.dll</HintPath>
+    <Reference Include="Mono.Cecil, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil.Mdb, Version=0.11.3.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
-      <HintPath>packages\Mono.Cecil.0.11.3\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
+    <Reference Include="Mono.Cecil.Mdb, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil.Pdb, Version=0.11.3.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
-      <HintPath>packages\Mono.Cecil.0.11.3\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
+    <Reference Include="Mono.Cecil.Pdb, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil.Rocks, Version=0.11.3.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
-      <HintPath>packages\Mono.Cecil.0.11.3\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
+    <Reference Include="Mono.Cecil.Rocks, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
     </Reference>
-    <Reference Include="NAudio, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
-      <HintPath>packages\NAudio.2.0.0\lib\netstandard2.0\NAudio.dll</HintPath>
+    <Reference Include="NAudio, Version=2.0.1.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
+      <HintPath>packages\NAudio.2.0.1\lib\netstandard2.0\NAudio.dll</HintPath>
     </Reference>
     <Reference Include="NAudio.Asio, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
       <HintPath>packages\NAudio.Asio.2.0.0\lib\netstandard2.0\NAudio.Asio.dll</HintPath>
@@ -97,17 +97,17 @@
     <Reference Include="NAudio.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
       <HintPath>packages\NAudio.Core.2.0.0\lib\netstandard2.0\NAudio.Core.dll</HintPath>
     </Reference>
-    <Reference Include="NAudio.Midi, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
-      <HintPath>packages\NAudio.Midi.2.0.0\lib\netstandard2.0\NAudio.Midi.dll</HintPath>
+    <Reference Include="NAudio.Midi, Version=2.0.1.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
+      <HintPath>packages\NAudio.Midi.2.0.1\lib\netstandard2.0\NAudio.Midi.dll</HintPath>
     </Reference>
     <Reference Include="NAudio.Wasapi, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
       <HintPath>packages\NAudio.Wasapi.2.0.0\lib\netstandard2.0\NAudio.Wasapi.dll</HintPath>
     </Reference>
-    <Reference Include="NAudio.WinForms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
-      <HintPath>packages\NAudio.WinForms.2.0.0\lib\net472\NAudio.WinForms.dll</HintPath>
+    <Reference Include="NAudio.WinForms, Version=2.0.1.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
+      <HintPath>packages\NAudio.WinForms.2.0.1\lib\net472\NAudio.WinForms.dll</HintPath>
     </Reference>
-    <Reference Include="NAudio.WinMM, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
-      <HintPath>packages\NAudio.WinMM.2.0.0\lib\netstandard2.0\NAudio.WinMM.dll</HintPath>
+    <Reference Include="NAudio.WinMM, Version=2.0.1.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
+      <HintPath>packages\NAudio.WinMM.2.0.1\lib\netstandard2.0\NAudio.WinMM.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -115,6 +115,7 @@
     <Reference Include="NLua, Version=1.5.9.0, Culture=neutral, PublicKeyToken=6a194c04b9c89217, processorArchitecture=MSIL">
       <HintPath>packages\NLua.1.5.9\lib\net46\NLua.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationFramework" />
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>packages\Serilog.2.10.0\lib\net46\Serilog.dll</HintPath>
     </Reference>
@@ -179,6 +180,7 @@
     <Reference Include="TwitchLib.Communication, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\TwitchLib.Communication.1.0.3\lib\netstandard2.0\TwitchLib.Communication.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Backend\EventBus.cs" />

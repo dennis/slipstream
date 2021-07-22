@@ -2,11 +2,14 @@
 
 using DSharpPlus;
 using DSharpPlus.Entities;
+
 using Serilog;
+
 using Slipstream.Components.Discord.EventHandler;
 using Slipstream.Components.Discord.Events;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
+
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -65,8 +68,7 @@ namespace Slipstream.Components.Discord.Lua
                         Token = Token,
                         TokenType = TokenType.Bot,
                         AutoReconnect = true,
-                        EnableCompression = true,
-                        LogLevel = LogLevel.Debug,
+                        MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Information
                     });
 
                     Client.ConnectAsync().GetAwaiter().GetResult();
@@ -82,6 +84,11 @@ namespace Slipstream.Components.Discord.Lua
             Logger.Debug($"Stopping {nameof(DiscordServiceThread)} {InstanceId}");
         }
 
+        private Task Client_Ready1(DiscordClient sender, DSharpPlus.EventArgs.ReadyEventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
+
         private void OnDiscordCommandSendMessage(DiscordCommandSendMessage e)
         {
             if (Client == null)
@@ -94,16 +101,27 @@ namespace Slipstream.Components.Discord.Lua
                 DiscordChannelIdMap.Add(e.ChannelId, channel);
             }
 
-            DiscordChannelIdMap[e.ChannelId].SendMessageAsync(e.Message, e.TextToSpeech);
+            if (e.TextToSpeech)
+            {
+                new DiscordMessageBuilder()
+                    .WithContent(e.Message)
+                    .HasTTS(true)
+                    .SendAsync(DiscordChannelIdMap[e.ChannelId])
+                    .GetAwaiter().GetResult();
+            }
+            else
+            {
+                DiscordChannelIdMap[e.ChannelId].SendMessageAsync(e.Message);
+            }
         }
 
-        private Task Client_SocketClosed(DSharpPlus.EventArgs.SocketCloseEventArgs e)
+        private Task Client_SocketClosed(DiscordClient sender, DSharpPlus.EventArgs.SocketCloseEventArgs e)
         {
             EventBus.PublishEvent(DiscordEventFactory.CreateDiscordDisconnected(InstanceEnvelope));
             return Task.CompletedTask;
         }
 
-        private Task Client_Ready(DSharpPlus.EventArgs.ReadyEventArgs e)
+        private Task Client_Ready(DiscordClient sender, DSharpPlus.EventArgs.ReadyEventArgs e)
         {
             EventBus.PublishEvent(DiscordEventFactory.CreateDiscordConnected(InstanceEnvelope));
 
@@ -113,7 +131,7 @@ namespace Slipstream.Components.Discord.Lua
             return Task.CompletedTask;
         }
 
-        private Task Client_MessageCreated(DSharpPlus.EventArgs.MessageCreateEventArgs e)
+        private Task Client_MessageCreated(DiscordClient sender, DSharpPlus.EventArgs.MessageCreateEventArgs e)
         {
             if (e.Author.IsCurrent)
                 return Task.CompletedTask;

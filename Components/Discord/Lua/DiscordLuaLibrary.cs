@@ -1,7 +1,7 @@
 ﻿#nullable enable
 
 using Autofac;
-using Slipstream.Components.Internal;
+
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
@@ -29,9 +29,12 @@ namespace Slipstream.Components.Discord.Lua
             var instanceId = cfg.Extract<string>("id");
             var token = cfg.Extract<string>("token");
 
+            var subscription = EventBus.RegisterListener(instanceId);
+
             return scope.Resolve<IDiscordInstanceThread>(
                 new NamedParameter("instanceId", instanceId),
-                new NamedParameter("token", token)
+                new NamedParameter("token", token),
+                new TypedParameter(typeof(IEventBusSubscription), subscription)
             );
         }
     }

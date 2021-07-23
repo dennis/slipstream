@@ -19,6 +19,7 @@ namespace Slipstream.Components.Discord.Lua
         {
             return LifetimeScope.Resolve<IDiscordLuaChannelReference>(
                 new NamedParameter("instanceId", InstanceId),
+                new NamedParameter("luaScriptInstanceId", LuaScriptInstanceId),
                 new NamedParameter("channelId", channelId));
         }
     }

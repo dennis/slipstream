@@ -1,5 +1,6 @@
 ﻿using Slipstream.Components.IRacing.Models;
 using Slipstream.Shared;
+
 using System.Collections.Generic;
 using System.Linq;
 
@@ -279,6 +280,9 @@ namespace Slipstream.Components.IRacing.Trackers
 
         private bool UpdateTrackerState(GameState.IState currentState, bool someoneIsBlinking, GameState.Car car)
         {
+            if (!LastCarData.ContainsKey(car.CarIdx))
+                AddToLastCarData(currentState, car);
+
             var carTrackerState = LastCarData[car.CarIdx];
 
             carTrackerState.LastAbsolutePosition = carTrackerState.AbsolutePosition;
@@ -408,47 +412,52 @@ namespace Slipstream.Components.IRacing.Trackers
 
             foreach (var car in currentState.Cars)
             {
-                if (car.UserId != -1 && !car.IsSpectator)
+                AddToLastCarData(currentState, car);
+            }
+        }
+
+        private void AddToLastCarData(GameState.IState currentState, GameState.Car car)
+        {
+            if (car.UserId != -1 && !car.IsSpectator)
+            {
+                var ignoredUntilOnTrack = car.Location == IIRacingEventFactory.CarLocation.InPitStall;
+                var preLap = car.Laps == 1 && LastSessionState != IIRacingEventFactory.IRacingSessionStateEnum.Invalid; // Initially lastsessionstate is invalid, so if we see it here, it mean that we're dropped directly into a race without any warmup/getincar/paradealps etc
+                var laps = car.Laps;
+                var lapDistPct = car.LapDistPct;
+
+                // Some tracks some of the cars starts in front of the s/f line (like Bathurst) and the
+                // rest behind the line. To properly be able to sort this, we'll pretend they are a
+                // lap down, so they dont get calculated as in front of everbody. We do this by setting
+                // preLap
+
+                if (lapDistPct > 0.5)
                 {
-                    var ignoredUntilOnTrack = car.Location == IIRacingEventFactory.CarLocation.InPitStall;
-                    var preLap = car.Laps == 1 && LastSessionState != IIRacingEventFactory.IRacingSessionStateEnum.Invalid; // Initially lastsessionstate is invalid, so if we see it here, it mean that we're dropped directly into a race without any warmup/getincar/paradealps etc
-                    var laps = car.Laps;
-                    var lapDistPct = car.LapDistPct;
-
-                    // Some tracks some of the cars starts in front of the s/f line (like Bathurst) and the
-                    // rest behind the line. To properly be able to sort this, we'll pretend they are a
-                    // lap down, so they dont get calculated as in front of everbody. We do this by setting
-                    // preLap
-
-                    if (lapDistPct > 0.5)
-                    {
-                        preLap = true;
-                    }
-
-                    Debug($"{currentState.SessionTime} Hello caridx-#{car.CarIdx} {car.CarNumber} {car.UserName} laps={car.Laps}, LapDistPct={car.LapDistPct}, PreLap={preLap}, Location={car.Location}, IgnoredUntilOnTrack={ignoredUntilOnTrack}");
-
-                    if (preLap)
-                    {
-                        laps--;
-                    }
-
-                    LastCarData.Add(car.CarIdx, new CarData
-                    {
-                        AbsolutePosition = laps + car.LapDistPct,
-                        CurrentPositionInClass = car.ClassPosition,
-                        CurrentPositionInRace = car.Position,
-                        LastLap = laps,
-                        LastLapDistPct = car.LapDistPct,
-                        LastLocation = car.Location,
-                        PreLap = preLap,
-                        IgnoredUntilOnTrack = ignoredUntilOnTrack,
-                        CarClassId = car.CarClassId,
-                    });
+                    preLap = true;
                 }
-                else
+
+                Debug($"{currentState.SessionTime} Hello caridx-#{car.CarIdx} {car.CarNumber} {car.UserName} laps={car.Laps}, LapDistPct={car.LapDistPct}, PreLap={preLap}, Location={car.Location}, IgnoredUntilOnTrack={ignoredUntilOnTrack}");
+
+                if (preLap)
                 {
-                    Debug($"Ignoring {car.CarIdx} {car.UserName}");
+                    laps--;
                 }
+
+                LastCarData.Add(car.CarIdx, new CarData
+                {
+                    AbsolutePosition = laps + car.LapDistPct,
+                    CurrentPositionInClass = car.ClassPosition,
+                    CurrentPositionInRace = car.Position,
+                    LastLap = laps,
+                    LastLapDistPct = car.LapDistPct,
+                    LastLocation = car.Location,
+                    PreLap = preLap,
+                    IgnoredUntilOnTrack = ignoredUntilOnTrack,
+                    CarClassId = car.CarClassId,
+                });
+            }
+            else
+            {
+                Debug($"Ignoring {car.CarIdx} {car.UserName}");
             }
         }
 

@@ -93,5 +93,35 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
                 }
             }
         }
+
+        [Fact]
+        public void NewCarMidSession()
+        {
+            const float NOW = 1234.2f;
+
+            // arrange
+
+            // car0 is front of car1
+            Builder
+                .AtSessionTime(NOW)
+                .Set(a => a.DriverCarIdx = 0)
+                .Set(a => a.SessionType = IIRacingEventFactory.IRacingSessionTypeEnum.Race)
+                .Set(a => a.SessionState = IIRacingEventFactory.IRacingSessionStateEnum.Racing)
+                .Car(0).OnTrack().Set(a => a.LapDistPct = 0.44f).CarDone()
+                .Commit();
+            // wild car1 appears
+            Builder
+                .AtSessionTime(NOW + 1)
+                .Car(1).OnTrack().Set(a => a.LapDistPct = 0.50f).CarDone()
+                .Commit();
+
+            // act
+            var sut = new TrackPositionTracker(EventBus, EventFactory);
+            foreach (var s in Builder.States)
+                sut.Handle(s, TrackerState, new EventEnvelope("sender"));
+
+            // assert
+            Assert.Equal(1, EventBus.Events.Count);
+        }
     }
 }

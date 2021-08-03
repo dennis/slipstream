@@ -1,5 +1,6 @@
 ﻿using Slipstream.Components.IRacing.Models;
 using Slipstream.Shared;
+
 using System;
 
 #nullable enable
@@ -29,7 +30,10 @@ namespace Slipstream.Components.IRacing.Trackers
                     state.CarsTracked.Add(car.CarIdx, carState);
                 }
 
-                if (carState.LastOnPitRoad != onPitRoad)
+                // Ignore car data if the location is NotInWord. In team events when changing drivers, it seems that the
+                // car is NotInWorld before returning to pits - and that will give two PitEnter events. To avoid this, we
+                // ignore data with NotInWorld.. NotInWorld also happens when you blink, but we can also ignore these.
+                if (carState.LastOnPitRoad != onPitRoad && car.Location != IIRacingEventFactory.CarLocation.NotInWorld)
                 {
                     var localUser = currentState.DriverCarIdx == car.CarIdx;
                     var now = currentState.SessionTime;
@@ -54,7 +58,7 @@ namespace Slipstream.Components.IRacing.Trackers
                         {
                             float? fuelLeft = null;
 
-                            if(localUser)
+                            if (localUser)
                             {
                                 fuelLeft = currentState.FuelLevel;
                             }

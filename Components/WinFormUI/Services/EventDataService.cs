@@ -40,7 +40,7 @@ namespace Slipstream.Components.WinFormUI.Services
         private static string GetDescriptionFromAttribute(PropertyInfo p)
         {
             return Attribute.IsDefined(p, typeof(DescriptionAttribute)) ?
-                    (Attribute.GetCustomAttribute(p, typeof(DescriptionAttribute)) as DescriptionAttribute).Description : null;
+                    (Attribute.GetCustomAttribute(p, typeof(DescriptionAttribute)) as DescriptionAttribute).Description : "";
         }
 
         private static IList<EventPropertyInfoModel> BuildEventProperties(Type t)

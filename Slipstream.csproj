@@ -64,6 +64,9 @@
     <Reference Include="DSharpPlus, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\DSharpPlus.4.0.1\lib\netstandard2.0\DSharpPlus.dll</HintPath>
     </Reference>
+    <Reference Include="EmbedIO, Version=3.4.3.0, Culture=neutral, PublicKeyToken=5e5f048b6e04267e, processorArchitecture=MSIL">
+      <HintPath>packages\EmbedIO.3.4.3\lib\netstandard2.0\EmbedIO.dll</HintPath>
+    </Reference>
     <Reference Include="Emzi0767.Common, Version=2.6.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Emzi0767.Common.2.6.2\lib\net45\Emzi0767.Common.dll</HintPath>
     </Reference>
@@ -124,6 +127,9 @@
     </Reference>
     <Reference Include="Serilog.Sinks.Console, Version=4.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>packages\Serilog.Sinks.Console.4.0.0\lib\net45\Serilog.Sinks.Console.dll</HintPath>
+    </Reference>
+    <Reference Include="Swan.Lite, Version=3.0.0.0, Culture=neutral, PublicKeyToken=30c707c872729fff, processorArchitecture=MSIL">
+      <HintPath>packages\Unosquare.Swan.Lite.3.0.0\lib\net461\Swan.Lite.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -267,6 +273,23 @@
     <Compile Include="Components\Lua\Lua\LuaInstanceThread.LuaLibraryInstanceTracker.cs" />
     <Compile Include="Components\Lua\Lua\StateLuaReference.cs" />
     <Compile Include="Components\Lua\Lua\UtilLuaReference.cs" />
+    <Compile Include="Components\WebWidget\EventFactory\WebWidgetEventFactory.cs" />
+    <Compile Include="Components\WebWidget\IWebWidgetEventFactory.cs" />
+    <Compile Include="Components\WebWidget\EventHandler\WebWidgetEventHandler.cs" />
+    <Compile Include="Components\WebWidget\Events\WebWidgetCommandEvent.cs" />
+    <Compile Include="Components\WebWidget\IHttpServer.cs" />
+    <Compile Include="Components\WebWidget\IHttpServerApi.cs" />
+    <Compile Include="Components\WebWidget\InstanceIndexWebModule.cs" />
+    <Compile Include="Components\WebWidget\InstanceWebModule.cs" />
+    <Compile Include="Components\WebWidget\IWebWidgetInstances.cs" />
+    <Compile Include="Components\WebWidget\JavascriptWebModule.cs" />
+    <Compile Include="Components\WebWidget\Lua\WebWidgetInstanceThread.cs" />
+    <Compile Include="Components\WebWidget\HttpServer.cs" />
+    <Compile Include="Components\WebWidget\Lua\WebWidgetLuaLibrary.cs" />
+    <Compile Include="Components\WebWidget\Lua\WebWidgetLuaReference.cs" />
+    <Compile Include="Components\WebWidget\Lua\IWebWidgetInstanceThread.cs" />
+    <Compile Include="Components\WebWidget\WebSocketsEventsServer.cs" />
+    <Compile Include="Components\WebWidget\WebWidgetInstances.cs" />
     <Compile Include="Shared\EventEnvelope.cs" />
     <Compile Include="Shared\IEventEnvelope.cs" />
     <Compile Include="Shared\Lua\BaseLuaLibrary.cs" />
@@ -508,18 +531,22 @@
     <None Include="Components\Playback\README.md" />
     <None Include="Components\README.md" />
     <None Include="Components\Twitch\README.md" />
-    <None Include="Components\WinFormUI\README.md" />
+    <None Include="Components\WebWidget\README.md" />
     <None Include="docs\init.lua.md" />
     <None Include="docs\release-checklist.md" />
-    <None Include="LuaScripts\iracing_ir.lua" />
-    <None Include="LuaScripts\iracing_track.lua" />
-    <None Include="LuaScripts\lib\common.lua" />
-    <None Include="LuaScripts\iracing_car.lua" />
-    <None Include="LuaScripts\iracing_prechecks.lua" />
-    <None Include="LuaScripts\iracing_sof.lua" />
-    <None Include="LuaScripts\lib\config.lua" />
+    <None Include="Samples\Debug\README.md" />
+    <None Include="Samples\IRacing - Audio - Prechecks\README.md" />
+    <None Include="Samples\IRacing - Twitch - IR Command\Scripts\iracing_ir.lua" />
+    <None Include="Samples\IRacing - Twitch - IR Command\README.md" />
+    <None Include="Samples\IRacing - Twitch - SoF Command\README.md" />
+    <None Include="Samples\IRacing - Twitch - Track Command\Scripts\iracing_track.lua" />
+    <None Include="Samples\Common\Scripts\common.lua" />
+    <None Include="Samples\IRacing - Twitch - Car Command\Scripts\iracing_car.lua" />
+    <None Include="Samples\IRacing - Audio - Prechecks\Scripts\iracing_prechecks.lua" />
+    <None Include="Samples\IRacing - Twitch - SoF Command\Scripts\iracing_sof.lua" />
+    <None Include="Samples\Common\Scripts\config.lua" />
     <None Include="README.md" />
-    <None Include="LuaScripts\debug.lua" />
+    <None Include="Samples\Debug\Scripts\debug.lua" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -530,6 +557,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Samples\IRacing - Twitch - Car Command\README.md" />
+    <None Include="Samples\IRacing - Twitch - Track Command\README.md" />
+    <None Include="Samples\IRacing - WebWidget - ChatOn Command\README.md" />
+    <None Include="Samples\IRacing - WebWidget - ChatOn Command\Scripts\chatstate.lua" />
     <None Include="Slipstream.nuspec" />
   </ItemGroup>
   <ItemGroup>
@@ -548,6 +579,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Samples\IRacing - WebWidget - ChatOn Command\WebWidgets\Textbox\controller.js" />
+    <Content Include="Samples\IRacing - WebWidget - ChatOn Command\WebWidgets\Textbox\index.html" />
+    <Content Include="Samples\IRacing - WebWidget - ChatOn Command\WebWidgets\Textbox\style.css" />
+    <EmbeddedResource Include="Backend\WebWidget\ss.js" />
+    <EmbeddedResource Include="Backend\WebWidget\InstanceIndex.html" />
     <Content Include="docs\img\screen_shot.PNG" />
   </ItemGroup>
   <ItemGroup>

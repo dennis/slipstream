@@ -64,7 +64,7 @@ namespace Slipstream.Shared.Lua
 
         protected abstract TInstance CreateInstance(ILifetimeScope scope, Parameters cfg);
 
-        protected void HandleInstance(string instanceId, Parameters cfg)
+        protected virtual void HandleInstance(string instanceId, Parameters cfg)
         {
             if (!Instances.ContainsKey(instanceId))
             {

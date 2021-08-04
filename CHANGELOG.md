@@ -13,6 +13,10 @@
    And only scripts using that instance will be notified of its events. Meaning,
    you will not get IRacing events, if you don't have require("api/iracing"):instance(..)
  - You need a new init.lua, so delete your existing init.lua to get a new one.
+ - IRacing: Adds pit-stop lua functions: pit_clear_all(), pit_clear_tyres(), 
+   pit_fast_repair(), pit_add_fuel(), pit_change_(left|right)_(front|rear)_tyre()
+   and pit_clean_windshield()
+ - New Component: WebWidgets
  - Merged UI components into WinFormUI. You need to change `require("api/ui")` to
    `require("api/winformui")`
 

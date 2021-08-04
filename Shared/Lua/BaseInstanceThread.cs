@@ -104,7 +104,7 @@ namespace Slipstream.Shared.Lua
                 ServiceThread.Join();
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             Stopping = true;
             if (ServiceThread?.IsAlive == true)

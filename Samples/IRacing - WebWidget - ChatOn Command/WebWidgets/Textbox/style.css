@@ -1,0 +1,64 @@
+html, body {
+    font-family: 'Open Sans', sans-serif;
+}
+
+.offline {
+    background-color: #000a;
+}
+
+.online {
+}
+
+.wrapper {
+    width: 100%;
+    z-index: 10;
+    position: absolute;
+    overflow: hidden;
+}
+
+    .wrapper.from-left {
+        left: 0;
+    }
+
+wrapper.from-right {
+    right: 0;
+}
+
+wrapper.from-top {
+    top: 0;
+}
+
+wrapper.from-bottom {
+    bottom: 0;
+}
+
+.wrapper .content {
+    padding: 5px 20px;
+    background-color: black;
+    color: white;
+    border-left: 1rem solid blue;
+}
+
+.wrapper.transition .content {
+    transition: transform .5s ease;
+}
+
+.wrapper.from-left .content {
+    transform: translateX(-100%);
+}
+
+.wrapper.from-right .content {
+    transform: translateX(100%);
+}
+
+.wrapper.from-top .content {
+    transform: translateY(-100%);
+}
+
+.wrapper.from-bottom .content {
+    transform: translateY(100%);
+}
+
+.wrapper.show .content {
+    transform: translateX(0);
+}

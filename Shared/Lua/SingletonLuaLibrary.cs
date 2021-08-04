@@ -1,11 +1,15 @@
 ﻿#nullable enable
 
 using Autofac;
+using NLua;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
+using System.Diagnostics;
 
 namespace Slipstream.Shared.Lua
 {
+    // This will at most create one instance with id "singleton". Can be used for eg. IRacing, where more than one instance
+    // doesn't make sense.
     public abstract class SingletonLuaLibrary<TInstance, TReference> : BaseLuaLibrary<TInstance, TReference>
         where TInstance : ILuaInstanceThread
         where TReference : ILuaReference

@@ -8,9 +8,7 @@ namespace Slipstream.Components.Twitch.Events
     public class TwitchReceivedMessage : IEvent
     {
         public string EventType => nameof(TwitchReceivedMessage);
-        
         public IEventEnvelope Envelope { get; set; } = new EventEnvelope();
-        
 
         [Description("User that sent the message")]
         public string From { get; set; } = string.Empty;

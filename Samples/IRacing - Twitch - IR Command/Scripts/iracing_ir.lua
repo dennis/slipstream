@@ -1,13 +1,3 @@
---[[
-
-	Provides "!ir" command, that will shown the latest seen IRating/License info
-
-	- "!ir" - shows IRating/License for current category of the session (road, dirt, dirtoval, dirtroad)
-	- "!ir <road|dirt|dirtroad|oval>" - show of another category than current
-
-	Before using this, edit lib/config.lua
---]]
-
 local cfg = require("lib/config")
 local iracing = require("api/iracing"):instance(cfg.iracing)
 local twitch = require("api/twitch"):instance(cfg.twitch)

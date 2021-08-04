@@ -105,6 +105,8 @@ namespace Slipstream
             builder.RegisterType<Components.WinFormUI.Lua.WinFormUIReference>().As<Components.WinFormUI.Lua.IWinFormUIReference>().InstancePerDependency();
             builder.RegisterType<Components.AppilcationUpdate.Lua.ApplicationUpdateInstanceThread>().As<Components.AppilcationUpdate.Lua.IApplicationUpdateInstanceThread>().InstancePerDependency();
             builder.RegisterType<Components.AppilcationUpdate.Lua.ApplicationUpdateReference>().As<Components.AppilcationUpdate.Lua.IApplicationUpdateReference>().InstancePerDependency();
+            builder.RegisterType<Components.WebWidget.Lua.WebWidgetInstanceThread>().As<Components.WebWidget.Lua.IWebWidgetInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.WebWidget.HttpServer>().As<Components.WebWidget.IHttpServer>().As<Components.WebWidget.IHttpServerApi>().SingleInstance();
         }
 
         private class PopulateSink

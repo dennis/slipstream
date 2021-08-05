@@ -6,8 +6,6 @@ using Slipstream.Components.WinFormUI.Events;
 using Slipstream.Components.WinFormUI.Lua;
 using Slipstream.Shared;
 
-using Swan.Parsers;
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

@@ -49,7 +49,7 @@ namespace Slipstream.Components.WinFormUI.Services
             var exclusionList = new List<string>
             {
                "EventType",
-               "ExcludeFromTxrx"
+               "Envelope"
             };
 
             var props = t.GetProperties(BindingFlags.Public | BindingFlags.Instance);

@@ -2,10 +2,14 @@
 
 using System;
 using System.IO;
+using System.Runtime.Versioning;
 using System.Speech.Synthesis;
 using System.Threading;
+
 using NAudio.Wave;
+
 using Serilog;
+
 using Slipstream.Components.Audio.EventHandler;
 using Slipstream.Components.Audio.Events;
 using Slipstream.Shared;
@@ -13,6 +17,9 @@ using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.Audio.Lua
 {
+#if WINDOWS
+
+    [SupportedOSPlatform("windows")]
     public class AudioInstanceThread : BaseInstanceThread, IAudioInstanceThread, IDisposable
     {
         private readonly SpeechSynthesizer Synthesizer = new SpeechSynthesizer();
@@ -114,10 +121,12 @@ namespace Slipstream.Components.Audio.Lua
 
         private void PlaybackStoppedReceived(object sender, StoppedEventArgs e)
         {
-            if(e.Exception != null)
+            if (e.Exception != null)
             {
                 Logger.Error("Error playing audio: {Message}", e.Exception.Message);
             }
         }
     }
+
+#endif
 }

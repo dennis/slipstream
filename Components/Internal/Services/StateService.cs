@@ -156,9 +156,9 @@ namespace Slipstream.Components.Internal.Services
             }
         }
 
-        private bool IsValidKey(string value)
+        private static bool IsValidKey(string value)
         {
-            return value.IndexOf('\t') == -1;
+            return !value.Contains('\t');
         }
     }
 }

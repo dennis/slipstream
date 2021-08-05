@@ -9,6 +9,7 @@ using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using Slipstream.Shared.Lua;
 
+using System;
 using System.Collections.Generic;
 
 namespace Slipstream.Components.Lua.Lua
@@ -38,6 +39,7 @@ namespace Slipstream.Components.Lua.Lua
 
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
         }
 
         public ILuaReference? GetInstance(string _, LuaTable cfgTable)

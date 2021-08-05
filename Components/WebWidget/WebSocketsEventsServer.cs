@@ -48,7 +48,7 @@ namespace Slipstream.Components.WebWidget
 
         private static string ParseInstanceId(IWebSocketContext context)
         {
-            return context.RequestUri.LocalPath.Substring("/events/".Length);
+            return context.RequestUri.LocalPath["/events/".Length..];
         }
 
         protected override Task OnClientDisconnectedAsync(IWebSocketContext context)

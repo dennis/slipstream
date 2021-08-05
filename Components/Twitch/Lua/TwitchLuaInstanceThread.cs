@@ -37,7 +37,7 @@ namespace Slipstream.Components.Twitch.Lua
         // users. Moderator got a bit more room.
         private const int CommandsReserved = 5;
 
-        private TimeSpan ThrottleDuration = TimeSpan.FromSeconds(30);
+        private readonly TimeSpan ThrottleDuration = TimeSpan.FromSeconds(30);
         private int MaximumCommandsWithinThottleDuration = 20 - CommandsReserved; // As API  might send more commands (in addition to message) - we decrease it a bit
         private DateTime ThrottleDurationStart = DateTime.UtcNow;
         private int CommandCountWithinThrottleDuration = 0;
@@ -93,6 +93,7 @@ namespace Slipstream.Components.Twitch.Lua
         {
             Disconnect();
             base.Dispose();
+            GC.SuppressFinalize(this);
         }
 
         private void ThrottleSafe(Action action)

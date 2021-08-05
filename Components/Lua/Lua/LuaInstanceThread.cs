@@ -185,7 +185,7 @@ SS = {{
 ");
         }
 
-        private string RandomString(int length)
+        private static string RandomString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             return new string(Enumerable.Repeat(chars, length)
@@ -248,7 +248,7 @@ SS = {{
             }
         }
 
-        private void HandleDelayedExecution(IDictionary<string, DelayedExecution> functions)
+        private static void HandleDelayedExecution(IDictionary<string, DelayedExecution> functions)
         {
             var triggeredFunctions = new Dictionary<string, DelayedExecution>();
 

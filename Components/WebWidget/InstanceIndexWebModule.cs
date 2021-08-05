@@ -6,8 +6,10 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using EmbedIO;
 using EmbedIO.Routing;
+
 using Serilog;
 
 namespace Slipstream.Components.WebWidget
@@ -53,7 +55,7 @@ namespace Slipstream.Components.WebWidget
             {
                 var content = "";
 
-                if(Instances.GetIds().Count == 0)
+                if (Instances.GetIds().Count == 0)
                 {
                     content = Template.Replace("{{CONTENT}}", "No instances");
                 }
@@ -72,12 +74,12 @@ namespace Slipstream.Components.WebWidget
                 context.Response.Headers.Add(HttpHeaderNames.CacheControl, "no-cache");
                 return context.SendStringAsync(content, MimeType.Html, Encoding.UTF8);
             }
-            catch(KeyNotFoundException _)
+            catch (KeyNotFoundException)
             {
                 context.Response.StatusCode = 404;
                 return Task.CompletedTask;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Logger.Error(e.Message);
                 throw;

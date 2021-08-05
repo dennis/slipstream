@@ -1,5 +1,6 @@
 ﻿using Slipstream.Components.WinFormUI.Models;
 using Slipstream.Shared;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -40,7 +41,7 @@ namespace Slipstream.Components.WinFormUI.Services
         private static string GetDescriptionFromAttribute(PropertyInfo p)
         {
             return Attribute.IsDefined(p, typeof(DescriptionAttribute)) ?
-                    (Attribute.GetCustomAttribute(p, typeof(DescriptionAttribute)) as DescriptionAttribute).Description : "";
+                    (Attribute.GetCustomAttribute(p, typeof(DescriptionAttribute)) as DescriptionAttribute)?.Description ?? "" : "";
         }
 
         private static IList<EventPropertyInfoModel> BuildEventProperties(Type t)
@@ -55,13 +56,13 @@ namespace Slipstream.Components.WinFormUI.Services
 
             return props
                 .Where(p => !exclusionList.Any(exc => exc == p.Name))
-                .Select(p => new EventPropertyInfoModel 
-            { 
-                Name = p.Name,
-                IsComplex = p.PropertyType.Namespace.StartsWith("Slipstream"),
-                Type = p.PropertyType,
-                Description = GetDescriptionFromAttribute(p)
-            }).ToList();
+                .Select(p => new EventPropertyInfoModel
+                {
+                    Name = p.Name,
+                    IsComplex = p.PropertyType.Namespace?.StartsWith("Slipstream") ?? false,
+                    Type = p.PropertyType,
+                    Description = GetDescriptionFromAttribute(p)
+                }).ToList();
         }
     }
 }

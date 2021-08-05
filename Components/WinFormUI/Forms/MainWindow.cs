@@ -58,7 +58,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             FormClosing += MainWindow_FormClosing;
         }
 
-        private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
+        private void MainWindow_FormClosing(object? sender, FormClosingEventArgs e)
         {
             if (!ShuttingDown)
             {
@@ -78,7 +78,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             EventHandlerThread = null;
         }
 
-        private void MainWindow_Load(object sender, EventArgs e)
+        private void MainWindow_Load(object? sender, EventArgs e)
         {
             EventBusSubscription = EventBus.RegisterListener(InstanceId, fromBeginning: true);
             EventHandlerThreadCancellationToken = EventHandlerThreadCts.Token;

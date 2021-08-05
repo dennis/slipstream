@@ -1,9 +1,11 @@
 ﻿#nullable enable
 
 using iRacingSDK;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using static Slipstream.Components.IRacing.IIRacingEventFactory;
 
 namespace Slipstream.Components.IRacing.GameState
@@ -154,7 +156,7 @@ namespace Slipstream.Components.IRacing.GameState
                         CarClassId = ds.SessionData.DriverInfo.Drivers.Where(a => a.CarIdx == idx).Select(a => a.CarClassID).FirstOrDefault()
                     };
 
-                    if (Cars.TryGetValue(idx, out Car existingCar))
+                    if (Cars.TryGetValue(idx, out Car? existingCar))
                     {
                         // If the car we just created, already exists in our existing cars dictionary,
                         // then reuse that instance instead of adding a new one

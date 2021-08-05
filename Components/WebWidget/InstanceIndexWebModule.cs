@@ -33,11 +33,21 @@ namespace Slipstream.Components.WebWidget
 
             var assembly = GetType().Assembly;
             using var s = assembly.GetManifestResourceStream("Slipstream.Backend.WebWidget.InstanceIndex.html");
-            using var sr = new StreamReader(s);
-            Template = sr.ReadToEnd();
+            if (s != null)
+            {
+                using var sr = new StreamReader(s);
+                Template = sr.ReadToEnd();
+            }
+            else
+            {
+                throw new Exception("Resource not available: Slipstream.Backend.WebWidget.InstanceIndex.html");
+            }
         }
 
+#pragma warning disable CS8766 // Nullability of reference types in return type doesn't match implicitly implemented member (possibly because of nullability attributes).
+
         public RouteMatch? MatchUrlPath(string urlPath)
+#pragma warning restore CS8766 // Nullability of reference types in return type doesn't match implicitly implemented member (possibly because of nullability attributes).
         {
             return RouteMatcher.Match(urlPath);
         }

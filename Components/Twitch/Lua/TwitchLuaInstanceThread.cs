@@ -2,10 +2,12 @@
 
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
@@ -209,7 +211,7 @@ namespace Slipstream.Components.Twitch.Lua
             CommandCountWithinThrottleDuration = 5; // just wildly guessing that we'll use up to 5 commands to connect
         }
 
-        private void Client_OnUserStateChanged(object sender, OnUserStateChangedArgs e)
+        private void Client_OnUserStateChanged(object? sender, OnUserStateChangedArgs e)
         {
             if (e.UserState.IsModerator)
             {
@@ -219,14 +221,14 @@ namespace Slipstream.Components.Twitch.Lua
             }
         }
 
-        private void OnRaidNotification(object sender, OnRaidNotificationArgs e)
+        private void OnRaidNotification(object? sender, OnRaidNotificationArgs e)
         {
             var @event = EventFactory.CreateTwitchRaided(InstanceEnvelope, e.RaidNotification.DisplayName, int.Parse(e.RaidNotification.MsgParamViewerCount));
 
             EventBus.PublishEvent(@event);
         }
 
-        private void OnReSubscriber(object sender, OnReSubscriberArgs e)
+        private void OnReSubscriber(object? sender, OnReSubscriberArgs e)
         {
             var @event = EventFactory.CreateTwitchUserSubscribed(
                 envelope: InstanceEnvelope,
@@ -240,7 +242,7 @@ namespace Slipstream.Components.Twitch.Lua
             EventBus.PublishEvent(@event);
         }
 
-        private void OnNewSubscriber(object sender, OnNewSubscriberArgs e)
+        private void OnNewSubscriber(object? sender, OnNewSubscriberArgs e)
         {
             var @event = EventFactory.CreateTwitchUserSubscribed(
                 envelope: InstanceEnvelope,
@@ -262,23 +264,23 @@ namespace Slipstream.Components.Twitch.Lua
             Client = null;
         }
 
-        private void OnConnected(object sender, OnConnectedArgs e)
+        private void OnConnected(object? sender, OnConnectedArgs e)
         {
             Logger.Information("Twitch connected as {TwitchUsername} to channel {TwitchChannel}", TwitchUsername, TwitchChannel);
         }
 
-        private void OnDisconnect(object sender, OnDisconnectedEventArgs e)
+        private void OnDisconnect(object? sender, OnDisconnectedEventArgs e)
         {
             AnnounceDisconnected();
             RequestReconnect = !Stopping;
         }
 
-        private void OnError(object sender, OnErrorEventArgs e)
+        private void OnError(object? sender, OnErrorEventArgs e)
         {
             Logger.Error("Twitch Error: {Message}}", e.Exception.Message);
         }
 
-        private void OnGiftedSubscription(object sender, OnGiftedSubscriptionArgs e)
+        private void OnGiftedSubscription(object? sender, OnGiftedSubscriptionArgs e)
         {
             var gifter = e.GiftedSubscription.DisplayName;
             if (e.GiftedSubscription.IsAnonymous)
@@ -297,22 +299,22 @@ namespace Slipstream.Components.Twitch.Lua
             EventBus.PublishEvent(@event);
         }
 
-        private void OnIncorrectLogin(object sender, OnIncorrectLoginArgs e)
+        private void OnIncorrectLogin(object? sender, OnIncorrectLoginArgs e)
         {
             Logger.Error("Twitch Error: {Message}}", e.Exception.Message);
         }
 
-        private void OnJoinedChannel(object sender, OnJoinedChannelArgs e)
+        private void OnJoinedChannel(object? sender, OnJoinedChannelArgs e)
         {
             AnnounceConnected();
         }
 
-        private void OnLog(object sender, OnLogArgs e)
+        private void OnLog(object? sender, OnLogArgs e)
         {
             Logger.Verbose("Twitch log: {Data}", e.Data);
         }
 
-        private void OnMessageReceived(object sender, OnMessageReceivedArgs e)
+        private void OnMessageReceived(object? sender, OnMessageReceivedArgs e)
         {
             var chatMessage = e.ChatMessage;
 
@@ -332,7 +334,7 @@ namespace Slipstream.Components.Twitch.Lua
                 ));
         }
 
-        private void OnWhisperReceived(object sender, OnWhisperReceivedArgs e)
+        private void OnWhisperReceived(object? sender, OnWhisperReceivedArgs e)
         {
             var message = e.WhisperMessage;
 

@@ -2,10 +2,13 @@
 
 using NLua;
 using NLua.Exceptions;
+
 using Serilog;
+
 using Slipstream.Components.Internal;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -140,8 +143,11 @@ namespace Slipstream.Components.Lua.Lua
                 SetupLua(Lua);
 
                 // Fix paths, so we can require() files relative to where the script is located
-                var scriptPath = Path.GetDirectoryName(FileName).Replace("\\", "\\\\");
-                Lua.DoString($"package.path = \"{scriptPath}\\\\?.lua;\" .. package.path;");
+                var scriptPath = Path.GetDirectoryName(FileName)?.Replace("\\", "\\\\") ?? String.Empty;
+                if (scriptPath == String.Empty)
+                {
+                    Lua.DoString($"package.path = \"{scriptPath}\\\\?.lua;\" .. package.path;");
+                }
 
                 Lua.DoFile(FileName);
 

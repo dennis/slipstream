@@ -121,7 +121,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Plugins.Trackers
                 sut.Handle(s, TrackerState, new EventEnvelope("sender"));
 
             // assert
-            Assert.Equal(1, EventBus.Events.Count);
+            Assert.Single(EventBus.Events);
         }
     }
 }

@@ -33,7 +33,10 @@ namespace Slipstream.Components.WebWidget
             Logger = logger;
         }
 
+#pragma warning disable CS8766 // Nullability of reference types in return type doesn't match implicitly implemented member (possibly because of nullability attributes).
+
         public RouteMatch? MatchUrlPath(string urlPath)
+#pragma warning restore CS8766 // Nullability of reference types in return type doesn't match implicitly implemented member (possibly because of nullability attributes).
         {
             return RouteMatcher.Match(urlPath);
         }

@@ -24,7 +24,7 @@ namespace Slipstream.Components.IRacing.Trackers
             {
                 var onPitRoad = car.OnPitRoad;
 
-                if (!state.CarsTracked.TryGetValue(car.CarIdx, out CarState carState))
+                if (!state.CarsTracked.TryGetValue(car.CarIdx, out CarState? carState))
                 {
                     carState = CarState.Build(car.CarIdx, currentState);
                     state.CarsTracked.Add(car.CarIdx, carState);

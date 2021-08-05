@@ -1,9 +1,11 @@
 ﻿#nullable enable
 
+using System;
 using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using EmbedIO;
 using EmbedIO.Routing;
 
@@ -24,11 +26,21 @@ namespace Slipstream.Components.WebWidget
 
             var assembly = GetType().Assembly;
             using var s = assembly.GetManifestResourceStream("Slipstream.Backend.WebWidget.ss.js");
-            using var sr = new StreamReader(s);
-            Content = sr.ReadToEnd();
+            if (s != null)
+            {
+                using var sr = new StreamReader(s);
+                Content = sr.ReadToEnd();
+            }
+            else
+            {
+                throw new Exception("Resource not available: Slipstream.Backend.WebWidget.ss.js");
+            }
         }
 
+#pragma warning disable CS8766 // Nullability of reference types in return type doesn't match implicitly implemented member (possibly because of nullability attributes).
+
         public RouteMatch? MatchUrlPath(string urlPath)
+#pragma warning restore CS8766 // Nullability of reference types in return type doesn't match implicitly implemented member (possibly because of nullability attributes).
         {
             return RouteMatcher.Match(urlPath);
         }

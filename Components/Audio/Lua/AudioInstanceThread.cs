@@ -119,7 +119,7 @@ namespace Slipstream.Components.Audio.Lua
             }
         }
 
-        private void PlaybackStoppedReceived(object sender, StoppedEventArgs e)
+        private void PlaybackStoppedReceived(object? sender, StoppedEventArgs e)
         {
             if (e.Exception != null)
             {

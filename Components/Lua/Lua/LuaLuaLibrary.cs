@@ -4,6 +4,8 @@ using Autofac;
 
 using NLua;
 
+using Slipstream.Components.Internal;
+using Slipstream.Components.Internal.EventFactory;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
@@ -62,7 +64,8 @@ namespace Slipstream.Components.Lua.Lua
                 {
                     var subscription = EventBus.RegisterListener(instanceId);
                     var newServiceThread = LifetimeScope.Resolve<ILuaInstanceThread>(
-                        new NamedParameter("luaLibrary", this),
+                        new NamedParameter("luaLibraryName", Name),
+                        //                        new NamedParameter("luaLibrary", this),
                         new NamedParameter("instanceId", instanceId),
                         new NamedParameter("filePath", filePath),
                         new TypedParameter(typeof(IEventBusSubscription), subscription)

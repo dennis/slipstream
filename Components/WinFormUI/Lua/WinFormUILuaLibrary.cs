@@ -22,11 +22,12 @@ namespace Slipstream.Components.WinFormUI.Lua
         {
         }
 
-        protected override IWinFormUIInstanceThread CreateInstance(ILifetimeScope scope, Parameters cfg)
+        protected override IWinFormUIInstanceThread CreateInstance(ILifetimeScope scope, string luaScriptInstanceId, Parameters cfg)
         {
             var instanceId = cfg.Extract<string>("id");
 
             return scope.Resolve<IWinFormUIInstanceThread>(
+                new NamedParameter("luaLibraryName", Name),
                 new NamedParameter("instanceId", instanceId)
             );
         }

@@ -11,6 +11,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Runtime.Versioning;
+using Slipstream.Components.Internal;
 
 namespace Slipstream.Components.AppilcationUpdate.Lua
 {
@@ -21,7 +22,6 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
     {
         private readonly IEventHandlerController EventHandlerController;
         private readonly IApplicationUpdateEventFactory ApplicationUpdateEventFactory;
-        private readonly IEventBus EventBus;
         private readonly IEventBusSubscription Subscription;
         private readonly IApplicationVersionService ApplicationVersionService;
         private readonly string UpdateLocation;
@@ -29,6 +29,7 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
         private UpdateInfoEventArgs? LastUpdateInfoEventArgs;
 
         public ApplicationUpdateInstanceThread(
+            string luaLibraryName,
             string instanceId,
             string location,
             bool prerelease,
@@ -37,8 +38,9 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
             IApplicationUpdateEventFactory applicationUpdateEventFactory,
             IEventBus eventBus,
             IEventBusSubscription subscription,
-            IApplicationVersionService applicationVersionService
-            ) : base(instanceId, logger, eventHandlerController)
+            IApplicationVersionService applicationVersionService,
+            IInternalEventFactory internalEventFactory
+        ) : base(luaLibraryName, instanceId, logger, eventHandlerController, eventBus, internalEventFactory)
         {
             UpdateLocation = location;
             Prerelease = prerelease;

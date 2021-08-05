@@ -1,5 +1,7 @@
 ﻿#nullable enable
 
+using System;
+
 using Serilog;
 
 namespace Slipstream.Components.WebWidget.Lua
@@ -21,6 +23,7 @@ namespace Slipstream.Components.WebWidget.Lua
 
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
         }
 
         public void Start()

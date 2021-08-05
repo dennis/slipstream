@@ -37,16 +37,16 @@ namespace Slipstream.Components.Lua.Lua
         private readonly IEventBusSubscription Subscription;
         private readonly IEventHandlerController EventHandlerController;
         private readonly LuaLuaLibrary LuaLibrary;
-        private readonly IEventBus EventBus;
-        private readonly IInternalEventFactory InternalEventFactory;
         private readonly IDictionary<string, DelayedExecution> DebounceDelayedFunctions = new Dictionary<string, DelayedExecution>();
         private readonly IDictionary<string, DelayedExecution> WaitDelayedFunctions = new Dictionary<string, DelayedExecution>();
         private readonly string FileName = "";
         private readonly List<Dependency> Dependencies = new List<Dependency>();
+        private readonly IEventEnvelope Envelope;
         private NLua.Lua Lua = new NLua.Lua();
         private ulong LastLuaGC;
 
         public LuaInstanceThread(
+            string luaLibraryName,
             string instanceId,
             string filePath,
             LuaLuaLibrary luaLibrary,
@@ -55,7 +55,7 @@ namespace Slipstream.Components.Lua.Lua
             IEventBusSubscription subscription,
             IEventHandlerController eventHandlerController,
             IEventBus eventBus,
-            IInternalEventFactory internalEventFactory) : base(instanceId, logger, eventHandlerController)
+            IInternalEventFactory internalEventFactory) : base(luaLibraryName, instanceId, logger, eventHandlerController, eventBus, internalEventFactory)
         {
             FileName = filePath;
             Repository = repository;
@@ -64,6 +64,7 @@ namespace Slipstream.Components.Lua.Lua
             LuaLibrary = luaLibrary;
             EventBus = eventBus;
             InternalEventFactory = internalEventFactory;
+            Envelope = new EventEnvelope(instanceId);
         }
 
         protected override void Main()
@@ -127,9 +128,7 @@ namespace Slipstream.Components.Lua.Lua
 
             foreach (var dependency in Dependencies)
             {
-                var envelope = new EventEnvelope(InstanceId).Add(dependency.InstanceId);
-
-                EventBus.PublishEvent(InternalEventFactory.CreateInternalRemoveDependency(envelope, dependency.LuaScriptInstanceId));
+                EventBus.PublishEvent(InternalEventFactory.CreateInternalDependencyRemoved(Envelope, LuaLibraryName, dependency.LuaScriptInstanceId, dependency.InstanceId));
             }
 
             Dependencies.Clear();
@@ -219,8 +218,7 @@ SS = {{
 
                     Dependencies.Add(dependency);
 
-                    var envelope = new EventEnvelope(InstanceId).Add(dependency.InstanceId);
-                    EventBus.PublishEvent(InternalEventFactory.CreateInternalAddDependency(envelope, InstanceId));
+                    EventBus.PublishEvent(InternalEventFactory.CreateInternalDependencyAdded(Envelope, LuaLibraryName, InstanceId, dependency.InstanceId));
                 }
             }
         }

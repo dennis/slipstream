@@ -1,7 +1,11 @@
 ﻿#nullable enable
 
+using System;
+
 using Autofac;
+
 using NLua;
+
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Lua;
 
@@ -20,6 +24,7 @@ namespace Slipstream.Components.Lua.Lua
 
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
         }
 
         public ILuaReference? GetInstance(string luaScriptInstanceId, LuaTable cfgTable)

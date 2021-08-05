@@ -7,6 +7,7 @@ using Serilog;
 
 using Slipstream.Components.Discord.EventHandler;
 using Slipstream.Components.Discord.Events;
+using Slipstream.Components.Internal;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
 
@@ -20,7 +21,6 @@ namespace Slipstream.Components.Discord.Lua
     {
         private readonly IEventBusSubscription Subscription;
         private readonly IEventHandlerController EventHandlerController;
-        private readonly IEventBus EventBus;
         private readonly IDiscordEventFactory DiscordEventFactory;
         private readonly string Token;
         private readonly Thread ServiceThead;
@@ -29,13 +29,15 @@ namespace Slipstream.Components.Discord.Lua
         private bool RequestConnect = true;
 
         public DiscordServiceThread(
+            string luaLibraryName,
             string instanceId,
             string token,
             IEventBusSubscription eventBusSubscription,
             IEventHandlerController eventHandlerController,
             IEventBus eventBus,
             IDiscordEventFactory discordEventFactory,
-            ILogger logger) : base(instanceId, logger, eventHandlerController)
+            IInternalEventFactory internalEventFactory,
+            ILogger logger) : base(luaLibraryName, instanceId, logger, eventHandlerController, eventBus, internalEventFactory)
         {
             Subscription = eventBusSubscription;
             EventHandlerController = eventHandlerController;

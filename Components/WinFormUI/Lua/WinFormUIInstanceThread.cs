@@ -3,6 +3,7 @@ using Slipstream.Components.Playback;
 using Slipstream.Components.WinFormUI.Forms;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
+
 using System;
 using System.Windows.Forms;
 
@@ -11,13 +12,15 @@ namespace Slipstream.Components.WinFormUI.Lua
     public class WinFormUIInstanceThread : BaseInstanceThread, IWinFormUIInstanceThread
     {
         private readonly IApplicationVersionService ApplicationVersionService;
-        private readonly IEventBus EventBus;
         private readonly IEventHandlerController EventHandlerController;
-        private readonly IInternalEventFactory InternalEventFactory;
         private readonly IPlaybackEventFactory PlaybackEventFactory;
+
+        public ILuaLibraryRepository LibraryRepository { get; }
+
         private readonly IWinFormUIEventFactory UIEventFactory;
 
         public WinFormUIInstanceThread(
+            string luaLibraryName,
             string instanceId,
             Serilog.ILogger logger,
             IInternalEventFactory eventFactory,
@@ -25,7 +28,9 @@ namespace Slipstream.Components.WinFormUI.Lua
             IApplicationVersionService applicationVersionService,
             IEventHandlerController eventHandlerController,
             IWinFormUIEventFactory uiEventFactory,
-            IPlaybackEventFactory playbackEventFactory) : base(instanceId, logger, eventHandlerController)
+            IPlaybackEventFactory playbackEventFactory,
+            ILuaLibraryRepository libraryRepository
+        ) : base(luaLibraryName, instanceId, logger, eventHandlerController, eventBus, eventFactory)
         {
             InternalEventFactory = eventFactory;
             EventBus = eventBus;
@@ -33,6 +38,7 @@ namespace Slipstream.Components.WinFormUI.Lua
             EventHandlerController = eventHandlerController;
             UIEventFactory = uiEventFactory;
             PlaybackEventFactory = playbackEventFactory;
+            LibraryRepository = libraryRepository;
         }
 
         [STAThreadAttribute]
@@ -46,7 +52,9 @@ namespace Slipstream.Components.WinFormUI.Lua
                 PlaybackEventFactory,
                 EventBus,
                 ApplicationVersionService,
-                EventHandlerController));
+                EventHandlerController,
+                LibraryRepository
+            ));
         }
 
         // Expose Protected variable for MainWindow to see and react on

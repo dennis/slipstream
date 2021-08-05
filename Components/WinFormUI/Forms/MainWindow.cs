@@ -5,6 +5,7 @@ using Slipstream.Components.Playback;
 using Slipstream.Components.WinFormUI.Events;
 using Slipstream.Components.WinFormUI.Lua;
 using Slipstream.Shared;
+using Slipstream.Shared.Lua;
 
 using System;
 using System.Collections.Concurrent;
@@ -37,7 +38,17 @@ namespace Slipstream.Components.WinFormUI.Forms
         private readonly CancellationTokenSource EventHandlerThreadCts = new CancellationTokenSource();
         private CancellationToken? EventHandlerThreadCancellationToken;
 
-        public MainWindow(string instanceId, WinFormUIInstanceThread instance, IInternalEventFactory internalEventFactory, IWinFormUIEventFactory uiEventFactory, IPlaybackEventFactory playbackEventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, IEventHandlerController eventHandlerController)
+        public MainWindow(
+            string instanceId,
+            WinFormUIInstanceThread instance,
+            IInternalEventFactory internalEventFactory,
+            IWinFormUIEventFactory uiEventFactory,
+            IPlaybackEventFactory playbackEventFactory,
+            IEventBus eventBus,
+            IApplicationVersionService applicationVersionService,
+            IEventHandlerController eventHandlerController,
+            ILuaLibraryRepository libraryRepository
+            )
         {
             InstanceId = instanceId;
             Instance = instance;
@@ -50,6 +61,19 @@ namespace Slipstream.Components.WinFormUI.Forms
             BroadcastEnvelope = new EventEnvelope(instanceId);
 
             InitializeComponent();
+
+            SuspendLayout();
+
+            InsideView.BeginUpdate();
+            foreach (var luaLibraryName in libraryRepository.GetAll())
+            {
+                InsideView.Nodes.Add(new TreeNode(luaLibraryName) { Name = luaLibraryName, ForeColor = System.Drawing.Color.Gray });
+            }
+            InsideView.EndUpdate();
+
+            AboutTextBox.Text = "Slipstream version v" + applicationVersionService.Version;
+
+            ResumeLayout();
 
             Text += " v" + applicationVersionService.Version;
 
@@ -126,18 +150,16 @@ namespace Slipstream.Components.WinFormUI.Forms
             Debug.Assert(EventBusSubscription != null);
             Debug.Assert(EventHandlerThreadCancellationToken != null);
 
-            var internalEventHandler = EventHandler.Get<Components.Internal.EventHandler.Internal>();
-            var uiEventHandler = EventHandler.Get<Components.WinFormUI.EventHandler.WinFormUIEventHandler>();
+            var internalEventHandler = EventHandler.Get<Internal.EventHandler.Internal>();
+            var uiEventHandler = EventHandler.Get<EventHandler.WinFormUIEventHandler>();
 
             uiEventHandler.OnWinFormUICommandWriteToConsole += (_, e) => PendingMessages.Add($"{DateTime.Now:s} {e.Message}");
             uiEventHandler.OnWinFormUICommandCreateButton += (_, e) => EventHandler_OnWinFormUICommandCreateButton(e);
             uiEventHandler.OnWinFormUICommandDeleteButton += (_, e) => EventHandler_OnWinFormUICommandDeleteButton(e);
-
-            internalEventHandler.OnInternaAddDependency += (_, e) =>
-            {
-                Envelope = Envelope.Add(e.InstanceId);
-            };
-            internalEventHandler.OnInternalRemoveDependency += (_, e) => Envelope = Envelope.Remove(e.InstanceId);
+            internalEventHandler.OnInternalInstanceAdded += (_, e) => EventHandler_OnInternalInstanceAdded(e.LuaLibrary, e.InstanceId);
+            internalEventHandler.OnInternalInstanceRemoved += (_, e) => EventHandler_OnInternalInstanceRemoved(e.LuaLibrary, e.InstanceId);
+            internalEventHandler.OnInternaDependencyAdded += (_, e) => EventHandler_OnInternaDependencyAdded(e.LuaLibrary, e.InstanceId, e.DependsOn);
+            internalEventHandler.OnInternalDependencyRemoved += (_, e) => EventHandler_OnInternalDependencyRemoved(e.LuaLibrary, e.InstanceId, e.DependsOn);
 
             var token = (CancellationToken)EventHandlerThreadCancellationToken; // We got a Assert ensuring this isn't null
 
@@ -145,6 +167,135 @@ namespace Slipstream.Components.WinFormUI.Forms
             {
                 EventHandler.HandleEvent(EventBusSubscription?.NextEvent(250));
             }
+        }
+
+        private void EventHandler_OnInternalDependencyRemoved(string luaLibraryName, string instanceId, string dependsOn)
+        {
+            if (dependsOn == InstanceId)
+                Envelope = Envelope.Remove(instanceId);
+
+            ExecuteSecure(() =>
+            {
+                InsideView.BeginUpdate();
+
+                var luaLibraryNode = FindLuaLibraryNode(luaLibraryName);
+
+                Debug.Assert(luaLibraryNode != null);
+
+                if (luaLibraryNode != null)
+                {
+                    foreach (TreeNode instanceNode in luaLibraryNode.Nodes)
+                    {
+                        if (instanceNode.Name == instanceId)
+                        {
+                            foreach (TreeNode dependsOnNode in instanceNode.Nodes)
+                            {
+                                if (dependsOnNode.Name == dependsOn)
+                                {
+                                    dependsOnNode.Remove();
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                InsideView.EndUpdate();
+            });
+        }
+
+        private void EventHandler_OnInternaDependencyAdded(string luaLibraryName, string instanceId, string dependsOn)
+        {
+            if (dependsOn == InstanceId)
+                Envelope = Envelope.Add(instanceId);
+
+            ExecuteSecure(() =>
+            {
+                InsideView.BeginUpdate();
+
+                var luaLibraryNode = FindLuaLibraryNode(luaLibraryName);
+
+                Debug.Assert(luaLibraryNode != null);
+
+                if (luaLibraryNode != null)
+                {
+                    foreach (TreeNode instanceNode in luaLibraryNode.Nodes)
+                    {
+                        if (instanceNode.Name == instanceId)
+                        {
+                            instanceNode.Nodes.Add(new TreeNode(dependsOn + " [dependency]") { Name = dependsOn });
+                            break;
+                        }
+                    }
+                }
+
+                InsideView.EndUpdate();
+            });
+        }
+
+        private void EventHandler_OnInternalInstanceAdded(string luaLibraryName, string instanceId)
+        {
+            ExecuteSecure(() =>
+            {
+                InsideView.BeginUpdate();
+
+                var luaLibraryNode = FindLuaLibraryNode(luaLibraryName);
+
+                Debug.Assert(luaLibraryNode != null);
+
+                if (luaLibraryNode != null)
+                {
+                    luaLibraryNode.ForeColor = System.Drawing.Color.Black;
+                    luaLibraryNode.Nodes.Add(new TreeNode(instanceId + " [instance]") { Name = instanceId });
+                }
+
+                InsideView.EndUpdate();
+            });
+        }
+
+        private TreeNode? FindLuaLibraryNode(string luaLibraryName)
+        {
+            foreach (TreeNode luaLibraryNode in InsideView.Nodes)
+            {
+                if (luaLibraryNode.Name == luaLibraryName)
+                {
+                    return luaLibraryNode;
+                }
+            }
+
+            return null;
+        }
+
+        private void EventHandler_OnInternalInstanceRemoved(string luaLibraryName, string instanceId)
+        {
+            ExecuteSecure(() =>
+            {
+                InsideView.BeginUpdate();
+
+                var luaLibraryNode = FindLuaLibraryNode(luaLibraryName);
+
+                Debug.Assert(luaLibraryNode != null);
+
+                if (luaLibraryNode != null)
+                {
+                    foreach (TreeNode instanceNode in luaLibraryNode.Nodes)
+                    {
+                        if (instanceNode.Name == instanceId)
+                        {
+                            instanceNode.Remove();
+
+                            if (luaLibraryNode.Nodes.Count == 0)
+                            {
+                                luaLibraryNode.ForeColor = System.Drawing.Color.Black;
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                InsideView.EndUpdate();
+            });
         }
 
         private void EventHandler_OnWinFormUICommandCreateButton(WinFormUICommandCreateButton @event)

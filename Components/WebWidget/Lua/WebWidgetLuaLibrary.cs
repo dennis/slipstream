@@ -30,7 +30,7 @@ namespace Slipstream.Components.WebWidget.Lua
         {
         }
 
-        protected override IWebWidgetInstanceThread CreateInstance(ILifetimeScope scope, Parameters cfg)
+        protected override IWebWidgetInstanceThread CreateInstance(ILifetimeScope scope, string luaScriptInstanceId, Parameters cfg)
         {
             var instanceId = cfg.Extract<string>("id");
             var webWidgetType = cfg.Extract<string>("type");

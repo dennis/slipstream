@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using Autofac;
+
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
@@ -23,7 +24,7 @@ namespace Slipstream.Components.IRacing.Lua
         {
         }
 
-        protected override IIRacingInstanceThread CreateInstance(ILifetimeScope scope, Parameters cfg)
+        protected override IIRacingInstanceThread CreateInstance(ILifetimeScope scope, string luaScriptInstanceId, Parameters cfg)
         {
             var instanceId = cfg.Extract<string>("id");
             var publishRawState = cfg.ExtractOrDefault("send_raw_state", false);
@@ -31,6 +32,7 @@ namespace Slipstream.Components.IRacing.Lua
             var subscription = EventBus.RegisterListener(instanceId);
 
             return LifetimeScope.Resolve<IIRacingInstanceThread>(
+                new NamedParameter("luaLibraryName", Name),
                 new NamedParameter("instanceId", instanceId),
                 new NamedParameter("publishRawState", publishRawState),
                 new TypedParameter(typeof(IEventBusSubscription), subscription)

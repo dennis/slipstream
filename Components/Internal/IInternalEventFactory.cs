@@ -9,8 +9,12 @@ namespace Slipstream.Components.Internal
     {
         InternalCommandShutdown CreateInternalCommandShutdown(IEventEnvelope envelope);
 
-        InternalAddDependency CreateInternalAddDependency(IEventEnvelope envelope, string instanceId);
+        InternalDependencyAdded CreateInternalDependencyAdded(IEventEnvelope envelope, string luaLibrary, string instanceId, string dependsOn);
 
-        InternalRemoveDependency CreateInternalRemoveDependency(IEventEnvelope envelope, string instanceId);
+        InternalDependencyRemoved CreateInternalDependencyRemoved(IEventEnvelope envelope, string luaLibrary, string instanceId, string dependsOn);
+
+        InternalInstanceAdded CreateInternalInstanceAdded(IEventEnvelope envelope, string luaLibrary, string instanceId);
+
+        InternalInstanceRemoved CreateInternalInstanceRemoved(IEventEnvelope envelope, string luaLibrary, string instanceId);
     }
 }

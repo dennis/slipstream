@@ -144,7 +144,7 @@ namespace Slipstream.Components.Lua.Lua
 
                 // Fix paths, so we can require() files relative to where the script is located
                 var scriptPath = Path.GetDirectoryName(FileName)?.Replace("\\", "\\\\") ?? String.Empty;
-                if (scriptPath == String.Empty)
+                if (scriptPath != String.Empty)
                 {
                     Lua.DoString($"package.path = \"{scriptPath}\\\\?.lua;\" .. package.path;");
                 }

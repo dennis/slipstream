@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Lua Scripts");
             this.panel1 = new System.Windows.Forms.Panel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -169,6 +170,10 @@
             this.InsideView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InsideView.Location = new System.Drawing.Point(0, 141);
             this.InsideView.Name = "InsideView";
+            treeNode1.Name = "LuaScripts";
+            treeNode1.Text = "Lua Scripts";
+            this.InsideView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+            treeNode1});
             this.InsideView.Size = new System.Drawing.Size(226, 354);
             this.InsideView.TabIndex = 1;
             // 

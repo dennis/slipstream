@@ -14,9 +14,6 @@ namespace Slipstream.Components.WinFormUI.Lua
         private readonly IApplicationVersionService ApplicationVersionService;
         private readonly IEventHandlerController EventHandlerController;
         private readonly IPlaybackEventFactory PlaybackEventFactory;
-
-        public ILuaLibraryRepository LibraryRepository { get; }
-
         private readonly IWinFormUIEventFactory UIEventFactory;
 
         public WinFormUIInstanceThread(
@@ -28,8 +25,7 @@ namespace Slipstream.Components.WinFormUI.Lua
             IApplicationVersionService applicationVersionService,
             IEventHandlerController eventHandlerController,
             IWinFormUIEventFactory uiEventFactory,
-            IPlaybackEventFactory playbackEventFactory,
-            ILuaLibraryRepository libraryRepository
+            IPlaybackEventFactory playbackEventFactory
         ) : base(luaLibraryName, instanceId, logger, eventHandlerController, eventBus, eventFactory)
         {
             InternalEventFactory = eventFactory;
@@ -38,7 +34,6 @@ namespace Slipstream.Components.WinFormUI.Lua
             EventHandlerController = eventHandlerController;
             UIEventFactory = uiEventFactory;
             PlaybackEventFactory = playbackEventFactory;
-            LibraryRepository = libraryRepository;
         }
 
         [STAThreadAttribute]
@@ -52,9 +47,8 @@ namespace Slipstream.Components.WinFormUI.Lua
                 PlaybackEventFactory,
                 EventBus,
                 ApplicationVersionService,
-                EventHandlerController,
-                LibraryRepository
-            ));
+                EventHandlerController
+           ));
         }
 
         // Expose Protected variable for MainWindow to see and react on

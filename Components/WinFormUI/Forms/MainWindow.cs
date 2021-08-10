@@ -36,6 +36,7 @@ namespace Slipstream.Components.WinFormUI.Forms
         private IEventEnvelope Envelope;
         private readonly IEventEnvelope BroadcastEnvelope;
         private readonly CancellationTokenSource EventHandlerThreadCts = new CancellationTokenSource();
+        private readonly TreeNode LuaScriptTreeNode;
         private CancellationToken? EventHandlerThreadCancellationToken;
 
         public MainWindow(
@@ -46,8 +47,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             IPlaybackEventFactory playbackEventFactory,
             IEventBus eventBus,
             IApplicationVersionService applicationVersionService,
-            IEventHandlerController eventHandlerController,
-            ILuaLibraryRepository libraryRepository
+            IEventHandlerController eventHandlerController
             )
         {
             InstanceId = instanceId;
@@ -62,18 +62,22 @@ namespace Slipstream.Components.WinFormUI.Forms
 
             InitializeComponent();
 
-            SuspendLayout();
-
-            InsideView.BeginUpdate();
-            foreach (var luaLibraryName in libraryRepository.GetAll())
-            {
-                InsideView.Nodes.Add(new TreeNode(luaLibraryName) { Name = luaLibraryName, ForeColor = System.Drawing.Color.Gray });
-            }
-            InsideView.EndUpdate();
-
             AboutTextBox.Text = "Slipstream version v" + applicationVersionService.Version;
 
-            ResumeLayout();
+            // Find Root Nodes of InsideView:
+            foreach (TreeNode node in InsideView.Nodes)
+            {
+                if (node.Name == "LuaScripts")
+                {
+                    LuaScriptTreeNode = node;
+                }
+            }
+
+            Debug.Assert(LuaScriptTreeNode != null);
+
+            InsideView.BeginUpdate();
+            LuaScriptTreeNode.Expand();
+            InsideView.EndUpdate();
 
             Text += " v" + applicationVersionService.Version;
 
@@ -171,33 +175,31 @@ namespace Slipstream.Components.WinFormUI.Forms
 
         private void EventHandler_OnInternalDependencyRemoved(string luaLibraryName, string instanceId, string dependsOn)
         {
+            // something stopped begin dependant on us, so remove it from our Envelope
             if (dependsOn == InstanceId)
                 Envelope = Envelope.Remove(instanceId);
+
+            // Populating "InsideView" TreeView
+            if (luaLibraryName != "api/lua")
+                return;
 
             ExecuteSecure(() =>
             {
                 InsideView.BeginUpdate();
 
-                var luaLibraryNode = FindLuaLibraryNode(luaLibraryName);
-
-                Debug.Assert(luaLibraryNode != null);
-
-                if (luaLibraryNode != null)
+                foreach (TreeNode instanceNode in LuaScriptTreeNode.Nodes)
                 {
-                    foreach (TreeNode instanceNode in luaLibraryNode.Nodes)
+                    if (instanceNode.Name == instanceId)
                     {
-                        if (instanceNode.Name == instanceId)
+                        foreach (TreeNode dependsOnNode in instanceNode.Nodes)
                         {
-                            foreach (TreeNode dependsOnNode in instanceNode.Nodes)
+                            if (dependsOnNode.Name == dependsOn)
                             {
-                                if (dependsOnNode.Name == dependsOn)
-                                {
-                                    dependsOnNode.Remove();
-                                    break;
-                                }
+                                dependsOnNode.Remove();
+                                break;
                             }
-                            break;
                         }
+                        break;
                     }
                 }
 
@@ -207,26 +209,24 @@ namespace Slipstream.Components.WinFormUI.Forms
 
         private void EventHandler_OnInternaDependencyAdded(string luaLibraryName, string instanceId, string dependsOn)
         {
+            // something is depending on us, so add it to the receivers of our events
             if (dependsOn == InstanceId)
                 Envelope = Envelope.Add(instanceId);
+
+            // Populating "InsideView" TreeView
+            if (luaLibraryName != "api/lua")
+                return;
 
             ExecuteSecure(() =>
             {
                 InsideView.BeginUpdate();
 
-                var luaLibraryNode = FindLuaLibraryNode(luaLibraryName);
-
-                Debug.Assert(luaLibraryNode != null);
-
-                if (luaLibraryNode != null)
+                foreach (TreeNode instanceNode in LuaScriptTreeNode.Nodes)
                 {
-                    foreach (TreeNode instanceNode in luaLibraryNode.Nodes)
+                    if (instanceNode.Name == instanceId)
                     {
-                        if (instanceNode.Name == instanceId)
-                        {
-                            instanceNode.Nodes.Add(new TreeNode(dependsOn + " [dependency]") { Name = dependsOn });
-                            break;
-                        }
+                        instanceNode.Nodes.Add(new TreeNode(dependsOn + " [dependency]") { Name = dependsOn });
+                        break;
                     }
                 }
 
@@ -236,61 +236,34 @@ namespace Slipstream.Components.WinFormUI.Forms
 
         private void EventHandler_OnInternalInstanceAdded(string luaLibraryName, string instanceId)
         {
+            if (luaLibraryName != "api/lua")
+                return;
+
             ExecuteSecure(() =>
             {
                 InsideView.BeginUpdate();
 
-                var luaLibraryNode = FindLuaLibraryNode(luaLibraryName);
-
-                Debug.Assert(luaLibraryNode != null);
-
-                if (luaLibraryNode != null)
-                {
-                    luaLibraryNode.ForeColor = System.Drawing.Color.Black;
-                    luaLibraryNode.Nodes.Add(new TreeNode(instanceId + " [instance]") { Name = instanceId });
-                }
+                LuaScriptTreeNode.Nodes.Add(new TreeNode(instanceId) { Name = instanceId });
 
                 InsideView.EndUpdate();
             });
         }
 
-        private TreeNode? FindLuaLibraryNode(string luaLibraryName)
-        {
-            foreach (TreeNode luaLibraryNode in InsideView.Nodes)
-            {
-                if (luaLibraryNode.Name == luaLibraryName)
-                {
-                    return luaLibraryNode;
-                }
-            }
-
-            return null;
-        }
-
         private void EventHandler_OnInternalInstanceRemoved(string luaLibraryName, string instanceId)
         {
+            if (luaLibraryName != "api/lua")
+                return;
+
             ExecuteSecure(() =>
             {
                 InsideView.BeginUpdate();
 
-                var luaLibraryNode = FindLuaLibraryNode(luaLibraryName);
-
-                Debug.Assert(luaLibraryNode != null);
-
-                if (luaLibraryNode != null)
+                foreach (TreeNode instanceNode in LuaScriptTreeNode.Nodes)
                 {
-                    foreach (TreeNode instanceNode in luaLibraryNode.Nodes)
+                    if (instanceNode.Name == instanceId)
                     {
-                        if (instanceNode.Name == instanceId)
-                        {
-                            instanceNode.Remove();
-
-                            if (luaLibraryNode.Nodes.Count == 0)
-                            {
-                                luaLibraryNode.ForeColor = System.Drawing.Color.Black;
-                            }
-                            break;
-                        }
+                        instanceNode.Remove();
+                        break;
                     }
                 }
 

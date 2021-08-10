@@ -10,6 +10,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -208,7 +209,7 @@ namespace Slipstream.Components.WinFormUI.Forms
 
         private void OpenDataDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Process.Start(".");
+            Process.Start("explorer.exe", Directory.GetCurrentDirectory());
         }
 
         private void TestEventsMenuItem_Click(object sender, EventArgs e)

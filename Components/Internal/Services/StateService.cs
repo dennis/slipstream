@@ -1,4 +1,5 @@
 ﻿using Serilog;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,7 +45,7 @@ namespace Slipstream.Components.Internal.Services
             {
                 using StreamReader r = new StreamReader(FilePath);
 
-                string line;
+                string? line;
                 while ((line = r.ReadLine()) != null)
                 {
                     var f = line.Split(new string[] { "\t" }, 3, StringSplitOptions.None);
@@ -145,7 +146,7 @@ namespace Slipstream.Components.Internal.Services
                 }
             }
 
-            if (KeyValues.TryGetValue(key, out StateValue value))
+            if (KeyValues.TryGetValue(key, out StateValue? value))
             {
                 return value.Value;
             }
@@ -155,9 +156,9 @@ namespace Slipstream.Components.Internal.Services
             }
         }
 
-        private bool IsValidKey(string value)
+        private static bool IsValidKey(string value)
         {
-            return value.IndexOf('\t') == -1;
+            return !value.Contains('\t');
         }
     }
 }

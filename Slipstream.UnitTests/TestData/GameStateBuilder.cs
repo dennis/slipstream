@@ -1,8 +1,10 @@
 ﻿using Slipstream.Components.IRacing;
 using Slipstream.Components.IRacing.GameState;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+
 using static Slipstream.Components.IRacing.IIRacingEventFactory;
 
 namespace Slipstream.UnitTests.TestData
@@ -10,7 +12,7 @@ namespace Slipstream.UnitTests.TestData
     public class GameStateBuilder
     {
         public List<IState> States { get; }
-        private readonly List<Car> Cars = new List<Car>();
+        private readonly List<Car> Cars = new();
         private readonly State State;
 
         public GameStateBuilder()

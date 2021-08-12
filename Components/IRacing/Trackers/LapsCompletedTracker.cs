@@ -25,7 +25,7 @@ namespace Slipstream.Components.IRacing.Trackers
                 var lapsCompleted = car.LapsCompleted;
                 var localUser = car.CarIdx == currentState.DriverCarIdx;
 
-                if (!state.Laps.TryGetValue(car.CarIdx, out LapState lapState))
+                if (!state.Laps.TryGetValue(car.CarIdx, out LapState? lapState))
                 {
                     lapState = new LapState
                     {

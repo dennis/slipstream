@@ -2,7 +2,9 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using EmbedIO.WebSockets;
+
 using Serilog;
 
 namespace Slipstream.Components.WebWidget
@@ -46,7 +48,7 @@ namespace Slipstream.Components.WebWidget
 
         private static string ParseInstanceId(IWebSocketContext context)
         {
-            return context.RequestUri.LocalPath.Substring("/events/".Length);
+            return context.RequestUri.LocalPath["/events/".Length..];
         }
 
         protected override Task OnClientDisconnectedAsync(IWebSocketContext context)
@@ -67,8 +69,7 @@ namespace Slipstream.Components.WebWidget
         {
             BroadcastAsync(data, s =>
             {
-                List<string> ctxIds;
-                InstanceToContextIdMap.TryGetValue(instanceId, out ctxIds);
+                InstanceToContextIdMap.TryGetValue(instanceId, out List<string>? ctxIds);
 
                 return ctxIds != null && ctxIds.Contains(s.Id);
             });

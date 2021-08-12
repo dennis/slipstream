@@ -18,7 +18,7 @@ namespace Slipstream.Shared.Lua
             }
         }
 
-        public ILuaLibrary Get(string name)
+        public ILuaLibrary? Get(string name)
         {
             return LuaLibraries.Find(a => a.Name == name);
         }

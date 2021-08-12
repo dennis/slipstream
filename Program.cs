@@ -1,8 +1,11 @@
 ﻿using Autofac;
+
 using Serilog;
+
 using Slipstream.Components.Internal;
 using Slipstream.Components.Internal.Services;
 using Slipstream.Shared;
+
 using System;
 using System.Windows.Forms;
 
@@ -87,7 +90,9 @@ namespace Slipstream
                 .AsSelf()
                 .InstancePerDependency();
 
+#if WINDOWS
             builder.RegisterType<Components.Audio.Lua.AudioInstanceThread>().As<Components.Audio.Lua.IAudioInstanceThread>().InstancePerDependency();
+#endif
             builder.RegisterType<Components.Discord.Lua.DiscordServiceThread>().As<Components.Discord.Lua.IDiscordInstanceThread>().InstancePerDependency();
             builder.RegisterType<Components.Discord.Lua.DiscordLuaChannelReference>().As<Components.Discord.Lua.IDiscordLuaChannelReference>().InstancePerDependency();
             builder.RegisterType<Components.FileMonitor.Lua.FileMonitorInstanceThread>().As<Components.FileMonitor.Lua.IFileMonitorInstanceThread>().InstancePerDependency();
@@ -103,8 +108,10 @@ namespace Slipstream
             builder.RegisterType<Components.Twitch.Lua.TwitchLuaReference>().As<Components.Twitch.Lua.ITwitchLuaReference>().InstancePerDependency();
             builder.RegisterType<Components.WinFormUI.Lua.WinFormUIInstanceThread>().As<Components.WinFormUI.Lua.IWinFormUIInstanceThread>().InstancePerDependency();
             builder.RegisterType<Components.WinFormUI.Lua.WinFormUIReference>().As<Components.WinFormUI.Lua.IWinFormUIReference>().InstancePerDependency();
+#if WINDOWS7_0_OR_GREATER
             builder.RegisterType<Components.AppilcationUpdate.Lua.ApplicationUpdateInstanceThread>().As<Components.AppilcationUpdate.Lua.IApplicationUpdateInstanceThread>().InstancePerDependency();
             builder.RegisterType<Components.AppilcationUpdate.Lua.ApplicationUpdateReference>().As<Components.AppilcationUpdate.Lua.IApplicationUpdateReference>().InstancePerDependency();
+#endif
             builder.RegisterType<Components.WebWidget.Lua.WebWidgetInstanceThread>().As<Components.WebWidget.Lua.IWebWidgetInstanceThread>().InstancePerDependency();
             builder.RegisterType<Components.WebWidget.HttpServer>().As<Components.WebWidget.IHttpServer>().As<Components.WebWidget.IHttpServerApi>().SingleInstance();
         }

@@ -6,8 +6,10 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using EmbedIO;
 using EmbedIO.Routing;
+
 using Serilog;
 
 namespace Slipstream.Components.WebWidget
@@ -31,7 +33,10 @@ namespace Slipstream.Components.WebWidget
             Logger = logger;
         }
 
+#pragma warning disable CS8766 // Nullability of reference types in return type doesn't match implicitly implemented member (possibly because of nullability attributes).
+
         public RouteMatch? MatchUrlPath(string urlPath)
+#pragma warning restore CS8766 // Nullability of reference types in return type doesn't match implicitly implemented member (possibly because of nullability attributes).
         {
             return RouteMatcher.Match(urlPath);
         }
@@ -46,7 +51,7 @@ namespace Slipstream.Components.WebWidget
             {
                 var instanceId = context.Route["id"];
                 var webWidgetType = Instances[instanceId];
-                    
+
                 var template = File.ReadAllText(WebWidgetDirectory + webWidgetType + "/index.html");
                 var assets = "/webwidgets/" + webWidgetType;
                 var rendered = template
@@ -58,13 +63,13 @@ namespace Slipstream.Components.WebWidget
                 context.Response.Headers.Add(HttpHeaderNames.CacheControl, "no-cache");
                 return context.SendStringAsync(rendered, MimeType.Html, Encoding.UTF8);
             }
-            catch(KeyNotFoundException _)
+            catch (KeyNotFoundException)
             {
                 context.Response.StatusCode = 404;
                 context.SetHandled();
                 return Task.CompletedTask;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Logger.Error(e.Message);
                 throw;

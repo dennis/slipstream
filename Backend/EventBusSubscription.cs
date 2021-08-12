@@ -1,4 +1,5 @@
 ﻿using Slipstream.Shared;
+
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
@@ -35,7 +36,7 @@ namespace Slipstream.Backend
 
         public IEvent? NextEvent(int millisecondsTimeout)
         {
-            if (Events.TryTake(out IEvent ev, millisecondsTimeout))
+            if (Events.TryTake(out IEvent? ev, millisecondsTimeout))
             {
                 return ev;
             }

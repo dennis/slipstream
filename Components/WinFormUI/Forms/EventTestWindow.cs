@@ -10,13 +10,13 @@ namespace Slipstream.Components.WinFormUI.Forms
 {
     public partial class EventTestWindow : Form
     {
-        EventInfoModel selectedEvent = null;
+        private EventInfoModel? SelectedEvent = null;
 
         public IEventBus EventBus { get; }
 
-        public EventTestWindow(Shared.IEventBus eventBus)
+        public EventTestWindow(IEventBus eventBus)
         {
-            this.EventBus = eventBus;
+            EventBus = eventBus;
             InitializeComponent();
         }
 
@@ -25,7 +25,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             await SetEvents(this.comboEvents);
         }
 
-        private async Task SetEvents(ComboBox comboEvents)
+        private static async Task SetEvents(ComboBox comboEvents)
         {
             var bindingSource = new BindingSource
             {
@@ -38,10 +38,11 @@ namespace Slipstream.Components.WinFormUI.Forms
 
         private void ComboEvents_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var selectedItem = ((ComboBox)sender).SelectedItem;
-            selectedEvent = selectedItem as EventInfoModel;
+            object? selectedItem = ((ComboBox)sender).SelectedItem;
+            SelectedEvent = selectedItem as EventInfoModel;
 
-            AddControlsToPanel(selectedEvent);
+            if (SelectedEvent != null)
+                AddControlsToPanel(SelectedEvent);
         }
 
         private void AddControlsToPanel(EventInfoModel selectedItem)
@@ -63,7 +64,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             flpControls.Controls.AddRange(inputControls.ToArray());
         }
 
-        private Panel CreateInputControl(string label, string textbox, string Description)
+        private static Panel CreateInputControl(string label, string textbox, string Description)
         {
             var panelControl = new FlowLayoutPanel();
             var labelControl = new Label { Text = label };
@@ -79,27 +80,39 @@ namespace Slipstream.Components.WinFormUI.Forms
 
         private void BtnCreateEvent_Click(object sender, EventArgs e)
         {
-            var eventType = selectedEvent;
+            if (SelectedEvent != null)
+            {
+                var eventInstance = CreateEventFromForm(SelectedEvent, flpControls);
 
-            var eventInstance = CreateEventFromForm(eventType, flpControls);
-            EventBus.PublishEvent(eventInstance);
+                if (eventInstance != null)
+                {
+                    EventBus.PublishEvent(eventInstance);
+                }
+            }
         }
 
-        private IEvent CreateEventFromForm(EventInfoModel eventInfo, FlowLayoutPanel flpControls)
+        private static IEvent? CreateEventFromForm(EventInfoModel eventInfo, FlowLayoutPanel flpControls)
         {
             // ToDo: A massive cheat, this could cause a naming collision
             // using it to bind data
 
-            var obj = Activator.CreateInstance(eventInfo.EventType);
-
-            foreach(var prop in eventInfo.Properties)
+            object? obj = Activator.CreateInstance(eventInfo.EventType);
+            if (obj == null)
             {
-                var inputControl = flpControls.Controls.Find(prop.Name, true).First() as TextBox;
-
-                obj.GetType().GetProperty(prop.Name).SetValue(obj, Convert.ChangeType(inputControl.Text, prop.Type));
+                return null;
             }
 
-            return (IEvent)obj;
+            foreach (var prop in eventInfo.Properties)
+            {
+                var inputControl = flpControls.Controls.Find(prop.Name, true).First();
+
+                if (inputControl is TextBox)
+                {
+                    obj.GetType().GetProperty(prop.Name)?.SetValue(obj, Convert.ChangeType(inputControl.Text, prop.Type));
+                }
+            }
+
+            return (IEvent?)obj;
         }
     }
 }

@@ -2,6 +2,6 @@
 {
     public interface ILuaLibraryRepository
     {
-        public ILuaLibrary Get(string name);
+        public ILuaLibrary? Get(string name);
     }
 }

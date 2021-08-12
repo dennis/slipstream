@@ -30,7 +30,7 @@ namespace Slipstream.Shared.Helpers.StrongParameters.Validators
 
                 var key = (string)k; // LuaTable keys are always strings for dictionaries
 
-                if (Schema.TryGetValue(key, out IValidator validator))
+                if (Schema.TryGetValue(key, out IValidator? validator))
                 {
                     try
                     {

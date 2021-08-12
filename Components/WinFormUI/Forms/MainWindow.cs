@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
+
 using EventHandler = Slipstream.Shared.EventHandlerController;
 
 namespace Slipstream.Components.WinFormUI.Forms
@@ -32,6 +33,8 @@ namespace Slipstream.Components.WinFormUI.Forms
         private bool ShuttingDown = false;
         private IEventEnvelope Envelope;
         private readonly IEventEnvelope BroadcastEnvelope;
+        private readonly CancellationTokenSource EventHandlerThreadCts = new CancellationTokenSource();
+        private CancellationToken? EventHandlerThreadCancellationToken;
 
         public MainWindow(string instanceId, WinFormUIInstanceThread instance, IInternalEventFactory internalEventFactory, IWinFormUIEventFactory uiEventFactory, IPlaybackEventFactory playbackEventFactory, IEventBus eventBus, IApplicationVersionService applicationVersionService, IEventHandlerController eventHandlerController)
         {
@@ -53,7 +56,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             FormClosing += MainWindow_FormClosing;
         }
 
-        private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
+        private void MainWindow_FormClosing(object? sender, FormClosingEventArgs e)
         {
             if (!ShuttingDown)
             {
@@ -68,14 +71,15 @@ namespace Slipstream.Components.WinFormUI.Forms
 
             EventBusSubscription?.Dispose();
             EventBusSubscription = null;
-            EventHandlerThread?.Abort(); // abit harsh?
+            EventHandlerThreadCts.Cancel();
             EventHandlerThread?.Join();
             EventHandlerThread = null;
         }
 
-        private void MainWindow_Load(object sender, EventArgs e)
+        private void MainWindow_Load(object? sender, EventArgs e)
         {
             EventBusSubscription = EventBus.RegisterListener(InstanceId, fromBeginning: true);
+            EventHandlerThreadCancellationToken = EventHandlerThreadCts.Token;
             EventHandlerThread = new Thread(new ThreadStart(this.EventListenerMain))
             {
                 Name = "EventListenerMain"
@@ -100,7 +104,7 @@ namespace Slipstream.Components.WinFormUI.Forms
         {
             string allMesssages = string.Empty;
 
-            while (PendingMessages.TryTake(out string msg))
+            while (PendingMessages.TryTake(out string? msg))
             {
                 allMesssages += msg + "\r\n";
             }
@@ -119,6 +123,7 @@ namespace Slipstream.Components.WinFormUI.Forms
         private void EventListenerMain()
         {
             Debug.Assert(EventBusSubscription != null);
+            Debug.Assert(EventHandlerThreadCancellationToken != null);
 
             var internalEventHandler = EventHandler.Get<Components.Internal.EventHandler.Internal>();
             var uiEventHandler = EventHandler.Get<Components.WinFormUI.EventHandler.WinFormUIEventHandler>();
@@ -133,9 +138,11 @@ namespace Slipstream.Components.WinFormUI.Forms
             };
             internalEventHandler.OnInternalRemoveDependency += (_, e) => Envelope = Envelope.Remove(e.InstanceId);
 
-            while (true)
+            var token = (CancellationToken)EventHandlerThreadCancellationToken; // We got a Assert ensuring this isn't null
+
+            while (!token.IsCancellationRequested)
             {
-                EventHandler.HandleEvent(EventBusSubscription?.NextEvent());
+                EventHandler.HandleEvent(EventBusSubscription?.NextEvent(250));
             }
         }
 

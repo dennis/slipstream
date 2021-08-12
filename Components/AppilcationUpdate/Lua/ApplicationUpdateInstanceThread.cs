@@ -10,9 +10,13 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Net;
+using System.Runtime.Versioning;
 
 namespace Slipstream.Components.AppilcationUpdate.Lua
 {
+#if WINDOWS7_0_OR_GREATER
+
+    [SupportedOSPlatform("windows7.0")]
     public class ApplicationUpdateInstanceThread : BaseInstanceThread, IApplicationUpdateInstanceThread
     {
         private readonly IEventHandlerController EventHandlerController;
@@ -186,4 +190,6 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
             AutoUpdater.Start(UpdateLocation);
         }
     }
+
+#endif
 }

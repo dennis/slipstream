@@ -1,4 +1,5 @@
 ﻿using Slipstream.Shared;
+
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -34,38 +35,27 @@ namespace Slipstream.Backend
         {
             e.Envelope.Uptime = Uptime() - StartedAt;
 
+            if (enabled)
+            {
+                lock (Events)
+                {
+                    if (Events.Count >= EVENT_MAX_SIZE)
+                    {
+                        // Is there a better way for deleting x elements from the beginning?
+                        for (int i = 0; i < EVENT_DELETE_SIZE; i++)
+                            Events.RemoveAt(0);
+                    }
+                    Events.Add(e);
+                }
+            }
+
             lock (Listeners)
             {
                 if (enabled)
                 {
-                    lock (Events)
-                    {
-                        if (Events.Count >= EVENT_MAX_SIZE)
-                        {
-                            // Is there a better way for deleting x elements from the beginning?
-                            for (int i = 0; i < EVENT_DELETE_SIZE; i++)
-                                Events.RemoveAt(0);
-                        }
-                        Events.Add(e);
-                    }
-
                     foreach (var l in Listeners)
                     {
-                        bool applicable = false;
-
-                        foreach (var instanceId in l.InstanceIds)
-                        {
-                            if (e.Envelope.ContainsRecipient(instanceId))
-                            {
-                                applicable = true;
-                                break;
-                            }
-                        }
-
-                        if (applicable)
-                        {
-                            l.Add(e);
-                        }
+                        l.Add(e);
                     }
                 }
                 else
@@ -75,9 +65,9 @@ namespace Slipstream.Backend
             }
         }
 
-        public IEventBusSubscription RegisterListener(string instanceId, bool fromStart = false)
+        public IEventBusSubscription RegisterListener(string instanceId, bool fromStart = false, bool promiscuousMode = false)
         {
-            var subscription = new EventBusSubscription(this, instanceId);
+            var subscription = new EventBusSubscription(this, instanceId, promiscuousMode);
 
             lock (Listeners)
             {
@@ -87,10 +77,7 @@ namespace Slipstream.Backend
                     {
                         foreach (var e in Events)
                         {
-                            if (e.Envelope.ContainsRecipient(instanceId))
-                            {
-                                subscription.Add(e);
-                            }
+                            subscription.Add(e);
                         }
                     }
                 }
@@ -124,7 +111,7 @@ namespace Slipstream.Backend
             }
         }
 
-        private ulong Uptime()
+        private static ulong Uptime()
         {
             var tick = (double)Stopwatch.GetTimestamp() * 1000 / Stopwatch.Frequency;
             return (ulong)tick;

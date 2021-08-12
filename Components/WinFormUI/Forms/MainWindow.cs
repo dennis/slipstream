@@ -5,7 +5,6 @@ using Slipstream.Components.Playback;
 using Slipstream.Components.WinFormUI.Events;
 using Slipstream.Components.WinFormUI.Lua;
 using Slipstream.Shared;
-using Slipstream.Shared.Lua;
 
 using System;
 using System.Collections.Concurrent;
@@ -21,6 +20,192 @@ namespace Slipstream.Components.WinFormUI.Forms
 {
     public partial class MainWindow : Form
     {
+        private enum NodeTypeEnum
+        {
+            None,
+            Generic,
+            LuaScripts,
+            Instance,
+            Dependency
+        }
+
+        private class InsideViewNodeTag
+        {
+            public NodeTypeEnum NodeType { get; private set; }
+            public bool EventFilter { get => NodeType == NodeTypeEnum.Instance || NodeType == NodeTypeEnum.Dependency || NodeType == NodeTypeEnum.LuaScripts; }
+
+            public InsideViewNodeTag(NodeTypeEnum type)
+            {
+                NodeType = type;
+            }
+
+            public static TreeNode InstanceNode(string text)
+            {
+                return new TreeNode(text)
+                {
+                    Name = text,
+                    Tag = new InsideViewNodeTag(NodeTypeEnum.Instance),
+                };
+            }
+
+            public static TreeNode DependencyNode(string text)
+            {
+                return new TreeNode(text)
+                {
+                    Name = text,
+                    Tag = new InsideViewNodeTag(NodeTypeEnum.Dependency),
+                };
+            }
+        }
+
+        private class EventRepository
+        {
+            private readonly List<IEvent> Events = new List<IEvent>();
+            private readonly DataGridView EventGridView;
+            private readonly IEventSerdeService EventSerdeService;
+            private readonly Label EventFilterDescriptionLabel;
+            private readonly ContextMenuStrip ContextMenu;
+            private readonly TabPage EventsTabPage;
+            private IEventFilter SelectedFilter = new NoneEventFilter();
+
+            private const int MaxEventsStored = 1000;
+
+            public EventRepository(DataGridView eventGridView, Label eventFilterDescriptionLabel, ContextMenuStrip eventViewerContextMenuStrip, TabPage eventsTabPage, IEventSerdeService eventSerdeService)
+            {
+                EventGridView = eventGridView;
+                EventSerdeService = eventSerdeService;
+                EventFilterDescriptionLabel = eventFilterDescriptionLabel;
+                ContextMenu = eventViewerContextMenuStrip;
+                EventsTabPage = eventsTabPage;
+            }
+
+            public void Add(IEvent e)
+            {
+                while (Events.Count > MaxEventsStored)
+                {
+                    Events.RemoveAt(0);
+                }
+                Events.Add(e);
+                AddToControl(e);
+            }
+
+            private void AddToControl(IEvent e)
+            {
+                if (SelectedFilter.Accept(e))
+                {
+                    string recipients = RecipientsAsString(e);
+                    var json = EventSerdeService.Serialize(e);
+
+                    EventGridView.Rows.Add(e.Envelope.Uptime, e.EventType, e.Envelope.Sender, recipients, json);
+                    EventGridView.Rows[^1].ContextMenuStrip = ContextMenu;
+                }
+            }
+
+            private static string RecipientsAsString(IEvent e)
+            {
+                if (e.Envelope.Recipients == null || e.Envelope.Recipients.Length == 0)
+                {
+                    return "*";
+                }
+                else
+                {
+                    return string.Join(", ", e.Envelope.Recipients);
+                }
+            }
+
+            private interface IEventFilter
+            {
+                bool Accept(IEvent e);
+            }
+
+            private class NoneEventFilter : IEventFilter
+            {
+                public bool Accept(IEvent e)
+                {
+                    return false;
+                }
+            }
+
+            private class AllEventFilter : IEventFilter
+            {
+                public bool Accept(IEvent e)
+                {
+                    return true;
+                }
+            }
+
+            private class DependencyEventFilter : IEventFilter
+            {
+                private readonly string SelectedNodeInstanceId;
+                private readonly string SelectedNodeDependency;
+
+                public DependencyEventFilter(string instanceId, string dependency)
+                {
+                    SelectedNodeInstanceId = instanceId;
+                    SelectedNodeDependency = dependency;
+                }
+
+                public bool Accept(IEvent e)
+                {
+                    return e.Envelope.ContainsRecipient(SelectedNodeInstanceId) && e.Envelope.Sender == SelectedNodeDependency;
+                }
+            }
+
+            private class InstanceEventFilter : IEventFilter
+            {
+                private readonly string SelectedNodeInstanceId;
+
+                public InstanceEventFilter(string instanceId)
+                {
+                    SelectedNodeInstanceId = instanceId;
+                }
+
+                public bool Accept(IEvent e)
+                {
+                    return e.Envelope.ContainsRecipient(SelectedNodeInstanceId);
+                }
+            }
+
+            internal void Selected(TreeNode node)
+            {
+                if (!(node.Tag is InsideViewNodeTag tag))
+                    return;
+
+                switch (tag.NodeType)
+                {
+                    case NodeTypeEnum.Dependency:
+                        SelectedFilter = new DependencyEventFilter(node.Parent.Name, node.Name);
+                        EventFilterDescriptionLabel.Text = $"Show events filtered by recipient '{node.Parent.Name}' and sender '{node.Name}'";
+                        EventsTabPage.Text = $"Events between '{node.Parent.Name}' and '{node.Name}'";
+                        break;
+
+                    case NodeTypeEnum.Instance:
+                        SelectedFilter = new InstanceEventFilter(node.Name);
+                        EventFilterDescriptionLabel.Text = $"Show events filtered by recipient '{node.Name}'";
+                        EventsTabPage.Text = $"Events for '{node.Name}'";
+                        break;
+
+                    case NodeTypeEnum.LuaScripts:
+                        SelectedFilter = new AllEventFilter();
+                        EventFilterDescriptionLabel.Text = "Showing all events";
+                        EventsTabPage.Text = $"Events";
+                        break;
+
+                    default:
+                        SelectedFilter = new NoneEventFilter();
+                        EventFilterDescriptionLabel.Text = "";
+                        EventsTabPage.Text = $"Events";
+                        break;
+                }
+
+                EventGridView.Rows.Clear();
+                foreach (var e in Events)
+                {
+                    AddToControl(e);
+                }
+            }
+        }
+
         private Thread? EventHandlerThread;
         private readonly IEventBus EventBus;
         private readonly string InstanceId;
@@ -38,6 +223,10 @@ namespace Slipstream.Components.WinFormUI.Forms
         private readonly CancellationTokenSource EventHandlerThreadCts = new CancellationTokenSource();
         private readonly TreeNode LuaScriptTreeNode;
         private CancellationToken? EventHandlerThreadCancellationToken;
+        private readonly EventRepository EventsCollected;
+        private readonly IEventSerdeService EventSerdeService;
+
+        private DataGridViewCellEventArgs? EventViewerMouseLocation;
 
         public MainWindow(
             string instanceId,
@@ -47,7 +236,8 @@ namespace Slipstream.Components.WinFormUI.Forms
             IPlaybackEventFactory playbackEventFactory,
             IEventBus eventBus,
             IApplicationVersionService applicationVersionService,
-            IEventHandlerController eventHandlerController
+            IEventHandlerController eventHandlerController,
+            IEventSerdeService eventSerdeService
             )
         {
             InstanceId = instanceId;
@@ -57,19 +247,31 @@ namespace Slipstream.Components.WinFormUI.Forms
             PlaybackEventFactory = playbackEventFactory;
             EventHandler = eventHandlerController;
             EventBus = eventBus;
+            EventSerdeService = eventSerdeService;
             Envelope = new EventEnvelope(instanceId);
             BroadcastEnvelope = new EventEnvelope(instanceId);
 
             InitializeComponent();
+
+            EventGridView.Columns.Add("uptime", "Uptime");
+            EventGridView.Columns.Add("eventname", "Event Name");
+            EventGridView.Columns.Add("sender", "Sender");
+            EventGridView.Columns.Add("recipients", "Recipients");
+            EventGridView.Columns.Add("json", "JSON");
+            EventGridView.Columns[^1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            EventsCollected = new EventRepository(EventGridView, EventFilterDescriptionLabel, EventViewerContextMenuStrip, EventsTabPage, eventSerdeService);
 
             AboutTextBox.Text = "Slipstream version v" + applicationVersionService.Version;
 
             // Find Root Nodes of InsideView:
             foreach (TreeNode node in InsideView.Nodes)
             {
+                node.Tag = new InsideViewNodeTag(NodeTypeEnum.LuaScripts);
+
                 if (node.Name == "LuaScripts")
                 {
                     LuaScriptTreeNode = node;
+                    node.Tag = new InsideViewNodeTag(NodeTypeEnum.LuaScripts);
                 }
             }
 
@@ -78,6 +280,8 @@ namespace Slipstream.Components.WinFormUI.Forms
             InsideView.BeginUpdate();
             LuaScriptTreeNode.Expand();
             InsideView.EndUpdate();
+
+            EventsCollected.Selected(LuaScriptTreeNode);
 
             Text += " v" + applicationVersionService.Version;
 
@@ -107,9 +311,9 @@ namespace Slipstream.Components.WinFormUI.Forms
 
         private void MainWindow_Load(object? sender, EventArgs e)
         {
-            EventBusSubscription = EventBus.RegisterListener(InstanceId, fromBeginning: true);
+            EventBusSubscription = EventBus.RegisterListener(InstanceId, fromBeginning: true, promiscuousMode: true);
             EventHandlerThreadCancellationToken = EventHandlerThreadCts.Token;
-            EventHandlerThread = new Thread(new ThreadStart(this.EventListenerMain))
+            EventHandlerThread = new Thread(new ThreadStart(EventListenerMain))
             {
                 Name = "EventListenerMain"
             };
@@ -118,7 +322,7 @@ namespace Slipstream.Components.WinFormUI.Forms
 
         private void AppendMessages(string msg)
         {
-            ExecuteSecure(() => this.LogAreaTextBox.AppendText(msg));
+            ExecuteSecure(() => LogAreaTextBox.AppendText(msg));
         }
 
         private void ExecuteSecure(Action a)
@@ -169,7 +373,12 @@ namespace Slipstream.Components.WinFormUI.Forms
 
             while (!token.IsCancellationRequested)
             {
-                EventHandler.HandleEvent(EventBusSubscription?.NextEvent(250));
+                var @event = EventBusSubscription?.NextEvent(250);
+                if (@event != null)
+                {
+                    ExecuteSecure(() => EventsCollected.Add(@event));
+                    EventHandler.HandleEvent(@event);
+                }
             }
         }
 
@@ -225,7 +434,7 @@ namespace Slipstream.Components.WinFormUI.Forms
                 {
                     if (instanceNode.Name == instanceId)
                     {
-                        instanceNode.Nodes.Add(new TreeNode(dependsOn + " [dependency]") { Name = dependsOn });
+                        instanceNode.Nodes.Add(InsideViewNodeTag.DependencyNode(dependsOn));
                         break;
                     }
                 }
@@ -243,7 +452,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             {
                 InsideView.BeginUpdate();
 
-                LuaScriptTreeNode.Nodes.Add(new TreeNode(instanceId) { Name = instanceId });
+                LuaScriptTreeNode.Nodes.Add(InsideViewNodeTag.InstanceNode(instanceId));
 
                 InsideView.EndUpdate();
             });
@@ -340,6 +549,89 @@ namespace Slipstream.Components.WinFormUI.Forms
         {
             EventTestWindow etw = new EventTestWindow(EventBus);
             etw.Show(this);
+        }
+
+        private void InsideView_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (e.Action == TreeViewAction.Unknown || e.Action == TreeViewAction.Collapse || e.Action == TreeViewAction.Expand)
+                return;
+
+            if (!(e.Node.Tag is InsideViewNodeTag nodeTag))
+                return;
+
+            if (nodeTag.EventFilter)
+            {
+                EventsCollected.Selected(e.Node);
+            }
+        }
+
+        private void EventGridView_CellMouseEnter(object sender, DataGridViewCellEventArgs location)
+        {
+            EventViewerMouseLocation = location;
+        }
+
+        private void EventViewerResendMenuItem_Click(object sender, EventArgs e)
+        {
+            if (EventViewerMouseLocation == null)
+                return;
+
+            if (!(EventGridView
+                .Rows[EventViewerMouseLocation.RowIndex]
+                .Cells[EventGridView.Rows[EventViewerMouseLocation.RowIndex].Cells.Count - 1]
+                .Value is string json))
+                return;
+
+            var @event = EventSerdeService.Deserialize(json);
+            if (@event == null)
+                return;
+            EventBus.PublishEvent(@event);
+        }
+
+        private void EventViewerCopyJsonMenuItem_Click(object sender, EventArgs e)
+        {
+            if (EventViewerMouseLocation == null)
+                return;
+
+            if (!(EventGridView
+                .Rows[EventViewerMouseLocation.RowIndex]
+                .Cells[EventGridView.Rows[EventViewerMouseLocation.RowIndex].Cells.Count - 1]
+                .Value is string json))
+                return;
+
+            CopyToClipBoard(json);
+        }
+
+        private static void CopyToClipBoard(string str)
+        {
+            // https://stackoverflow.com/questions/17762037/current-thread-must-be-set-to-single-thread-apartment-sta-error-in-copy-stri
+            Thread thread = new Thread(() => Clipboard.SetText(str));
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            thread.Join();
+        }
+
+        private void CopyLuaHandlerCodeMenuItem_Click(object sender, EventArgs e)
+        {
+            if (EventViewerMouseLocation == null)
+                return;
+
+            var rows = EventGridView.Rows[EventViewerMouseLocation.RowIndex];
+
+            if (!(rows
+                .Cells[EventGridView.Rows[EventViewerMouseLocation.RowIndex].Cells.Count - 1]
+                .Value is string json))
+                return;
+
+            if (!(rows.Cells[1].Value is string eventType))
+                return;
+
+            var code = $@"
+addEventHandler(""{eventType}"", function(event)
+    -- Example event: {json}
+    -- your code here
+end)
+";
+            CopyToClipBoard(code);
         }
     }
 }

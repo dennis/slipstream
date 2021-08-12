@@ -14,6 +14,7 @@ namespace Slipstream.Components.WinFormUI.Lua
         private readonly IApplicationVersionService ApplicationVersionService;
         private readonly IEventHandlerController EventHandlerController;
         private readonly IPlaybackEventFactory PlaybackEventFactory;
+        private readonly IEventSerdeService EventSerdeService;
         private readonly IWinFormUIEventFactory UIEventFactory;
 
         public WinFormUIInstanceThread(
@@ -25,7 +26,8 @@ namespace Slipstream.Components.WinFormUI.Lua
             IApplicationVersionService applicationVersionService,
             IEventHandlerController eventHandlerController,
             IWinFormUIEventFactory uiEventFactory,
-            IPlaybackEventFactory playbackEventFactory
+            IPlaybackEventFactory playbackEventFactory,
+            IEventSerdeService eventSerdeService
         ) : base(luaLibraryName, instanceId, logger, eventHandlerController, eventBus, eventFactory)
         {
             InternalEventFactory = eventFactory;
@@ -34,6 +36,7 @@ namespace Slipstream.Components.WinFormUI.Lua
             EventHandlerController = eventHandlerController;
             UIEventFactory = uiEventFactory;
             PlaybackEventFactory = playbackEventFactory;
+            EventSerdeService = eventSerdeService;
         }
 
         [STAThreadAttribute]
@@ -47,7 +50,8 @@ namespace Slipstream.Components.WinFormUI.Lua
                 PlaybackEventFactory,
                 EventBus,
                 ApplicationVersionService,
-                EventHandlerController
+                EventHandlerController,
+                EventSerdeService
            ));
         }
 

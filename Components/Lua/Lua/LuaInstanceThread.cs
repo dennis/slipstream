@@ -181,6 +181,45 @@ SS = {{
     instance_id = ""{InstanceId.Replace("\\", "\\\\")}"",
     file = ""{FileName.Replace("\\", "\\\\")}""
 }}
+
+SS.eventHandlers = {{}}
+SS.eventHandlers.handlers = {{}}
+SS.eventHandlers.add = function(self, eventName, func)
+    if type(self) ~= ""table"" then
+        error(""ERROR: Please use event:add(...) (note: colon, not comma)"")
+
+        return
+    end
+
+    if not self.handlers[eventName] then
+        self.handlers[eventName] = {{}}
+    end
+
+    table.insert(self.handlers[eventName], func)
+end
+
+SS.eventHandlers.handle = function(self, event)
+    if type(self) ~= ""table"" then
+        error(""ERROR: Please use event:handle(...) (note: colon, not comma)"")
+        return
+    end
+
+    if self.handlers[event.EventType] then
+        for _, h in ipairs(self.handlers[event.EventType]) do
+            h(event)
+        end
+    end
+end
+
+function addEventHandler(eventName, func)
+    SS.eventHandlers:add(eventName, func)
+
+    if not handle then
+        function handle(event)
+            SS.eventHandlers:handle(event)
+        end
+    end
+end
 ");
         }
 

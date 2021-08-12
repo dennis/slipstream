@@ -7,7 +7,7 @@ namespace Slipstream.Shared
 {
     public class EventEnvelope : IEventEnvelope
     {
-        public string Sender { get; }
+        public string Sender { get; set; }
         public string[]? Recipients { get; set; }
         public UInt64 Uptime { get; set; }
 

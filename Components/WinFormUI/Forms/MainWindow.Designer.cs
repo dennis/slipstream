@@ -29,15 +29,18 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Lua Scripts");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Lua Scripts");
             this.panel1 = new System.Windows.Forms.Panel();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.EventsTabControl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.AboutTextBox = new System.Windows.Forms.RichTextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.LogAreaTextBox = new System.Windows.Forms.TextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.ButtonFlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.EventsTabPage = new System.Windows.Forms.TabPage();
+            this.EventGridView = new System.Windows.Forms.DataGridView();
+            this.EventFilterDescriptionLabel = new System.Windows.Forms.Label();
             this.Tree = new System.Windows.Forms.Panel();
             this.InsideView = new System.Windows.Forms.TreeView();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -54,18 +57,25 @@
             this.LogMessageUpdateTimer = new System.Windows.Forms.Timer(this.components);
             this.SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.EventViewerContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.EventViewerResendMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.EventViewerCopyJsonMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.CopyLuaHandlerCodeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
-            this.tabControl1.SuspendLayout();
+            this.EventsTabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.EventsTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.EventGridView)).BeginInit();
             this.Tree.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.EventViewerContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.tabControl1);
+            this.panel1.Controls.Add(this.EventsTabControl);
             this.panel1.Controls.Add(this.Tree);
             this.panel1.Controls.Add(this.menuStrip1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -75,17 +85,18 @@
             this.panel1.Size = new System.Drawing.Size(933, 519);
             this.panel1.TabIndex = 0;
             // 
-            // tabControl1
+            // EventsTabControl
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(226, 24);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(707, 495);
-            this.tabControl1.TabIndex = 5;
+            this.EventsTabControl.Controls.Add(this.tabPage1);
+            this.EventsTabControl.Controls.Add(this.tabPage2);
+            this.EventsTabControl.Controls.Add(this.tabPage3);
+            this.EventsTabControl.Controls.Add(this.EventsTabPage);
+            this.EventsTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.EventsTabControl.Location = new System.Drawing.Point(226, 24);
+            this.EventsTabControl.Name = "EventsTabControl";
+            this.EventsTabControl.SelectedIndex = 0;
+            this.EventsTabControl.Size = new System.Drawing.Size(707, 495);
+            this.EventsTabControl.TabIndex = 5;
             // 
             // tabPage1
             // 
@@ -115,7 +126,7 @@
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(699, 467);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Log";
+            this.tabPage2.Text = "Console";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // LogAreaTextBox
@@ -154,6 +165,42 @@
             this.ButtonFlowLayoutPanel.Size = new System.Drawing.Size(693, 461);
             this.ButtonFlowLayoutPanel.TabIndex = 5;
             // 
+            // EventsTabPage
+            // 
+            this.EventsTabPage.Controls.Add(this.EventGridView);
+            this.EventsTabPage.Controls.Add(this.EventFilterDescriptionLabel);
+            this.EventsTabPage.Location = new System.Drawing.Point(4, 24);
+            this.EventsTabPage.Name = "EventsTabPage";
+            this.EventsTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.EventsTabPage.Size = new System.Drawing.Size(699, 467);
+            this.EventsTabPage.TabIndex = 3;
+            this.EventsTabPage.Text = "Events";
+            this.EventsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // EventGridView
+            // 
+            this.EventGridView.AllowUserToAddRows = false;
+            this.EventGridView.AllowUserToDeleteRows = false;
+            this.EventGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.EventGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.EventGridView.Location = new System.Drawing.Point(3, 18);
+            this.EventGridView.Name = "EventGridView";
+            this.EventGridView.ReadOnly = true;
+            this.EventGridView.RowTemplate.Height = 25;
+            this.EventGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.EventGridView.Size = new System.Drawing.Size(693, 446);
+            this.EventGridView.TabIndex = 1;
+            this.EventGridView.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.EventGridView_CellMouseEnter);
+            // 
+            // EventFilterDescriptionLabel
+            // 
+            this.EventFilterDescriptionLabel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.EventFilterDescriptionLabel.Location = new System.Drawing.Point(3, 3);
+            this.EventFilterDescriptionLabel.Name = "EventFilterDescriptionLabel";
+            this.EventFilterDescriptionLabel.Size = new System.Drawing.Size(693, 15);
+            this.EventFilterDescriptionLabel.TabIndex = 0;
+            this.EventFilterDescriptionLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
             // Tree
             // 
             this.Tree.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(85)))), ((int)(((byte)(91)))), ((int)(((byte)(110)))));
@@ -170,12 +217,13 @@
             this.InsideView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InsideView.Location = new System.Drawing.Point(0, 141);
             this.InsideView.Name = "InsideView";
-            treeNode1.Name = "LuaScripts";
-            treeNode1.Text = "Lua Scripts";
+            treeNode2.Name = "LuaScripts";
+            treeNode2.Text = "Lua Scripts";
             this.InsideView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1});
+            treeNode2});
             this.InsideView.Size = new System.Drawing.Size(226, 354);
             this.InsideView.TabIndex = 1;
+            this.InsideView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.InsideView_AfterSelect);
             // 
             // panel2
             // 
@@ -288,6 +336,36 @@
             this.OpenFileDialog.DefaultExt = "mjson";
             this.OpenFileDialog.Filter = "Event files|*.mjson|All files|*.*";
             // 
+            // EventViewerContextMenuStrip
+            // 
+            this.EventViewerContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.EventViewerResendMenuItem,
+            this.EventViewerCopyJsonMenuItem,
+            this.CopyLuaHandlerCodeMenuItem});
+            this.EventViewerContextMenuStrip.Name = "EventViewerContextMenuStrip";
+            this.EventViewerContextMenuStrip.Size = new System.Drawing.Size(201, 92);
+            // 
+            // EventViewerResendMenuItem
+            // 
+            this.EventViewerResendMenuItem.Name = "EventViewerResendMenuItem";
+            this.EventViewerResendMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.EventViewerResendMenuItem.Text = "Resend event";
+            this.EventViewerResendMenuItem.Click += new System.EventHandler(this.EventViewerResendMenuItem_Click);
+            // 
+            // EventViewerCopyJsonMenuItem
+            // 
+            this.EventViewerCopyJsonMenuItem.Name = "EventViewerCopyJsonMenuItem";
+            this.EventViewerCopyJsonMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.EventViewerCopyJsonMenuItem.Text = "Copy JSON";
+            this.EventViewerCopyJsonMenuItem.Click += new System.EventHandler(this.EventViewerCopyJsonMenuItem_Click);
+            // 
+            // CopyLuaHandlerCodeMenuItem
+            // 
+            this.CopyLuaHandlerCodeMenuItem.Name = "CopyLuaHandlerCodeMenuItem";
+            this.CopyLuaHandlerCodeMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.CopyLuaHandlerCodeMenuItem.Text = "Copy Lua Handler Code";
+            this.CopyLuaHandlerCodeMenuItem.Click += new System.EventHandler(this.CopyLuaHandlerCodeMenuItem_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -300,14 +378,17 @@
             this.Text = "Slipstream";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.tabControl1.ResumeLayout(false);
+            this.EventsTabControl.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.tabPage3.ResumeLayout(false);
+            this.EventsTabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.EventGridView)).EndInit();
             this.Tree.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.EventViewerContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -331,13 +412,20 @@
         private System.Windows.Forms.Panel Tree;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.TreeView InsideView;
-        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabControl EventsTabControl;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.TextBox LogAreaTextBox;
         private System.Windows.Forms.FlowLayoutPanel ButtonFlowLayoutPanel;
         private System.Windows.Forms.RichTextBox AboutTextBox;
+        private System.Windows.Forms.TabPage EventsTabPage;
+        private System.Windows.Forms.Label EventFilterDescriptionLabel;
+        private System.Windows.Forms.DataGridView EventGridView;
+        private System.Windows.Forms.ContextMenuStrip EventViewerContextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem EventViewerResendMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem EventViewerCopyJsonMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem CopyLuaHandlerCodeMenuItem;
     }
 }
 

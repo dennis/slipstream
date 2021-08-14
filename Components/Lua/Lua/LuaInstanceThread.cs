@@ -117,7 +117,7 @@ namespace Slipstream.Components.Lua.Lua
             {
                 string message = e.InnerException?.Message ?? e.Message;
 
-                Logger.Error(e, "{source} errored: {message}", e.Source, message);
+                Logger.Error(e, "{source} errored: {message}", e.Source ?? FileName, message);
             }
             catch (Exception e)
             {

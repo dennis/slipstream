@@ -214,7 +214,7 @@ namespace Slipstream.Components.WinFormUI.Forms
         private readonly IWinFormUIEventFactory UIEventFactory;
         private readonly IPlaybackEventFactory PlaybackEventFactory;
         private IEventBusSubscription? EventBusSubscription;
-        private readonly BlockingCollection<string> PendingMessages = new BlockingCollection<string>();
+        private readonly BlockingCollection<WinFormUICommandWriteToConsole> PendingMessages = new BlockingCollection<WinFormUICommandWriteToConsole>();
         private readonly IDictionary<string, Button> LuaButtons = new Dictionary<string, Button>();
         private readonly IEventHandlerController EventHandler;
         private bool ShuttingDown = false;
@@ -320,9 +320,15 @@ namespace Slipstream.Components.WinFormUI.Forms
             EventHandlerThread.Start();
         }
 
-        private void AppendMessages(string msg)
+        private void AppendMessages(WinFormUICommandWriteToConsole msg)
         {
-            ExecuteSecure(() => LogAreaTextBox.AppendText(msg));
+            ExecuteSecure(() =>
+            {
+                var color = msg.Error ? System.Drawing.Color.Red : System.Drawing.Color.Black;
+                ConsoleListView.BeginUpdate();
+                ConsoleListView.Items.Add(new ListViewItem(new string[] { msg.Message }, 0, color, System.Drawing.Color.Transparent, ConsoleListView.Font));
+                ConsoleListView.EndUpdate();
+            });
         }
 
         private void ExecuteSecure(Action a)
@@ -335,14 +341,13 @@ namespace Slipstream.Components.WinFormUI.Forms
 
         private void LogMessageUpdate_Tick(object sender, EventArgs e)
         {
-            string allMesssages = string.Empty;
-
-            while (PendingMessages.TryTake(out string? msg))
+            while (PendingMessages.TryTake(out WinFormUICommandWriteToConsole? msg))
             {
-                allMesssages += msg + "\r\n";
+                if (msg != null)
+                {
+                    AppendMessages(msg);
+                }
             }
-
-            AppendMessages(allMesssages);
 
             if (Instance.IsStopping())
             {
@@ -361,7 +366,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             var internalEventHandler = EventHandler.Get<Internal.EventHandler.Internal>();
             var uiEventHandler = EventHandler.Get<EventHandler.WinFormUIEventHandler>();
 
-            uiEventHandler.OnWinFormUICommandWriteToConsole += (_, e) => PendingMessages.Add($"{DateTime.Now:s} {e.Message}");
+            uiEventHandler.OnWinFormUICommandWriteToConsole += (_, e) => PendingMessages.Add(e);
             uiEventHandler.OnWinFormUICommandCreateButton += (_, e) => EventHandler_OnWinFormUICommandCreateButton(e);
             uiEventHandler.OnWinFormUICommandDeleteButton += (_, e) => EventHandler_OnWinFormUICommandDeleteButton(e);
             internalEventHandler.OnInternalInstanceAdded += (_, e) => EventHandler_OnInternalInstanceAdded(e.LuaLibrary, e.InstanceId);

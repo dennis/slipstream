@@ -29,13 +29,14 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Lua Scripts");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Lua Scripts");
             this.panel1 = new System.Windows.Forms.Panel();
             this.EventsTabControl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.AboutTextBox = new System.Windows.Forms.RichTextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.LogAreaTextBox = new System.Windows.Forms.TextBox();
+            this.ConsoleListView = new System.Windows.Forms.ListView();
+            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.ButtonFlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.EventsTabPage = new System.Windows.Forms.TabPage();
@@ -120,7 +121,7 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.LogAreaTextBox);
+            this.tabPage2.Controls.Add(this.ConsoleListView);
             this.tabPage2.Location = new System.Drawing.Point(4, 24);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -129,19 +130,27 @@
             this.tabPage2.Text = "Console";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // LogAreaTextBox
+            // ConsoleListView
             // 
-            this.LogAreaTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.LogAreaTextBox.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.LogAreaTextBox.Location = new System.Drawing.Point(3, 3);
-            this.LogAreaTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.LogAreaTextBox.Multiline = true;
-            this.LogAreaTextBox.Name = "LogAreaTextBox";
-            this.LogAreaTextBox.ReadOnly = true;
-            this.LogAreaTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.LogAreaTextBox.Size = new System.Drawing.Size(693, 461);
-            this.LogAreaTextBox.TabIndex = 3;
-            this.LogAreaTextBox.WordWrap = false;
+            this.ConsoleListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader2});
+            this.ConsoleListView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ConsoleListView.FullRowSelect = true;
+            this.ConsoleListView.GridLines = true;
+            this.ConsoleListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.ConsoleListView.HideSelection = false;
+            this.ConsoleListView.Location = new System.Drawing.Point(3, 3);
+            this.ConsoleListView.MultiSelect = false;
+            this.ConsoleListView.Name = "ConsoleListView";
+            this.ConsoleListView.ShowGroups = false;
+            this.ConsoleListView.Size = new System.Drawing.Size(693, 461);
+            this.ConsoleListView.TabIndex = 0;
+            this.ConsoleListView.UseCompatibleStateImageBehavior = false;
+            this.ConsoleListView.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Width = 600;
             // 
             // tabPage3
             // 
@@ -217,10 +226,10 @@
             this.InsideView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InsideView.Location = new System.Drawing.Point(0, 141);
             this.InsideView.Name = "InsideView";
-            treeNode2.Name = "LuaScripts";
-            treeNode2.Text = "Lua Scripts";
+            treeNode1.Name = "LuaScripts";
+            treeNode1.Text = "Lua Scripts";
             this.InsideView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode2});
+            treeNode1});
             this.InsideView.Size = new System.Drawing.Size(226, 354);
             this.InsideView.TabIndex = 1;
             this.InsideView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.InsideView_AfterSelect);
@@ -343,7 +352,7 @@
             this.EventViewerCopyJsonMenuItem,
             this.CopyLuaHandlerCodeMenuItem});
             this.EventViewerContextMenuStrip.Name = "EventViewerContextMenuStrip";
-            this.EventViewerContextMenuStrip.Size = new System.Drawing.Size(201, 92);
+            this.EventViewerContextMenuStrip.Size = new System.Drawing.Size(201, 70);
             // 
             // EventViewerResendMenuItem
             // 
@@ -381,7 +390,6 @@
             this.EventsTabControl.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             this.EventsTabPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.EventGridView)).EndInit();
@@ -416,7 +424,6 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.TextBox LogAreaTextBox;
         private System.Windows.Forms.FlowLayoutPanel ButtonFlowLayoutPanel;
         private System.Windows.Forms.RichTextBox AboutTextBox;
         private System.Windows.Forms.TabPage EventsTabPage;
@@ -426,6 +433,8 @@
         private System.Windows.Forms.ToolStripMenuItem EventViewerResendMenuItem;
         private System.Windows.Forms.ToolStripMenuItem EventViewerCopyJsonMenuItem;
         private System.Windows.Forms.ToolStripMenuItem CopyLuaHandlerCodeMenuItem;
+        private System.Windows.Forms.ListView ConsoleListView;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
     }
 }
 

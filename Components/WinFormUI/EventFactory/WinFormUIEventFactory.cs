@@ -7,12 +7,13 @@ namespace Slipstream.Components.WinFormUI.EventFactory
 {
     public class WinFormUIEventFactory : IWinFormUIEventFactory
     {
-        public WinFormUICommandWriteToConsole CreateWinFormUICommandWriteToConsole(IEventEnvelope envelope, string message)
+        public WinFormUICommandWriteToConsole CreateWinFormUICommandWriteToConsole(IEventEnvelope envelope, string message, bool error)
         {
             return new WinFormUICommandWriteToConsole
             {
                 Envelope = envelope,
-                Message = message
+                Message = message,
+                Error = error
             };
         }
 

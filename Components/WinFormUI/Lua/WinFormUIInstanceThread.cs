@@ -15,11 +15,13 @@ namespace Slipstream.Components.WinFormUI.Lua
         private readonly IEventHandlerController EventHandlerController;
         private readonly IPlaybackEventFactory PlaybackEventFactory;
         private readonly IEventSerdeService EventSerdeService;
+        private readonly bool DeepView;
         private readonly IWinFormUIEventFactory UIEventFactory;
 
         public WinFormUIInstanceThread(
             string luaLibraryName,
             string instanceId,
+            bool deepView,
             Serilog.ILogger logger,
             IInternalEventFactory eventFactory,
             IEventBus eventBus,
@@ -37,6 +39,7 @@ namespace Slipstream.Components.WinFormUI.Lua
             UIEventFactory = uiEventFactory;
             PlaybackEventFactory = playbackEventFactory;
             EventSerdeService = eventSerdeService;
+            DeepView = deepView;
         }
 
         [STAThreadAttribute]
@@ -51,7 +54,8 @@ namespace Slipstream.Components.WinFormUI.Lua
                 EventBus,
                 ApplicationVersionService,
                 EventHandlerController,
-                EventSerdeService
+                EventSerdeService,
+                DeepView
            ));
         }
 

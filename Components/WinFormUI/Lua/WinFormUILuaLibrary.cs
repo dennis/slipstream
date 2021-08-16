@@ -15,7 +15,8 @@ namespace Slipstream.Components.WinFormUI.Lua
         static WinFormUILuaLibrary()
         {
             ConfigurationValidator = new DictionaryValidator()
-                .RequireString("id");
+                .RequireString("id")
+                .PermitBool("deepview");
         }
 
         public WinFormUILuaLibrary(ILifetimeScope scope, IEventBus eventBus) : base(ConfigurationValidator, scope, eventBus)
@@ -25,10 +26,12 @@ namespace Slipstream.Components.WinFormUI.Lua
         protected override IWinFormUIInstanceThread CreateInstance(ILifetimeScope scope, string luaScriptInstanceId, Parameters cfg)
         {
             var instanceId = cfg.Extract<string>("id");
+            var deepview = cfg.ExtractOrDefault("deepview", false);
 
             return scope.Resolve<IWinFormUIInstanceThread>(
                 new NamedParameter("luaLibraryName", Name),
-                new NamedParameter("instanceId", instanceId)
+                new NamedParameter("instanceId", instanceId),
+                new NamedParameter("deepView", deepview)
             );
         }
     }

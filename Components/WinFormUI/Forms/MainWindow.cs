@@ -3,6 +3,7 @@
 using Slipstream.Components.Internal;
 using Slipstream.Components.Playback;
 using Slipstream.Components.WinFormUI.Events;
+using Slipstream.Components.WinFormUI.Forms.Helpers;
 using Slipstream.Components.WinFormUI.Lua;
 using Slipstream.Shared;
 
@@ -20,192 +21,6 @@ namespace Slipstream.Components.WinFormUI.Forms
 {
     public partial class MainWindow : Form
     {
-        private enum NodeTypeEnum
-        {
-            None,
-            Generic,
-            LuaScripts,
-            Instance,
-            Dependency
-        }
-
-        private class InsideViewNodeTag
-        {
-            public NodeTypeEnum NodeType { get; private set; }
-            public bool EventFilter { get => NodeType == NodeTypeEnum.Instance || NodeType == NodeTypeEnum.Dependency || NodeType == NodeTypeEnum.LuaScripts; }
-
-            public InsideViewNodeTag(NodeTypeEnum type)
-            {
-                NodeType = type;
-            }
-
-            public static TreeNode InstanceNode(string text)
-            {
-                return new TreeNode(text)
-                {
-                    Name = text,
-                    Tag = new InsideViewNodeTag(NodeTypeEnum.Instance),
-                };
-            }
-
-            public static TreeNode DependencyNode(string text)
-            {
-                return new TreeNode(text)
-                {
-                    Name = text,
-                    Tag = new InsideViewNodeTag(NodeTypeEnum.Dependency),
-                };
-            }
-        }
-
-        private class EventRepository
-        {
-            private readonly List<IEvent> Events = new List<IEvent>();
-            private readonly DataGridView EventGridView;
-            private readonly IEventSerdeService EventSerdeService;
-            private readonly Label EventFilterDescriptionLabel;
-            private readonly ContextMenuStrip ContextMenu;
-            private readonly TabPage EventsTabPage;
-            private IEventFilter SelectedFilter = new NoneEventFilter();
-
-            private const int MaxEventsStored = 1000;
-
-            public EventRepository(DataGridView eventGridView, Label eventFilterDescriptionLabel, ContextMenuStrip eventViewerContextMenuStrip, TabPage eventsTabPage, IEventSerdeService eventSerdeService)
-            {
-                EventGridView = eventGridView;
-                EventSerdeService = eventSerdeService;
-                EventFilterDescriptionLabel = eventFilterDescriptionLabel;
-                ContextMenu = eventViewerContextMenuStrip;
-                EventsTabPage = eventsTabPage;
-            }
-
-            public void Add(IEvent e)
-            {
-                while (Events.Count > MaxEventsStored)
-                {
-                    Events.RemoveAt(0);
-                }
-                Events.Add(e);
-                AddToControl(e);
-            }
-
-            private void AddToControl(IEvent e)
-            {
-                if (SelectedFilter.Accept(e))
-                {
-                    string recipients = RecipientsAsString(e);
-                    var json = EventSerdeService.Serialize(e);
-
-                    EventGridView.Rows.Add(e.Envelope.Uptime, e.EventType, e.Envelope.Sender, recipients, json);
-                    EventGridView.Rows[^1].ContextMenuStrip = ContextMenu;
-                }
-            }
-
-            private static string RecipientsAsString(IEvent e)
-            {
-                if (e.Envelope.Recipients == null || e.Envelope.Recipients.Length == 0)
-                {
-                    return "*";
-                }
-                else
-                {
-                    return string.Join(", ", e.Envelope.Recipients);
-                }
-            }
-
-            private interface IEventFilter
-            {
-                bool Accept(IEvent e);
-            }
-
-            private class NoneEventFilter : IEventFilter
-            {
-                public bool Accept(IEvent e)
-                {
-                    return false;
-                }
-            }
-
-            private class AllEventFilter : IEventFilter
-            {
-                public bool Accept(IEvent e)
-                {
-                    return true;
-                }
-            }
-
-            private class DependencyEventFilter : IEventFilter
-            {
-                private readonly string SelectedNodeInstanceId;
-                private readonly string SelectedNodeDependency;
-
-                public DependencyEventFilter(string instanceId, string dependency)
-                {
-                    SelectedNodeInstanceId = instanceId;
-                    SelectedNodeDependency = dependency;
-                }
-
-                public bool Accept(IEvent e)
-                {
-                    return e.Envelope.ContainsRecipient(SelectedNodeInstanceId) && e.Envelope.Sender == SelectedNodeDependency;
-                }
-            }
-
-            private class InstanceEventFilter : IEventFilter
-            {
-                private readonly string SelectedNodeInstanceId;
-
-                public InstanceEventFilter(string instanceId)
-                {
-                    SelectedNodeInstanceId = instanceId;
-                }
-
-                public bool Accept(IEvent e)
-                {
-                    return e.Envelope.ContainsRecipient(SelectedNodeInstanceId);
-                }
-            }
-
-            internal void Selected(TreeNode node)
-            {
-                if (!(node.Tag is InsideViewNodeTag tag))
-                    return;
-
-                switch (tag.NodeType)
-                {
-                    case NodeTypeEnum.Dependency:
-                        SelectedFilter = new DependencyEventFilter(node.Parent.Name, node.Name);
-                        EventFilterDescriptionLabel.Text = $"Show events filtered by recipient '{node.Parent.Name}' and sender '{node.Name}'";
-                        EventsTabPage.Text = $"Events between '{node.Parent.Name}' and '{node.Name}'";
-                        break;
-
-                    case NodeTypeEnum.Instance:
-                        SelectedFilter = new InstanceEventFilter(node.Name);
-                        EventFilterDescriptionLabel.Text = $"Show events filtered by recipient '{node.Name}'";
-                        EventsTabPage.Text = $"Events for '{node.Name}'";
-                        break;
-
-                    case NodeTypeEnum.LuaScripts:
-                        SelectedFilter = new AllEventFilter();
-                        EventFilterDescriptionLabel.Text = "Showing all events";
-                        EventsTabPage.Text = $"Events";
-                        break;
-
-                    default:
-                        SelectedFilter = new NoneEventFilter();
-                        EventFilterDescriptionLabel.Text = "";
-                        EventsTabPage.Text = $"Events";
-                        break;
-                }
-
-                EventGridView.Rows.Clear();
-                foreach (var e in Events)
-                {
-                    AddToControl(e);
-                }
-            }
-        }
-
         private Thread? EventHandlerThread;
         private readonly IEventBus EventBus;
         private readonly string InstanceId;
@@ -225,8 +40,10 @@ namespace Slipstream.Components.WinFormUI.Forms
         private CancellationToken? EventHandlerThreadCancellationToken;
         private readonly EventRepository EventsCollected;
         private readonly IEventSerdeService EventSerdeService;
+        private readonly bool DeepView = false;
 
         private DataGridViewCellEventArgs? EventViewerMouseLocation;
+        private readonly TreeNode? DeepViewInstanceNode;
 
         public MainWindow(
             string instanceId,
@@ -237,7 +54,8 @@ namespace Slipstream.Components.WinFormUI.Forms
             IEventBus eventBus,
             IApplicationVersionService applicationVersionService,
             IEventHandlerController eventHandlerController,
-            IEventSerdeService eventSerdeService
+            IEventSerdeService eventSerdeService,
+            bool deepView
             )
         {
             InstanceId = instanceId;
@@ -250,6 +68,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             EventSerdeService = eventSerdeService;
             Envelope = new EventEnvelope(instanceId);
             BroadcastEnvelope = new EventEnvelope(instanceId);
+            DeepView = deepView;
 
             InitializeComponent();
 
@@ -274,11 +93,16 @@ namespace Slipstream.Components.WinFormUI.Forms
                     node.Tag = new InsideViewNodeTag(NodeTypeEnum.LuaScripts);
                 }
             }
-
             Debug.Assert(LuaScriptTreeNode != null);
 
             InsideView.BeginUpdate();
-            LuaScriptTreeNode.Expand();
+
+            if (DeepView)
+            {
+                InsideView.Nodes.Add("Instances");
+                DeepViewInstanceNode = InsideView.Nodes[^1];
+            }
+
             InsideView.EndUpdate();
 
             EventsCollected.Selected(LuaScriptTreeNode);
@@ -369,10 +193,19 @@ namespace Slipstream.Components.WinFormUI.Forms
             uiEventHandler.OnWinFormUICommandWriteToConsole += (_, e) => PendingMessages.Add(e);
             uiEventHandler.OnWinFormUICommandCreateButton += (_, e) => EventHandler_OnWinFormUICommandCreateButton(e);
             uiEventHandler.OnWinFormUICommandDeleteButton += (_, e) => EventHandler_OnWinFormUICommandDeleteButton(e);
-            internalEventHandler.OnInternalInstanceAdded += (_, e) => EventHandler_OnInternalInstanceAdded(e.LuaLibrary, e.InstanceId);
-            internalEventHandler.OnInternalInstanceRemoved += (_, e) => EventHandler_OnInternalInstanceRemoved(e.LuaLibrary, e.InstanceId);
-            internalEventHandler.OnInternaDependencyAdded += (_, e) => EventHandler_OnInternaDependencyAdded(e.LuaLibrary, e.InstanceId, e.DependsOn);
-            internalEventHandler.OnInternalDependencyRemoved += (_, e) => EventHandler_OnInternalDependencyRemoved(e.LuaLibrary, e.InstanceId, e.DependsOn);
+
+            internalEventHandler.OnInternaDependencyAdded += (_, e) => EventHandler_OnInternaDependencyAdded_Envelope(e.InstanceId, e.DependsOn);
+            internalEventHandler.OnInternalDependencyRemoved += (_, e) => EventHandler_OnInternalDependencyRemoved_Envelope(e.InstanceId, e.DependsOn);
+
+            internalEventHandler.OnInternalInstanceAdded += (_, e) => EventHandler_OnInternalInstanceAdded_InsideView(e.LuaLibrary, e.InstanceId);
+            internalEventHandler.OnInternalInstanceRemoved += (_, e) => EventHandler_OnInternalInstanceRemoved_InsideView(e.LuaLibrary, e.InstanceId);
+            internalEventHandler.OnInternaDependencyAdded += (_, e) => EventHandler_OnInternaDependencyAdded_InsideView(e.LuaLibrary, e.InstanceId, e.DependsOn);
+            internalEventHandler.OnInternalDependencyRemoved += (_, e) => EventHandler_OnInternalDependencyRemoved_InsideView(e.LuaLibrary, e.InstanceId, e.DependsOn);
+
+            internalEventHandler.OnInternalInstanceAdded += (_, e) => EventHandler_OnInternalInstanceAdded_DeepView(e.InstanceId);
+            internalEventHandler.OnInternalInstanceRemoved += (_, e) => EventHandler_OnInternalInstanceRemoved_DeepView(e.InstanceId);
+            internalEventHandler.OnInternaDependencyAdded += (_, e) => EventHandler_OnInternaDependencyAdded_DeepView(e.InstanceId, e.DependsOn);
+            internalEventHandler.OnInternalDependencyRemoved += (_, e) => EventHandler_OnInternalDependencyRemoved_DeepView(e.InstanceId, e.DependsOn);
 
             var token = (CancellationToken)EventHandlerThreadCancellationToken; // We got a Assert ensuring this isn't null
 
@@ -387,12 +220,15 @@ namespace Slipstream.Components.WinFormUI.Forms
             }
         }
 
-        private void EventHandler_OnInternalDependencyRemoved(string luaLibraryName, string instanceId, string dependsOn)
+        private void EventHandler_OnInternalDependencyRemoved_Envelope(string instanceId, string dependsOn)
         {
             // something stopped begin dependant on us, so remove it from our Envelope
             if (dependsOn == InstanceId)
                 Envelope = Envelope.Remove(instanceId);
+        }
 
+        private void EventHandler_OnInternalDependencyRemoved_InsideView(string luaLibraryName, string instanceId, string dependsOn)
+        {
             // Populating "InsideView" TreeView
             if (luaLibraryName != "api/lua")
                 return;
@@ -421,13 +257,44 @@ namespace Slipstream.Components.WinFormUI.Forms
             });
         }
 
-        private void EventHandler_OnInternaDependencyAdded(string luaLibraryName, string instanceId, string dependsOn)
+        private void EventHandler_OnInternalDependencyRemoved_DeepView(string instanceId, string dependsOn)
+        {
+            if (DeepViewInstanceNode == null)
+                return;
+
+            ExecuteSecure(() =>
+            {
+                InsideView.BeginUpdate();
+
+                foreach (TreeNode instanceNode in DeepViewInstanceNode.Nodes)
+                {
+                    if (instanceNode.Name == instanceId)
+                    {
+                        foreach (TreeNode dependsOnNode in instanceNode.Nodes)
+                        {
+                            if (dependsOnNode.Name == dependsOn)
+                            {
+                                dependsOnNode.Remove();
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                InsideView.EndUpdate();
+            });
+        }
+
+        private void EventHandler_OnInternaDependencyAdded_Envelope(string instanceId, string dependsOn)
         {
             // something is depending on us, so add it to the receivers of our events
             if (dependsOn == InstanceId)
                 Envelope = Envelope.Add(instanceId);
+        }
 
-            // Populating "InsideView" TreeView
+        private void EventHandler_OnInternaDependencyAdded_InsideView(string luaLibraryName, string instanceId, string dependsOn)
+        {
             if (luaLibraryName != "api/lua")
                 return;
 
@@ -448,7 +315,29 @@ namespace Slipstream.Components.WinFormUI.Forms
             });
         }
 
-        private void EventHandler_OnInternalInstanceAdded(string luaLibraryName, string instanceId)
+        private void EventHandler_OnInternaDependencyAdded_DeepView(string instanceId, string dependsOn)
+        {
+            if (DeepViewInstanceNode == null)
+                return;
+
+            ExecuteSecure(() =>
+            {
+                InsideView.BeginUpdate();
+
+                foreach (TreeNode instanceNode in DeepViewInstanceNode.Nodes)
+                {
+                    if (instanceNode.Name == instanceId)
+                    {
+                        instanceNode.Nodes.Add(InsideViewNodeTag.DependencyNode(dependsOn));
+                        break;
+                    }
+                }
+
+                InsideView.EndUpdate();
+            });
+        }
+
+        private void EventHandler_OnInternalInstanceAdded_InsideView(string luaLibraryName, string instanceId)
         {
             if (luaLibraryName != "api/lua")
                 return;
@@ -463,7 +352,22 @@ namespace Slipstream.Components.WinFormUI.Forms
             });
         }
 
-        private void EventHandler_OnInternalInstanceRemoved(string luaLibraryName, string instanceId)
+        private void EventHandler_OnInternalInstanceAdded_DeepView(string instanceId)
+        {
+            if (DeepViewInstanceNode == null)
+                return;
+
+            ExecuteSecure(() =>
+            {
+                InsideView.BeginUpdate();
+
+                DeepViewInstanceNode.Nodes.Add(InsideViewNodeTag.InstanceNode(instanceId));
+
+                InsideView.EndUpdate();
+            });
+        }
+
+        private void EventHandler_OnInternalInstanceRemoved_InsideView(string luaLibraryName, string instanceId)
         {
             if (luaLibraryName != "api/lua")
                 return;
@@ -473,6 +377,28 @@ namespace Slipstream.Components.WinFormUI.Forms
                 InsideView.BeginUpdate();
 
                 foreach (TreeNode instanceNode in LuaScriptTreeNode.Nodes)
+                {
+                    if (instanceNode.Name == instanceId)
+                    {
+                        instanceNode.Remove();
+                        break;
+                    }
+                }
+
+                InsideView.EndUpdate();
+            });
+        }
+
+        private void EventHandler_OnInternalInstanceRemoved_DeepView(string instanceId)
+        {
+            if (DeepViewInstanceNode == null)
+                return;
+
+            ExecuteSecure(() =>
+            {
+                InsideView.BeginUpdate();
+
+                foreach (TreeNode instanceNode in DeepViewInstanceNode.Nodes)
                 {
                     if (instanceNode.Name == instanceId)
                     {

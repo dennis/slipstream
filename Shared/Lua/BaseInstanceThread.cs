@@ -50,10 +50,21 @@ namespace Slipstream.Shared.Lua
             internalHandler.OnInternalDependencyRemoved += (_, e) =>
             {
                 if (e.DependsOn == InstanceId)
+                {
                     InstanceEnvelope = InstanceEnvelope.Remove(e.InstanceId);
+
+                    if (InstanceEnvelope.Recipients == null || InstanceEnvelope.Recipients.Length == 0)
+                        InactiveInstance();
+                }
             };
 
             SetupThread();
+        }
+
+        protected virtual void InactiveInstance()
+        {
+            Logger.Information($"Instance '{InstanceId}' is inactive (not used by anyone)");
+            Stopping = true;
         }
 
         private void SetupThread()
@@ -99,7 +110,6 @@ namespace Slipstream.Shared.Lua
             {
                 ServiceThread.Start();
                 EventBus.PublishEvent(InternalEventFactory.CreateInternalInstanceAdded(BroadcastEnvelope, LuaLibraryName, InstanceId));
-
             }
             else if (ServiceThread?.ThreadState == ThreadState.Stopped)
             {

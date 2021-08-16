@@ -2,53 +2,45 @@
 
 using System.Collections.Generic;
 
+using static Slipstream.Components.WebWidget.IWebWidgetInstances;
+
 namespace Slipstream.Components.WebWidget
 {
     public class WebWidgetInstances : IWebWidgetInstances
     {
-        private readonly IDictionary<string, string> InstancesType = new Dictionary<string, string>();
-        private readonly IDictionary<string, string?> InstanceInitData = new Dictionary<string, string?>();
+        private readonly IDictionary<string, Instance> Instances = new Dictionary<string, Instance>();
 
-        public void Add(string id, string type, string? data)
+        public void Add(string instanceId, string webwidgetType, string? initData)
         {
-            lock(InstancesType)
+            lock (Instances)
             {
-                InstancesType.Add(id, type);
-                InstanceInitData.Add(id, data);
-            }
-                
-        }
-
-        public void Remove(string id)
-        {
-            lock (InstancesType)
-            {
-                InstancesType.Remove(id);
-                InstanceInitData.Remove(id);
+                Instances.Add(instanceId, new Instance { InstanceId = instanceId, Type = webwidgetType, InitData = initData });
             }
         }
 
-        public string this[string id]
+        public void Remove(string instanceId)
+        {
+            lock (Instances)
+            {
+                Instances.Remove(instanceId);
+            }
+        }
+
+        public Instance this[string instanceId]
         {
             get
             {
-                return InstancesType[id];
+                lock (Instances)
+                {
+                    return Instances[instanceId].Clone();
+                }
             }
-        }
-
-        public string? InitData(string id)
-        {
-            lock(InstanceInitData)
-                if(InstanceInitData.ContainsKey(id))
-                    return InstanceInitData[id];
-
-            return null;
         }
 
         public ICollection<string> GetIds()
         {
-            lock(InstancesType)
-                return InstancesType.Keys;
+            lock (Instances)
+                return Instances.Keys;
         }
     }
 }

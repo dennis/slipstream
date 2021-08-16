@@ -37,7 +37,7 @@ namespace Slipstream.Components.WebWidget
                 InstanceToContextIdMap[instanceId].Add(context.Id);
             }
 
-            var initData = Instances.InitData(instanceId);
+            var initData = Instances[instanceId].InitData;
 
             // if we encoded null, it will be "null" - no need to send that
             if (initData != null && initData != "null")

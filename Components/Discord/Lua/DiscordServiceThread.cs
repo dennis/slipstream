@@ -80,8 +80,6 @@ namespace Slipstream.Components.Discord.Lua
                     RequestConnect = false;
                 }
             }
-
-            Logger.Debug($"Stopping {nameof(DiscordServiceThread)} {InstanceId}");
         }
 
         private Task Client_Ready1(DiscordClient sender, DSharpPlus.EventArgs.ReadyEventArgs e)

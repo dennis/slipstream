@@ -26,8 +26,29 @@ namespace Slipstream.Shared.Lua
             internalHandler.OnInternalCommandShutdown += (_, e) => Stopping = true;
             internalHandler.OnInternaAddDependency += (_, e) => InstanceEnvelope = InstanceEnvelope.Add(e.InstanceId);
             internalHandler.OnInternalRemoveDependency += (_, e) => InstanceEnvelope = InstanceEnvelope.Remove(e.InstanceId);
+            internalHandler.OnInternaDependencyAdded += (_, e) =>
+            {
+                if (e.DependsOn == InstanceId)
+                    InstanceEnvelope = InstanceEnvelope.Add(e.InstanceId);
+            };
+            internalHandler.OnInternalDependencyRemoved += (_, e) =>
+            {
+                if (e.DependsOn == InstanceId)
+                {
+                    InstanceEnvelope = InstanceEnvelope.Remove(e.InstanceId);
+
+                    if (InstanceEnvelope.Recipients == null || InstanceEnvelope.Recipients.Length == 0)
+                        InactiveInstance();
+                }
+            };
 
             SetupThread();
+        }
+
+        protected virtual void InactiveInstance()
+        {
+            Logger.Information($"Instance '{InstanceId}' is inactive (not used by anyone)");
+            Stopping = true;
         }
 
         private void SetupThread()
@@ -68,6 +89,7 @@ namespace Slipstream.Shared.Lua
             if (ServiceThread?.ThreadState == ThreadState.Unstarted)
             {
                 ServiceThread.Start();
+                EventBus.PublishEvent(InternalEventFactory.CreateInternalInstanceAdded(BroadcastEnvelope, LuaLibraryName, InstanceId));
             }
             else if (ServiceThread?.ThreadState == ThreadState.Stopped)
             {

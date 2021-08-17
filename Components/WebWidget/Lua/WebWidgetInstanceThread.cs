@@ -1,6 +1,6 @@
 ﻿#nullable enable
 
-using Serilog;
+using System;
 
 namespace Slipstream.Components.WebWidget.Lua
 {

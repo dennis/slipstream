@@ -10,11 +10,20 @@ namespace Slipstream.Components.WebWidget
     {
         private readonly IDictionary<string, Instance> Instances = new Dictionary<string, Instance>();
 
+        public int Count
+        {
+            get
+            {
+                lock (Instances)
+                    return Instances.Count;
+            }
+        }
+
         public void Add(string instanceId, string webwidgetType, string? initData)
         {
             lock (Instances)
             {
-                Instances.Add(instanceId, new Instance { InstanceId = instanceId, Type = webwidgetType, InitData = initData });
+                Instances.Add(instanceId, new Instance(instanceId) { InstanceId = instanceId, Type = webwidgetType, InitData = initData });
             }
         }
 
@@ -23,6 +32,20 @@ namespace Slipstream.Components.WebWidget
             lock (Instances)
             {
                 Instances.Remove(instanceId);
+            }
+        }
+
+        public bool TryGetValue(string instanceId, out Instance result)
+        {
+            if (Instances.TryGetValue(instanceId, out Instance? obj))
+            {
+                result = obj;
+                return true;
+            }
+            else
+            {
+                result = new Instance("UNKNOWN");
+                return false;
             }
         }
 

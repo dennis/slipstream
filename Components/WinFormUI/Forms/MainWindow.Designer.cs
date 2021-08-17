@@ -50,7 +50,6 @@
             this.LoadEventsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SaveEventsToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.PluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TestEventsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -247,7 +246,6 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileToolStripMenuItem,
-            this.PluginsToolStripMenuItem,
             this.ToolsMenuItem,
             this.HelpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -293,12 +291,6 @@
             this.ExitToolStripMenuItem.Text = "Exit";
             this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
-            // PluginsToolStripMenuItem
-            // 
-            this.PluginsToolStripMenuItem.Name = "PluginsToolStripMenuItem";
-            this.PluginsToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
-            this.PluginsToolStripMenuItem.Text = "&Plugins";
-            // 
             // ToolsMenuItem
             // 
             this.ToolsMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -310,7 +302,7 @@
             // TestEventsMenuItem
             // 
             this.TestEventsMenuItem.Name = "TestEventsMenuItem";
-            this.TestEventsMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.TestEventsMenuItem.Size = new System.Drawing.Size(180, 22);
             this.TestEventsMenuItem.Text = "&Test Events";
             this.TestEventsMenuItem.ToolTipText = "Allows users to send test events to test scripts";
             this.TestEventsMenuItem.Click += new System.EventHandler(this.TestEventsMenuItem_Click);
@@ -407,7 +399,6 @@
         private System.Windows.Forms.Timer LogMessageUpdateTimer;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem FileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem PluginsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ExitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem HelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem OpenDataDirectoryToolStripMenuItem;

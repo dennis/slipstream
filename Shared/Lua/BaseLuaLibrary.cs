@@ -81,5 +81,10 @@ namespace Slipstream.Shared.Lua
                 instance.Start();
             }
         }
+
+        protected void RemoveInstance(string instanceId)
+        {
+            Instances.Remove(instanceId);
+        }
     }
 }

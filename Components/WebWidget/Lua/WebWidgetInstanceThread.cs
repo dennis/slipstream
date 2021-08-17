@@ -2,8 +2,6 @@
 
 using System;
 
-using Serilog;
-
 namespace Slipstream.Components.WebWidget.Lua
 {
     public class WebWidgetInstanceThread : IWebWidgetInstanceThread

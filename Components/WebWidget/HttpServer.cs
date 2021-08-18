@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,6 +10,7 @@ using EmbedIO;
 using Serilog;
 
 using Slipstream.Components.Internal;
+using Slipstream.Components.Internal.EventFactory;
 using Slipstream.Components.WebWidget.EventHandler;
 using Slipstream.Components.WebWidget.Lua;
 using Slipstream.Shared;
@@ -29,6 +31,7 @@ namespace Slipstream.Components.WebWidget
         private readonly IEventBus EventBus;
         private readonly IInternalEventFactory InternalEventFactory;
         private readonly WebWidgetLuaLibrary LuaLibrary;
+        private readonly IWebWidgetEventFactory WebWidgetEventFactory;
         private readonly IWebWidgetInstances Instances = new WebWidgetInstances();
         private readonly IEventEnvelope BroadcastEnvelope = new EventEnvelope("webwidget");
         private const string Url = "http://127.0.0.1:1919"; // Must NOT end with slash
@@ -40,6 +43,7 @@ namespace Slipstream.Components.WebWidget
             IEventHandlerController eventHandlerController,
             IEventBus eventBus,
             IInternalEventFactory internalEventFactory,
+            IWebWidgetEventFactory webWidgetEventFactory,
             WebWidgetLuaLibrary luaLibrary)
         {
             Logger = logger;
@@ -48,6 +52,7 @@ namespace Slipstream.Components.WebWidget
             EventBus = eventBus;
             InternalEventFactory = internalEventFactory;
             LuaLibrary = luaLibrary;
+            WebWidgetEventFactory = webWidgetEventFactory;
 
             EventsServerModule = new WebSocketsEventsServer(Logger, Instances);
 
@@ -68,20 +73,23 @@ namespace Slipstream.Components.WebWidget
                 }
             }
 
+            var endpoint = $"{Url}/instances/{instanceId}";
+
             // Crude sanity check
             var indexFile = WEB_WIDGET_ROOT_DIRECTORY + webWidgetType + "/index.html";
             if (System.IO.File.Exists(indexFile))
             {
                 EventBus.PublishEvent(InternalEventFactory.CreateInternalInstanceAdded(BroadcastEnvelope, "webwidget", instanceId));
+                EventBus.PublishEvent(WebWidgetEventFactory.CreateWebWidgetEndpointAdded(BroadcastEnvelope, endpoint));
 
                 Instances.Add(instanceId, webWidgetType, data);
                 Subscription.AddImpersonate(instanceId);
 
-                Logger.Information($"HttpServer: {Url}/instances/{instanceId} added");
+                Logger.Information($"HttpServer: {endpoint} added");
             }
             else
             {
-                Logger.Error($"HttpServer: {Url}/instances/{instanceId} not added, as {indexFile} does not exist");
+                Logger.Error($"HttpServer: {endpoint} not added, as {indexFile} does not exist");
             }
         }
 
@@ -150,9 +158,11 @@ namespace Slipstream.Components.WebWidget
 
         public void RemoveInstance(string instanceId)
         {
+            var endpoint = $"{Url}/instances/{instanceId}";
             Instances.Remove(instanceId);
             Subscription.DeleteImpersonation(instanceId);
-            Logger.Information($"HttpServer: {Url}/instances/{instanceId} removed");
+            Logger.Information($"HttpServer: {endpoint} removed");
+            EventBus.PublishEvent(WebWidgetEventFactory.CreateWebWidgetEndpointRemoved(BroadcastEnvelope, endpoint));
             EventBus.PublishEvent(InternalEventFactory.CreateInternalInstanceRemoved(BroadcastEnvelope, "webwidget", instanceId));
             Stopping = Instances.Count == 0;
             LuaLibrary.InstanceDropped(instanceId);

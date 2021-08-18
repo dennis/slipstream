@@ -44,6 +44,7 @@ namespace Slipstream.Components.WinFormUI.Forms
 
         private DataGridViewCellEventArgs? EventViewerMouseLocation;
         private readonly TreeNode? DeepViewInstanceNode;
+        private readonly Dictionary<string, ToolStripMenuItem> EndpointMenuItems = new Dictionary<string, ToolStripMenuItem>();
 
         public MainWindow(
             string instanceId,
@@ -190,6 +191,7 @@ namespace Slipstream.Components.WinFormUI.Forms
 
             var internalEventHandler = EventHandler.Get<Internal.EventHandler.Internal>();
             var uiEventHandler = EventHandler.Get<EventHandler.WinFormUIEventHandler>();
+            var webWidgetEventHandler = EventHandler.Get<WebWidget.EventHandler.WebWidgetEventHandler>();
 
             uiEventHandler.OnWinFormUICommandWriteToConsole += (_, e) => PendingMessages.Add(e);
             uiEventHandler.OnWinFormUICommandCreateButton += (_, e) => EventHandler_OnWinFormUICommandCreateButton(e);
@@ -208,6 +210,9 @@ namespace Slipstream.Components.WinFormUI.Forms
             internalEventHandler.OnInternaDependencyAdded += (_, e) => EventHandler_OnInternaDependencyAdded_DeepView(e.InstanceId, e.DependsOn);
             internalEventHandler.OnInternalDependencyRemoved += (_, e) => EventHandler_OnInternalDependencyRemoved_DeepView(e.InstanceId, e.DependsOn);
 
+            webWidgetEventHandler.OnWebWidgetEndpointAdded += (_, e) => EventHandler_OnWebWidgetEndpointAdded(e.Endpoint);
+            webWidgetEventHandler.OnWebWidgetEndpointRemoved += (_, e) => EventHandler_OnWebWidgetEndpointRemoved(e.Endpoint);
+
             var token = (CancellationToken)EventHandlerThreadCancellationToken; // We got a Assert ensuring this isn't null
 
             while (!token.IsCancellationRequested)
@@ -219,6 +224,35 @@ namespace Slipstream.Components.WinFormUI.Forms
                     EventHandler.HandleEvent(@event);
                 }
             }
+        }
+
+        private void EventHandler_OnWebWidgetEndpointRemoved(string endpoint)
+        {
+            ExecuteSecure(() =>
+            {
+                EndpointsToolStripMenuItem.DropDownItems.Remove(EndpointMenuItems[endpoint]);
+                EndpointsToolStripMenuItem.Enabled = EndpointsToolStripMenuItem.DropDownItems.Count != 0;
+                EndpointMenuItems.Remove(endpoint);
+            });
+        }
+
+        private void EventHandler_OnWebWidgetEndpointAdded(string endpoint)
+        {
+            ExecuteSecure(() =>
+            {
+                EndpointsToolStripMenuItem.Enabled = true;
+
+                var openItem = new ToolStripMenuItem("Open in browser");
+                openItem.Click += (_, e) => { Process.Start(new ProcessStartInfo(endpoint) { UseShellExecute = true }); };
+                var copyItem = new ToolStripMenuItem("Copy to clipboard");
+                copyItem.Click += (_, e) => CopyToClipBoard(endpoint);
+
+                var item = new ToolStripMenuItem(endpoint);
+                item.DropDownItems.AddRange(new ToolStripItem[] { openItem, copyItem });
+
+                EndpointMenuItems.Add(endpoint, item);
+                EndpointsToolStripMenuItem.DropDownItems.Add(item);
+            });
         }
 
         private void EventHandler_OnInternalDependencyRemoved_Envelope(string instanceId, string dependsOn)

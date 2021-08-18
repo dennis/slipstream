@@ -17,9 +17,10 @@ the same `id` if one exists.
 
 `config` is the initial configuration of the instance if one needs to be created. It is a table with one or more keys as defined below.
 
-| Parameter   | Type          | Default    | Description                    |
-| :---------- | :-----------: | :--------: | :----------------------------- |
-| id          | string        |            | Mandatory: Id of this instance |
+| Parameter   | Type          | Default    | Description                             |
+| :---------- | :-----------: | :--------: | :-------------------------------------- |
+| id          | string        |            | Mandatory: Id of this instance          |
+| deepview    | bool          |            | Show more details in UI (for debugging) |
 </details>
 
 <details><summary>ui:print(message)</summary><br />

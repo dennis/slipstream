@@ -1,7 +1,10 @@
 ﻿#nullable enable
 
 using Serilog;
+
+using Slipstream.Components.Internal;
 using Slipstream.Components.Internal.EventHandler;
+
 using System;
 using System.Threading;
 
@@ -15,19 +18,53 @@ namespace Slipstream.Shared.Lua
         protected volatile bool Stopping = false;
         protected volatile bool AutoStart = false;
         protected IEventEnvelope InstanceEnvelope;
+        protected IEventEnvelope BroadcastEnvelope;
+        protected IEventBus EventBus;
+        protected readonly string LuaLibraryName;
+        protected IInternalEventFactory InternalEventFactory;
 
-        protected BaseInstanceThread(string instanceId, ILogger logger, IEventHandlerController eventHandlerController)
+        protected BaseInstanceThread(
+            string luaLLibraryName,
+            string instanceId,
+            ILogger logger,
+            IEventHandlerController eventHandlerController,
+            IEventBus eventBus,
+            IInternalEventFactory internalEventFactory
+        )
         {
             InstanceId = instanceId;
             Logger = logger;
             InstanceEnvelope = new EventEnvelope(instanceId);
+            BroadcastEnvelope = new EventEnvelope(instanceId);
+            LuaLibraryName = luaLLibraryName;
+            EventBus = eventBus;
+            InternalEventFactory = internalEventFactory;
 
             var internalHandler = eventHandlerController.Get<Internal>();
             internalHandler.OnInternalCommandShutdown += (_, e) => Stopping = true;
-            internalHandler.OnInternaAddDependency += (_, e) => InstanceEnvelope = InstanceEnvelope.Add(e.InstanceId);
-            internalHandler.OnInternalRemoveDependency += (_, e) => InstanceEnvelope = InstanceEnvelope.Remove(e.InstanceId);
+            internalHandler.OnInternaDependencyAdded += (_, e) =>
+            {
+                if (e.DependsOn == InstanceId)
+                    InstanceEnvelope = InstanceEnvelope.Add(e.InstanceId);
+            };
+            internalHandler.OnInternalDependencyRemoved += (_, e) =>
+            {
+                if (e.DependsOn == InstanceId)
+                {
+                    InstanceEnvelope = InstanceEnvelope.Remove(e.InstanceId);
+
+                    if (InstanceEnvelope.Recipients == null || InstanceEnvelope.Recipients.Length == 0)
+                        InactiveInstance();
+                }
+            };
 
             SetupThread();
+        }
+
+        protected virtual void InactiveInstance()
+        {
+            Logger.Information($"Instance '{InstanceId}' is inactive (not used by anyone)");
+            Stopping = true;
         }
 
         private void SetupThread()
@@ -41,6 +78,7 @@ namespace Slipstream.Shared.Lua
         private void ThreadMain()
         {
             Logger.Debug($"Starting {GetType().Name } {InstanceId}");
+
             try
             {
                 Main();
@@ -58,7 +96,10 @@ namespace Slipstream.Shared.Lua
                 AutoStart = false;
                 Stopping = false;
                 ThreadMain();
+                return;
             }
+
+            EventBus.PublishEvent(InternalEventFactory.CreateInternalInstanceRemoved(BroadcastEnvelope, LuaLibraryName, InstanceId));
         }
 
         protected abstract void Main();
@@ -68,6 +109,7 @@ namespace Slipstream.Shared.Lua
             if (ServiceThread?.ThreadState == ThreadState.Unstarted)
             {
                 ServiceThread.Start();
+                EventBus.PublishEvent(InternalEventFactory.CreateInternalInstanceAdded(BroadcastEnvelope, LuaLibraryName, InstanceId));
             }
             else if (ServiceThread?.ThreadState == ThreadState.Stopped)
             {
@@ -76,6 +118,7 @@ namespace Slipstream.Shared.Lua
                 // We need to recreate it
                 SetupThread();
                 ServiceThread.Start();
+                EventBus.PublishEvent(InternalEventFactory.CreateInternalInstanceAdded(BroadcastEnvelope, LuaLibraryName, InstanceId));
             }
         }
 
@@ -109,6 +152,7 @@ namespace Slipstream.Shared.Lua
             Stopping = true;
             if (ServiceThread?.IsAlive == true)
                 ServiceThread?.Join();
+            GC.SuppressFinalize(this);
         }
     }
 }

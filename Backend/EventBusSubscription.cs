@@ -11,17 +11,33 @@ namespace Slipstream.Backend
     {
         private readonly BlockingCollection<IEvent> Events = new BlockingCollection<IEvent>();
         private readonly IEventBus EventBus;
-        public List<string> InstanceIds { get; set; } = new List<string>();
+        private readonly bool PromiscuousMode = false;
+        private List<string> InstanceIds { get; set; } = new List<string>();
 
-        public EventBusSubscription(IEventBus eventBus, string instanceId)
+        public EventBusSubscription(IEventBus eventBus, string instanceId, bool promiscuousMode = false)
         {
             EventBus = eventBus;
             InstanceIds.Add(instanceId);
+            PromiscuousMode = promiscuousMode;
         }
 
         public void Add(IEvent ev)
         {
-            Events.Add(ev);
+            if (PromiscuousMode)
+            {
+                Events.Add(ev);
+            }
+            else
+            {
+                foreach (var instanceId in InstanceIds)
+                {
+                    if (ev.Envelope.ContainsRecipient(instanceId))
+                    {
+                        Events.Add(ev);
+                        return;
+                    }
+                }
+            }
         }
 
         public void Dispose()

@@ -1,36 +1,39 @@
 ﻿#nullable enable
 
 using Autofac;
-using NLua;
+
+using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
+using Slipstream.Shared.Helpers.StrongParameters.Validators;
 using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.Lua.Lua
 {
-    public class UtilLuaLibrary : ILuaLibraryAutoRegistration
+    public class UtilLuaLibrary : BaseLuaLibrary<NoopInstanceThread, UtilLuaReference>, ILuaLibraryAutoRegistration
     {
-        private readonly ILifetimeScope LifetimeScope;
+        private static readonly DictionaryValidator ConfigurationValidator;
 
-        public string Name => "api/util";
-
-        public UtilLuaLibrary(ILifetimeScope scope)
+        static UtilLuaLibrary()
         {
-            LifetimeScope = scope;
+            ConfigurationValidator = new DictionaryValidator().RequireString("id");
         }
 
-        public void Dispose()
+        public UtilLuaLibrary(ILifetimeScope scope, IEventBus eventBus) : base(ConfigurationValidator, scope, eventBus)
         {
         }
 
-        public ILuaReference? GetInstance(string luaScriptInstanceId, LuaTable cfgTable)
+        protected override NoopInstanceThread CreateInstance(ILifetimeScope scope, string luaScriptInstanceId, Parameters cfg)
         {
-            var cfg = Parameters.From(cfgTable);
             var instanceId = cfg.Extract<string>("id");
 
-            return LifetimeScope.Resolve<UtilLuaReference>(
+            var subscription = EventBus.RegisterListener(instanceId);
+
+            return LifetimeScope.Resolve<NoopInstanceThread>(
                 new NamedParameter("luaScriptInstanceId", luaScriptInstanceId),
+                new NamedParameter("luaLibraryName", Name),
                 new NamedParameter("instanceId", instanceId),
-                new NamedParameter("luaLibrary", this)
+                new NamedParameter("luaLibrary", this),
+                new TypedParameter(typeof(IEventBusSubscription), subscription)
             );
         }
     }

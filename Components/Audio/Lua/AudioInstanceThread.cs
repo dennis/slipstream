@@ -12,6 +12,7 @@ using Serilog;
 
 using Slipstream.Components.Audio.EventHandler;
 using Slipstream.Components.Audio.Events;
+using Slipstream.Components.Internal;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
 
@@ -27,10 +28,19 @@ namespace Slipstream.Components.Audio.Lua
         private readonly IEventHandlerController EventHandlerController;
         private readonly IEventBusSubscription Subscription;
         private readonly IAudioEventFactory EventFactory;
-        private readonly IEventBus EventBus;
         private int OutputDeviceNumber = -1;
 
-        public AudioInstanceThread(string instanceId, int output, string path, IEventBusSubscription eventBusSubscription, IEventHandlerController eventHandlerController, IEventBus eventBus, IAudioEventFactory audioEventFactory, ILogger logger) : base(instanceId, logger, eventHandlerController)
+        public AudioInstanceThread(
+            string luaLibraryName,
+            string instanceId,
+            int output,
+            string path,
+            IEventBusSubscription eventBusSubscription,
+            IEventHandlerController eventHandlerController,
+            IEventBus eventBus,
+            IAudioEventFactory audioEventFactory,
+            IInternalEventFactory internalEventFactory,
+            ILogger logger) : base(luaLibraryName, instanceId, logger, eventHandlerController, eventBus, internalEventFactory)
         {
             Path = path;
             Subscription = eventBusSubscription;
@@ -65,7 +75,7 @@ namespace Slipstream.Components.Audio.Lua
             OutputDeviceNumber = @event.DeviceIdx;
         }
 
-        private void OnAudioCommandSendDevices(AudioCommandSendDevices @event)
+        private void OnAudioCommandSendDevices(AudioCommandSendDevices _)
         {
             for (int n = -1; n < WaveOut.DeviceCount; n++)
             {

@@ -1,10 +1,9 @@
 ﻿#nullable enable
 
 using Autofac;
-using NLua;
+
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
-using System.Diagnostics;
 
 namespace Slipstream.Shared.Lua
 {
@@ -18,12 +17,12 @@ namespace Slipstream.Shared.Lua
         {
         }
 
-        new protected void HandleInstance(string _, Parameters cfg)
+        new protected void HandleInstance(string luaScriptInstanceId, string _, Parameters cfg)
         {
             // Force instanceId to be "singleton", so we never get more than one
             cfg["instanceId"] = "singleton";
 
-            base.HandleInstance("singleton", cfg);
+            base.HandleInstance(luaScriptInstanceId, "singleton", cfg);
         }
     }
 }

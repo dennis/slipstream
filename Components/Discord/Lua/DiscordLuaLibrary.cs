@@ -24,7 +24,7 @@ namespace Slipstream.Components.Discord.Lua
         {
         }
 
-        protected override IDiscordInstanceThread CreateInstance(ILifetimeScope scope, Parameters cfg)
+        protected override IDiscordInstanceThread CreateInstance(ILifetimeScope scope, string luaScriptInstanceId, Parameters cfg)
         {
             var instanceId = cfg.Extract<string>("id");
             var token = cfg.Extract<string>("token");
@@ -32,6 +32,7 @@ namespace Slipstream.Components.Discord.Lua
             var subscription = EventBus.RegisterListener(instanceId);
 
             return scope.Resolve<IDiscordInstanceThread>(
+                new NamedParameter("luaLibraryName", Name),
                 new NamedParameter("instanceId", instanceId),
                 new NamedParameter("token", token),
                 new TypedParameter(typeof(IEventBusSubscription), subscription)

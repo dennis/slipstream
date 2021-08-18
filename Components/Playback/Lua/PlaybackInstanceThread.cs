@@ -4,6 +4,7 @@ using Slipstream.Components.Internal;
 using Slipstream.Components.Playback.Events;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
+
 using System.IO;
 using System.Threading;
 
@@ -11,18 +12,20 @@ namespace Slipstream.Components.Playback.Lua
 {
     public class PlaybackInstanceThread : BaseInstanceThread, IPlaybackInstanceThread
     {
-        private readonly IEventBus EventBus;
         private readonly IEventHandlerController EventHandlerController;
         private readonly IEventSerdeService EventSerdeService;
         private readonly IEventBusSubscription Subscription;
 
         public PlaybackInstanceThread(
+            string luaLibraryName,
             string instanceId,
             Serilog.ILogger logger,
             IEventBus eventBus,
             IEventHandlerController eventHandlerController,
             IEventSerdeService eventSerdeService,
-            IEventBusSubscription eventBusSubscription) : base(instanceId, logger, eventHandlerController)
+            IEventBusSubscription eventBusSubscription,
+            IInternalEventFactory internalEventFactory
+        ) : base(luaLibraryName, instanceId, logger, eventHandlerController, eventBus, internalEventFactory)
         {
             EventBus = eventBus;
             EventHandlerController = eventHandlerController;

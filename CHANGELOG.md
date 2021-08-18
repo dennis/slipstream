@@ -2,6 +2,17 @@
 
 ## Next version
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.8.0...main)
+ - WinFormUI: Reworked UI. Now allows you to see scripts and which instances they
+   use. And many other small tweaks
+ - Removed empty menu "Plugins"
+ - Lua: Added some lua code to make it possible to pick up events with the following code:
+```lua
+    addEventHandler("InternalDependencyAdded", function(event)
+    -- Example event: {"EventType":"InternalDependencyAdded","Envelope":{"Sender":"Scripts\\simple.lua","Recipients":null,"Uptime":25020},"LuaLibrary":"api/lua","InstanceId":"Scripts\\simple.lua","DependsOn":"winformui"}
+    ui:print(util:event_to_json(event))
+end)
+```
+   It will setup a `handle()` function for you that wires it up.
 
 ## [0.8.0](https://github.com/dennis/slipstream/releases/tag/v0.8.0) (2021-08-04)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.7.0...v0.8.0)

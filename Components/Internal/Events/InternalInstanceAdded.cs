@@ -4,11 +4,13 @@ using Slipstream.Shared;
 
 namespace Slipstream.Components.Internal.Events
 {
-    public class InternalRemoveDependency : IEvent
+    public class InternalInstanceAdded : IEvent
     {
-        public string EventType => nameof(InternalRemoveDependency);
+        public string EventType => nameof(InternalInstanceAdded);
 
         public IEventEnvelope Envelope { get; set; } = new EventEnvelope();
+
+        public string LuaLibrary { get; set; } = string.Empty;
 
         public string InstanceId { get; set; } = string.Empty;
     }

@@ -89,6 +89,7 @@ namespace Slipstream
                 .As<Shared.Lua.ILuaReference>()
                 .AsSelf()
                 .InstancePerDependency();
+            builder.RegisterType<Shared.Lua.NoopInstanceThread>().InstancePerDependency();
 
 #if WINDOWS
             builder.RegisterType<Components.Audio.Lua.AudioInstanceThread>().As<Components.Audio.Lua.IAudioInstanceThread>().InstancePerDependency();

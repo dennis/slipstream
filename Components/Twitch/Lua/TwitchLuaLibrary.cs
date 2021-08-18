@@ -25,7 +25,7 @@ namespace Slipstream.Components.Twitch.Lua
         {
         }
 
-        protected override ITwitchLuaInstanceThread CreateInstance(ILifetimeScope scope, Parameters cfg)
+        protected override ITwitchLuaInstanceThread CreateInstance(ILifetimeScope scope, string luaScriptInstanceId, Parameters cfg)
         {
             var instanceId = cfg.Extract<string>("id");
             var twitchToken = cfg.Extract<string>("token");
@@ -36,6 +36,7 @@ namespace Slipstream.Components.Twitch.Lua
             var subscription = EventBus.RegisterListener(instanceId);
 
             return scope.Resolve<ITwitchLuaInstanceThread>(
+                new NamedParameter("luaLibraryName", Name),
                 new NamedParameter("instanceId", instanceId),
                 new NamedParameter("twitchToken", twitchToken),
                 new NamedParameter("twitchUsername", twitchUsername),

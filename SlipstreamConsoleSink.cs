@@ -2,6 +2,7 @@
 using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
+
 using Slipstream.Components.WinFormUI;
 using Slipstream.Shared;
 
@@ -25,7 +26,7 @@ namespace Slipstream
             {
                 var message = logEvent.RenderMessage();
 
-                EventBus.PublishEvent(EventFactory.CreateWinFormUICommandWriteToConsole(Envelope, message));
+                EventBus.PublishEvent(EventFactory.CreateWinFormUICommandWriteToConsole(Envelope, message, error: logEvent.Level == LogEventLevel.Error || logEvent.Level == LogEventLevel.Fatal));
             }
         }
     }

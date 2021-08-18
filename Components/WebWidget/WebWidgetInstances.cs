@@ -2,53 +2,68 @@
 
 using System.Collections.Generic;
 
+using static Slipstream.Components.WebWidget.IWebWidgetInstances;
+
 namespace Slipstream.Components.WebWidget
 {
     public class WebWidgetInstances : IWebWidgetInstances
     {
-        private readonly IDictionary<string, string> InstancesType = new Dictionary<string, string>();
-        private readonly IDictionary<string, string?> InstanceInitData = new Dictionary<string, string?>();
+        private readonly IDictionary<string, Instance> Instances = new Dictionary<string, Instance>();
 
-        public void Add(string id, string type, string? data)
-        {
-            lock(InstancesType)
-            {
-                InstancesType.Add(id, type);
-                InstanceInitData.Add(id, data);
-            }
-                
-        }
-
-        public void Remove(string id)
-        {
-            lock (InstancesType)
-            {
-                InstancesType.Remove(id);
-                InstanceInitData.Remove(id);
-            }
-        }
-
-        public string this[string id]
+        public int Count
         {
             get
             {
-                return InstancesType[id];
+                lock (Instances)
+                    return Instances.Count;
             }
         }
 
-        public string? InitData(string id)
+        public void Add(string instanceId, string webwidgetType, string? initData)
         {
-            lock(InstanceInitData)
-                if(InstanceInitData.ContainsKey(id))
-                    return InstanceInitData[id];
+            lock (Instances)
+            {
+                Instances.Add(instanceId, new Instance(instanceId) { InstanceId = instanceId, Type = webwidgetType, InitData = initData });
+            }
+        }
 
-            return null;
+        public void Remove(string instanceId)
+        {
+            lock (Instances)
+            {
+                Instances.Remove(instanceId);
+            }
+        }
+
+        public bool TryGetValue(string instanceId, out Instance result)
+        {
+            if (Instances.TryGetValue(instanceId, out Instance? obj))
+            {
+                result = obj;
+                return true;
+            }
+            else
+            {
+                result = new Instance("UNKNOWN");
+                return false;
+            }
+        }
+
+        public Instance this[string instanceId]
+        {
+            get
+            {
+                lock (Instances)
+                {
+                    return Instances[instanceId].Clone();
+                }
+            }
         }
 
         public ICollection<string> GetIds()
         {
-            lock(InstancesType)
-                return InstancesType.Keys;
+            lock (Instances)
+                return Instances.Keys;
         }
     }
 }

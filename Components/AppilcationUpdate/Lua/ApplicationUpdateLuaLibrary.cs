@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using Autofac;
+
 using Slipstream.Components.Internal;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
@@ -25,14 +26,18 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
         {
         }
 
-        protected override IApplicationUpdateInstanceThread CreateInstance(ILifetimeScope scope, Parameters cfg)
+        protected override IApplicationUpdateInstanceThread CreateInstance(ILifetimeScope scope, string luaScriptInstanceId, Parameters cfg)
         {
             var instanceId = cfg.Extract<string>("id");
             var updateLocation = cfg.Extract<string>("location");
             var prerelease = cfg.ExtractOrDefault("prerelease", false);
 
+            var subscription = EventBus.RegisterListener(instanceId);
+
             return scope.Resolve<IApplicationUpdateInstanceThread>(
+                new NamedParameter("luaLibraryName", Name),
                 new NamedParameter("instanceId", instanceId),
+                new TypedParameter(typeof(IEventBusSubscription), subscription),
                 new NamedParameter("location", updateLocation),
                 new NamedParameter("prerelease", prerelease)
             );

@@ -1,9 +1,13 @@
 ﻿#nullable enable
 
 using Autofac;
+
 using NLua;
+
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -37,6 +41,8 @@ namespace Slipstream.Shared.Lua
                 thread.Value.Dispose();
             }
             Instances.Clear();
+
+            GC.SuppressFinalize(this);
         }
 
         public ILuaReference? GetInstance(string luaScriptInstanceId, LuaTable cfgTable)
@@ -49,7 +55,7 @@ namespace Slipstream.Shared.Lua
 
             lock (Lock)
             {
-                HandleInstance(instanceId, cfg);
+                HandleInstance(luaScriptInstanceId, instanceId, cfg);
 
                 Debug.Assert(Instances.ContainsKey(instanceId));
                 var container = Instances[instanceId];
@@ -62,18 +68,23 @@ namespace Slipstream.Shared.Lua
             }
         }
 
-        protected abstract TInstance CreateInstance(ILifetimeScope scope, Parameters cfg);
+        protected abstract TInstance CreateInstance(ILifetimeScope scope, string luaScriptInstanceId, Parameters cfg);
 
-        protected virtual void HandleInstance(string instanceId, Parameters cfg)
+        protected virtual void HandleInstance(string luaScriptInstanceId, string instanceId, Parameters cfg)
         {
             if (!Instances.ContainsKey(instanceId))
             {
                 Debug.WriteLine($"[{instanceId}] Creating instance {GetType().Name}");
 
-                var instance = CreateInstance(LifetimeScope, cfg);
+                var instance = CreateInstance(LifetimeScope, luaScriptInstanceId, cfg);
                 Instances.Add(instanceId, instance);
                 instance.Start();
             }
+        }
+
+        protected void RemoveInstance(string instanceId)
+        {
+            Instances.Remove(instanceId);
         }
     }
 }

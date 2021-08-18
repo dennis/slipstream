@@ -7,7 +7,7 @@ namespace Slipstream.Components.WinFormUI
 {
     public interface IWinFormUIEventFactory
     {
-        WinFormUICommandWriteToConsole CreateWinFormUICommandWriteToConsole(IEventEnvelope envelope, string message);
+        WinFormUICommandWriteToConsole CreateWinFormUICommandWriteToConsole(IEventEnvelope envelope, string message, bool error);
 
         WinFormUICommandCreateButton CreateWinFormUICommandCreateButton(IEventEnvelope envelope, string text);
 

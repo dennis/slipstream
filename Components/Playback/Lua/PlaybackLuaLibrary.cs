@@ -22,7 +22,7 @@ namespace Slipstream.Components.Playback.Lua
         {
         }
 
-        protected override IPlaybackInstanceThread CreateInstance(ILifetimeScope scope, Parameters cfg)
+        protected override IPlaybackInstanceThread CreateInstance(ILifetimeScope scope, string luaScriptInstanceId, Parameters cfg)
         {
             var instanceId = cfg.Extract<string>("id");
 

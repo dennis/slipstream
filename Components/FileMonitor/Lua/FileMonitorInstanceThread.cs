@@ -1,9 +1,13 @@
 ﻿#nullable enable
 
 using Serilog;
+
 using Slipstream.Components.FileMonitor.Events;
+using Slipstream.Components.Internal;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -11,15 +15,22 @@ namespace Slipstream.Components.FileMonitor.Lua
 {
     public class FileMonitorInstanceThread : BaseInstanceThread, IFileMonitorInstanceThread
     {
-        private readonly FileSystemWatcher[] Watchers = new FileSystemWatcher[] { };
-        private readonly IEventBus EventBus;
+        private readonly FileSystemWatcher[] Watchers = Array.Empty<FileSystemWatcher>();
         private readonly IFileMonitorEventFactory EventFactory;
         private readonly IEventBusSubscription Subscription;
         private readonly IEventHandlerController EventHandlerController;
 
-        public FileMonitorInstanceThread(string instanceId, string[] paths, IEventBus eventBus, IFileMonitorEventFactory eventFactory, IEventBusSubscription eventBusSubscription, IEventHandlerController eventHandlerController, ILogger logger) : base(instanceId, logger, eventHandlerController)
+        public FileMonitorInstanceThread(
+            string luaLibraryName,
+            string instanceId,
+            string[] paths,
+            IEventBus eventBus,
+            IFileMonitorEventFactory eventFactory,
+            IEventBusSubscription eventBusSubscription,
+            IEventHandlerController eventHandlerController,
+            IInternalEventFactory internalEventFactory,
+            ILogger logger) : base(luaLibraryName, instanceId, logger, eventHandlerController, eventBus, internalEventFactory)
         {
-            EventBus = eventBus;
             EventFactory = eventFactory;
             Subscription = eventBusSubscription;
             EventHandlerController = eventHandlerController;
@@ -77,7 +88,7 @@ namespace Slipstream.Components.FileMonitor.Lua
             EventBus.PublishEvent(EventFactory.CreateFileMonitorFileCreated(InstanceEnvelope, e.FullPath));
         }
 
-        new public void Dispose()
+        public new void Dispose()
         {
             base.Dispose();
 
@@ -85,6 +96,8 @@ namespace Slipstream.Components.FileMonitor.Lua
             {
                 w.Dispose();
             }
+
+            GC.SuppressFinalize(this);
         }
 
         private void ScanExistingFiles(FileMonitorCommandScan e)

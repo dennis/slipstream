@@ -1,4 +1,5 @@
 ﻿using Slipstream.Shared;
+
 using System.Collections.Generic;
 
 namespace Slipstream.UnitTests.Components.IRacing.Trackers
@@ -16,7 +17,7 @@ namespace Slipstream.UnitTests.Components.IRacing.Trackers
             Events.Add(e);
         }
 
-        public IEventBusSubscription RegisterListener(string instanceId, bool fromBeginning = false)
+        public IEventBusSubscription RegisterListener(string instanceId, bool fromBeginning = false, bool promiscuousMode = false)
         {
             throw new System.NotImplementedException();
         }

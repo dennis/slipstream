@@ -1,5 +1,7 @@
 ﻿#nullable enable
 
+using Slipstream.Components.Internal;
+using Slipstream.Components.Internal.EventFactory;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
 
@@ -25,7 +27,6 @@ namespace Slipstream.Components.Twitch.Lua
         private readonly string TwitchChannel;
         private readonly bool TwitchLog;
         private readonly ITwitchEventFactory EventFactory;
-        private readonly IEventBus EventBus;
         private readonly IEventBusSubscription Subscription;
         private bool AnnouncedConnected = false;
         private TwitchClient? Client;
@@ -43,6 +44,7 @@ namespace Slipstream.Components.Twitch.Lua
         private int CommandCountWithinThrottleDuration = 0;
 
         public TwitchLuaInstanceThread(
+            string luaLibraryName,
             string instanceId,
             string twitchToken,
             string twitchUsername,
@@ -52,7 +54,9 @@ namespace Slipstream.Components.Twitch.Lua
             IEventHandlerController eventHandlerController,
             ITwitchEventFactory eventFactory,
             IEventBus eventBus,
-            IEventBusSubscription eventBusSubscription) : base(instanceId, logger, eventHandlerController)
+            IEventBusSubscription eventBusSubscription,
+            IInternalEventFactory internalEventFactory
+        ) : base(luaLibraryName, instanceId, logger, eventHandlerController, eventBus, internalEventFactory)
         {
             EventHandlerController = eventHandlerController;
             TwitchToken = twitchToken;

@@ -30,7 +30,7 @@ namespace Slipstream.Components.WebWidget.Lua
         {
         }
 
-        protected override IWebWidgetInstanceThread CreateInstance(ILifetimeScope scope, Parameters cfg)
+        protected override IWebWidgetInstanceThread CreateInstance(ILifetimeScope scope, string luaScriptInstanceId, Parameters cfg)
         {
             var instanceId = cfg.Extract<string>("id");
             var webWidgetType = cfg.Extract<string>("type");
@@ -41,7 +41,8 @@ namespace Slipstream.Components.WebWidget.Lua
             {
                 var subscription = EventBus.RegisterListener(instanceId);
                 HttpServer = LifetimeScope.Resolve<IHttpServer>(
-                    new TypedParameter(typeof(IEventBusSubscription), subscription)
+                    new TypedParameter(typeof(IEventBusSubscription), subscription),
+                    new TypedParameter(typeof(WebWidgetLuaLibrary), this)
                 );
             }
 
@@ -51,6 +52,11 @@ namespace Slipstream.Components.WebWidget.Lua
                new NamedParameter("data", json),
                new NamedParameter("httpServer", HttpServer)
            );
+        }
+
+        public void InstanceDropped(string instanceId)
+        {
+            RemoveInstance(instanceId);
         }
     }
 }

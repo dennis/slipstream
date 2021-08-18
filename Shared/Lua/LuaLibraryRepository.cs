@@ -22,5 +22,13 @@ namespace Slipstream.Shared.Lua
         {
             return LuaLibraries.Find(a => a.Name == name);
         }
+
+        public IEnumerable<string> GetAll()
+        {
+            foreach (var type in LuaLibraries)
+            {
+                yield return type.Name;
+            }
+        }
     }
 }

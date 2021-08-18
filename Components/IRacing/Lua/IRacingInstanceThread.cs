@@ -1,9 +1,13 @@
 ﻿#nullable enable
 
 using Serilog;
+
+using Slipstream.Components.Internal;
+using Slipstream.Components.Internal.EventFactory;
 using Slipstream.Components.IRacing.GameState;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
+
 using System.Threading;
 
 namespace Slipstream.Components.IRacing.Lua
@@ -11,19 +15,21 @@ namespace Slipstream.Components.IRacing.Lua
     public class IRacingInstanceThread : BaseInstanceThread, IIRacingInstanceThread
     {
         private readonly bool PublishRawState;
-        private readonly IEventBus EventBus;
         private readonly IIRacingEventFactory IRacingEventFactory;
         private readonly IEventHandlerController EventHandlerController;
         private readonly IEventBusSubscription Subscription;
 
         public IRacingInstanceThread(
+            string luaLibraryName,
             string instanceId,
             bool publishRawState,
             ILogger logger,
             IEventBus eventBus,
             IIRacingEventFactory eventFactory,
             IEventHandlerController eventHandlerController,
-            IEventBusSubscription eventBusSubscription) : base(instanceId, logger, eventHandlerController)
+            IEventBusSubscription eventBusSubscription,
+            IInternalEventFactory internalEventFactory
+        ) : base(luaLibraryName, instanceId, logger, eventHandlerController, eventBus, internalEventFactory)
         {
             PublishRawState = publishRawState;
             EventBus = eventBus;

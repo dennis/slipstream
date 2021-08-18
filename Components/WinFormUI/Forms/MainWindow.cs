@@ -106,6 +106,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             InsideView.EndUpdate();
 
             EventsCollected.Selected(LuaScriptTreeNode);
+            EventsTabControl.SelectedIndex = 1;
 
             Text += " v" + applicationVersionService.Version;
 

@@ -52,6 +52,7 @@
             this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TestEventsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.EndpointsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenDataDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LogMessageUpdateTimer = new System.Windows.Forms.Timer(this.components);
@@ -247,6 +248,7 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileToolStripMenuItem,
             this.ToolsMenuItem,
+            this.EndpointsToolStripMenuItem,
             this.HelpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -302,10 +304,17 @@
             // TestEventsMenuItem
             // 
             this.TestEventsMenuItem.Name = "TestEventsMenuItem";
-            this.TestEventsMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.TestEventsMenuItem.Size = new System.Drawing.Size(131, 22);
             this.TestEventsMenuItem.Text = "&Test Events";
             this.TestEventsMenuItem.ToolTipText = "Allows users to send test events to test scripts";
             this.TestEventsMenuItem.Click += new System.EventHandler(this.TestEventsMenuItem_Click);
+            // 
+            // EndpointsToolStripMenuItem
+            // 
+            this.EndpointsToolStripMenuItem.Enabled = false;
+            this.EndpointsToolStripMenuItem.Name = "EndpointsToolStripMenuItem";
+            this.EndpointsToolStripMenuItem.Size = new System.Drawing.Size(72, 20);
+            this.EndpointsToolStripMenuItem.Text = "&Endpoints";
             // 
             // HelpToolStripMenuItem
             // 
@@ -426,6 +435,7 @@
         private System.Windows.Forms.ToolStripMenuItem CopyLuaHandlerCodeMenuItem;
         private System.Windows.Forms.ListView ConsoleListView;
         private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ToolStripMenuItem EndpointsToolStripMenuItem;
     }
 }
 

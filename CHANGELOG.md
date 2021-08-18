@@ -13,6 +13,7 @@
 end)
 ```
    It will setup a `handle()` function for you that wires it up.
+ - Endpoints created, are now shown in menu under "Endpoints"
 
 ## [0.8.0](https://github.com/dennis/slipstream/releases/tag/v0.8.0) (2021-08-04)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.7.0...v0.8.0)

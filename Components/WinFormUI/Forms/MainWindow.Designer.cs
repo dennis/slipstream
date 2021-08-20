@@ -98,6 +98,7 @@
             this.EventsTabControl.SelectedIndex = 0;
             this.EventsTabControl.Size = new System.Drawing.Size(707, 495);
             this.EventsTabControl.TabIndex = 5;
+            this.EventsTabControl.Resize += new System.EventHandler(this.EventsTabControl_Resize);
             // 
             // tabPage1
             // 
@@ -150,7 +151,7 @@
             // 
             // columnHeader2
             // 
-            this.columnHeader2.Width = 600;
+            this.columnHeader2.Width = 2000;
             // 
             // tabPage3
             // 

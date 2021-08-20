@@ -108,6 +108,7 @@ namespace Slipstream.Components.WinFormUI.Forms
 
             EventsCollected.Selected(LuaScriptTreeNode);
             EventsTabControl.SelectedIndex = 1;
+            ConsoleListView.Columns[0].Width = EventsTabControl.Width - 20;
 
             Text += " v" + applicationVersionService.Version;
 
@@ -598,6 +599,11 @@ addEventHandler(""{eventType}"", function(event)
 end)
 ";
             CopyToClipBoard(code);
+        }
+
+        private void EventsTabControl_Resize(object sender, EventArgs e)
+        {
+            ConsoleListView.Columns[0].Width = EventsTabControl.Width - 20;
         }
     }
 }

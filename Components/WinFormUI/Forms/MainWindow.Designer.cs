@@ -97,6 +97,7 @@
             this.EventsTabControl.SelectedIndex = 0;
             this.EventsTabControl.Size = new System.Drawing.Size(707, 495);
             this.EventsTabControl.TabIndex = 5;
+            this.EventsTabControl.Resize += new System.EventHandler(this.EventsTabControl_Resize);
             // 
             // tabPage1
             // 
@@ -149,7 +150,7 @@
             // 
             // columnHeader2
             // 
-            this.columnHeader2.Width = 600;
+            this.columnHeader2.Width = 2000;
             // 
             // tabPage3
             // 
@@ -302,7 +303,7 @@
             // TestEventsMenuItem
             // 
             this.TestEventsMenuItem.Name = "TestEventsMenuItem";
-            this.TestEventsMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.TestEventsMenuItem.Size = new System.Drawing.Size(131, 22);
             this.TestEventsMenuItem.Text = "&Test Events";
             this.TestEventsMenuItem.ToolTipText = "Allows users to send test events to test scripts";
             this.TestEventsMenuItem.Click += new System.EventHandler(this.TestEventsMenuItem_Click);

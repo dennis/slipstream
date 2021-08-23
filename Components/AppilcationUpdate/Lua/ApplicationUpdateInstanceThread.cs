@@ -49,6 +49,9 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
             EventBus = eventBus;
             Subscription = subscription;
             ApplicationVersionService = applicationVersionService;
+
+            // We're are listening to our own events, so we need to add us as recipients
+            InstanceEnvelope = InstanceEnvelope.Add(instanceId);
         }
 
         private void AutoUpdaterOnParseUpdateInfoEvent(ParseUpdateInfoEventArgs args)
@@ -142,7 +145,7 @@ namespace Slipstream.Components.AppilcationUpdate.Lua
             {
                 if (AutoUpdater.DownloadUpdate(LastUpdateInfoEventArgs))
                 {
-                    Logger.Information("Auto update: Updated version. Restart to use it");
+                    Logger.Information("Auto update: Downloaded new version. Please complete the installation and quit this once");
                 }
                 else
                 {

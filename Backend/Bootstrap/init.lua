@@ -2,6 +2,8 @@
 -- ever break it, just rename/delete it, and a new working one is created.
 -- There is no auto-reloading of this file - it is only evaluated at startup
 
+require("api/applicationupdate"):instance({id="updater", location="https://api.github.com/repos/dennis/slipstream/releases", prerelease=true}):start()
+
 local lua_loader = "SlipstreamLuaLoader"
 local lua = require("api/lua")
 

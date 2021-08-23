@@ -2,7 +2,6 @@
 
 using Autofac;
 
-using Slipstream.Components.Internal;
 using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Helpers.StrongParameters.Validators;

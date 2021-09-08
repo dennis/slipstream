@@ -13,6 +13,7 @@ namespace Slipstream.Shared.Lua
         private readonly string LuaLibraryName;
         private readonly string InstanceId;
         private readonly IEventEnvelope Envelope;
+        public bool Stopped => false;
 
         public NoopInstanceThread(string luaLibraryName, string instanceId, IEventBus eventBus, IInternalEventFactory internalEventFactory)
         {

@@ -191,5 +191,10 @@ namespace Slipstream.Components.WebWidget
         public void Dispose()
         {
         }
+
+        public bool ContainsInstance(string instanceId)
+        {
+            return Instances.TryGetValue(instanceId, out _);
+        }
     }
 }

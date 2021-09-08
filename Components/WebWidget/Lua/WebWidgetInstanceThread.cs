@@ -11,6 +11,8 @@ namespace Slipstream.Components.WebWidget.Lua
         private readonly IHttpServerApi HttpServer;
         private readonly string? Data;
 
+        public bool Stopped => HttpServer.ContainsInstance(InstanceId);
+
         public WebWidgetInstanceThread(string instanceId, string webWidgetType, string data, IHttpServerApi httpServer)
         {
             InstanceId = instanceId;

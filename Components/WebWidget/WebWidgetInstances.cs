@@ -65,5 +65,11 @@ namespace Slipstream.Components.WebWidget
             lock (Instances)
                 return Instances.Keys;
         }
+
+        public bool Contains(string id)
+        {
+            lock (Instances)
+                return Instances.ContainsKey(id);
+        }
     }
 }

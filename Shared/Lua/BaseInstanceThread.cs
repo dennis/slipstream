@@ -22,6 +22,7 @@ namespace Slipstream.Shared.Lua
         protected IEventBus EventBus;
         protected readonly string LuaLibraryName;
         protected IInternalEventFactory InternalEventFactory;
+        public bool Stopped { get; internal set; }
 
         protected BaseInstanceThread(
             string luaLLibraryName,
@@ -39,6 +40,7 @@ namespace Slipstream.Shared.Lua
             LuaLibraryName = luaLLibraryName;
             EventBus = eventBus;
             InternalEventFactory = internalEventFactory;
+            Stopped = false;
 
             var internalHandler = eventHandlerController.Get<Internal>();
             internalHandler.OnInternalCommandShutdown += (_, e) => Stopping = true;
@@ -100,6 +102,7 @@ namespace Slipstream.Shared.Lua
             }
 
             EventBus.PublishEvent(InternalEventFactory.CreateInternalInstanceRemoved(BroadcastEnvelope, LuaLibraryName, InstanceId));
+            Stopped = true;
         }
 
         protected abstract void Main();
@@ -119,6 +122,10 @@ namespace Slipstream.Shared.Lua
                 SetupThread();
                 ServiceThread.Start();
                 EventBus.PublishEvent(InternalEventFactory.CreateInternalInstanceAdded(BroadcastEnvelope, LuaLibraryName, InstanceId));
+            }
+            else
+            {
+                throw new Exception(ServiceThread?.ThreadState.ToString());
             }
         }
 

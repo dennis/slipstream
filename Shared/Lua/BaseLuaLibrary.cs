@@ -72,13 +72,23 @@ namespace Slipstream.Shared.Lua
 
         protected virtual void HandleInstance(string luaScriptInstanceId, string instanceId, Parameters cfg)
         {
+            // Remove instance if it is stopped meanwhile
+            if (Instances.TryGetValue(instanceId, out TInstance instance))
+            {
+                if (instance.Stopped)
+                {
+                    Instances.Remove(instanceId);
+                    instance.Dispose();
+                }
+            }
+
             if (!Instances.ContainsKey(instanceId))
             {
                 Debug.WriteLine($"[{instanceId}] Creating instance {GetType().Name}");
 
-                var instance = CreateInstance(LifetimeScope, luaScriptInstanceId, cfg);
-                Instances.Add(instanceId, instance);
-                instance.Start();
+                var newInstance = CreateInstance(LifetimeScope, luaScriptInstanceId, cfg);
+                Instances.Add(instanceId, newInstance);
+                newInstance.Start();
             }
         }
 

@@ -32,6 +32,8 @@ namespace Slipstream.Components.WebWidget
 
         void Remove(string id);
 
+        bool Contains(string id);
+
         Instance this[string id] { get; }
 
         bool TryGetValue(string instanceId, out Instance result);

@@ -107,7 +107,7 @@ namespace Slipstream.Components.WebWidget
                 var webWidgetHandler = EventHandlerController.Get<WebWidgetEventHandler>();
 
                 internalHandler.OnInternalCommandShutdown += (_, e) => Stopping = true;
-                internalHandler.OnInternaDependencyAdded += (_, e) =>
+                internalHandler.OnInternalDependencyAdded += (_, e) =>
                 {
                     if (Instances.TryGetValue(e.DependsOn, out IWebWidgetInstances.Instance instance))
                     {

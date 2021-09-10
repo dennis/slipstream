@@ -11,7 +11,7 @@ namespace Slipstream.Components.Internal.EventHandler
     {
         public event EventHandler<InternalCommandShutdown>? OnInternalCommandShutdown;
 
-        public event EventHandler<InternalDependencyAdded>? OnInternaDependencyAdded;
+        public event EventHandler<InternalDependencyAdded>? OnInternalDependencyAdded;
 
         public event EventHandler<InternalDependencyRemoved>? OnInternalDependencyRemoved;
 
@@ -24,7 +24,7 @@ namespace Slipstream.Components.Internal.EventHandler
             return @event switch
             {
                 InternalCommandShutdown tev => OnEvent(OnInternalCommandShutdown, tev),
-                InternalDependencyAdded tev => OnEvent(OnInternaDependencyAdded, tev),
+                InternalDependencyAdded tev => OnEvent(OnInternalDependencyAdded, tev),
                 InternalDependencyRemoved tev => OnEvent(OnInternalDependencyRemoved, tev),
                 InternalInstanceAdded tev => OnEvent(OnInternalInstanceAdded, tev),
                 InternalInstanceRemoved tev => OnEvent(OnInternalInstanceRemoved, tev),

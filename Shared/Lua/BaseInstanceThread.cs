@@ -44,7 +44,7 @@ namespace Slipstream.Shared.Lua
 
             var internalHandler = eventHandlerController.Get<Internal>();
             internalHandler.OnInternalCommandShutdown += (_, e) => Stopping = true;
-            internalHandler.OnInternaDependencyAdded += (_, e) =>
+            internalHandler.OnInternalDependencyAdded += (_, e) =>
             {
                 if (e.DependsOn == InstanceId)
                     InstanceEnvelope = InstanceEnvelope.Add(e.InstanceId);

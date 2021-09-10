@@ -1,6 +1,8 @@
 ﻿# Changelog
 ## Next version
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.9.0...main)
+ - AudioComponent improved: Now removes any pending say/play commands if sender 
+   is removed (eg. script deleted or reloaded)
 
 ## [0.9.0](https://github.com/dennis/slipstream/releases/tag/v0.9.0) (2021-08-21)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.8.0...v0.9.0)

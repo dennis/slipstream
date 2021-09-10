@@ -1,9 +1,7 @@
 ﻿#nullable enable
 
 using System;
-using System.IO;
 using System.Runtime.Versioning;
-using System.Speech.Synthesis;
 using System.Threading;
 
 using NAudio.Wave;
@@ -13,6 +11,7 @@ using Serilog;
 using Slipstream.Components.Audio.EventHandler;
 using Slipstream.Components.Audio.Events;
 using Slipstream.Components.Internal;
+using Slipstream.Components.Internal.Events;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
 
@@ -21,14 +20,13 @@ namespace Slipstream.Components.Audio.Lua
 #if WINDOWS
 
     [SupportedOSPlatform("windows")]
-    public class AudioInstanceThread : BaseInstanceThread, IAudioInstanceThread, IDisposable
+    public partial class AudioInstanceThread : BaseInstanceThread, IAudioInstanceThread, IDisposable
     {
-        private readonly SpeechSynthesizer Synthesizer = new SpeechSynthesizer();
-        private readonly string Path;
         private readonly IEventHandlerController EventHandlerController;
         private readonly IEventBusSubscription Subscription;
         private readonly IAudioEventFactory EventFactory;
-        private int OutputDeviceNumber = -1;
+        private readonly CancellationTokenSource AudioPlayerThreadCts = new CancellationTokenSource();
+        private readonly AudioPlayerImpl AudioPlayer;
 
         public AudioInstanceThread(
             string luaLibraryName,
@@ -42,20 +40,24 @@ namespace Slipstream.Components.Audio.Lua
             IInternalEventFactory internalEventFactory,
             ILogger logger) : base(luaLibraryName, instanceId, logger, eventHandlerController, eventBus, internalEventFactory)
         {
-            Path = path;
             Subscription = eventBusSubscription;
             EventHandlerController = eventHandlerController;
             EventFactory = audioEventFactory;
             EventBus = eventBus;
 
-            OutputDeviceNumber = output;
+            AudioPlayer = new AudioPlayerImpl(instanceId, logger, path, output, AudioPlayerThreadCts.Token);
+            AudioPlayer.Start();
         }
 
         protected override void Main()
         {
+            var internalEventHandler = EventHandlerController.Get<Internal.EventHandler.Internal>();
+            internalEventHandler.OnInternalDependencyAdded += (_, e) => OnInternalDependencyAdded(e);
+            internalEventHandler.OnInternalDependencyRemoved += (_, e) => OnInternalDependencyRemoved(e);
+
             var audioEventHandler = EventHandlerController.Get<AudioEventHandler>();
-            audioEventHandler.OnAudioCommandSay += (_, e) => OnAudioCommandSay(e);
-            audioEventHandler.OnAudioCommandPlay += (_, e) => OnAudioCommandPlay(e);
+            audioEventHandler.OnAudioCommandSay += (_, e) => AudioPlayer.AddAudioCommand(e);
+            audioEventHandler.OnAudioCommandPlay += (_, e) => AudioPlayer.AddAudioCommand(e);
             audioEventHandler.OnAudioCommandSendDevices += (_, e) => OnAudioCommandSendDevices(e);
             audioEventHandler.OnAudioCommandSetOutputDevice += (_, e) => OnAudioCommandSetOutputDevice(e);
 
@@ -68,11 +70,29 @@ namespace Slipstream.Components.Audio.Lua
                     EventHandlerController.HandleEvent(@event);
                 }
             }
+
+            AudioPlayerThreadCts.Cancel();
+        }
+
+        private void OnInternalDependencyRemoved(InternalDependencyRemoved e)
+        {
+            if (e.DependsOn != InstanceId)
+                return;
+
+            AudioPlayer.RemoveSender(e.Envelope.Sender);
+        }
+
+        private void OnInternalDependencyAdded(InternalDependencyAdded e)
+        {
+            if (e.DependsOn != InstanceId)
+                return;
+
+            AudioPlayer.AddSender(e.Envelope.Sender);
         }
 
         private void OnAudioCommandSetOutputDevice(AudioCommandSetOutputDevice @event)
         {
-            OutputDeviceNumber = @event.DeviceIdx;
+            AudioPlayer.SetOutputDevice(@event.DeviceIdx);
         }
 
         private void OnAudioCommandSendDevices(AudioCommandSendDevices _)
@@ -82,58 +102,6 @@ namespace Slipstream.Components.Audio.Lua
                 var caps = WaveOut.GetCapabilities(n);
 
                 EventBus.PublishEvent(EventFactory.CreateAudioOutputDevice(InstanceEnvelope, caps.ProductName, n));
-            }
-        }
-
-        private void OnAudioCommandPlay(AudioCommandPlay @event)
-        {
-            var filename = @event.Filename;
-            var volume = @event.Volume;
-            var filePath = System.IO.Path.Combine(Path, filename);
-
-            try
-            {
-                using var audioFile = new AudioFileReader(filePath);
-
-                Play(new AudioFileReader(filePath), (float)volume);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Playing audio file failed: {Message}", ex.Message);
-            }
-        }
-
-        private void OnAudioCommandSay(AudioCommandSay @event)
-        {
-            using var stream = new MemoryStream();
-
-            Synthesizer.SetOutputToWaveStream(stream);
-            Synthesizer.Speak(@event.Message);
-
-            stream.Flush();
-            stream.Seek(0, SeekOrigin.Begin);
-
-            Play(new WaveFileReader(stream), (float)@event.Volume);
-        }
-
-        private void Play(WaveStream stream, float volume)
-        {
-            using var outputDevice = new WaveOutEvent { DeviceNumber = OutputDeviceNumber };
-            outputDevice.PlaybackStopped += PlaybackStoppedReceived;
-            outputDevice.Init(stream);
-            outputDevice.Volume = volume;
-            outputDevice.Play();
-            while (outputDevice.PlaybackState == PlaybackState.Playing && !Stopping)
-            {
-                Thread.Sleep(100);
-            }
-        }
-
-        private void PlaybackStoppedReceived(object? sender, StoppedEventArgs e)
-        {
-            if (e.Exception != null)
-            {
-                Logger.Error("Error playing audio: {Message}", e.Exception.Message);
             }
         }
     }

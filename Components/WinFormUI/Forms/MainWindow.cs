@@ -155,6 +155,8 @@ namespace Slipstream.Components.WinFormUI.Forms
                 ConsoleListView.BeginUpdate();
                 ConsoleListView.Items.Add(new ListViewItem(new string[] { msg.Message }, 0, color, System.Drawing.Color.Transparent, ConsoleListView.Font));
                 ConsoleListView.EndUpdate();
+
+                Debug.WriteLine(msg.Message);
             });
         }
 
@@ -198,17 +200,17 @@ namespace Slipstream.Components.WinFormUI.Forms
             uiEventHandler.OnWinFormUICommandCreateButton += (_, e) => EventHandler_OnWinFormUICommandCreateButton(e);
             uiEventHandler.OnWinFormUICommandDeleteButton += (_, e) => EventHandler_OnWinFormUICommandDeleteButton(e);
 
-            internalEventHandler.OnInternaDependencyAdded += (_, e) => EventHandler_OnInternaDependencyAdded_Envelope(e.InstanceId, e.DependsOn);
+            internalEventHandler.OnInternalDependencyAdded += (_, e) => EventHandler_OnInternaDependencyAdded_Envelope(e.InstanceId, e.DependsOn);
             internalEventHandler.OnInternalDependencyRemoved += (_, e) => EventHandler_OnInternalDependencyRemoved_Envelope(e.InstanceId, e.DependsOn);
 
             internalEventHandler.OnInternalInstanceAdded += (_, e) => EventHandler_OnInternalInstanceAdded_InsideView(e.LuaLibrary, e.InstanceId);
             internalEventHandler.OnInternalInstanceRemoved += (_, e) => EventHandler_OnInternalInstanceRemoved_InsideView(e.LuaLibrary, e.InstanceId);
-            internalEventHandler.OnInternaDependencyAdded += (_, e) => EventHandler_OnInternaDependencyAdded_InsideView(e.LuaLibrary, e.InstanceId, e.DependsOn);
+            internalEventHandler.OnInternalDependencyAdded += (_, e) => EventHandler_OnInternaDependencyAdded_InsideView(e.LuaLibrary, e.InstanceId, e.DependsOn);
             internalEventHandler.OnInternalDependencyRemoved += (_, e) => EventHandler_OnInternalDependencyRemoved_InsideView(e.LuaLibrary, e.InstanceId, e.DependsOn);
 
             internalEventHandler.OnInternalInstanceAdded += (_, e) => EventHandler_OnInternalInstanceAdded_DeepView(e.InstanceId);
             internalEventHandler.OnInternalInstanceRemoved += (_, e) => EventHandler_OnInternalInstanceRemoved_DeepView(e.InstanceId);
-            internalEventHandler.OnInternaDependencyAdded += (_, e) => EventHandler_OnInternaDependencyAdded_DeepView(e.InstanceId, e.DependsOn);
+            internalEventHandler.OnInternalDependencyAdded += (_, e) => EventHandler_OnInternaDependencyAdded_DeepView(e.InstanceId, e.DependsOn);
             internalEventHandler.OnInternalDependencyRemoved += (_, e) => EventHandler_OnInternalDependencyRemoved_DeepView(e.InstanceId, e.DependsOn);
 
             webWidgetEventHandler.OnWebWidgetEndpointAdded += (_, e) => EventHandler_OnWebWidgetEndpointAdded(e.Endpoint);

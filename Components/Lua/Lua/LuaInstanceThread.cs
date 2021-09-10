@@ -124,6 +124,9 @@ namespace Slipstream.Components.Lua.Lua
                 Logger.Error(e, "{fileName} errored: {message}", FileName, e.Message);
             }
 
+            DebounceDelayedFunctions.Clear();
+            WaitDelayedFunctions.Clear();
+
             LuaLibrary.InstanceStopped(InstanceId);
 
             foreach (var dependency in Dependencies)

@@ -81,6 +81,9 @@ not connected to Slipstream.
 There are also three global variables available: `ASSETS` (for the assets path), `INSTANCE_ID` and finally `WEB_WIDGET_TYPE`
 
 See `widget:send(data)` for how to send data to your widget.
+
+If you want to send data to your Lua script from the webwidget, you can do so by using `sendData(data)`, where `data` can be anything. 
+When sending data, this will be received in Lua scripts as `WebWidgetData` event. 
 </details>
 
 <details><summary>widget:send(data)</summary><br />

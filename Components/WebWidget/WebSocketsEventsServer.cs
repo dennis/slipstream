@@ -2,10 +2,12 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Text;
 
 using EmbedIO.WebSockets;
 
 using Serilog;
+using Slipstream.Shared;
 
 namespace Slipstream.Components.WebWidget
 {
@@ -13,21 +15,38 @@ namespace Slipstream.Components.WebWidget
     {
         private readonly ILogger Logger;
         private readonly IWebWidgetInstances Instances;
+        private readonly IEventBus EventBus;
+        private readonly IWebWidgetEventFactory WebWidgetEventFactory;
         private readonly Dictionary<string, List<string>> InstanceToContextIdMap = new Dictionary<string, List<string>>();
 
-        public WebSocketsEventsServer(ILogger logger, IWebWidgetInstances instances) : base("/events/{id}", true)
+        public WebSocketsEventsServer(
+            ILogger logger,
+            IWebWidgetInstances instances,
+            IEventBus eventBus,
+            IWebWidgetEventFactory webWidgetEventFactory
+        ) : base("/events/{id}", true)
         {
             Logger = logger;
             Instances = instances;
+            EventBus = eventBus;
+            WebWidgetEventFactory = webWidgetEventFactory;
         }
 
         protected override Task OnMessageReceivedAsync(IWebSocketContext context, byte[] rxBuffer, IWebSocketReceiveResult rxResult)
-            => Task.CompletedTask;
+        {
+            string instanceId = ParseInstanceId(context);
+            var data = Encoding.UTF8.GetString(rxBuffer);
+            Logger.Information($"HttpServer - got data from instanceID={instanceId}: {data}");
+
+            EventBus.PublishEvent(WebWidgetEventFactory.CreateWebWidgetData(new EventEnvelope(instanceId), data));
+
+            return Task.CompletedTask;
+        }
 
         protected override Task OnClientConnectedAsync(IWebSocketContext context)
         {
             string instanceId = ParseInstanceId(context);
-            Logger.Information($"HttpServer - connected {context} - ctxid={context.Id}, instanceID={instanceId}");
+            Logger.Information($"HttpServer - connected to instanceID={instanceId}");
 
             lock (InstanceToContextIdMap)
             {

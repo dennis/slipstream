@@ -50,7 +50,7 @@ namespace Slipstream.Components.WebWidget
             try
             {
                 var instanceId = context.Route["id"];
-                var webWidgetType = Instances[instanceId];
+                var webWidgetType = Instances[instanceId].Type;
 
                 var template = File.ReadAllText(WebWidgetDirectory + webWidgetType + "/index.html");
                 var assets = "/webwidgets/" + webWidgetType;

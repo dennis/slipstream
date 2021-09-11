@@ -12,5 +12,7 @@ namespace Slipstream.Components.WebWidget
         WebWidgetEndpointAdded CreateWebWidgetEndpointAdded(IEventEnvelope envelope, string endpoint);
 
         WebWidgetEndpointRemoved CreateWebWidgetEndpointRemoved(IEventEnvelope envelope, string endpoint);
+
+        WebWidgetData CreateWebWidgetData(IEventEnvelope envelope, string data);
     }
 }

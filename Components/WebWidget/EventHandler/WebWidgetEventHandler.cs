@@ -15,6 +15,8 @@ namespace Slipstream.Components.WebWidget.EventHandler
 
         public event EventHandler<WebWidgetEndpointRemoved>? OnWebWidgetEndpointRemoved;
 
+        public event EventHandler<WebWidgetData>? OnWebWidgetData;
+
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)
         {
             return @event switch
@@ -22,6 +24,7 @@ namespace Slipstream.Components.WebWidget.EventHandler
                 WebWidgetCommandEvent tev => OnEvent(OnWebWidgetCommandEvent, tev),
                 WebWidgetEndpointAdded tev => OnEvent(OnWebWidgetEndpointAdded, tev),
                 WebWidgetEndpointRemoved tev => OnEvent(OnWebWidgetEndpointRemoved, tev),
+                WebWidgetData tev => OnEvent(OnWebWidgetData, tev),
                 _ => IEventHandler.HandledStatus.NotMine,
             };
         }

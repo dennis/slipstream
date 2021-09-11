@@ -2,9 +2,10 @@
 var WEB_WIDGET_TYPE
 var ASSETS
 
-function connect() {  
-    let socket = a = new WebSocket("ws://" + document.location.host + "/events/" + INSTANCE_ID)
+let socket = null
 
+function connect() {
+    socket = new WebSocket("ws://" + document.location.host + "/events/" + INSTANCE_ID)
     socket.onopen = function (e) {
         console.log("[slipstream ws] [open] Connection established")
 
@@ -41,6 +42,11 @@ function connect() {
         console.log("[slipstream ws] [error] " + error.message)
         socket.close()
     }
+}
+
+function sendData(data) {
+    if(socket != null)
+        socket.send(data)
 }
 
 window.addEventListener('load', function () {

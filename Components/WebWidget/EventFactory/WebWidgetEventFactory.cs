@@ -22,5 +22,10 @@ namespace Slipstream.Components.Internal.EventFactory
         {
             return new WebWidgetEndpointRemoved { Envelope = envelope, Endpoint = endpoint };
         }
+
+        public WebWidgetData CreateWebWidgetData(IEventEnvelope envelope, string data)
+        {
+            return new WebWidgetData { Envelope = envelope, Data = data };
+        }
     }
 }

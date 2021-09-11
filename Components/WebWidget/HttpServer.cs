@@ -1,7 +1,6 @@
 ﻿#nullable enable
 
 using System;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,11 +9,9 @@ using EmbedIO;
 using Serilog;
 
 using Slipstream.Components.Internal;
-using Slipstream.Components.Internal.EventFactory;
 using Slipstream.Components.WebWidget.EventHandler;
 using Slipstream.Components.WebWidget.Lua;
 using Slipstream.Shared;
-using Slipstream.Shared.Lua;
 
 namespace Slipstream.Components.WebWidget
 {
@@ -54,7 +51,7 @@ namespace Slipstream.Components.WebWidget
             LuaLibrary = luaLibrary;
             WebWidgetEventFactory = webWidgetEventFactory;
 
-            EventsServerModule = new WebSocketsEventsServer(Logger, Instances);
+            EventsServerModule = new WebSocketsEventsServer(Logger, Instances, eventBus, webWidgetEventFactory);
 
             System.IO.Directory.CreateDirectory(WEB_WIDGET_ROOT_DIRECTORY);
         }

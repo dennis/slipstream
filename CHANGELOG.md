@@ -4,6 +4,7 @@
  - AudioComponent improved: Now removes any pending say/play commands if sender 
    is removed (eg. script deleted or reloaded)
  - Bugfix: Clear delayed functions (debounce and wait) on script restart
+ - WebWidget: Allow javascript to send `WebWidgetData` via js function `sendData(data)`
 
 ## [0.9.0](https://github.com/dennis/slipstream/releases/tag/v0.9.0) (2021-08-21)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.8.0...v0.9.0)

@@ -200,6 +200,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             var internalEventHandler = EventHandler.Get<Internal.EventHandler.Internal>();
             var uiEventHandler = EventHandler.Get<EventHandler.WinFormUIEventHandler>();
             var webWidgetEventHandler = EventHandler.Get<WebWidget.EventHandler.WebWidgetEventHandler>();
+            var webEventHandler = EventHandler.Get<Web.EventHandler.WebEventHandler>();
 
             uiEventHandler.OnWinFormUICommandWriteToConsole += (_, e) => PendingMessages.Add(e);
             uiEventHandler.OnWinFormUICommandCreateButton += (_, e) => EventHandler_OnWinFormUICommandCreateButton(e);
@@ -218,8 +219,10 @@ namespace Slipstream.Components.WinFormUI.Forms
             internalEventHandler.OnInternalDependencyAdded += (_, e) => EventHandler_OnInternaDependencyAdded_DeepView(e.InstanceId, e.DependsOn);
             internalEventHandler.OnInternalDependencyRemoved += (_, e) => EventHandler_OnInternalDependencyRemoved_DeepView(e.InstanceId, e.DependsOn);
 
-            webWidgetEventHandler.OnWebWidgetEndpointAdded += (_, e) => EventHandler_OnWebWidgetEndpointAdded(e.Endpoint);
-            webWidgetEventHandler.OnWebWidgetEndpointRemoved += (_, e) => EventHandler_OnWebWidgetEndpointRemoved(e.Endpoint);
+            webWidgetEventHandler.OnWebWidgetEndpointAdded += (_, e) => EventHandler_OnEndpointAdded(e.Endpoint);
+            webWidgetEventHandler.OnWebWidgetEndpointRemoved += (_, e) => EventHandler_OnEndpointRemoved(e.Endpoint);
+            webEventHandler.OnWebEndpointAdded += (_, e) => EventHandler_OnEndpointAdded(e.Endpoint);
+            webEventHandler.OnWebEndpointRemoved += (_, e) => EventHandler_OnEndpointRemoved(e.Endpoint);
 
             var token = (CancellationToken)EventHandlerThreadCancellationToken; // We got a Assert ensuring this isn't null
 
@@ -234,22 +237,28 @@ namespace Slipstream.Components.WinFormUI.Forms
             }
         }
 
-        private void EventHandler_OnWebWidgetEndpointRemoved(string endpoint)
+        private void EventHandler_OnEndpointRemoved(string endpoint)
         {
             ExecuteSecure(() =>
             {
-                EndpointsToolStripMenuItem.DropDownItems.Remove(EndpointMenuItems[endpoint]);
-                EndpointsToolStripMenuItem.Enabled = EndpointsToolStripMenuItem.DropDownItems.Count != 0;
-                EndpointMenuItems.Remove(endpoint);
+                if (EndpointMenuItems.ContainsKey(endpoint))
+                {
+                    EndpointsToolStripMenuItem.DropDownItems.Remove(EndpointMenuItems[endpoint]);
+                    EndpointsToolStripMenuItem.Enabled = EndpointsToolStripMenuItem.DropDownItems.Count != 0;
+                    EndpointMenuItems.Remove(endpoint);
+                }
             });
         }
 
-        private void EventHandler_OnWebWidgetEndpointAdded(string endpoint)
+        private void EventHandler_OnEndpointAdded(string endpoint)
         {
             // Make sure that endpoints does not contain http://*, but an actual useable URL
             endpoint = endpoint.Replace("http://*", "http://127.0.0.1");
             ExecuteSecure(() =>
             {
+                if (EndpointMenuItems.ContainsKey(endpoint))
+                    return;
+
                 EndpointsToolStripMenuItem.Enabled = true;
 
                 var openItem = new ToolStripMenuItem("Open in browser");
@@ -260,6 +269,10 @@ namespace Slipstream.Components.WinFormUI.Forms
                 var item = new ToolStripMenuItem(endpoint);
                 item.DropDownItems.AddRange(new ToolStripItem[] { openItem, copyItem });
 
+                if (!endpoint.StartsWith("http://") && !endpoint.StartsWith("https://"))
+                {
+                    openItem.Enabled = false;
+                }
                 EndpointMenuItems.Add(endpoint, item);
                 EndpointsToolStripMenuItem.DropDownItems.Add(item);
             });

@@ -11,7 +11,7 @@ namespace Slipstream.Components.Playback.EventFactory
         {
             return new PlaybackCommandInjectEvents
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 Filename = filename
             };
         }
@@ -20,7 +20,7 @@ namespace Slipstream.Components.Playback.EventFactory
         {
             return new PlaybackCommandSaveEvents
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 Filename = filename
             };
         }

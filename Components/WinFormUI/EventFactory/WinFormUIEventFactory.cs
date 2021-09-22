@@ -11,7 +11,7 @@ namespace Slipstream.Components.WinFormUI.EventFactory
         {
             return new WinFormUICommandWriteToConsole
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 Message = message,
                 Error = error
             };
@@ -21,7 +21,7 @@ namespace Slipstream.Components.WinFormUI.EventFactory
         {
             return new WinFormUICommandCreateButton
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 Text = text,
             };
         }
@@ -30,7 +30,7 @@ namespace Slipstream.Components.WinFormUI.EventFactory
         {
             return new WinFormUICommandDeleteButton
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 Text = text,
             };
         }
@@ -39,7 +39,7 @@ namespace Slipstream.Components.WinFormUI.EventFactory
         {
             return new WinFormUIButtonTriggered
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 Text = text
             };
         }

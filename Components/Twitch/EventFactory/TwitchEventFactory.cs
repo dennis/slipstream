@@ -11,26 +11,26 @@ namespace Slipstream.Components.Twitch.EventFactory
         {
             return new TwitchCommandSendMessage
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 Message = message
             };
         }
 
         public TwitchConnected CreateTwitchConnected(IEventEnvelope envelope)
         {
-            return new TwitchConnected { Envelope = envelope };
+            return new TwitchConnected { Envelope = envelope.Clone() };
         }
 
         public TwitchDisconnected CreateTwitchDisconnected(IEventEnvelope envelope)
         {
-            return new TwitchDisconnected { Envelope = envelope };
+            return new TwitchDisconnected { Envelope = envelope.Clone() };
         }
 
         public TwitchReceivedMessage CreateTwitchReceivedMessage(IEventEnvelope envelope, string from, string message, bool moderator, bool subscriber, bool vip, bool broadcaster)
         {
             return new TwitchReceivedMessage
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 From = from,
                 Message = message,
                 Moderator = moderator,
@@ -44,7 +44,7 @@ namespace Slipstream.Components.Twitch.EventFactory
         {
             return new TwitchReceivedWhisper
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 From = from,
                 Message = message
             };
@@ -54,7 +54,7 @@ namespace Slipstream.Components.Twitch.EventFactory
         {
             return new TwitchCommandSendWhisper
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 To = to,
                 Message = message
             };
@@ -64,7 +64,7 @@ namespace Slipstream.Components.Twitch.EventFactory
         {
             return new TwitchUserSubscribed
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 Name = name,
                 Message = message,
                 SystemMessage = systemMessage,
@@ -78,7 +78,7 @@ namespace Slipstream.Components.Twitch.EventFactory
         {
             return new TwitchGiftedSubscription
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 Gifter = gifter,
                 SubscriptionPlan = subscriptionPlan,
                 Recipient = recipient,
@@ -90,7 +90,7 @@ namespace Slipstream.Components.Twitch.EventFactory
         {
             return new TwitchRaided
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 Name = name,
                 ViewerCount = viewerCount,
             };

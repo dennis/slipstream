@@ -9,7 +9,7 @@ namespace Slipstream.Components.Discord.EventFactory
         {
             return new DiscordCommandSendMessage
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 ChannelId = channelId,
                 Message = message,
                 TextToSpeech = tts
@@ -20,7 +20,7 @@ namespace Slipstream.Components.Discord.EventFactory
         {
             return new DiscordConnected
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
             };
         }
 
@@ -28,7 +28,7 @@ namespace Slipstream.Components.Discord.EventFactory
         {
             return new DiscordDisconnected
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
             };
         }
 
@@ -36,7 +36,7 @@ namespace Slipstream.Components.Discord.EventFactory
         {
             return new DiscordMessageReceived
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 FromId = fromId,
                 From = from,
                 ChannelId = channelId,

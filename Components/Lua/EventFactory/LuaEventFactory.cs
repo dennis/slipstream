@@ -26,7 +26,7 @@ namespace Slipstream.Components.Lua.EventFactory
 
             return new LuaCommandDeduplicateEvents
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 Events = json
             };
         }

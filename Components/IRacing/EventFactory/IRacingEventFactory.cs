@@ -1,7 +1,9 @@
 ﻿using Slipstream.Components.IRacing.Events;
 using Slipstream.Components.IRacing.GameState;
 using Slipstream.Shared;
+
 using System;
+
 using static Slipstream.Components.IRacing.IIRacingEventFactory;
 
 #nullable enable
@@ -25,7 +27,7 @@ namespace Slipstream.Components.IRacing.EventFactory
         {
             return new IRacingCompletedLap
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 SessionTime = sessionTime,
                 CarIdx = carIdx,
                 LapTime = lapTime,
@@ -56,7 +58,7 @@ namespace Slipstream.Components.IRacing.EventFactory
         {
             return new IRacingCarInfo
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 SessionTime = sessionTime,
                 CarIdx = carIdx,
                 CarNumber = carNumber,
@@ -77,7 +79,7 @@ namespace Slipstream.Components.IRacing.EventFactory
         {
             return new IRacingConnected
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
             };
         }
 
@@ -110,14 +112,14 @@ namespace Slipstream.Components.IRacing.EventFactory
 
         public IRacingDisconnected CreateIRacingDisconnected(IEventEnvelope envelope)
         {
-            return new IRacingDisconnected { Envelope = envelope };
+            return new IRacingDisconnected { Envelope = envelope.Clone() };
         }
 
         public IRacingPitEnter CreateIRacingPitEnter(IEventEnvelope envelope, double sessionTime, long carIdx, bool localUser)
         {
             return new IRacingPitEnter
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 SessionTime = sessionTime,
                 CarIdx = carIdx,
                 LocalUser = localUser

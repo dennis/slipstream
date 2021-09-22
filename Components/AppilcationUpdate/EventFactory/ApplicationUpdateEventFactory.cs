@@ -7,14 +7,14 @@ namespace Slipstream.Components.AppilcationUpdate.EventFactory
     {
         public ApplicationUpdateCommandCheckLatestVersion CreateApplicationUpdateCommandCheckLatestVersion(IEventEnvelope envelope)
         {
-            return new ApplicationUpdateCommandCheckLatestVersion { Envelope = envelope };
+            return new ApplicationUpdateCommandCheckLatestVersion { Envelope = envelope.Clone() };
         }
 
         public ApplicationUpdateLatestVersionChanged CreateApplicationUpdateLatestVersionChanged(IEventEnvelope envelope, string version)
         {
             return new ApplicationUpdateLatestVersionChanged
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 LatestVersion = version,
             };
         }

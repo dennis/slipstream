@@ -9,14 +9,14 @@ namespace Slipstream.Components.Internal.EventFactory
     {
         public InternalCommandShutdown CreateInternalCommandShutdown(IEventEnvelope envelope)
         {
-            return new InternalCommandShutdown { Envelope = envelope };
+            return new InternalCommandShutdown { Envelope = envelope.Clone() };
         }
 
         public InternalDependencyAdded CreateInternalDependencyAdded(IEventEnvelope envelope, string luaLibrary, string instanceId, string dependsOn)
         {
             return new InternalDependencyAdded
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 LuaLibrary = luaLibrary,
                 InstanceId = instanceId,
                 DependsOn = dependsOn,
@@ -27,7 +27,7 @@ namespace Slipstream.Components.Internal.EventFactory
         {
             return new InternalDependencyRemoved
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 LuaLibrary = luaLibrary,
                 InstanceId = instanceId,
                 DependsOn = dependsOn,
@@ -38,7 +38,7 @@ namespace Slipstream.Components.Internal.EventFactory
         {
             return new InternalInstanceAdded
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 LuaLibrary = luaLibrary,
                 InstanceId = instanceId
             };
@@ -48,7 +48,7 @@ namespace Slipstream.Components.Internal.EventFactory
         {
             return new InternalInstanceRemoved
             {
-                Envelope = envelope,
+                Envelope = envelope.Clone(),
                 LuaLibrary = luaLibrary,
                 InstanceId = instanceId
             };

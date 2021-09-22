@@ -88,5 +88,23 @@ namespace Slipstream.Shared
                 return true;
             }
         }
+
+        public IEventEnvelope Clone()
+        {
+            var recipients = new List<string>();
+
+            if (Recipients != null)
+            {
+                foreach (var r in Recipients)
+                {
+                    recipients.Add(r);
+                }
+            }
+
+            return new EventEnvelope(Sender)
+            {
+                Recipients = recipients.ToArray()
+            };
+        }
     }
 }

@@ -8,10 +8,9 @@ namespace Slipstream.Backend
     public class EventBus : IEventBus
     {
         private readonly IList<EventBusSubscription> Listeners = new List<EventBusSubscription>();
-        private readonly IList<IEvent> Events = new List<IEvent>(EVENT_MAX_SIZE);
+        private readonly ICircularBlockingQueue<IEvent> Events = new CircularBlockingQueue<IEvent>(EVENT_MAX_SIZE);
         private readonly List<IEvent> PendingEvents = new List<IEvent>();
         private const int EVENT_MAX_SIZE = 1000;
-        private const int EVENT_DELETE_SIZE = 200; // when we hit EVENT_MAX_SIZE. How many elements should we remove?
         private volatile bool enabled = false;
         private readonly ulong StartedAt;
 
@@ -33,26 +32,13 @@ namespace Slipstream.Backend
 
         public void PublishEvent(IEvent e)
         {
-            e.Envelope.Uptime = Uptime() - StartedAt;
-
-            if (enabled)
-            {
-                lock (Events)
-                {
-                    if (Events.Count >= EVENT_MAX_SIZE)
-                    {
-                        // Is there a better way for deleting x elements from the beginning?
-                        for (int i = 0; i < EVENT_DELETE_SIZE; i++)
-                            Events.RemoveAt(0);
-                    }
-                    Events.Add(e);
-                }
-            }
-
             lock (Listeners)
             {
+                e.Envelope.Uptime = Uptime() - StartedAt;
+
                 if (enabled)
                 {
+                    Events.Enqueue(e);
                     foreach (var l in Listeners)
                     {
                         l.Add(e);
@@ -73,12 +59,14 @@ namespace Slipstream.Backend
             {
                 if (fromStart)
                 {
-                    lock (Events)
+                    // As this is a queue, we need to clone it before consuming it. We can't use Events directory,
+                    // as this would clear any existing events from it.
+                    var cloned = Events.Clone();
+
+                    IEvent? e;
+                    while ((e = cloned.Dequeue(0)) != null)
                     {
-                        foreach (var e in Events)
-                        {
-                            subscription.Add(e);
-                        }
+                        subscription.Add(e);
                     }
                 }
 
@@ -101,13 +89,17 @@ namespace Slipstream.Backend
         {
             lock (Listeners)
             {
-                enabled = true;
                 foreach (var e in PendingEvents)
                 {
-                    PublishEvent(e);
+                    Events.Enqueue(e);
+                    foreach (var l in Listeners)
+                    {
+                        l.Add(e);
+                    }
                 }
 
                 PendingEvents.Clear();
+                enabled = true;
             }
         }
 

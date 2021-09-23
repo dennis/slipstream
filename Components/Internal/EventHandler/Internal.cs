@@ -19,6 +19,8 @@ namespace Slipstream.Components.Internal.EventHandler
 
         public event EventHandler<InternalInstanceRemoved>? OnInternalInstanceRemoved;
 
+        public event EventHandler<InternalCustomEvent>? OnInternalCustomEvent;
+
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)
         {
             return @event switch
@@ -28,6 +30,7 @@ namespace Slipstream.Components.Internal.EventHandler
                 InternalDependencyRemoved tev => OnEvent(OnInternalDependencyRemoved, tev),
                 InternalInstanceAdded tev => OnEvent(OnInternalInstanceAdded, tev),
                 InternalInstanceRemoved tev => OnEvent(OnInternalInstanceRemoved, tev),
+                InternalCustomEvent tev => OnEvent(OnInternalCustomEvent, tev),
                 _ => IEventHandler.HandledStatus.NotMine,
             };
         }

@@ -1,5 +1,8 @@
 ﻿#nullable enable
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 using NLua;
 using NLua.Exceptions;
 
@@ -7,7 +10,10 @@ using Serilog;
 
 using Slipstream.Components.Internal;
 using Slipstream.Shared;
+using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Lua;
+
+using Swan.Formatters;
 
 using System;
 using System.Collections.Generic;
@@ -159,8 +165,8 @@ namespace Slipstream.Components.Lua.Lua
 
         private void SetupLua(NLua.Lua lua)
         {
-            var hiddenRequireName = $"require_{RandomString(5)}"; // TODO: is there a better way?
-            var hiddenSelf = $"slipstream_{RandomString(5)}";
+            var hiddenRequireName = $"require_{RandomString()}"; // TODO: is there a better way?
+            var hiddenSelf = $"slipstream_{RandomString()}";
 
             lua[hiddenSelf] = this;
             lua.DoString(@$"
@@ -178,6 +184,8 @@ end
 
 function debounce(a, b, c); {hiddenSelf}:debounce(a, b, c); end
 function wait(a, b, c); {hiddenSelf}:wait(a, b, c); end
+function parse_json(a); return {hiddenSelf}:parse_json(a); end
+function generate_json(a); return {hiddenSelf}:generate_json(a); end
 
 -- internal slipstream stuff
 SS = {{
@@ -226,10 +234,11 @@ end
 ");
         }
 
-        private static string RandomString(int length)
+        private static string RandomString()
         {
+            const int length = 5;
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            return new string(Enumerable.Repeat(chars, length)
+            return "__SS_" + new string(Enumerable.Repeat(chars, length)
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
@@ -286,6 +295,113 @@ end
                         WaitDelayedFunctions[name] = new DelayedExecution(func, DateTime.Now.AddSeconds(duration));
                 }
             }
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
+        public LuaTable? parse_json(string jsonString)
+        {
+            try
+            {
+                return ParseJObjectAsLuaTable(JObject.Parse(jsonString));
+            }
+            catch (Newtonsoft.Json.JsonReaderException)
+            {
+                Logger.Warning($"{FileName}: parse_json(): JSON Invalid. Tried to parse: {jsonString}");
+                return null;
+            }
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
+        public static string generate_json(LuaTable luaTable)
+        {
+            return JsonConvert.SerializeObject(Parameters.From(luaTable));
+        }
+
+        private LuaTable ParseJObjectAsLuaTable(JObject jobj)
+        {
+            LuaTable? luaTable = CreateEmptyLuaTable();
+
+            foreach (var kv in jobj)
+            {
+                luaTable[kv.Key] = ParseJToken(kv.Value);
+            }
+
+            return luaTable;
+        }
+
+        private object? ParseJToken(JToken? value)
+        {
+            if (value == null || value.Type == JTokenType.Null)
+                return null;
+
+            switch (value.Type)
+            {
+                case JTokenType.None:
+                    return null;
+
+                case JTokenType.Object:
+                    return ParseJObjectAsLuaTable((JObject)value);
+
+                case JTokenType.Array:
+                    return ParseJArrayAsLuaTable((JArray)value);
+
+                case JTokenType.Constructor:
+                case JTokenType.Property:
+                case JTokenType.Comment:
+                case JTokenType.Null:
+                case JTokenType.Undefined:
+                case JTokenType.Date:
+                case JTokenType.Raw:
+                case JTokenType.Bytes:
+                case JTokenType.Guid:
+                case JTokenType.Uri:
+                case JTokenType.TimeSpan:
+                    throw new Exception($"JToken not supported: {value.Type}. Please report this as a bug");
+
+                case JTokenType.Integer:
+                    return value.ToObject<long>();
+
+                case JTokenType.Float:
+                    return value.ToObject<float>();
+
+                case JTokenType.String:
+                    return value.ToObject<string>();
+
+                case JTokenType.Boolean:
+                    return value.ToObject<bool>();
+
+                default:
+                    throw new Exception($"JToken not supported: {value.Type}. Please report this as a bug");
+            }
+        }
+
+        private object ParseJArrayAsLuaTable(JArray v)
+        {
+            LuaTable? luaTable = CreateEmptyLuaTable();
+
+            int i = 0;
+            foreach (var value in v)
+            {
+                var key = "" + i;
+
+                luaTable[key] = ParseJToken(value);
+
+                i += 1;
+            }
+
+            return luaTable;
+        }
+
+        private LuaTable CreateEmptyLuaTable()
+        {
+            var tmpName = RandomString();
+            Lua.NewTable(tmpName);
+            var luaTable = Lua[tmpName] as LuaTable;
+            Lua[tmpName] = null;
+
+            Debug.Assert(luaTable != null);
+
+            return luaTable!;
         }
 
         private static void HandleDelayedExecution(IDictionary<string, DelayedExecution> functions)

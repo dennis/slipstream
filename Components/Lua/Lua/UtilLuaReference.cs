@@ -31,6 +31,7 @@ namespace Slipstream.Components.Lua.Lua
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
         public string event_to_json(IEvent @event)
         {
+            // Should this be a method on event?
             return EventSerdeService.Serialize(@event);
         }
 

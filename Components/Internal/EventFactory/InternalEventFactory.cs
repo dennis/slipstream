@@ -53,5 +53,15 @@ namespace Slipstream.Components.Internal.EventFactory
                 InstanceId = instanceId
             };
         }
+
+        public InternalCustomEvent CreateInternalCustomEvent(IEventEnvelope envelope, string name, string json)
+        {
+            return new InternalCustomEvent()
+            {
+                Envelope = envelope.Clone(),
+                Name = name,
+                Json = json
+            };
+        }
     }
 }

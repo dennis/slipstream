@@ -16,5 +16,7 @@ namespace Slipstream.Components.Internal
         InternalInstanceAdded CreateInternalInstanceAdded(IEventEnvelope envelope, string luaLibrary, string instanceId);
 
         InternalInstanceRemoved CreateInternalInstanceRemoved(IEventEnvelope envelope, string luaLibrary, string instanceId);
+
+        InternalCustomEvent CreateInternalCustomEvent(IEventEnvelope envelope, string name, string json);
     }
 }

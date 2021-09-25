@@ -1,25 +1,8 @@
 ﻿# Internal
 
-## Lua: Core
+## Lua (global functions)
 
-<details><summary>Construction</summary><br />
-
-```lua
-local internal = require("api/internal"):instance(config)
-```
-
-This will construct an instance of `api/internal` or return an existing instance with 
-the same `id` if one exists.
-
-`config` is the initial configuration of the instance if one needs to be created. It is a table with one or more keys as defined below.
-
-| Parameter   | Type          | Default    | Description                    |
-| :---------- | :-----------: | :--------: | :----------------------------- |
-| id          | string        |            | Mandatory: Id of this instance |
-
-</details>
-
-<details><summary>core:debounce(name, func, duration_seconds)</summary><br />
+<details><summary>debounce(name, func, duration_seconds)</summary><br />
 Debouncing a function ensures that it doesn’t get called too frequently. 
 
 | Parameter        | Type     | Description                            |
@@ -37,18 +20,16 @@ local hello = function()
     ui:print("Hello world")
 end
 
-core:debounce("sample1", hello, 10)
+debounce("sample1", hello, 10)
 
 -- 9 seconds later. Timer is reset to 10 seconds again.
-core:debounce("sample1", hello, 10)
+debounce("sample1", hello, 10)
 
 -- 10 seconds later will output "Hello world"
 ```
-
-This function is aliased as ``debounce``
 </details>
 
-<details><summary>core:wait(name, func, duration_seconds)</summary><br />
+<details><summary>wait(name, func, duration_seconds)</summary><br />
 Wait will wait for a duration before calling the function. If you redefine the wait, it 
 will not reset the timer. This is the difference between this and debounce.
 
@@ -63,16 +44,43 @@ local hello = function()
     ui:print("Hello world")
 end
 
-core:wait("sample1", hello, 10)
-core:wait("sample1", hello, 2)
+wait("sample1", hello, 10)
+wait("sample1", hello, 2)
 
 -- 10 seconds later will output "Hello world"
 ```
-
-This function is aliased as ``wait``
 </details>
 
-<details><summary>core:event_to_json(event)</summary><br />
+
+<details><summary>parse_json(json)</summary><br />
+Will parse `json` and return a LuaTable with the values
+parsed.
+
+| Parameter        | Type     | Description                       |
+|:-----------------|:--------:|:----------------------------------|
+| json             | string   | json string to be parsed          |
+
+```lua
+local json = parse_json("{\"foo\":\"bar\"}")
+json.foo -- "contains now bar"
+```
+</details>
+
+<details><summary>generate_json(table)</summary><br />
+The inverse of `parse_json()`, taking a lua table and return it as 
+a json encoded string.
+
+| Parameter        | Type      | Description    |
+|:-----------------|:------+--:|:---------------|
+| table            | luatable  | data           |
+
+```lua
+local json = generatote_json({ foo = "bar" })
+json -- "{\"foo\":\"bar\"}"
+```
+</details>
+
+<details><summary>event_to_json(event)</summary><br />
 Encodes an event as a json-string.
 
 | Parameter | Type  | Description                       |
@@ -81,7 +89,7 @@ Encodes an event as a json-string.
 
 ```lua
 function handle(event)
-    core::print(core::event_to_json(event))
+    local json = :event_to_json(event)
 end
 ```
 </details>
@@ -145,6 +153,19 @@ internal:shutdown()
 
 This function publishes `InternalCommandShutdown` event, that is handled by Engine, that will
 publish `InternalShutdown` if it allows the shutdown.
+</details>
+
+<details><summary>internal:send_custom_event(name, payload)</summary><br />
+Sends a custom event
+
+| Parameter        | Type      | Description                |
+|:-----------------|:---------:|:---------------------------|
+| name             | string    | name to identify the event |
+| payload          | string OR lua table    | payload to send in the event. If luatable is provided it will be converted to json via `generate_json()` |
+
+```lua
+internal:send_custom_event("command", { type = "sof" })
+```
 </details>
 
 ## Lua: State

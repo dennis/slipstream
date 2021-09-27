@@ -45,6 +45,8 @@ namespace Slipstream.Components.WinFormUI.Lua
         [STAThreadAttribute]
         protected override void Main()
         {
+            var subscription = EventBus.RegisterListener(InstanceId, fromBeginning: true, promiscuousMode: true);
+
             Application.Run(new MainWindow(
                 InstanceId,
                 this,
@@ -55,6 +57,7 @@ namespace Slipstream.Components.WinFormUI.Lua
                 ApplicationVersionService,
                 EventHandlerController,
                 EventSerdeService,
+                subscription,
                 DeepView
            ));
         }

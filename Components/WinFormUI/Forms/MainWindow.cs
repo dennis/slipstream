@@ -56,6 +56,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             IApplicationVersionService applicationVersionService,
             IEventHandlerController eventHandlerController,
             IEventSerdeService eventSerdeService,
+            IEventBusSubscription subscription,
             bool deepView
             )
         {
@@ -70,6 +71,8 @@ namespace Slipstream.Components.WinFormUI.Forms
             Envelope = new EventEnvelope(instanceId);
             BroadcastEnvelope = new EventEnvelope(instanceId);
             DeepView = deepView;
+
+            EventBusSubscription = subscription;
 
             InitializeComponent();
 
@@ -138,7 +141,6 @@ namespace Slipstream.Components.WinFormUI.Forms
 
         private void MainWindow_Load(object? sender, EventArgs e)
         {
-            EventBusSubscription = EventBus.RegisterListener(InstanceId, fromBeginning: true, promiscuousMode: true);
             EventHandlerThreadCancellationToken = EventHandlerThreadCts.Token;
             EventHandlerThread = new Thread(new ThreadStart(EventListenerMain))
             {

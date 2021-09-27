@@ -12,6 +12,7 @@
    Use `parse_json(event.Json)` to get a LuaTable with the values as were sent 
    via the event. Also adds `generate_json(luaTable)` to generate json string from 
    a Lua table.
+ - Bugfix: WinFormUI wouldn't always pick up creation events, while it was initializing it's window.
 
 
 ## [0.9.0](https://github.com/dennis/slipstream/releases/tag/v0.9.0) (2021-08-21)

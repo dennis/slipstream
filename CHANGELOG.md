@@ -1,6 +1,9 @@
 ﻿# Changelog
 ## Next version
-[Full Changelog](https://github.com/dennis/slipstream/compare/v0.9.0...main)
+[Full Changelog](https://github.com/dennis/slipstream/compare/v0.10.0...main)
+
+## [0.10.0](https://github.com/dennis/slipstream/releases/tag/v0.10.0) (2021-10-07)
+[Full Changelog](https://github.com/dennis/slipstream/compare/v0.9.0...v0.10.0)
  - AudioComponent improved: Now removes any pending say/play commands if sender 
    is removed (eg. script deleted or reloaded)
  - Bugfix: Clear delayed functions (debounce and wait) on script restart
@@ -13,6 +16,7 @@
    via the event. Also adds `generate_json(luaTable)` to generate json string from 
    a Lua table.
  - Bugfix: WinFormUI wouldn't always pick up creation events, while it was initializing it's window.
+ - Bugfix: Auto-create "Scripts" directory if missing
 
 
 ## [0.9.0](https://github.com/dennis/slipstream/releases/tag/v0.9.0) (2021-08-21)

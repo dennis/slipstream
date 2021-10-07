@@ -39,6 +39,9 @@ namespace Slipstream.Components.FileMonitor.Lua
 
             foreach (var path in paths)
             {
+                // Make sure directory exists, before monitoring it
+                Directory.CreateDirectory(path);
+
                 var watcher = new FileSystemWatcher(path);
                 watcher.Created += (_, e) => WatcherOnCreated(e);
                 watcher.Changed += (_, e) => WatcherOnChanged(e);

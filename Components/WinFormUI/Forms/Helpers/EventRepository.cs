@@ -58,6 +58,11 @@ namespace Slipstream.Components.WinFormUI.Forms.Helpers
                     EventGridView.Rows[^1].DefaultCellStyle.ForeColor = Color.Green;
                     EventGridView.Rows[^1].Cells[1].ToolTipText = "InternalCustomEvent";
                 }
+                else if (e.EventType.StartsWith("Internal"))
+                {
+                    EventGridView.Rows.Add(e.Envelope.Uptime, e.EventType, e.Envelope.Sender, recipients, json);
+                    EventGridView.Rows[^1].DefaultCellStyle.ForeColor = Color.Gray;
+                }
                 else
                 {
                     EventGridView.Rows.Add(e.Envelope.Uptime, e.EventType, e.Envelope.Sender, recipients, json);

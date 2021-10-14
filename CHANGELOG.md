@@ -4,6 +4,8 @@
  - WinformUI/EventViewer: If last row is shown, then keep showing the last row as new events
    are added
  - WinformUI/Console: Always scroll to newest line added
+ - WinformUI/EventViewer: Show custom events colored green and use their name instead of 
+   InternalCustomEvent
 
 ## [0.10.0](https://github.com/dennis/slipstream/releases/tag/v0.10.0) (2021-10-07)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.9.0...v0.10.0)

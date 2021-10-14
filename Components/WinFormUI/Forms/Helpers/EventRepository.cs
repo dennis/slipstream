@@ -1,9 +1,11 @@
 ﻿#nullable enable
 
 using Slipstream.Components.Internal;
+using Slipstream.Components.Internal.Events;
 using Slipstream.Shared;
 
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Slipstream.Components.WinFormUI.Forms.Helpers
@@ -48,7 +50,19 @@ namespace Slipstream.Components.WinFormUI.Forms.Helpers
 
                 // Default to showing the last item (newest event) if nothing is added, or if we're already viewing last item
                 bool viewingLastRow = (EventGridView.FirstDisplayedScrollingRowIndex + EventGridView.DisplayedRowCount(true) == EventGridView.RowCount) || EventGridView.RowCount == 0;
-                EventGridView.Rows.Add(e.Envelope.Uptime, e.EventType, e.Envelope.Sender, recipients, json);
+
+                // Show Custom events in green
+                if (e is InternalCustomEvent a)
+                {
+                    EventGridView.Rows.Add(e.Envelope.Uptime, a.Name, e.Envelope.Sender, recipients, json);
+                    EventGridView.Rows[^1].DefaultCellStyle.ForeColor = Color.Green;
+                    EventGridView.Rows[^1].Cells[1].ToolTipText = "InternalCustomEvent";
+                }
+                else
+                {
+                    EventGridView.Rows.Add(e.Envelope.Uptime, e.EventType, e.Envelope.Sender, recipients, json);
+                }
+
                 EventGridView.Rows[^1].ContextMenuStrip = ContextMenu;
                 if (viewingLastRow)
                 {

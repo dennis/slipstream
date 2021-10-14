@@ -46,8 +46,15 @@ namespace Slipstream.Components.WinFormUI.Forms.Helpers
                 string recipients = RecipientsAsString(e);
                 var json = EventSerdeService.Serialize(e);
 
+                // Default to showing the last item (newest event) if nothing is added, or if we're already viewing last item
+                bool viewingLastRow = (EventGridView.FirstDisplayedScrollingRowIndex + EventGridView.DisplayedRowCount(true) == EventGridView.RowCount) || EventGridView.RowCount == 0;
                 EventGridView.Rows.Add(e.Envelope.Uptime, e.EventType, e.Envelope.Sender, recipients, json);
                 EventGridView.Rows[^1].ContextMenuStrip = ContextMenu;
+                if (viewingLastRow)
+                {
+                    // Make sure we're still viewing last row
+                    EventGridView.FirstDisplayedScrollingRowIndex = EventGridView.RowCount - 1;
+                }
             }
         }
 

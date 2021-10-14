@@ -154,11 +154,11 @@ namespace Slipstream.Components.WinFormUI.Forms
             ExecuteSecure(() =>
             {
                 var color = msg.Error ? System.Drawing.Color.Red : System.Drawing.Color.Black;
+                var line = new ListViewItem(new string[] { msg.Message }, 0, color, System.Drawing.Color.Transparent, ConsoleListView.Font);
                 ConsoleListView.BeginUpdate();
-                ConsoleListView.Items.Add(new ListViewItem(new string[] { msg.Message }, 0, color, System.Drawing.Color.Transparent, ConsoleListView.Font));
+                ConsoleListView.Items.Add(line);
+                ConsoleListView.EnsureVisible(ConsoleListView.Items.Count - 1);
                 ConsoleListView.EndUpdate();
-
-                Debug.WriteLine(msg.Message);
             });
         }
 

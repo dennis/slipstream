@@ -7,6 +7,8 @@
  - WinFormUI/EventViewer: Show custom events colored green and use their name instead of 
    InternalCustomEvent
  - WinFormUI/EventViewer: Show internal events colored gray.
+ - Don't exit WinFormUI if inactive (nothing depends on it). Once we start the UI, we expect 
+   it to be running until user exits
 
 ## [0.10.0](https://github.com/dennis/slipstream/releases/tag/v0.10.0) (2021-10-07)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.9.0...v0.10.0)

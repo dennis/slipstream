@@ -62,6 +62,12 @@ namespace Slipstream.Components.WinFormUI.Lua
            ));
         }
 
+        protected override void InactiveInstance()
+        {
+            // Even if nothing depends on WinFormUI, we don't want to shut down once we're running
+            // That will make it really hard to debug problems as the events and console isn't visible
+        }
+
         // Expose Protected variable for MainWindow to see and react on
         internal bool IsStopping()
         {

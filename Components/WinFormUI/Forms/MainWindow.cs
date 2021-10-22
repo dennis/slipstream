@@ -221,8 +221,8 @@ namespace Slipstream.Components.WinFormUI.Forms
 
             webWidgetEventHandler.OnWebWidgetEndpointAdded += (_, e) => EventHandler_OnEndpointAdded(e.Endpoint);
             webWidgetEventHandler.OnWebWidgetEndpointRemoved += (_, e) => EventHandler_OnEndpointRemoved(e.Endpoint);
-            webEventHandler.OnWebEndpointAdded += (_, e) => EventHandler_OnEndpointAdded(e.Endpoint);
-            webEventHandler.OnWebEndpointRemoved += (_, e) => EventHandler_OnEndpointRemoved(e.Endpoint);
+            webEventHandler.OnWebEndpointAdded += (_, e) => EventHandler_OnEndpointAdded(e.Url);
+            webEventHandler.OnWebEndpointRemoved += (_, e) => EventHandler_OnEndpointRemoved(e.Url);
 
             var token = (CancellationToken)EventHandlerThreadCancellationToken; // We got a Assert ensuring this isn't null
 

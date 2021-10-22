@@ -1,6 +1,5 @@
 ﻿#nullable enable
 
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,8 +8,6 @@ using EmbedIO.WebSockets;
 using Serilog;
 
 using Slipstream.Shared;
-
-using static Slipstream.Components.WebWidget.IWebWidgetInstances;
 
 namespace Slipstream.Components.Web.Lua
 {

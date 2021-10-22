@@ -186,7 +186,7 @@ namespace Slipstream.Components.Web.Lua
 
             RebuildWebServer = true;
 
-            EventBus.PublishEvent(WebEventFactory.CreateWebEndpointAdded(InstanceEnvelope, $"{endpoint.Url}"));
+            EventBus.PublishEvent(WebEventFactory.CreateWebEndpointAdded(InstanceEnvelope, endpoint.Route, endpoint.Url));
         }
 
         private void RemoveEndpoint(IEndpointDefinition endpoint)
@@ -197,7 +197,7 @@ namespace Slipstream.Components.Web.Lua
                 {
                     Logger.Information($"Web: Removing endpoint for {endpoint.Url}");
                     EndpointDefinitions.Remove(endpoint.Route);
-                    EventBus.PublishEvent(WebEventFactory.CreateWebEndpointRemoved(InstanceEnvelope, $"{endpoint.Url}"));
+                    EventBus.PublishEvent(WebEventFactory.CreateWebEndpointRemoved(InstanceEnvelope, endpoint.Route, endpoint.Url));
                 }
             }
 

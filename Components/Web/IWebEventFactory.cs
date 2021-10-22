@@ -25,9 +25,9 @@ namespace Slipstream.Components.Web
 
         WebCommandRoutePath CreateWebCommandRoutePath(IEventEnvelope envelope, string route, string path);
 
-        WebEndpointAdded CreateWebEndpointAdded(IEventEnvelope envelope, string endpoint);
+        WebEndpointAdded CreateWebEndpointAdded(IEventEnvelope envelope, string endpoint, string url);
 
-        WebEndpointRemoved CreateWebEndpointRemoved(IEventEnvelope envelope, string endpoint);
+        WebEndpointRemoved CreateWebEndpointRemoved(IEventEnvelope envelope, string endpoint, string url);
 
         WebEndpointRequested CreateWebEndpointRequested(IEventEnvelope envelope, string endpoint, string method, string body, string queryParams);
 

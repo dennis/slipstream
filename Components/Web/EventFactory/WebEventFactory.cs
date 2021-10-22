@@ -57,14 +57,14 @@ namespace Slipstream.Components.Web.EventFactory
             return new WebCommandRouteWebSocket { Envelope = envelope, Route = route };
         }
 
-        public WebEndpointAdded CreateWebEndpointAdded(IEventEnvelope envelope, string endpoint)
+        public WebEndpointAdded CreateWebEndpointAdded(IEventEnvelope envelope, string endpoint, string url)
         {
-            return new WebEndpointAdded { Envelope = envelope, Endpoint = endpoint };
+            return new WebEndpointAdded { Envelope = envelope, Endpoint = endpoint, Url = url };
         }
 
-        public WebEndpointRemoved CreateWebEndpointRemoved(IEventEnvelope envelope, string endpoint)
+        public WebEndpointRemoved CreateWebEndpointRemoved(IEventEnvelope envelope, string endpoint, string url)
         {
-            return new WebEndpointRemoved { Envelope = envelope, Endpoint = endpoint };
+            return new WebEndpointRemoved { Envelope = envelope, Endpoint = endpoint, Url = url };
         }
 
         public WebEndpointRequested CreateWebEndpointRequested(IEventEnvelope envelope, string endpoint, string method, string body, string queryParams)

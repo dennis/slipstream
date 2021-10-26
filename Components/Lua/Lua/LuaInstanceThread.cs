@@ -35,6 +35,15 @@ namespace Slipstream.Components.Lua.Lua
             }
         }
 
+        private class ScriptCallbacksLuaFunc
+        {
+            // function that receives events
+            public LuaFunction? HandleFunc { get; set; }
+
+            // function that is invoked when script is stopped - "destructor"
+            public LuaFunction? AtExitFunc { get; set; }
+        }
+
         private readonly Object Lock = new object();
         private static readonly Random random = new Random();
         private readonly ILuaLibraryRepository Repository;
@@ -73,12 +82,14 @@ namespace Slipstream.Components.Lua.Lua
 
         protected override void Main()
         {
+            var callbacks = new ScriptCallbacksLuaFunc();
+
             try
             {
-                var handleFunc = LoadFile();
+                callbacks = LoadFile();
 
                 // If we have no HandleFunc defined, then just exit as this script will never do anything
-                if (handleFunc == null && WaitDelayedFunctions.Count == 0 && DebounceDelayedFunctions.Count == 0)
+                if (callbacks.HandleFunc == null && WaitDelayedFunctions.Count == 0 && DebounceDelayedFunctions.Count == 0)
                 {
                     Logger.Warning("{fileName} got no handle(), wait() nor debounce() functions. Stopping", FileName);
                 }
@@ -96,7 +107,7 @@ namespace Slipstream.Components.Lua.Lua
                             {
                                 lock (Lock)
                                 {
-                                    handleFunc?.Call(@event);
+                                    callbacks.HandleFunc?.Call(@event);
 
                                     // Perform GC in Lua approx every second
                                     if (@event.Envelope.Uptime - LastLuaGC > 1000)
@@ -131,6 +142,8 @@ namespace Slipstream.Components.Lua.Lua
             DebounceDelayedFunctions.Clear();
             WaitDelayedFunctions.Clear();
 
+            callbacks.AtExitFunc?.Call();
+
             LuaLibrary.InstanceStopped(InstanceId);
 
             foreach (var dependency in Dependencies)
@@ -141,7 +154,7 @@ namespace Slipstream.Components.Lua.Lua
             Dependencies.Clear();
         }
 
-        private LuaFunction? LoadFile()
+        private ScriptCallbacksLuaFunc LoadFile()
         {
             lock (Lock)
             {
@@ -157,7 +170,10 @@ namespace Slipstream.Components.Lua.Lua
 
                 Lua.DoFile(FileName);
 
-                return Lua["handle"] as NLua.LuaFunction;
+                var handleFunc = Lua["handle"] as NLua.LuaFunction;
+                var atExitFunc = Lua["atexit"] as NLua.LuaFunction;
+
+                return new ScriptCallbacksLuaFunc { HandleFunc = handleFunc, AtExitFunc = atExitFunc };
             }
         }
 

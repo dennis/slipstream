@@ -1,5 +1,24 @@
 ﻿# Internal
 
+## Lua (callbacks)
+
+<details><summary>handle(event)</summary><br />
+Function you define in your script which will be invoked by Slipstream for
+all events received for you.  `event` always contains an `event.EventType`
+so you can tell them apart. A script can only have one `handle(event)` 
+function.
+
+Instead of using `handle(event)` directly, you can instead use the 
+helper `addEventHandler(eventType, callback)`. It will wire everything up
+and invoke your callback function, when an event of that type is received.
+You can have multiple callbacks for the same event type if needed. As 
+`addEventHandler` defines its own `handle(event)` function, you cannot
+use it yourself.
+
+<details><summary>atexit()</summary><br />
+This function, if it is defined, will be invoked when the script shuts down.
+You can't stop it from shutting down, but you can do some cleanup if needed.
+
 ## Lua (global functions)
 
 <details><summary>debounce(name, func, duration_seconds)</summary><br />
@@ -75,7 +94,7 @@ a json encoded string.
 | table            | luatable  | data           |
 
 ```lua
-local json = generatote_json({ foo = "bar" })
+local json = generate_json({ foo = "bar" })
 json -- "{\"foo\":\"bar\"}"
 ```
 </details>
@@ -89,7 +108,7 @@ Encodes an event as a json-string.
 
 ```lua
 function handle(event)
-    local json = :event_to_json(event)
+    local json = event_to_json(event)
 end
 ```
 </details>

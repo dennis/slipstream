@@ -593,7 +593,7 @@ namespace Slipstream.Components.WinFormUI.Forms
                 .Value is string json))
                 return;
 
-            if (!(rows.Cells[1].Value is string eventType))
+            if (!(rows.Cells[1].ToolTipText is string eventType))
                 return;
 
             var code = $@"

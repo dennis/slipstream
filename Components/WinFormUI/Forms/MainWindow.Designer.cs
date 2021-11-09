@@ -62,6 +62,7 @@
             this.EventViewerResendMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.EventViewerCopyJsonMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CopyLuaHandlerCodeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ClearEventsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             this.EventsTabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -352,9 +353,10 @@
             this.EventViewerContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.EventViewerResendMenuItem,
             this.EventViewerCopyJsonMenuItem,
-            this.CopyLuaHandlerCodeMenuItem});
+            this.CopyLuaHandlerCodeMenuItem,
+            this.ClearEventsMenuItem});
             this.EventViewerContextMenuStrip.Name = "EventViewerContextMenuStrip";
-            this.EventViewerContextMenuStrip.Size = new System.Drawing.Size(201, 70);
+            this.EventViewerContextMenuStrip.Size = new System.Drawing.Size(201, 92);
             // 
             // EventViewerResendMenuItem
             // 
@@ -376,6 +378,13 @@
             this.CopyLuaHandlerCodeMenuItem.Size = new System.Drawing.Size(200, 22);
             this.CopyLuaHandlerCodeMenuItem.Text = "Copy Lua Handler Code";
             this.CopyLuaHandlerCodeMenuItem.Click += new System.EventHandler(this.CopyLuaHandlerCodeMenuItem_Click);
+            // 
+            // ClearEventsMenuItem
+            // 
+            this.ClearEventsMenuItem.Name = "ClearEventsMenuItem";
+            this.ClearEventsMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.ClearEventsMenuItem.Text = "Clear all events";
+            this.ClearEventsMenuItem.Click += new System.EventHandler(this.ClearEventsMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -437,6 +446,7 @@
         private System.Windows.Forms.ListView ConsoleListView;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ToolStripMenuItem EndpointsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ClearEventsMenuItem;
     }
 }
 

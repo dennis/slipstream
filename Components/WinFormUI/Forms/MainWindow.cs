@@ -609,5 +609,14 @@ end)
         {
             ConsoleListView.Columns[0].Width = EventsTabControl.Width - 20;
         }
+
+        private void ClearEventsMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult dialogResult = MessageBox.Show("Are you sure you want to clear events?", "Clear events", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes)
+            {
+                EventsCollected.Clear();
+            }
+        }
     }
 }

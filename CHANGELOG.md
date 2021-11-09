@@ -11,6 +11,7 @@
    it to be running until user exits
  - Lua: added support for executing code when script shuts down. If you define an `atexit` function, 
    it will be invoked at script shutdown.
+ - Added "Clear All Events" option when right-clicking in the events tab
 
 ## [0.10.0](https://github.com/dennis/slipstream/releases/tag/v0.10.0) (2021-10-07)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.9.0...v0.10.0)

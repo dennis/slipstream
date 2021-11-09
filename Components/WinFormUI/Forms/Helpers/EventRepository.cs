@@ -89,6 +89,11 @@ namespace Slipstream.Components.WinFormUI.Forms.Helpers
             }
         }
 
+        internal void Clear()
+        {
+            EventGridView.Rows.Clear();
+        }
+
         internal void Selected(TreeNode node)
         {
             if (!(node.Tag is InsideViewNodeTag tag))

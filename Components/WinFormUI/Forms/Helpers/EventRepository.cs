@@ -6,6 +6,7 @@ using Slipstream.Shared;
 
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Slipstream.Components.WinFormUI.Forms.Helpers
@@ -89,6 +90,11 @@ namespace Slipstream.Components.WinFormUI.Forms.Helpers
             }
         }
 
+        internal void Clear()
+        {
+            EventGridView.Rows.Clear();
+        }
+
         internal void Selected(TreeNode node)
         {
             if (!(node.Tag is InsideViewNodeTag tag))
@@ -125,6 +131,21 @@ namespace Slipstream.Components.WinFormUI.Forms.Helpers
             foreach (var e in Events)
             {
                 AddToControl(e);
+            }
+        }
+
+        internal void SaveToFile(string fileName)
+        {
+            using StreamWriter file = new StreamWriter(fileName);
+
+            foreach(var e in Events)
+            {
+                if (SelectedFilter.Accept(e))
+                {
+                    var json = EventSerdeService.Serialize(e);
+
+                    file.Write(json);
+                }
             }
         }
     }

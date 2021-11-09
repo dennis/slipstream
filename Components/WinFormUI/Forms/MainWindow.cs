@@ -593,7 +593,7 @@ namespace Slipstream.Components.WinFormUI.Forms
                 .Value is string json))
                 return;
 
-            if (!(rows.Cells[1].Value is string eventType))
+            if (!(rows.Cells[1].ToolTipText is string eventType))
                 return;
 
             var code = $@"
@@ -608,6 +608,32 @@ end)
         private void EventsTabControl_Resize(object sender, EventArgs e)
         {
             ConsoleListView.Columns[0].Width = EventsTabControl.Width - 20;
+        }
+
+        private void ClearEventsMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult dialogResult = MessageBox.Show("Are you sure you want to clear events?", "Clear events", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes)
+            {
+                EventsCollected.Clear();
+            }
+        }
+
+        private void SaveEventsMenuItem_Click(object sender, EventArgs e)
+        {
+            // https://stackoverflow.com/questions/17762037/current-thread-must-be-set-to-single-thread-apartment-sta-error-in-copy-stri
+            Thread thread = new Thread(() =>
+            {
+                var result = SaveFileDialog.ShowDialog();
+
+                if (result == DialogResult.OK)
+                {
+                    EventsCollected.SaveToFile(SaveFileDialog.FileName);
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            thread.Join();
         }
     }
 }

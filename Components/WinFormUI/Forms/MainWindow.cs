@@ -618,5 +618,22 @@ end)
                 EventsCollected.Clear();
             }
         }
+
+        private void SaveEventsMenuItem_Click(object sender, EventArgs e)
+        {
+            // https://stackoverflow.com/questions/17762037/current-thread-must-be-set-to-single-thread-apartment-sta-error-in-copy-stri
+            Thread thread = new Thread(() =>
+            {
+                var result = SaveFileDialog.ShowDialog();
+
+                if (result == DialogResult.OK)
+                {
+                    EventsCollected.SaveToFile(SaveFileDialog.FileName);
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            thread.Join();
+        }
     }
 }

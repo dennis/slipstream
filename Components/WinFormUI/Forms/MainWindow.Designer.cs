@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Lua Scripts");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Lua Scripts");
             this.panel1 = new System.Windows.Forms.Panel();
             this.EventsTabControl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -63,6 +63,7 @@
             this.EventViewerCopyJsonMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CopyLuaHandlerCodeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ClearEventsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SaveEventsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             this.EventsTabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -228,10 +229,10 @@
             this.InsideView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InsideView.Location = new System.Drawing.Point(0, 141);
             this.InsideView.Name = "InsideView";
-            treeNode1.Name = "LuaScripts";
-            treeNode1.Text = "Lua Scripts";
+            treeNode2.Name = "LuaScripts";
+            treeNode2.Text = "Lua Scripts";
             this.InsideView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1});
+            treeNode2});
             this.InsideView.Size = new System.Drawing.Size(226, 354);
             this.InsideView.TabIndex = 1;
             this.InsideView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.InsideView_AfterSelect);
@@ -354,9 +355,10 @@
             this.EventViewerResendMenuItem,
             this.EventViewerCopyJsonMenuItem,
             this.CopyLuaHandlerCodeMenuItem,
-            this.ClearEventsMenuItem});
+            this.ClearEventsMenuItem,
+            this.SaveEventsMenuItem});
             this.EventViewerContextMenuStrip.Name = "EventViewerContextMenuStrip";
-            this.EventViewerContextMenuStrip.Size = new System.Drawing.Size(201, 92);
+            this.EventViewerContextMenuStrip.Size = new System.Drawing.Size(201, 136);
             // 
             // EventViewerResendMenuItem
             // 
@@ -385,6 +387,13 @@
             this.ClearEventsMenuItem.Size = new System.Drawing.Size(200, 22);
             this.ClearEventsMenuItem.Text = "Clear all events";
             this.ClearEventsMenuItem.Click += new System.EventHandler(this.ClearEventsMenuItem_Click);
+            // 
+            // SaveEventsMenuItem
+            // 
+            this.SaveEventsMenuItem.Name = "SaveEventsMenuItem";
+            this.SaveEventsMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.SaveEventsMenuItem.Text = "Save events to file";
+            this.SaveEventsMenuItem.Click += new System.EventHandler(this.SaveEventsMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -447,6 +456,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ToolStripMenuItem EndpointsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ClearEventsMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem SaveEventsMenuItem;
     }
 }
 

@@ -115,6 +115,8 @@ namespace Slipstream
 #endif
             builder.RegisterType<Components.WebWidget.Lua.WebWidgetInstanceThread>().As<Components.WebWidget.Lua.IWebWidgetInstanceThread>().InstancePerDependency();
             builder.RegisterType<Components.WebWidget.HttpServer>().As<Components.WebWidget.IHttpServer>().As<Components.WebWidget.IHttpServerApi>().SingleInstance();
+            builder.RegisterType<Components.JustGiving.Lua.JustGivingInstanceThread>().As<Components.JustGiving.Lua.IJustGivingInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.JustGiving.Lua.JustGivingLuaReference>().As<Components.JustGiving.Lua.IJustGivingLuaReference>().InstancePerDependency();
         }
 
         private class PopulateSink

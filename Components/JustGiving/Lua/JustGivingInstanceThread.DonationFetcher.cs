@@ -53,14 +53,6 @@ namespace Slipstream.Components.JustGiving.Lua
                             // Something went wrong
                             return new List<DonationsResult.Donation>();
                         }
-
-                        // Verify that the result set isnt changed since getting the first one.
-                        if (firstDonationPageResult.Pagination.TotalResults != donationsResult.Pagination.TotalResults)
-                        {
-                            // Result-set was modified. Restart
-                            Debug.WriteLine($"JustGiving [{PageShortName}]: Result was modified while reading, reloading");
-                            return UpdateDonation(donations);
-                        }
                     }
 
                     foreach (var item in donationsResult.Donations)

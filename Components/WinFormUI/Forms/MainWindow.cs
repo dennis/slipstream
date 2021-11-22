@@ -11,6 +11,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -109,9 +110,10 @@ namespace Slipstream.Components.WinFormUI.Forms
 
             InsideView.EndUpdate();
 
+            ResizeConsoleViewColumns();
+
             EventsCollected.Selected(LuaScriptTreeNode);
             EventsTabControl.SelectedIndex = 1;
-            ConsoleListView.Columns[0].Width = EventsTabControl.Width - 20;
 
             Text += " v" + applicationVersionService.Version;
 
@@ -153,8 +155,9 @@ namespace Slipstream.Components.WinFormUI.Forms
         {
             ExecuteSecure(() =>
             {
+                var now = DateTime.Now.ToString("T", DateTimeFormatInfo.InvariantInfo);
                 var color = msg.Error ? System.Drawing.Color.Red : System.Drawing.Color.Black;
-                var line = new ListViewItem(new string[] { msg.Message }, 0, color, System.Drawing.Color.Transparent, ConsoleListView.Font);
+                var line = new ListViewItem(new string[] { now, msg.Message }, 0, color, System.Drawing.Color.Transparent, ConsoleListView.Font);
                 ConsoleListView.BeginUpdate();
                 ConsoleListView.Items.Add(line);
                 ConsoleListView.EnsureVisible(ConsoleListView.Items.Count - 1);
@@ -607,7 +610,14 @@ end)
 
         private void EventsTabControl_Resize(object sender, EventArgs e)
         {
-            ConsoleListView.Columns[0].Width = EventsTabControl.Width - 20;
+            ResizeConsoleViewColumns();
+        }
+
+        private void ResizeConsoleViewColumns()
+        {
+            // the 20px, is the width needed to make sure that the ConsoleViewTextColumn doesn't create a
+            // horizontal scrollback
+            ConsoleViewTextColumnHeader.Width = EventsTabControl.Width - ConsoleViewTimestampColumnHeader.Width - 20;
         }
 
         private void ClearEventsMenuItem_Click(object sender, EventArgs e)

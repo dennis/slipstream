@@ -29,14 +29,15 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Lua Scripts");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Lua Scripts");
             this.panel1 = new System.Windows.Forms.Panel();
             this.EventsTabControl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.AboutTextBox = new System.Windows.Forms.RichTextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.ConsoleListView = new System.Windows.Forms.ListView();
-            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+            this.ConsoleViewTimestampColumnHeader = new System.Windows.Forms.ColumnHeader();
+            this.ConsoleViewTextColumnHeader = new System.Windows.Forms.ColumnHeader();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.ButtonFlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.EventsTabPage = new System.Windows.Forms.TabPage();
@@ -136,7 +137,8 @@
             // ConsoleListView
             // 
             this.ConsoleListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader2});
+            this.ConsoleViewTimestampColumnHeader,
+            this.ConsoleViewTextColumnHeader});
             this.ConsoleListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ConsoleListView.FullRowSelect = true;
             this.ConsoleListView.GridLines = true;
@@ -151,9 +153,14 @@
             this.ConsoleListView.UseCompatibleStateImageBehavior = false;
             this.ConsoleListView.View = System.Windows.Forms.View.Details;
             // 
-            // columnHeader2
+            // ConsoleViewTimestampColumnHeader
             // 
-            this.columnHeader2.Width = 2000;
+            this.ConsoleViewTimestampColumnHeader.Text = "Time";
+            // 
+            // ConsoleViewTextColumnHeader
+            // 
+            this.ConsoleViewTextColumnHeader.Text = "Message";
+            this.ConsoleViewTextColumnHeader.Width = 2000;
             // 
             // tabPage3
             // 
@@ -229,10 +236,10 @@
             this.InsideView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InsideView.Location = new System.Drawing.Point(0, 141);
             this.InsideView.Name = "InsideView";
-            treeNode2.Name = "LuaScripts";
-            treeNode2.Text = "Lua Scripts";
+            treeNode1.Name = "LuaScripts";
+            treeNode1.Text = "Lua Scripts";
             this.InsideView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode2});
+            treeNode1});
             this.InsideView.Size = new System.Drawing.Size(226, 354);
             this.InsideView.TabIndex = 1;
             this.InsideView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.InsideView_AfterSelect);
@@ -358,7 +365,7 @@
             this.ClearEventsMenuItem,
             this.SaveEventsMenuItem});
             this.EventViewerContextMenuStrip.Name = "EventViewerContextMenuStrip";
-            this.EventViewerContextMenuStrip.Size = new System.Drawing.Size(201, 136);
+            this.EventViewerContextMenuStrip.Size = new System.Drawing.Size(201, 114);
             // 
             // EventViewerResendMenuItem
             // 
@@ -453,10 +460,11 @@
         private System.Windows.Forms.ToolStripMenuItem EventViewerCopyJsonMenuItem;
         private System.Windows.Forms.ToolStripMenuItem CopyLuaHandlerCodeMenuItem;
         private System.Windows.Forms.ListView ConsoleListView;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ToolStripMenuItem EndpointsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ClearEventsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem SaveEventsMenuItem;
+        private System.Windows.Forms.ColumnHeader ConsoleViewTextColumnHeader;
+        private System.Windows.Forms.ColumnHeader ConsoleViewTimestampColumnHeader;
     }
 }
 

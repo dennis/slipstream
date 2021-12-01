@@ -31,7 +31,7 @@ namespace Slipstream.Components.WebWidget
         private readonly IWebWidgetEventFactory WebWidgetEventFactory;
         private readonly IWebWidgetInstances Instances = new WebWidgetInstances();
         private readonly IEventEnvelope BroadcastEnvelope = new EventEnvelope("webwidget");
-        private const string Url = "http://127.0.0.1:1919"; // Must NOT end with slash
+        private const string Url = "http://*:1919"; // Must NOT end with slash
         private volatile bool Stopping;
 
         public HttpServer(

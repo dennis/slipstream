@@ -16,6 +16,7 @@
  - Generate correct lua handler code for custom events
  - New component: JustGiving - monitor fundraisings and get events at new donations
  - WinFormUI: Console lines are now timestamped
+ - WebWidgets: HTTP Server now listens on all IPs
 
 ## [0.10.0](https://github.com/dennis/slipstream/releases/tag/v0.10.0) (2021-10-07)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.9.0...v0.10.0)

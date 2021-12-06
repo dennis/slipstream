@@ -1,5 +1,7 @@
 ﻿using Autofac;
+
 using Slipstream.Backend;
+
 using System;
 using System.Collections.Generic;
 
@@ -12,9 +14,13 @@ namespace Slipstream.Shared
         private readonly IDictionary<dynamic, IEventHandler> Handlers = new Dictionary<dynamic, IEventHandler>();
 
         private volatile bool enabled = true;
-        public bool Enabled { get { return enabled; } set { enabled = value; } }
+
+        public bool Enabled
+        { get { return enabled; } set { enabled = value; } }
 
         public event EventHandler<IEvent>? OnDefault;
+
+        public event EventHandler<IEvent>? OnAllways;
 
         public EventHandlerController(ILifetimeScope scope)
         {
@@ -41,6 +47,8 @@ namespace Slipstream.Shared
         {
             if (ev == null || !Enabled)
                 return;
+
+            OnAllways?.Invoke(this, ev);
 
             bool handled = false;
 

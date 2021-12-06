@@ -15,6 +15,7 @@ namespace Slipstream.Shared.Lua
         protected readonly string InstanceId;
         protected readonly ILogger Logger;
         private Thread? ServiceThread;
+        private ulong _inactiveSince = 0;
         protected volatile bool Stopping = false;
         protected volatile bool AutoStart = false;
         protected IEventEnvelope InstanceEnvelope;
@@ -43,11 +44,21 @@ namespace Slipstream.Shared.Lua
             Stopped = false;
 
             var internalHandler = eventHandlerController.Get<Internal>();
+            eventHandlerController.OnAllways += (_, e) =>
+            {
+                if (_inactiveSince > 0 && !Stopped && (e.Envelope.Uptime - _inactiveSince) > 10_000)
+                {
+                    InactiveInstanceDead();
+                }
+            };
             internalHandler.OnInternalCommandShutdown += (_, e) => Stopping = true;
             internalHandler.OnInternalDependencyAdded += (_, e) =>
             {
                 if (e.DependsOn == InstanceId)
                     InstanceEnvelope = InstanceEnvelope.Add(e.InstanceId);
+
+                if (_inactiveSince > 0)
+                    ReactiveInstance(e.Envelope.Uptime);
             };
             internalHandler.OnInternalDependencyRemoved += (_, e) =>
             {
@@ -56,17 +67,30 @@ namespace Slipstream.Shared.Lua
                     InstanceEnvelope = InstanceEnvelope.Remove(e.InstanceId);
 
                     if (InstanceEnvelope.Recipients == null || InstanceEnvelope.Recipients.Length == 0)
-                        InactiveInstance();
+                        InactiveInstance(e.Envelope.Uptime);
                 }
             };
 
             SetupThread();
         }
 
-        protected virtual void InactiveInstance()
+        private void InactiveInstanceDead()
+        {
+            Logger.Information($"Instance '{InstanceId}' is died, stopping");
+            Stop();
+            _inactiveSince = 0;
+        }
+
+        private void ReactiveInstance(ulong uptime)
+        {
+            Logger.Information($"Instance '{InstanceId}' is reactivated");
+            _inactiveSince = 0;
+        }
+
+        protected virtual void InactiveInstance(ulong uptime)
         {
             Logger.Information($"Instance '{InstanceId}' is inactive (not used by anyone)");
-            Stopping = true;
+            _inactiveSince = uptime;
         }
 
         private void SetupThread()

@@ -22,6 +22,9 @@ namespace Slipstream
             if (EventBus == null || EventFactory == null)
                 return;
 
+            if (logEvent.Level < LogEventLevel.Information)
+                return;
+
             lock (ThreadLock)
             {
                 var message = logEvent.RenderMessage();

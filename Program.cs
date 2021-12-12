@@ -5,6 +5,7 @@ using Serilog;
 using Slipstream.Components.Internal;
 using Slipstream.Components.Internal.Services;
 using Slipstream.Shared;
+using Slipstream.Shared.Logger;
 
 using System;
 using System.Windows.Forms;
@@ -54,9 +55,13 @@ namespace Slipstream
             builder.Register(c => new StateService(c.Resolve<ILogger>(), Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Slipstream\state.txt")).As<IStateService>().SingleInstance();
 
             var logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
+                .MinimumLevel.Debug()
+                .Enrich.With(new ThreadIdEnricher())
+                .Enrich.With(new SessionIdEnricher())
                 .WriteTo.Console()
                 .WriteTo.SlipstreamConsoleSink(out SlipstreamConsoleSink sink)
+                .WriteTo.File("slipstream.log")
+                .WriteTo.Seq("http://localhost:5341") // TODO make this optional?
                 .CreateLogger();
 
             builder.RegisterInstance(logger).As<ILogger>().SingleInstance();

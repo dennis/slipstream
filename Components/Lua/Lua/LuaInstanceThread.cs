@@ -91,7 +91,7 @@ namespace Slipstream.Components.Lua.Lua
                 // If we have no HandleFunc defined, then just exit as this script will never do anything
                 if (callbacks.HandleFunc == null && WaitDelayedFunctions.Count == 0 && DebounceDelayedFunctions.Count == 0)
                 {
-                    Logger.Warning("{fileName} got no handle(), wait() nor debounce() functions. Stopping", FileName);
+                    Logger.Warning("{FileName} got no handle(), wait() nor debounce() functions. Stopping", FileName);
                 }
                 else
                 {
@@ -119,7 +119,7 @@ namespace Slipstream.Components.Lua.Lua
                             }
                             catch (Exception e)
                             {
-                                Logger.Error(e, "{fileName} errored while invoking handle(): {message}", FileName, e.Message);
+                                Logger.Error(e, "{FileName} errored while invoking handle(): {Message}", FileName, e.Message);
                             }
                         }
 
@@ -132,11 +132,11 @@ namespace Slipstream.Components.Lua.Lua
             {
                 string message = e.InnerException?.Message ?? e.Message;
 
-                Logger.Error(e, "{source} errored: {message}", e.Source ?? FileName, message);
+                Logger.Error(e, "{Source} errored: {Message}", e.Source ?? FileName, message);
             }
             catch (Exception e)
             {
-                Logger.Error(e, "{fileName} errored: {message}", FileName, e.Message);
+                Logger.Error(e, "{FileName} errored: {Message}", FileName, e.Message);
             }
 
             DebounceDelayedFunctions.Clear();
@@ -326,7 +326,7 @@ end
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
-        public string generate_json(LuaTable luaTable)
+        public static string generate_json(LuaTable luaTable)
         {
             return JsonConvert.SerializeObject(Parameters.From(luaTable));
         }

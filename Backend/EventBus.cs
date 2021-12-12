@@ -1,4 +1,6 @@
-﻿using Slipstream.Shared;
+﻿using Serilog;
+
+using Slipstream.Shared;
 
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,10 +15,12 @@ namespace Slipstream.Backend
         private const int EVENT_MAX_SIZE = 1000;
         private volatile bool enabled = false;
         private readonly ulong StartedAt;
+        private readonly ILogger Logger;
 
-        public EventBus()
+        public EventBus(ILogger logger)
         {
             StartedAt = Uptime();
+            Logger = logger.ForContext(GetType());
         }
 
         public bool Enabled
@@ -25,6 +29,8 @@ namespace Slipstream.Backend
             set
             {
                 Debug.Assert(value && !enabled);
+
+                Logger.Debug("Enabled EventBus");
 
                 EnableAndFlushPendingEvents();
             }
@@ -53,7 +59,8 @@ namespace Slipstream.Backend
 
         public IEventBusSubscription RegisterListener(string instanceId, bool fromStart = false, bool promiscuousMode = false)
         {
-            var subscription = new EventBusSubscription(this, instanceId, promiscuousMode);
+            var subscription = new EventBusSubscription(this, instanceId, Logger, promiscuousMode);
+            Logger.Debug("Creating new subscriber for {InstanceId} fromStart={FromStart}, promiscuousMode={PromiscuousMode}, Id={SubscriptionId}", instanceId, fromStart, promiscuousMode, subscription.Id);
 
             lock (Listeners)
             {
@@ -68,6 +75,8 @@ namespace Slipstream.Backend
                     {
                         subscription.Add(e);
                     }
+
+                    Logger.Debug("Subscription Id={SubscriptionId} prepared, adding events'fromStart' resulted in {EventCount} events", subscription.Id, subscription.Count);
                 }
 
                 Listeners.Add(subscription);
@@ -87,6 +96,7 @@ namespace Slipstream.Backend
 
         private void EnableAndFlushPendingEvents()
         {
+            Logger.Debug("Flushing pending events");
             lock (Listeners)
             {
                 foreach (var e in PendingEvents)

@@ -35,13 +35,15 @@ namespace Slipstream.Shared.Lua
         )
         {
             InstanceId = instanceId;
-            Logger = logger;
+            Logger = logger.ForContext(this.GetType()).ForContext("InstanceId", InstanceId);
             InstanceEnvelope = new EventEnvelope(instanceId);
             BroadcastEnvelope = new EventEnvelope(instanceId);
             LuaLibraryName = luaLLibraryName;
             EventBus = eventBus;
             InternalEventFactory = internalEventFactory;
             Stopped = false;
+
+            Logger.Debug("Launching instance '{InstanceId}'", instanceId);
 
             var internalHandler = eventHandlerController.Get<Internal>();
             eventHandlerController.OnAllways += (_, e) =>
@@ -76,20 +78,20 @@ namespace Slipstream.Shared.Lua
 
         private void InactiveInstanceDead()
         {
-            Logger.Information($"Instance '{InstanceId}' is died, stopping");
+            Logger.Debug("Instance '{InstanceId}' is died, stopping", InstanceId);
             Stop();
             _inactiveSince = 0;
         }
 
-        private void ReactiveInstance(ulong uptime)
+        private void ReactiveInstance(ulong _)
         {
-            Logger.Information($"Instance '{InstanceId}' is reactivated");
+            Logger.Debug("Instance '{InstanceId}' is reactivated", InstanceId);
             _inactiveSince = 0;
         }
 
         protected virtual void InactiveInstance(ulong uptime)
         {
-            Logger.Information($"Instance '{InstanceId}' is inactive (not used by anyone)");
+            Logger.Information("Instance '{InstanceId}' is inactive (not used by anyone)", InstanceId);
             _inactiveSince = uptime;
         }
 
@@ -133,6 +135,7 @@ namespace Slipstream.Shared.Lua
 
         public void Start()
         {
+            Logger.Debug($"Starting {InstanceId}", InstanceId);
             if (ServiceThread?.ThreadState == ThreadState.Unstarted)
             {
                 ServiceThread.Start();
@@ -155,12 +158,14 @@ namespace Slipstream.Shared.Lua
 
         public void Stop()
         {
+            Logger.Debug($"Stopping {InstanceId}", InstanceId);
             if (ServiceThread?.IsAlive == true)
                 Stopping = true;
         }
 
         public void Restart()
         {
+            Logger.Debug($"Restarting {InstanceId}", InstanceId);
             if (ServiceThread?.IsAlive == true)
             {
                 Stop();
@@ -174,12 +179,14 @@ namespace Slipstream.Shared.Lua
 
         public void Join()
         {
+            Logger.Debug($"Joining {InstanceId}", InstanceId);
             if (ServiceThread?.IsAlive == true)
                 ServiceThread.Join();
         }
 
         public virtual void Dispose()
         {
+            Logger.Debug($"Disposing {InstanceId}", InstanceId);
             Stopping = true;
             if (ServiceThread?.IsAlive == true)
                 ServiceThread?.Join();

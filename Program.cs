@@ -60,8 +60,10 @@ namespace Slipstream
                 .Enrich.With(new SessionIdEnricher())
                 .WriteTo.Console()
                 .WriteTo.SlipstreamConsoleSink(out SlipstreamConsoleSink sink)
-                .WriteTo.File("slipstream.log")
-                .WriteTo.Seq("http://localhost:5341") // TODO make this optional?
+                .WriteTo.File("slipstream.log", rollingInterval: RollingInterval.Day)
+#if DEBUG
+                .WriteTo.Seq("http://localhost:5341")
+#endif
                 .CreateLogger();
 
             builder.RegisterInstance(logger).As<ILogger>().SingleInstance();

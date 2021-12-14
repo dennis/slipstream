@@ -253,7 +253,6 @@ namespace Slipstream.Components.WinFormUI.Forms
                 EndpointsToolStripMenuItem.Enabled = true;
 
                 var openItem = new ToolStripMenuItem("Open in browser");
-            http://*:1919/instances/focused-mode
                 openItem.Click += (_, e) => { Process.Start(new ProcessStartInfo(endpoint) { UseShellExecute = true }); };
                 var copyItem = new ToolStripMenuItem("Copy to clipboard");
                 copyItem.Click += (_, e) => CopyToClipBoard(endpoint);

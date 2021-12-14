@@ -137,8 +137,6 @@ namespace Slipstream.Components.Audio.Lua
                         } while (@event != null);
                     }
                 }
-
-                AudioPlayerThread.Join();
             }
 
             private void OnAudioCommandPlay(AudioCommandPlay @event)

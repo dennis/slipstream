@@ -32,6 +32,8 @@ namespace Slipstream.Backend
                 .ForContext("SubscriptionId", Id)
                 .ForContext(GetType());
             PromiscuousMode = promiscuousMode;
+
+            Logger.Debug("Subscription {SubscriptionId} active promiscuousMode={PromiscuousMode}  ", Id, promiscuousMode);
         }
 
         public void Add(IEvent ev)
@@ -55,6 +57,7 @@ namespace Slipstream.Backend
 
         public void Dispose()
         {
+            Logger.Debug("Unregistering subscription {SubscriptionId}  with it's {EventCount} remaining events in queue", Id, Events.Count);
             EventBus.UnregisterSubscription(this);
         }
 

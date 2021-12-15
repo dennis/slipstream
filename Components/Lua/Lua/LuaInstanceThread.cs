@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows;
 
 namespace Slipstream.Components.Lua.Lua
 {
@@ -279,7 +280,7 @@ end
 
                 if (!Dependencies.Contains(dependency))
                 {
-                    Debug.WriteLine($"[{InstanceId}] depends on {inst.InstanceId}");
+                    Logger.Debug("[{InstanceId}] depends on {DependencyInstanceId}", InstanceId, inst.InstanceId);
 
                     Dependencies.Add(dependency);
 
@@ -293,8 +294,10 @@ end
         {
             if (func != null)
             {
+                var triggerAt = DateTime.Now.AddSeconds(debounceLength);
                 lock (Lock)
-                    DebounceDelayedFunctions[name] = new DelayedExecution(func, DateTime.Now.AddSeconds(debounceLength));
+                    DebounceDelayedFunctions[name] = new DelayedExecution(func, triggerAt);
+                Logger.Debug("{InstanceId} Setting debounce() with name '{WaitName}' until {TriggerDateTime}", InstanceId, name, triggerAt);
             }
         }
 
@@ -303,10 +306,16 @@ end
         {
             if (func != null)
             {
-                lock (Lock)
+                if (!WaitDelayedFunctions.ContainsKey(name))
                 {
-                    if (!WaitDelayedFunctions.ContainsKey(name))
-                        WaitDelayedFunctions[name] = new DelayedExecution(func, DateTime.Now.AddSeconds(duration));
+                    var triggerAt = DateTime.Now.AddSeconds(duration);
+                    lock (Lock)
+                        WaitDelayedFunctions[name] = new DelayedExecution(func, triggerAt);
+                    Logger.Debug("{InstanceId} Adding wait() with name '{WaitName}' until {TriggerDateTime}", InstanceId, name, triggerAt);
+                }
+                else
+                {
+                    Logger.Debug("{InstanceId} Adding wait() with name '{WaitName}' ignored. We're already waiting", InstanceId, name);
                 }
             }
         }
@@ -320,7 +329,7 @@ end
             }
             catch (Newtonsoft.Json.JsonReaderException)
             {
-                Logger.Warning($"{FileName}: parse_json(): JSON Invalid. Tried to parse: {jsonString}");
+                Logger.Warning("{FileName}: parse_json(): JSON Invalid. Tried to parse: {json}", FileName, jsonString);
                 return null;
             }
         }

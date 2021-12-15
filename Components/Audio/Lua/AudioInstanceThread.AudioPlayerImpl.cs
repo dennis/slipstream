@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Speech.Synthesis;
 using System.Threading;
@@ -60,12 +59,6 @@ namespace Slipstream.Components.Audio.Lua
             {
                 lock (ActiveSenders)
                     ActiveSenders.Add(sender);
-
-                Debug.WriteLine("ActiveSenders after adding " + sender);
-                foreach (var item in ActiveSenders)
-                {
-                    Debug.WriteLine(" - " + item);
-                }
             }
 
             internal void RemoveSender(string sender)
@@ -92,12 +85,6 @@ namespace Slipstream.Components.Audio.Lua
                         AudioEvents.Enqueue(@event);
                     }
                     AudioEventsSignal.Set();
-                }
-
-                Debug.WriteLine("ActiveSenders after removing " + sender + ". Removed " + removeEvents + " events");
-                foreach (var item in ActiveSenders)
-                {
-                    Debug.WriteLine(" - " + item);
                 }
             }
 

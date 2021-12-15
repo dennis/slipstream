@@ -1,7 +1,6 @@
 ﻿#nullable enable
 
 using Slipstream.Components.Internal;
-using Slipstream.Components.Internal.EventFactory;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
 
@@ -93,7 +92,7 @@ namespace Slipstream.Components.Twitch.Lua
             }
         }
 
-        new public void Dispose()
+        public new void Dispose()
         {
             Disconnect();
             base.Dispose();

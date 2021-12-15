@@ -12,6 +12,8 @@ using Slipstream.Shared;
 using Slipstream.Shared.Helpers.StrongParameters;
 using Slipstream.Shared.Lua;
 
+using Swan.Formatters;
+
 namespace Slipstream.Components.Lua.Lua
 {
     public class InternalLuaReference : ILuaReference
@@ -55,17 +57,19 @@ namespace Slipstream.Components.Lua.Lua
                 catch (Newtonsoft.Json.JsonReaderException)
                 {
                     // TODO: It would be really useful to get linenumber here
-                    Logger.Error($"{LuaScriptInstanceId}: send_custom_event(): JSON Invalid: {json}");
+                    Logger.Error("{LuaScriptInstanceId}: send_custom_event(): JSON Invalid: {json}", LuaScriptInstanceId, json);
                     return;
                 }
             }
 
+            Logger.Debug("{LuaScriptInstanceId}: Broadcast custom event: {json}", LuaScriptInstanceId, json);
             EventBus.PublishEvent(EventFactory.CreateInternalCustomEvent(BroadcastEnvelope, name, json));
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
         public void shutdown()
         {
+            Logger.Debug("{LuaScriptInstanceId}: Shutdown requested", LuaScriptInstanceId);
             EventBus.PublishEvent(EventFactory.CreateInternalCommandShutdown(Envelope));
         }
     }

@@ -10,7 +10,6 @@ using Slipstream.Shared.Lua;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 
 namespace Slipstream.Components.JustGiving.Lua
@@ -79,14 +78,14 @@ namespace Slipstream.Components.JustGiving.Lua
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"JustGiving [{PageShortName}]: Unexpected problem when creating JustGivingDonation event {ex.Message} {ex.StackTrace}");
+                    Logger.Error(ex, "JustGiving [{PageShortName}]: Unexpected problem when creating JustGivingDonation event {Message}", PageShortName, ex.Message);
                 }
             }
         }
 
         private void UpdateJustGivingData()
         {
-            var fetcher = new DonationFetcher(AppId, PageShortName, newDonation => NewDonation(newDonation), meta => NewMetaData(meta));
+            var fetcher = new DonationFetcher(Logger, AppId, PageShortName, newDonation => NewDonation(newDonation), meta => NewMetaData(meta));
             var newDonations = fetcher.UpdateDonation(Donations);
             if (newDonations.Count > 0 || !JustGivingInitialized)
             {
@@ -115,14 +114,14 @@ namespace Slipstream.Components.JustGiving.Lua
             }
             catch (Exception e)
             {
-                Debug.WriteLine($"JustGiving [{PageShortName}]: Unexpected problem when creating JustGivingInfo event {e.Message} {e.StackTrace}");
+                Logger.Error(e, "JustGiving [{PageShortName}]: Unexpected problem when creating JustGivingInfo event {Message}", PageShortName, e.Message);
             }
         }
 
         private void NewDonation(DonationsResult.Donation donation)
         {
             // Send event
-            Debug.WriteLine($"JustGiving [{PageShortName}]: {donation.Id} {donation.DonorDisplayName} {donation.Message}");
+            Logger.Debug("JustGiving [{PageShortName}]: {DonationId} {DonorDisplayName} {Message}", PageShortName, donation.Id, donation.DonorDisplayName, donation.Message);
             Donations.Add(donation.Id, donation);
 
             if (!JustGivingInitialized)
@@ -146,7 +145,7 @@ namespace Slipstream.Components.JustGiving.Lua
 
             if (donation.Amount == null)
             {
-                Debug.WriteLine($"JustGiving [{PageShortName}]: {donation.Id} Ignored - not amount donated");
+                Logger.Debug("JustGiving [{PageShortName}]: {DonationId} Ignored - not amount donated", PageShortName, donation.Id);
                 return;
             }
 
@@ -156,7 +155,7 @@ namespace Slipstream.Components.JustGiving.Lua
             }
             catch (Exception e)
             {
-                Debug.WriteLine($"JustGiving [{PageShortName}]: Unexpected problem when creating JustGivingDonation event {e.Message} {e.StackTrace}");
+                Logger.Error(e, "JustGiving [{PageShortName}]: Unexpected problem when creating JustGivingDonation event {Message}", PageShortName, e.Message);
             }
         }
 

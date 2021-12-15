@@ -26,7 +26,7 @@ namespace Slipstream.Backend
         )
         {
             EventBus = eventBus;
-            Logger = logger;
+            Logger = logger.ForContext(GetType());
             LuaLuaLibrary = luaLibraryRepository.Get("api/lua") as LuaLuaLibrary;
 
             // init.lua..

@@ -2,9 +2,10 @@
 
 using Newtonsoft.Json;
 
+using Serilog;
+
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net.Http;
 
 namespace Slipstream.Components.JustGiving.Lua
@@ -13,14 +14,16 @@ namespace Slipstream.Components.JustGiving.Lua
     {
         public class DonationFetcher
         {
+            private ILogger Logger { get; set; }
             private string AppId { get; }
             private string PageShortName { get; }
             private Action<DonationsResult.Donation> OnNewDonation { get; }
             private Action<DonationMeta> OnNewMeta { get; }
             private DonationMeta PreviousMeta = new DonationMeta();
 
-            public DonationFetcher(string appId, string pageShortName, Action<DonationsResult.Donation> onNewDonation, Action<DonationMeta> onNewMeta)
+            public DonationFetcher(ILogger logger, string appId, string pageShortName, Action<DonationsResult.Donation> onNewDonation, Action<DonationMeta> onNewMeta)
             {
+                Logger = logger;
                 AppId = appId;
                 PageShortName = pageShortName;
                 OnNewDonation = onNewDonation;
@@ -104,7 +107,7 @@ namespace Slipstream.Components.JustGiving.Lua
                 HttpClient client = new HttpClient();
                 var uri = $"http://api.justgiving.com/{AppId}/v1/fundraising/pages/{PageShortName}/donations?pageNum={pageNum}&pageSize=100";
 
-                Debug.WriteLine($"JustGiving [{PageShortName}]: Fetch Donations page {pageNum}");
+                Logger.Debug("JustGiving [{PageShortName}]: Fetch Donations page {PageNum}", PageShortName, pageNum);
 
                 var request = new HttpRequestMessage(HttpMethod.Get, uri);
                 request.Headers.TryAddWithoutValidation("Accept", "application/json");

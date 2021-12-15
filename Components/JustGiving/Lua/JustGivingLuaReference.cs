@@ -14,6 +14,7 @@ namespace Slipstream.Components.JustGiving.Lua
             EventFactory = eventFactory;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
         public void send_all_donations()
         {
             EventBus.PublishEvent(EventFactory.CreateJustGivingCommandSendDonations(Envelope));

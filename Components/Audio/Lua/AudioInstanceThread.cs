@@ -71,6 +71,7 @@ namespace Slipstream.Components.Audio.Lua
                 }
             }
 
+            Logger.Debug("Cancelling AudioPlayer for {InstanceId}", InstanceId);
             AudioPlayerThreadCts.Cancel();
         }
 

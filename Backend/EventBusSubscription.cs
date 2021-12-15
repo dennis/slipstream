@@ -1,4 +1,6 @@
-﻿using Slipstream.Shared;
+﻿using Serilog;
+
+using Slipstream.Shared;
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -11,14 +13,27 @@ namespace Slipstream.Backend
     {
         private readonly BlockingCollection<IEvent> Events = new BlockingCollection<IEvent>();
         private readonly IEventBus EventBus;
+        private readonly ILogger Logger;
         private readonly bool PromiscuousMode = false;
         private List<string> InstanceIds { get; set; } = new List<string>();
 
-        public EventBusSubscription(IEventBus eventBus, string instanceId, bool promiscuousMode = false)
+        private static int IdMax = 0;
+
+        public int Id { get; set; }
+        public int Count { get => Events.Count; }
+
+        public EventBusSubscription(IEventBus eventBus, string instanceId, ILogger logger, bool promiscuousMode = false)
         {
+            Id = ++IdMax;
             EventBus = eventBus;
             InstanceIds.Add(instanceId);
+            Logger = logger
+                .ForContext("SlipstreamInstanceId", instanceId)
+                .ForContext("SubscriptionId", Id)
+                .ForContext(GetType());
             PromiscuousMode = promiscuousMode;
+
+            Logger.Debug("Subscription {SubscriptionId} active promiscuousMode={PromiscuousMode}  ", Id, promiscuousMode);
         }
 
         public void Add(IEvent ev)
@@ -42,18 +57,15 @@ namespace Slipstream.Backend
 
         public void Dispose()
         {
+            Logger.Debug("Unregistering subscription {SubscriptionId}  with it's {EventCount} remaining events in queue", Id, Events.Count);
             EventBus.UnregisterSubscription(this);
-        }
-
-        public IEvent NextEvent()
-        {
-            return Events.Take();
         }
 
         public IEvent? NextEvent(int millisecondsTimeout)
         {
             if (Events.TryTake(out IEvent? ev, millisecondsTimeout))
             {
+                Logger.Debug("Subscription {SubscriptionId} received event: {EventType}@{Uptime} from {EventSender}. {EventCount} remaining events queued up", Id, ev.EventType, ev.Envelope.Uptime, ev.Envelope.Sender, Events.Count);
                 return ev;
             }
 
@@ -62,11 +74,13 @@ namespace Slipstream.Backend
 
         public void AddImpersonate(string instanceId)
         {
+            Logger.Debug("Adding impersonation {InstanceId}", instanceId);
             InstanceIds.Add(instanceId);
         }
 
         public void DeleteImpersonation(string instanceId)
         {
+            Logger.Debug("Deleting impersonation {InstanceId}", instanceId);
             InstanceIds.Remove(instanceId);
         }
     }

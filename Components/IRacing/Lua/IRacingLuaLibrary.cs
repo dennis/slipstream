@@ -20,7 +20,7 @@ namespace Slipstream.Components.IRacing.Lua
                 .PermitBool("send_raw_state");
         }
 
-        public IRacingLuaLibrary(ILifetimeScope scope, IEventBus eventBus) : base(ConfigurationValidator, scope, eventBus)
+        public IRacingLuaLibrary(ILifetimeScope scope, IEventBus eventBus, IInstanceIdTypeTracker instanceIdTypeTracker) : base(ConfigurationValidator, scope, eventBus, instanceIdTypeTracker)
         {
         }
 

@@ -21,6 +21,9 @@
  - Audio: Bugfix: Audio thread not shutting properly down
  - If Slipstream is compiled in "Debug" and you got [Seq](https://datalust.co/seq) installed, it will
    send all its logs there. It will also log all messages to file (same directory as executable).
+ - Verify that instance id are not reused for differnet lua libraries. This means that this 
+   script: `require("api/audio"):instance({id="audio"}); require("api/iracing"):instance({id = "audio"})` 
+   will failed with error: `errored: Id 'audio' with unexpected LuaLibrary 'api/iracing', but was previously used with LuaLibrary 'api/audio'`
 
 ## [0.10.0](https://github.com/dennis/slipstream/releases/tag/v0.10.0) (2021-10-07)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.9.0...v0.10.0)

@@ -18,7 +18,7 @@ namespace Slipstream.Components.Playback.Lua
                 .RequireString("id");
         }
 
-        public PlaybackLuaLibrary(ILifetimeScope scope, IEventBus eventBus) : base(ConfigurationValidator, scope, eventBus)
+        public PlaybackLuaLibrary(ILifetimeScope scope, IEventBus eventBus, IInstanceIdTypeTracker instanceIdTypeTracker) : base(ConfigurationValidator, scope, eventBus, instanceIdTypeTracker)
         {
         }
 

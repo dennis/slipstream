@@ -69,6 +69,8 @@ namespace Slipstream
             builder.RegisterInstance(logger).As<ILogger>().SingleInstance();
             builder.RegisterInstance(sink).As<SlipstreamConsoleSink>().SingleInstance();
 
+            builder.RegisterType<InstanceIdTypeTracker>().As<IInstanceIdTypeTracker>().SingleInstance();
+
             // EventHandlers
             builder.RegisterAssemblyTypes(typeof(Program).Assembly)
                 .Where(t => t.IsAssignableTo<IEventHandler>())

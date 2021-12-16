@@ -26,7 +26,7 @@ namespace Slipstream.Components.WebWidget.Lua
                 .RequireString("type");
         }
 
-        public WebWidgetLuaLibrary(ILifetimeScope scope, IEventBus eventBus) : base(ConfigurationValidator, scope, eventBus)
+        public WebWidgetLuaLibrary(ILifetimeScope scope, IEventBus eventBus, IInstanceIdTypeTracker instanceIdTypeTracker) : base(ConfigurationValidator, scope, eventBus, instanceIdTypeTracker)
         {
         }
 

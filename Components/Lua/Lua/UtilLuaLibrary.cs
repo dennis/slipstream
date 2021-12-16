@@ -18,7 +18,7 @@ namespace Slipstream.Components.Lua.Lua
             ConfigurationValidator = new DictionaryValidator().RequireString("id");
         }
 
-        public UtilLuaLibrary(ILifetimeScope scope, IEventBus eventBus) : base(ConfigurationValidator, scope, eventBus)
+        public UtilLuaLibrary(ILifetimeScope scope, IEventBus eventBus, IInstanceIdTypeTracker instanceIdTypeTracker) : base(ConfigurationValidator, scope, eventBus, instanceIdTypeTracker)
         {
         }
 

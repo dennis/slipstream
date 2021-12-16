@@ -23,7 +23,7 @@ namespace Slipstream.Components.JustGiving.Lua
                 .RequireString("page");
         }
 
-        public JustGivingLuaLibrary(ILifetimeScope scope, IEventBus eventBus) : base(ConfigurationValidator, scope, eventBus)
+        public JustGivingLuaLibrary(ILifetimeScope scope, IEventBus eventBus, IInstanceIdTypeTracker instanceIdTypeTracker) : base(ConfigurationValidator, scope, eventBus, instanceIdTypeTracker)
         {
         }
 

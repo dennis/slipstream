@@ -24,7 +24,7 @@ namespace Slipstream.Components.FileMonitor.Lua
                 .RequireArray("paths", (a) => a.RequireString());
         }
 
-        public FileMonitorLuaLibrary(ILifetimeScope scope, IEventBus eventBus) : base(ConfigurationValidator, scope, eventBus)
+        public FileMonitorLuaLibrary(ILifetimeScope scope, IEventBus eventBus, IInstanceIdTypeTracker instanceIdTypeTracker) : base(ConfigurationValidator, scope, eventBus, instanceIdTypeTracker)
         {
         }
 

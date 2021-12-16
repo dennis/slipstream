@@ -13,11 +13,11 @@ namespace Slipstream.Shared.Lua
         where TInstance : ILuaInstanceThread
         where TReference : ILuaReference
     {
-        protected SingletonLuaLibrary(DictionaryValidator validator, ILifetimeScope lifetimeScope, IEventBus eventBus) : base(validator, lifetimeScope, eventBus)
+        protected SingletonLuaLibrary(DictionaryValidator validator, ILifetimeScope lifetimeScope, IEventBus eventBus, IInstanceIdTypeTracker instanceIdTypeTracker) : base(validator, lifetimeScope, eventBus, instanceIdTypeTracker)
         {
         }
 
-        new protected void HandleInstance(string luaScriptInstanceId, string _, Parameters cfg)
+        protected new void HandleInstance(string luaScriptInstanceId, string _, Parameters cfg)
         {
             // Force instanceId to be "singleton", so we never get more than one
             cfg["instanceId"] = "singleton";

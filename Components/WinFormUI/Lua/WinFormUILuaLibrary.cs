@@ -19,7 +19,7 @@ namespace Slipstream.Components.WinFormUI.Lua
                 .PermitBool("deepview");
         }
 
-        public WinFormUILuaLibrary(ILifetimeScope scope, IEventBus eventBus) : base(ConfigurationValidator, scope, eventBus)
+        public WinFormUILuaLibrary(ILifetimeScope scope, IEventBus eventBus, IInstanceIdTypeTracker instanceIdTypeTracker) : base(ConfigurationValidator, scope, eventBus, instanceIdTypeTracker)
         {
         }
 

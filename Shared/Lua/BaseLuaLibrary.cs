@@ -21,16 +21,18 @@ namespace Slipstream.Shared.Lua
         protected readonly DictionaryValidator Validator;
         protected readonly ILifetimeScope LifetimeScope;
         protected readonly IEventBus EventBus;
+        private readonly IInstanceIdTypeTracker InstanceIdTypeTracker;
         private readonly Dictionary<string, TInstance> Instances = new Dictionary<string, TInstance>();
 
         // LuaLibrary from class name and use that
         public string Name => $"api/{GetType().Name.Replace("LuaLibrary", "").ToLower()}";
 
-        protected BaseLuaLibrary(DictionaryValidator validator, ILifetimeScope lifetimeScope, IEventBus eventBus)
+        protected BaseLuaLibrary(DictionaryValidator validator, ILifetimeScope lifetimeScope, IEventBus eventBus, IInstanceIdTypeTracker instanceIdTypeTracker)
         {
             Validator = validator;
             LifetimeScope = lifetimeScope;
             EventBus = eventBus;
+            InstanceIdTypeTracker = instanceIdTypeTracker;
         }
 
         public void Dispose()
@@ -52,6 +54,8 @@ namespace Slipstream.Shared.Lua
             Validator.Validate(cfg);
 
             var instanceId = cfg.Get<string>("id");
+
+            InstanceIdTypeTracker.Verify(instanceId, Name);
 
             lock (Lock)
             {

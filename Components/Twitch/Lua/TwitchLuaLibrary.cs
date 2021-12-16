@@ -21,7 +21,7 @@ namespace Slipstream.Components.Twitch.Lua
                 .PermitBool("log");
         }
 
-        public TwitchLuaLibrary(ILifetimeScope scope, IEventBus eventBus) : base(ConfigurationValidator, scope, eventBus)
+        public TwitchLuaLibrary(ILifetimeScope scope, IEventBus eventBus, IInstanceIdTypeTracker instanceIdTypeTracker) : base(ConfigurationValidator, scope, eventBus, instanceIdTypeTracker)
         {
         }
 

@@ -335,7 +335,7 @@ end
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
-        public static string generate_json(LuaTable luaTable)
+        public string generate_json(LuaTable luaTable)
         {
             return JsonConvert.SerializeObject(Parameters.From(luaTable));
         }

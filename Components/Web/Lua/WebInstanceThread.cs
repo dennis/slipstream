@@ -15,6 +15,7 @@ using Slipstream.Components.Internal;
 using Slipstream.Components.Web.EventHandler;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
+using System.Diagnostics;
 
 namespace Slipstream.Components.Web.Lua
 {
@@ -24,7 +25,7 @@ namespace Slipstream.Components.Web.Lua
         private readonly IEventHandlerController EventHandlerController;
         private readonly IWebEventFactory WebEventFactory;
         private readonly string Url;
-        private readonly Dictionary<string, IEndpointDefinition> EndpointDefinitions = new Dictionary<string, IEndpointDefinition>();
+        private readonly Dictionary<string, IEndpointContainer> EndpointDefinitions = new Dictionary<string, IEndpointContainer>();
         private readonly Dictionary<string, IWebModule> WebServerModules = new Dictionary<string, IWebModule>();
         private volatile bool RebuildWebServer = true;
 
@@ -48,6 +49,8 @@ namespace Slipstream.Components.Web.Lua
 
         protected override void Main()
         {
+            // TODO: If we get multiple content for same endpoint, store them, but use the latest, so we can
+            // restore the earlier version of the later one is removed
             var internalEventHandler = EventHandlerController.Get<Internal.EventHandler.Internal>();
 
             // We need to reconfigure the webserver every time the Envelope is updated by BaseInstanceThreadclass, so
@@ -60,7 +63,34 @@ namespace Slipstream.Components.Web.Lua
             internalEventHandler.OnInternalDependencyRemoved += (_, e) =>
             {
                 if (e.DependsOn == InstanceId)
+                {
                     RebuildWebServer = true;
+
+                    // Check if any of our endpoints is only used by the removed dependency,
+                    // and remove it if not used
+                    lock (EndpointDefinitions)
+                    {
+                        var routeDeletionList = new List<string>();
+
+                        foreach (var container in EndpointDefinitions)
+                        {
+                            if (container.Value.Users.Contains(e.Envelope.Sender))
+                            {
+                                container.Value.Users.RemoveAll(u => u == e.Envelope.Sender);
+
+                                if (container.Value.Users.Count == 0)
+                                {
+                                    routeDeletionList.Add(container.Key);
+                                }
+                            }
+                        }
+
+                        foreach (var route in routeDeletionList)
+                        {
+                            RemoveEndpoint_EndpointDefinitionsNeedsToBeLocked(route);
+                        }
+                    }
+                }
             };
 
             var webEventHandler = EventHandlerController.Get<WebEventHandler>();
@@ -76,7 +106,7 @@ namespace Slipstream.Components.Web.Lua
 
             while (!Stopping)
             {
-                WebServer server = BuildWebServer();
+                using WebServer server = BuildWebServer();
                 RebuildWebServer = false;
 
                 while (!Stopping && !RebuildWebServer)
@@ -90,12 +120,17 @@ namespace Slipstream.Components.Web.Lua
                 }
             }
 
+            lock (EndpointDefinitions)
+            {
+                foreach (var route in EndpointDefinitions.Keys)
+                {
+                    RemoveEndpoint_EndpointDefinitionsNeedsToBeLocked(route);
+                }
+            }
+
             EventBus.PublishEvent(WebEventFactory.CreateWebServerRemoved(BroadcastEnvelope, Url));
 
-            foreach (var e in EndpointDefinitions.Values)
-            {
-                RemoveEndpoint(e);
-            }
+            RebuildWebServer = true;
 
             Logger.Information($"Web: Stopping webserver for {Url}");
         }
@@ -107,9 +142,9 @@ namespace Slipstream.Components.Web.Lua
 
             lock (EndpointDefinitions)
             {
-                foreach (var item in EndpointDefinitions.OrderByDescending(x => x.Key.Length))
+                foreach (var container in EndpointDefinitions.OrderByDescending(x => x.Key.Length))
                 {
-                    item.Value.Apply(server, WebServerModules);
+                    container.Value.EndpointDefinition.Apply(server, WebServerModules);
                 }
 
                 server.HandleHttpException(async (ctx, ex) =>
@@ -129,7 +164,7 @@ namespace Slipstream.Components.Web.Lua
             try
             {
                 string content = File.ReadAllText(e.Filename);
-                AddEndpoint(new WebModuleEndpoint(Url + e.Route, e.Route, new StaticContentServerModule(EventBus, WebEventFactory, InstanceEnvelope, e.Route, e.MimeType, content)));
+                AddEndpoint(e.Envelope.Sender, new WebModuleEndpoint(Url + e.Route, e.Route, new StaticContentServerModule(EventBus, WebEventFactory, InstanceEnvelope, e.Route, e.MimeType, content)));
             }
             catch (Exception ex)
             {
@@ -161,47 +196,56 @@ namespace Slipstream.Components.Web.Lua
 
         private void OnWebCommandRouteWebSocket(object? sender, Events.WebCommandRouteWebSocket e)
         {
-            AddEndpoint(new WebModuleEndpoint(Url.Replace("http://", "ws://") + e.Route, e.Route, new WebSocketsServerModule(EventBus, WebEventFactory, InstanceEnvelope, Logger, e.Route)));
+            AddEndpoint(e.Envelope.Sender, new WebModuleEndpoint(Url.Replace("http://", "ws://") + e.Route, e.Route, new WebSocketsServerModule(EventBus, WebEventFactory, InstanceEnvelope, Logger, e.Route)));
         }
 
         private void OnWebCommandRoutePath(object? sender, Events.WebCommandRoutePath e)
         {
-            AddEndpoint(new StaticFolderEndpoint(Url + e.Route, e.Route, e.Path));
+            AddEndpoint(e.Envelope.Sender, new StaticFolderEndpoint(Url + e.Route, e.Route, e.Path));
         }
 
         private void OnWebCommandRouteStaticContent(object? _, Events.WebCommandRouteStaticContent e)
         {
-            AddEndpoint(new WebModuleEndpoint(Url + e.Route, e.Route, new StaticContentServerModule(EventBus, WebEventFactory, InstanceEnvelope, e.Route, e.MimeType, e.Content)));
+            AddEndpoint(e.Envelope.Sender, new WebModuleEndpoint(Url + e.Route, e.Route, new StaticContentServerModule(EventBus, WebEventFactory, InstanceEnvelope, e.Route, e.MimeType, e.Content)));
         }
 
-        private void AddEndpoint(IEndpointDefinition endpoint)
+        private void AddEndpoint(string senderInstanceId, IEndpointDefinition endpoint)
         {
-            RemoveEndpoint(endpoint); // Make sure it's gone
-
+            Logger.Information($"Endpoint: {senderInstanceId} added {endpoint.Route}");
             lock (EndpointDefinitions)
             {
-                Logger.Information($"Web: Adding endpoint for {endpoint.Url}");
-                EndpointDefinitions.Add(endpoint.Route, endpoint);
-            }
+                IEndpointContainer? currentEndpoint;
 
-            RebuildWebServer = true;
-
-            EventBus.PublishEvent(WebEventFactory.CreateWebEndpointAdded(InstanceEnvelope, endpoint.Route, endpoint.Url));
-        }
-
-        private void RemoveEndpoint(IEndpointDefinition endpoint)
-        {
-            lock (EndpointDefinitions)
-            {
-                if (EndpointDefinitions.ContainsKey(endpoint.Route))
+                var old = EndpointDefinitions.Where(a => a.Value.EndpointDefinition.Route == endpoint.Route).ToList();
+                if (old != null && old.Count == 1)
                 {
-                    Logger.Information($"Web: Removing endpoint for {endpoint.Url}");
-                    EndpointDefinitions.Remove(endpoint.Route);
-                    EventBus.PublishEvent(WebEventFactory.CreateWebEndpointRemoved(InstanceEnvelope, endpoint.Route, endpoint.Url));
+                    Logger.Information($"Web: Updating endpoint for {endpoint.Url}");
+                    currentEndpoint = old[0].Value;
+                    currentEndpoint.EndpointDefinition = endpoint;
                 }
+                else
+                {
+                    currentEndpoint = new EndpointContainer(endpoint);
+                    Logger.Information($"Web: Adding new endpoint for {endpoint.Url}");
+                    EndpointDefinitions.Add(endpoint.Route, currentEndpoint);
+                    EventBus.PublishEvent(WebEventFactory.CreateWebEndpointAdded(InstanceEnvelope, endpoint.Route, endpoint.Url));
+                }
+
+                Debug.Assert(currentEndpoint != null);
+
+                currentEndpoint.Users.Add(senderInstanceId);
             }
 
             RebuildWebServer = true;
+        }
+
+        private void RemoveEndpoint_EndpointDefinitionsNeedsToBeLocked(string route)
+        {
+            Logger.Information($"Endpoint: removed {route}");
+            var endpoint = EndpointDefinitions[route];
+            Logger.Information($"Web: Removing endpoint for {endpoint.EndpointDefinition.Url}");
+            EndpointDefinitions.Remove(endpoint.EndpointDefinition.Route);
+            EventBus.PublishEvent(WebEventFactory.CreateWebEndpointRemoved(InstanceEnvelope, endpoint.EndpointDefinition.Route, endpoint.EndpointDefinition.Url));
         }
     }
 }

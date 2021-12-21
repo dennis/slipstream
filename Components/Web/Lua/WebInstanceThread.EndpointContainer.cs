@@ -8,12 +8,18 @@ namespace Slipstream.Components.Web.Lua
     {
         private class EndpointContainer : IEndpointContainer
         {
-            public IEndpointDefinition EndpointDefinition { get; set; }
+            public string Creator { get; private set; }
             public List<string> Users { get; set; } = new List<string>();
+            public List<IEndpointDefinition> EndpointDefinitions { get; set; } = new List<IEndpointDefinition>();
+            public string Route { get; private set; }
 
-            public EndpointContainer(IEndpointDefinition endpoint)
+            public string Url { get; private set; }
+
+            public EndpointContainer(string creator, string route, string url)
             {
-                EndpointDefinition = endpoint;
+                Creator = creator;
+                Route = route;
+                Url = url;
             }
         }
     }

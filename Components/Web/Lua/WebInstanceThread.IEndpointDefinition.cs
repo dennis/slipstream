@@ -8,10 +8,9 @@ namespace Slipstream.Components.Web.Lua
     {
         private interface IEndpointDefinition
         {
-            public string Route { get; }
-            public string Url { get; }
+            public string Creator { get; }
 
-            void Apply(WebServer ws, System.Collections.Generic.Dictionary<string, IWebModule> webServerModules);
+            void Apply(WebServer ws, string route, System.Collections.Generic.Dictionary<string, IWebModule> webServerModules);
         }
     }
 }

@@ -12,21 +12,18 @@ namespace Slipstream.Components.Web.Lua
         {
             private readonly IWebModule WebModule;
 
-            public string Route { get; private set; }
+            public string Creator { get; private set; }
 
-            public string Url { get; private set; }
-
-            public WebModuleEndpoint(string url, string route, IWebModule webModule)
+            public WebModuleEndpoint(string creator, IWebModule webModule)
             {
-                Route = route;
+                Creator = creator;
                 WebModule = webModule;
-                Url = url;
             }
 
-            public void Apply(WebServer ws, Dictionary<string, IWebModule> webServerModules)
+            public void Apply(WebServer ws, string route, Dictionary<string, IWebModule> webServerModules)
             {
                 ws.WithModule(WebModule);
-                webServerModules.Add(Route, WebModule);
+                webServerModules.Add(route, WebModule);
             }
         }
     }

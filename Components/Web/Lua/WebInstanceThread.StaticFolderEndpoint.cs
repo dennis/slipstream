@@ -11,19 +11,17 @@ namespace Slipstream.Components.Web.Lua
         private class StaticFolderEndpoint : IEndpointDefinition
         {
             private readonly string Path;
-            public string Url { get; private set; }
-            public string Route { get; private set; }
+            public string Creator { get; private set; }
 
-            public StaticFolderEndpoint(string url, string route, string path)
+            public StaticFolderEndpoint(string creator, string path)
             {
-                Route = route;
+                Creator = creator;
                 Path = path;
-                Url = url;
             }
 
-            public void Apply(WebServer ws, Dictionary<string, IWebModule> webServerModules)
+            public void Apply(WebServer ws, string route, Dictionary<string, IWebModule> webServerModules)
             {
-                ws.WithStaticFolder(Route, Path, false);
+                ws.WithStaticFolder(route, Path, false);
             }
         }
     }

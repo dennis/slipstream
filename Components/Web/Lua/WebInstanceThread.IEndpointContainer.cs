@@ -8,8 +8,11 @@ namespace Slipstream.Components.Web.Lua
     {
         private interface IEndpointContainer
         {
-            IEndpointDefinition EndpointDefinition { get; set; }
+            string Route { get; }
+            string Url { get; }
+
             List<string> Users { get; set; }
+            List<IEndpointDefinition> EndpointDefinitions { get; set; }
         }
     }
 }

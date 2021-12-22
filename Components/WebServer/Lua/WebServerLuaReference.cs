@@ -46,16 +46,23 @@ namespace Slipstream.Components.WebServer.Lua
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
+        public void send_data(string route, string clientId, LuaTable data)
+        {
+            var json = JsonConvert.SerializeObject(Parameters.From(data));
+            send_data(route, clientId, json);
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
         public void broadcast_data(string route, string data)
         {
             EventBus.PublishEvent(EventFactory.CreateWebServerCommandData(Envelope, route, data));
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]
-        public void send_data(string route, LuaTable data)
+        public void broadcast_data(string route, LuaTable data)
         {
             var json = JsonConvert.SerializeObject(Parameters.From(data));
-            EventBus.PublishEvent(EventFactory.CreateWebServerCommandData(Envelope, route, json));
+            broadcast_data(route, json);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This is expose in Lua, so we want to keep that naming style")]

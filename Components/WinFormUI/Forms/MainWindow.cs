@@ -200,7 +200,7 @@ namespace Slipstream.Components.WinFormUI.Forms
             var internalEventHandler = EventHandler.Get<Internal.EventHandler.Internal>();
             var uiEventHandler = EventHandler.Get<EventHandler.WinFormUIEventHandler>();
             var webWidgetEventHandler = EventHandler.Get<WebWidget.EventHandler.WebWidgetEventHandler>();
-            var webEventHandler = EventHandler.Get<Web.EventHandler.WebEventHandler>();
+            var webEventHandler = EventHandler.Get<WebServer.EventHandler.WebServerEventHandler>();
 
             uiEventHandler.OnWinFormUICommandWriteToConsole += (_, e) => PendingMessages.Add(e);
             uiEventHandler.OnWinFormUICommandCreateButton += (_, e) => EventHandler_OnWinFormUICommandCreateButton(e);
@@ -221,8 +221,8 @@ namespace Slipstream.Components.WinFormUI.Forms
 
             webWidgetEventHandler.OnWebWidgetEndpointAdded += (_, e) => EventHandler_OnEndpointAdded(e.Endpoint);
             webWidgetEventHandler.OnWebWidgetEndpointRemoved += (_, e) => EventHandler_OnEndpointRemoved(e.Endpoint);
-            webEventHandler.OnWebEndpointAdded += (_, e) => EventHandler_OnEndpointAdded(e.Url);
-            webEventHandler.OnWebEndpointRemoved += (_, e) => EventHandler_OnEndpointRemoved(e.Url);
+            webEventHandler.OnWebServerEndpointAdded += (_, e) => EventHandler_OnEndpointAdded(e.Url);
+            webEventHandler.OnWebServerEndpointRemoved += (_, e) => EventHandler_OnEndpointRemoved(e.Url);
 
             var token = (CancellationToken)EventHandlerThreadCancellationToken; // We got a Assert ensuring this isn't null
 

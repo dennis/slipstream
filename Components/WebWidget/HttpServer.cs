@@ -165,7 +165,7 @@ namespace Slipstream.Components.WebWidget
             LuaLibrary.InstanceDropped(instanceId);
         }
 
-        private WebServer CreateWebServer(string url)
+        private EmbedIO.WebServer CreateWebServer(string url)
         {
             // endpoints:
             // /
@@ -174,7 +174,7 @@ namespace Slipstream.Components.WebWidget
             // /webwidgets/<webwidgettype>/
             // /events/<instanceid>/
 
-            var server = new WebServer(o => o
+            var server = new EmbedIO.WebServer(o => o
                 .WithUrlPrefix(url))
                 .WithStaticFolder("/webwidgets/", WEB_WIDGET_ROOT_DIRECTORY, false)
                 .WithModule(EventsServerModule)

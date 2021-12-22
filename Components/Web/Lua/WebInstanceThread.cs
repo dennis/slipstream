@@ -45,7 +45,7 @@ namespace Slipstream.Components.Web.Lua
             EventHandlerController = eventHandlerController;
             WebEventFactory = webEventFactory;
 
-            Url = $"http://127.0.0.1:{port}"; // Must NOT end with slash
+            Url = $"http://*:{port}"; // Must NOT end with slash
         }
 
         protected override void Main()

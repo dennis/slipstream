@@ -75,7 +75,7 @@ namespace Slipstream.Components.WebServer.Lua
                     }
                 }
 
-                EventBus.PublishEvent(WebEventFactory.CreateWebServerEndpointRequested(Envelope, BaseRoute, httpMethod, httpBody, string.Join("&", httpQueryParams)));
+                EventBus.PublishEvent(WebEventFactory.CreateWebServerEndpointRequested(Envelope, Envelope.Sender, BaseRoute, httpMethod, httpBody, string.Join("&", httpQueryParams)));
 
                 await context.SendStringAsync(Content, MimeType, Encoding.UTF8);
             }

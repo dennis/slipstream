@@ -42,7 +42,7 @@ namespace Slipstream.Components.WebServer.Lua
             {
                 Logger.Information($"Web: WS Client Connected {context.Id}");
 
-                EventBus.PublishEvent(WebEventFactory.CreateWebServerSocketClientConnected(Envelope, Endpoint, context.Id));
+                EventBus.PublishEvent(WebEventFactory.CreateWebServerSocketClientConnected(Envelope, Envelope.Sender, Endpoint, context.Id));
 
                 return base.OnClientConnectedAsync(context);
             }
@@ -51,7 +51,7 @@ namespace Slipstream.Components.WebServer.Lua
             {
                 Logger.Information($"Web: WS Client Disconnected {context.Id}");
 
-                EventBus.PublishEvent(WebEventFactory.CreateWebServerSocketClientDisconnected(Envelope, Endpoint, context.Id));
+                EventBus.PublishEvent(WebEventFactory.CreateWebServerSocketClientDisconnected(Envelope, Envelope.Sender, Endpoint, context.Id));
 
                 return base.OnClientDisconnectedAsync(context);
             }
@@ -61,7 +61,7 @@ namespace Slipstream.Components.WebServer.Lua
                 var data = Encoding.UTF8.GetString(rxBuffer);
                 Logger.Information($"HttpServer - message from {context.Id}: {data}");
 
-                EventBus.PublishEvent(WebEventFactory.CreateWebServerSocketDataReceived(Envelope, Endpoint, context.Id, data));
+                EventBus.PublishEvent(WebEventFactory.CreateWebServerSocketDataReceived(Envelope, Envelope.Sender, Endpoint, context.Id, data));
 
                 return Task.CompletedTask;
             }

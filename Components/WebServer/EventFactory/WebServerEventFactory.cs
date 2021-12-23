@@ -17,29 +17,29 @@ namespace Slipstream.Components.WebServer.EventFactory
             return new WebServerCommandData { Envelope = envelope, Route = route, ClientId = clientId, Data = data };
         }
 
-        public WebServerServerAdded CreateWebServerServerAdded(IEventEnvelope envelope, string endpoint)
+        public WebServerServerAdded CreateWebServerServerAdded(IEventEnvelope envelope, string server, string endpoint)
         {
-            return new WebServerServerAdded { Envelope = envelope, Endpoint = endpoint };
+            return new WebServerServerAdded { Envelope = envelope, Server = server, Endpoint = endpoint };
         }
 
-        public WebServerServerRemoved CreateWebServerServerRemoved(IEventEnvelope envelope, string endpoint)
+        public WebServerServerRemoved CreateWebServerServerRemoved(IEventEnvelope envelope, string server, string endpoint)
         {
-            return new WebServerServerRemoved { Envelope = envelope, Endpoint = endpoint };
+            return new WebServerServerRemoved { Envelope = envelope, Server = server, Endpoint = endpoint };
         }
 
-        public WebServerSocketDataReceived CreateWebServerSocketDataReceived(IEventEnvelope envelope, string endpoint, string clientId, string data)
+        public WebServerSocketDataReceived CreateWebServerSocketDataReceived(IEventEnvelope envelope, string server, string endpoint, string clientId, string data)
         {
-            return new WebServerSocketDataReceived { Envelope = envelope, Data = data, Endpoint = endpoint, ClientId = clientId };
+            return new WebServerSocketDataReceived { Envelope = envelope, Server = server, Data = data, Endpoint = endpoint, ClientId = clientId };
         }
 
-        public WebServerSocketClientConnected CreateWebServerSocketClientConnected(IEventEnvelope envelope, string endpoint, string clientId)
+        public WebServerSocketClientConnected CreateWebServerSocketClientConnected(IEventEnvelope envelope, string server, string endpoint, string clientId)
         {
-            return new WebServerSocketClientConnected { Envelope = envelope, Endpoint = endpoint, ClientId = clientId };
+            return new WebServerSocketClientConnected { Envelope = envelope, Server = server, Endpoint = endpoint, ClientId = clientId };
         }
 
-        public WebServerSocketClientDisconnected CreateWebServerSocketClientDisconnected(IEventEnvelope envelope, string endpoint, string clientId)
+        public WebServerSocketClientDisconnected CreateWebServerSocketClientDisconnected(IEventEnvelope envelope, string server, string endpoint, string clientId)
         {
-            return new WebServerSocketClientDisconnected { Envelope = envelope, Endpoint = endpoint, ClientId = clientId };
+            return new WebServerSocketClientDisconnected { Envelope = envelope, Server = server, Endpoint = endpoint, ClientId = clientId };
         }
 
         public WebServerCommandRouteStaticContent CreateWebServerCommandRouteStaticContent(IEventEnvelope envelope, string route, string mimeType, string content)
@@ -57,19 +57,19 @@ namespace Slipstream.Components.WebServer.EventFactory
             return new WebServerCommandRouteWebSocket { Envelope = envelope, Route = route };
         }
 
-        public WebServerEndpointAdded CreateWebServerEndpointAdded(IEventEnvelope envelope, string endpoint, string url)
+        public WebServerEndpointAdded CreateWebServerEndpointAdded(IEventEnvelope envelope, string server, string endpoint, string url)
         {
-            return new WebServerEndpointAdded { Envelope = envelope, Endpoint = endpoint, Url = url };
+            return new WebServerEndpointAdded { Envelope = envelope, Server = server, Endpoint = endpoint, Url = url };
         }
 
-        public WebServerEndpointRemoved CreateWebServerEndpointRemoved(IEventEnvelope envelope, string endpoint, string url)
+        public WebServerEndpointRemoved CreateWebServerEndpointRemoved(IEventEnvelope envelope, string server, string endpoint, string url)
         {
-            return new WebServerEndpointRemoved { Envelope = envelope, Endpoint = endpoint, Url = url };
+            return new WebServerEndpointRemoved { Envelope = envelope, Server = server, Endpoint = endpoint, Url = url };
         }
 
-        public WebServerEndpointRequested CreateWebServerEndpointRequested(IEventEnvelope envelope, string endpoint, string method, string body, string queryParams)
+        public WebServerEndpointRequested CreateWebServerEndpointRequested(IEventEnvelope envelope, string server, string endpoint, string method, string body, string queryParams)
         {
-            return new WebServerEndpointRequested { Envelope = envelope, Endpoint = endpoint, Method = method, Body = body, QueryParams = queryParams };
+            return new WebServerEndpointRequested { Envelope = envelope, Server = server, Endpoint = endpoint, Method = method, Body = body, QueryParams = queryParams };
         }
 
         public WebServerCommandRouteFileContent CreateWebServerCommandRouteFileContent(IEventEnvelope envelope, string route, string mimeType, string filename)

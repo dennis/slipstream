@@ -9,6 +9,7 @@ namespace Slipstream.Components.WebServer.Events
     {
         public string EventType => typeof(WebServerEndpointRequested).Name;
         public IEventEnvelope Envelope { get; set; } = new EventEnvelope();
+        public string Server { get; set; } = string.Empty;
         public string Endpoint { get; set; } = string.Empty;
         public string Method { get; set; } = string.Empty;
         public string Body { get; set; } = string.Empty;

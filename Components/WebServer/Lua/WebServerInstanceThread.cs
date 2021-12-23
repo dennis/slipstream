@@ -67,7 +67,7 @@ namespace Slipstream.Components.WebServer.Lua
 
             Logger.Information($"Web: Starting webserver for {Url}");
 
-            EventBus.PublishEvent(WebEventFactory.CreateWebServerServerAdded(BroadcastEnvelope, Url));
+            EventBus.PublishEvent(WebEventFactory.CreateWebServerServerAdded(BroadcastEnvelope, BroadcastEnvelope.Sender, Url));
 
             while (!Stopping)
             {
@@ -105,7 +105,7 @@ namespace Slipstream.Components.WebServer.Lua
                 }
             }
 
-            EventBus.PublishEvent(WebEventFactory.CreateWebServerServerRemoved(BroadcastEnvelope, Url));
+            EventBus.PublishEvent(WebEventFactory.CreateWebServerServerRemoved(BroadcastEnvelope, BroadcastEnvelope.Sender, Url));
 
             RebuildWebServer = true;
 
@@ -171,7 +171,7 @@ namespace Slipstream.Components.WebServer.Lua
                         foreach (var item in EndpointContainers[route].EndpointDefinitions)
                         {
                             Logger.Information($"Web: Removing endpoint for '{route}'. Shutting it down, as nobody is using it");
-                            EventBus.PublishEvent(WebEventFactory.CreateWebServerEndpointRemoved(InstanceEnvelope, route, url));
+                            EventBus.PublishEvent(WebEventFactory.CreateWebServerEndpointRemoved(InstanceEnvelope, InstanceEnvelope.Sender, route, url));
                         }
 
                         EndpointContainers.Remove(route);
@@ -285,7 +285,7 @@ namespace Slipstream.Components.WebServer.Lua
 
                     Logger.Information($"Web: Adding new endpoint for {url}");
                     EndpointContainers.Add(route, current);
-                    EventBus.PublishEvent(WebEventFactory.CreateWebServerEndpointAdded(InstanceEnvelope, route, url));
+                    EventBus.PublishEvent(WebEventFactory.CreateWebServerEndpointAdded(InstanceEnvelope, InstanceEnvelope.Sender, route, url));
                 }
 
                 Debug.Assert(current != null);
@@ -308,7 +308,7 @@ namespace Slipstream.Components.WebServer.Lua
                 {
                     // remove the last element, so that any other owners, creating this endpoint will be restored
                     Logger.Information($"Web: Removing endpoint for '{route}'. Shutting it down");
-                    EventBus.PublishEvent(WebEventFactory.CreateWebServerEndpointRemoved(InstanceEnvelope, route, url));
+                    EventBus.PublishEvent(WebEventFactory.CreateWebServerEndpointRemoved(InstanceEnvelope, InstanceEnvelope.Sender, route, url));
                     EndpointContainers.Remove(route);
 
                     RebuildWebServer = true;

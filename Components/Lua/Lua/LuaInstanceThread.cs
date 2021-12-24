@@ -327,6 +327,11 @@ end
             {
                 return ParseJObjectAsLuaTable(JObject.Parse(jsonString));
             }
+            catch (System.ArgumentNullException)
+            {
+                Logger.Warning($"{FileName}: parse_json(): JSON Invalid. Tried to null");
+                return null;
+            }
             catch (Newtonsoft.Json.JsonReaderException)
             {
                 Logger.Warning("{FileName}: parse_json(): JSON Invalid. Tried to parse: {json}", FileName, jsonString);

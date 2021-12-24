@@ -105,7 +105,7 @@ namespace Slipstream.Shared.Lua
 
         private void ThreadMain()
         {
-            Logger.Debug($"Starting {GetType().Name } {InstanceId}");
+            Logger.Debug("Starting {InstanceId}", InstanceId);
 
             try
             {
@@ -113,13 +113,13 @@ namespace Slipstream.Shared.Lua
             }
             catch (Exception e)
             {
-                Logger.Error($"Exception in {GetType().Name} {InstanceId}: {e.Message}");
+                Logger.Error("Exception in {ExceptionName} {InstanceId}: {ExceptionMessage}", GetType().Name, InstanceId, e.Message, e);
             }
             Logger.Debug($"Stopping {GetType().Name } {InstanceId}");
 
             if (AutoStart)
             {
-                Logger.Debug($"Autostarting {GetType().Name } {InstanceId}");
+                Logger.Debug("Autostarting {InstanceId}", InstanceId);
 
                 AutoStart = false;
                 Stopping = false;

@@ -27,6 +27,12 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Samples\IRacing - WebWidget - ChatOn Command\**" />
+    <EmbeddedResource Remove="Samples\IRacing - WebWidget - ChatOn Command\**" />
+    <None Remove="Samples\IRacing - WebWidget - ChatOn Command\**" />
+    <Page Remove="Samples\IRacing - WebWidget - ChatOn Command\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.Speech" />
   </ItemGroup>
   <ItemGroup>
@@ -45,9 +51,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Samples\IRacing - WebWidget - ChatOn Command\WebWidgets\Textbox\controller.js" />
-    <Content Include="Samples\IRacing - WebWidget - ChatOn Command\WebWidgets\Textbox\index.html" />
-    <Content Include="Samples\IRacing - WebWidget - ChatOn Command\WebWidgets\Textbox\style.css" />
     <EmbeddedResource Include="Backend\WebWidget\ss.js" />
     <EmbeddedResource Include="Backend\WebWidget\InstanceIndex.html" />
     <Content Include="docs\img\screen_shot.PNG" />
@@ -588,9 +591,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Samples\JustGiving - Discord - Donation Announcer\Scripts\" />
   </ItemGroup>
   <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release'">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">

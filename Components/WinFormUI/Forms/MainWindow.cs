@@ -247,15 +247,15 @@ namespace Slipstream.Components.WinFormUI.Forms
         private void EventHandler_OnWebWidgetEndpointAdded(string endpoint)
         {
             // Make sure that endpoints does not contain http://*, but an actual useable URL
-            endpoint = endpoint.Replace("http://*", "http://127.0.0.1");
+            var concreteEndpoint = endpoint.Replace("http://*", "http://127.0.0.1").Replace("ws://*", "ws://128.0.0.1");
             ExecuteSecure(() =>
             {
                 EndpointsToolStripMenuItem.Enabled = true;
 
                 var openItem = new ToolStripMenuItem("Open in browser");
-                openItem.Click += (_, e) => { Process.Start(new ProcessStartInfo(endpoint) { UseShellExecute = true }); };
+                openItem.Click += (_, e) => { Process.Start(new ProcessStartInfo(concreteEndpoint) { UseShellExecute = true }); };
                 var copyItem = new ToolStripMenuItem("Copy to clipboard");
-                copyItem.Click += (_, e) => CopyToClipBoard(endpoint);
+                copyItem.Click += (_, e) => CopyToClipBoard(concreteEndpoint);
 
                 var item = new ToolStripMenuItem(endpoint);
                 item.DropDownItems.AddRange(new ToolStripItem[] { openItem, copyItem });

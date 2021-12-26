@@ -4,7 +4,6 @@ using Serilog;
 
 using Slipstream.Components.Internal;
 using Slipstream.Components.Internal.Services;
-using Slipstream.Components.WebServer.Lua;
 using Slipstream.Shared;
 using Slipstream.Shared.Logger;
 
@@ -127,7 +126,9 @@ namespace Slipstream
             builder.RegisterType<Components.WebWidget.HttpServer>().As<Components.WebWidget.IHttpServer>().As<Components.WebWidget.IHttpServerApi>().SingleInstance();
             builder.RegisterType<Components.JustGiving.Lua.JustGivingInstanceThread>().As<Components.JustGiving.Lua.IJustGivingInstanceThread>().InstancePerDependency();
             builder.RegisterType<Components.JustGiving.Lua.JustGivingLuaReference>().As<Components.JustGiving.Lua.IJustGivingLuaReference>().InstancePerDependency();
-            builder.RegisterType<Components.WebServer.Lua.WebServerInstanceThread>().As<IWebServerInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.WebServer.Lua.WebServerInstanceThread>().As<Components.WebServer.Lua.IWebServerInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.WebSocket.Lua.WebSocketLuaInstanceThread>().As<Components.WebSocket.Lua.IWebSocketLuaInstanceThread>().InstancePerDependency();
+            builder.RegisterType<Components.WebSocket.Lua.WebSocketLuaReference>().As<Components.WebSocket.Lua.IWebSocketLuaReference>().InstancePerDependency();
         }
 
         private class PopulateSink

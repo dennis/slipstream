@@ -26,6 +26,7 @@
    will failed with error: `errored: Id 'audio' with unexpected LuaLibrary 'api/iracing', but was previously used with LuaLibrary 'api/audio'`
  - New component: WebServer. A more general way of server content through http. Can replace
    WebWidget, so WebWidget will be deprecated
+ - New component: WebSocket. A websocket client.
 
 ## [0.10.0](https://github.com/dennis/slipstream/releases/tag/v0.10.0) (2021-10-07)
 [Full Changelog](https://github.com/dennis/slipstream/compare/v0.9.0...v0.10.0)

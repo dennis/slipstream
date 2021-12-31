@@ -51,6 +51,9 @@ namespace Slipstream.Components.WebSocket.Lua
             var cts = new CancellationTokenSource();
             var ws = new ClientWebSocket();
 
+            // Some webserver requires Origin (e.g the one i use in go) - so let's make one
+            ws.Options.SetRequestHeader("Origin", Endpoint.Replace("wss://", "https://").Replace("ws://", "http://"));
+
             var eventHandler = EventHandlerController.Get<WebSocketEventHandler>();
 
             eventHandler.OnWebSocketCommandData += (_, e) =>

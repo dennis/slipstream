@@ -204,5 +204,7 @@ namespace Slipstream.Components.IRacing
         IRacingCommandPitAddFuel CreateIRacingCommandPitAddFuel(IEventEnvelope envelope, int addLiters);
 
         IRacingCommandPitCleanWindshield CreateIRacingCommandPitCleanWindshield(IEventEnvelope envelope);
+
+        IRacingTime CreateIRacingTime(IEventEnvelope envelope, double sessionTime, double sessionTimeRemaining);
     }
 }

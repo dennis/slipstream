@@ -618,5 +618,10 @@ namespace Slipstream.Components.IRacing.EventFactory
         {
             return new IRacingCommandPitCleanWindshield { Envelope = envelope };
         }
+
+        public IRacingTime CreateIRacingTime(IEventEnvelope envelope, double sessionTime, double sessionTimeRemaining)
+        {
+            return new IRacingTime { Envelope = envelope, SessionTime = sessionTime, SessionTimeRemaining = sessionTimeRemaining };
+        }
     }
 }

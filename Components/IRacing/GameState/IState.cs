@@ -7,6 +7,7 @@ namespace Slipstream.Components.IRacing.GameState
     public interface IState
     {
         public double SessionTime { get; }
+        public double SessionTimeRemaining { get; }
         public int SessionNum { get; }
         public long DriverCarIdx { get; }
         public int DriverIncidentCount { get; }

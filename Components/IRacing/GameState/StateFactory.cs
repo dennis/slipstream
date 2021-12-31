@@ -55,6 +55,7 @@ namespace Slipstream.Components.IRacing.GameState
             var state = new State
             {
                 SessionTime = ds.Telemetry.SessionTime,
+                SessionTimeRemaining = ds.Telemetry.SessionTimeRemain,
                 SessionNum = Math.Max(0, ds.Telemetry.SessionNum),
                 SessionFlags = (SessionFlags)(int)ds.Telemetry.SessionFlags,
                 SessionState = SessionStateMapping[ds.Telemetry.SessionState],

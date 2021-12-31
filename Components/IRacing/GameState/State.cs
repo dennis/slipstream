@@ -1,7 +1,9 @@
 ﻿#nullable enable
 
 using System.Collections.Generic;
+
 using static Slipstream.Components.IRacing.IIRacingEventFactory;
+
 using Skies = Slipstream.Components.IRacing.IIRacingEventFactory.Skies;
 
 namespace Slipstream.Components.IRacing.GameState
@@ -9,6 +11,7 @@ namespace Slipstream.Components.IRacing.GameState
     public class State : IState
     {
         public double SessionTime { get; set; }
+        public double SessionTimeRemaining { get; set; }
         public int SessionNum { get; set; }
         public long DriverCarIdx { get; set; }
         public int DriverIncidentCount { get; set; }

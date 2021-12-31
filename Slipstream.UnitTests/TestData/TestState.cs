@@ -1,6 +1,8 @@
 ﻿using Slipstream.Components.IRacing;
 using Slipstream.Components.IRacing.GameState;
+
 using System.Collections.Generic;
+
 using static Slipstream.Components.IRacing.IIRacingEventFactory;
 
 namespace Slipstream.UnitTests.TestData
@@ -8,6 +10,7 @@ namespace Slipstream.UnitTests.TestData
     public class TestState : IState
     {
         public double SessionTime { get; set; } = 5123;
+        public double SessionTimeRemaining { get; set; } = 300;
 
         public int SessionNum { get; set; } = 3;
 
@@ -15,7 +18,7 @@ namespace Slipstream.UnitTests.TestData
 
         public int TeamIncidentCount { get; set; } = 0;
 
-        public Car[] Cars { get; set; } = new Car[] { };
+        public Car[] Cars { get; set; } = System.Array.Empty<Car>();
 
         public float FuelLevel { get; set; } = 0;
 
@@ -103,7 +106,7 @@ namespace Slipstream.UnitTests.TestData
 
         public IIRacingEventFactory.IRacingSessionTypeEnum SessionType { get; set; } = IIRacingEventFactory.IRacingSessionTypeEnum.Race;
 
-        public ISession[] Sessions { get; set; } = new Session[] { };
+        public ISession[] Sessions { get; set; } = System.Array.Empty<Session>();
 
         public ISession CurrentSession { get => Sessions[0]; }
         public float LastLapTime { get; set; }

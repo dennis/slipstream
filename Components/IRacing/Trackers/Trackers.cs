@@ -2,7 +2,9 @@
 
 using Slipstream.Components.IRacing.Models;
 using Slipstream.Shared;
+
 using System.Collections.Generic;
+
 using static Slipstream.Components.IRacing.Trackers.IIRacingDataTracker;
 
 namespace Slipstream.Components.IRacing.Trackers
@@ -28,6 +30,7 @@ namespace Slipstream.Components.IRacing.Trackers
             DataTrackers.Add(new CarPositionTracker(eventBus, eventFactory));
             DataTrackers.Add(new TowTracker(eventBus, eventFactory));
             DataTrackers.Add(new TrackPositionTracker(eventBus, eventFactory));
+            DataTrackers.Add(new TimeTracker(eventBus, eventFactory));
         }
 
         public void Handle(GameState.IState currentState, IEventEnvelope envelope)

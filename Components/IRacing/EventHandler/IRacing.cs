@@ -2,6 +2,7 @@
 
 using Slipstream.Components.IRacing.Events;
 using Slipstream.Shared;
+
 using System;
 
 namespace Slipstream.Components.IRacing.EventHandler
@@ -76,6 +77,8 @@ namespace Slipstream.Components.IRacing.EventHandler
 
         public event EventHandler<IRacingCommandPitCleanWindshield>? OnIRacingCommandPitCleanWindshield;
 
+        public event EventHandler<IRacingTime>? OnIRacingTime;
+
         public IEventHandler.HandledStatus HandleEvent(IEvent @event)
         {
             return @event switch
@@ -114,6 +117,7 @@ namespace Slipstream.Components.IRacing.EventHandler
                 IRacingCommandPitAddFuel tev => OnEvent(OnIRacingCommandPitAddFuel, tev),
                 IRacingCommandPitRequestFastRepair tev => OnEvent(OnIRacingCommandPitRequestFastRepair, tev),
                 IRacingCommandPitCleanWindshield tev => OnEvent(OnIRacingCommandPitCleanWindshield, tev),
+                IRacingTime tev => OnEvent(OnIRacingTime, tev),
                 _ => IEventHandler.HandledStatus.NotMine,
             };
         }

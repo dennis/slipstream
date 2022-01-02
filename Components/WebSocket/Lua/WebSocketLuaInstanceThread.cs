@@ -1,16 +1,12 @@
 ﻿#nullable enable
 
-using Newtonsoft.Json.Linq;
-
 using Slipstream.Components.Internal;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
 
-using Swan.Parsers;
-
 using System;
+using System.Collections.Concurrent;
 using System.IO;
-using System.Net;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -48,71 +44,138 @@ namespace Slipstream.Components.WebSocket.Lua
 
         protected override void Main()
         {
-            var cts = new CancellationTokenSource();
-            var ws = new ClientWebSocket();
+            Task.Run(() => MainAsync());
+        }
 
-            // Some webserver requires Origin (e.g the one i use in go) - so let's make one
-            ws.Options.SetRequestHeader("Origin", Endpoint.Replace("wss://", "https://").Replace("ws://", "http://"));
+        private async void MainAsync()
+        {
+            var cts = new CancellationTokenSource();
+            var outgoingData = new BlockingCollection<ArraySegment<byte>>();
 
             var eventHandler = EventHandlerController.Get<WebSocketEventHandler>();
-
             eventHandler.OnWebSocketCommandData += (_, e) =>
             {
                 var encoded = Encoding.UTF8.GetBytes(e.Data);
                 var buffer = new ArraySegment<byte>(encoded, 0, encoded.Length);
-                ws.SendAsync(buffer, WebSocketMessageType.Text, true, cts.Token).GetAwaiter().GetResult();
+
+                outgoingData.Add(buffer);
             };
-
-            ws.ConnectAsync(new Uri(Endpoint), cts.Token).GetAwaiter().GetResult();
-
-            EventBus.PublishEvent(EventFactory.CreateWebSocketConnected(InstanceEnvelope));
-
-            var buffer = new ArraySegment<byte>(new Byte[MAX_READ_BUFFER_SIZE]);
-            var ms = new MemoryStream();
-
-            var readTask = ws.ReceiveAsync(buffer, cts.Token);
 
             while (!Stopping)
             {
-                IEvent? @event = Subscription.NextEvent(100);
-
-                if (@event != null)
+                var announceConnected = false;
+                try
                 {
-                    EventHandlerController.HandleEvent(@event);
-                }
+                    // Some webserver requires Origin (e.g the one i use in go) - so let's make one
+                    var ws = new ClientWebSocket();
+                    ws.Options.SetRequestHeader("Origin", Endpoint.Replace("wss://", "https://").Replace("ws://", "http://"));
 
-                if (ws.State != WebSocketState.Open)
-                {
-                    break;
-                }
+                    await ws.ConnectAsync(new Uri(Endpoint), cts.Token);
+                    announceConnected = true;
+                    Logger.Information("{InstanceId} is connected to {Endpoint}", InstanceId, Endpoint);
+                    EventBus.PublishEvent(EventFactory.CreateWebSocketConnected(InstanceEnvelope));
 
-                if (readTask.IsCompleted)
-                {
-                    var result = readTask.GetAwaiter().GetResult();
-                    ms.Write(buffer.Array!, buffer.Offset, result.Count);
+                    var buffer = new ArraySegment<byte>(new Byte[MAX_READ_BUFFER_SIZE]);
+                    var ms = new MemoryStream();
 
-                    if (result.EndOfMessage)
+                    var readTask = ws.ReceiveAsync(buffer, cts.Token);
+                    var eventHandlerTask = EventHandlerAsync(cts.Token);
+                    var pendingWriteTask = GetNextOutgoingData(outgoingData, cts.Token);
+
+                    while (!Stopping)
                     {
-                        ms.Seek(0, SeekOrigin.Begin);
+                        if (ws.State != WebSocketState.Open)
+                        {
+                            break;
+                        }
 
-                        using var reader = new StreamReader(ms, Encoding.UTF8);
-                        var data = reader.ReadToEnd();
-                        ms.Dispose();
+                        var completedTask = await Task.WhenAny(new Task[] { readTask, pendingWriteTask, eventHandlerTask });
 
-                        ms = new MemoryStream();
+                        if (completedTask == readTask)
+                        {
+                            var result = readTask.GetAwaiter().GetResult(); // we want it to throw exceptions, which it doesnt do with readTask.Result
 
-                        System.Diagnostics.Debug.WriteLine("GOT DATA: " + data);
+                            ms.Write(buffer.Array!, buffer.Offset, result.Count);
 
-                        EventBus.PublishEvent(EventFactory.CreateWebSocketDataReceived(InstanceEnvelope, data));
+                            if (result.Count == 0)
+                            {
+                                // Graceful disconnect
+                                Logger.Information("{InstanceId} {Endpoint} disconnected", InstanceId, Endpoint);
+                                break;
+                            }
+
+                            if (result.EndOfMessage)
+                            {
+                                ms.Seek(0, SeekOrigin.Begin);
+
+                                using var reader = new StreamReader(ms, Encoding.UTF8);
+                                var data = reader.ReadToEnd();
+                                ms.Dispose();
+
+                                ms = new MemoryStream();
+
+                                System.Diagnostics.Debug.WriteLine("GOT DATA: " + data);
+
+                                EventBus.PublishEvent(EventFactory.CreateWebSocketDataReceived(InstanceEnvelope, data));
+                            }
+
+                            readTask = ws.ReceiveAsync(buffer, cts.Token);
+                        }
+                        else if (completedTask == eventHandlerTask)
+                        {
+                            // Nothing to do - it will only complete once we're outside this while() loop
+                        }
+                        else if (completedTask == pendingWriteTask)
+                        {
+                            if (completedTask.IsCompletedSuccessfully)
+                            {
+                                await ws.SendAsync(pendingWriteTask.Result, WebSocketMessageType.Text, true, cts.Token);
+                                pendingWriteTask = GetNextOutgoingData(outgoingData, cts.Token);
+                            }
+                        }
+                        else
+                        {
+                            // This should never happen
+                            Logger.Debug("{InstanceId} - this should never happen", InstanceId);
+                        }
                     }
-
-                    readTask = ws.ReceiveAsync(buffer, cts.Token);
+                }
+                catch (WebSocketException e)
+                {
+                    Logger.Error(e, "{InstanceId} cannot connect to {Endpoint}", InstanceId, Endpoint);
+                    continue;
+                }
+                finally
+                {
+                    if (announceConnected)
+                    {
+                        EventBus.PublishEvent(EventFactory.CreateWebSocketDisconnected(InstanceEnvelope));
+                        announceConnected = false;
+                    }
                 }
             }
 
             cts.Cancel();
+        }
 
-            EventBus.PublishEvent(EventFactory.CreateWebSocketDisconnected(InstanceEnvelope));
+        private static Task<ArraySegment<byte>> GetNextOutgoingData(BlockingCollection<ArraySegment<byte>> outgoingData, CancellationToken token)
+        {
+            return Task.Run(() =>outgoingData.Take(token), token);
+        }
+
+        private Task EventHandlerAsync(CancellationToken token)
+        {
+            return Task.Run(() =>
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    IEvent? @event = Subscription.NextEvent(100);
+                    if (@event != null)
+                    {
+                        EventHandlerController.HandleEvent(@event);
+                    }
+                }
+            }, token);
         }
 
         public new void Dispose()

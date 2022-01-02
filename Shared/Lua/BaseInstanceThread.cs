@@ -91,7 +91,7 @@ namespace Slipstream.Shared.Lua
 
         protected virtual void InactiveInstance(ulong uptime)
         {
-            Logger.Information("Instance '{InstanceId}' is inactive (not used by anyone)", InstanceId);
+            Logger.Debug("Instance '{InstanceId}' is inactive (not used by anyone)", InstanceId);
             _inactiveSince = uptime;
         }
 

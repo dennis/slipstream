@@ -49,7 +49,7 @@ namespace Slipstream.Components.WebSocket.Lua
 
         private async void MainAsync()
         {
-            var cts = new CancellationTokenSource();
+            using var cts = new CancellationTokenSource();
             var outgoingData = new BlockingCollection<ArraySegment<byte>>();
 
             var eventHandler = EventHandlerController.Get<WebSocketEventHandler>();
@@ -60,6 +60,8 @@ namespace Slipstream.Components.WebSocket.Lua
 
                 outgoingData.Add(buffer);
             };
+
+            var eventHandlerTask = EventHandlerAsync(cts.Token);
 
             while (!Stopping)
             {
@@ -79,7 +81,6 @@ namespace Slipstream.Components.WebSocket.Lua
                     var ms = new MemoryStream();
 
                     var readTask = ws.ReceiveAsync(buffer, cts.Token);
-                    var eventHandlerTask = EventHandlerAsync(cts.Token);
                     var pendingWriteTask = GetNextOutgoingData(outgoingData, cts.Token);
 
                     while (!Stopping)
@@ -160,7 +161,7 @@ namespace Slipstream.Components.WebSocket.Lua
 
         private static Task<ArraySegment<byte>> GetNextOutgoingData(BlockingCollection<ArraySegment<byte>> outgoingData, CancellationToken token)
         {
-            return Task.Run(() =>outgoingData.Take(token), token);
+            return Task.Run(() => outgoingData.Take(token), token);
         }
 
         private Task EventHandlerAsync(CancellationToken token)

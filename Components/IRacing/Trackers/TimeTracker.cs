@@ -11,6 +11,7 @@ namespace Slipstream.Components.IRacing.Trackers
         private readonly IIRacingEventFactory EventFactory;
         private readonly IEventBus EventBus;
         private double LastSessionTimeSeen = double.NaN;
+        private int LastSessionNumSeen = -1;
 
         public TimeTracker(IEventBus eventBus, IIRacingEventFactory eventFactory)
         {
@@ -20,6 +21,12 @@ namespace Slipstream.Components.IRacing.Trackers
 
         public void Handle(GameState.IState currentState, IRacingDataTrackerState state, IEventEnvelope envelope)
         {
+            if (LastSessionNumSeen != currentState.SessionNum)
+            {
+                LastSessionNumSeen = currentState.SessionNum;
+                LastSessionTimeSeen = -1;
+            }
+
             if (double.IsNaN(LastSessionTimeSeen) || (currentState.SessionTime - LastSessionTimeSeen) > 1.0)
             {
                 LastSessionTimeSeen = currentState.SessionTime;

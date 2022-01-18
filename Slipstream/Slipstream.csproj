@@ -56,9 +56,6 @@
     <Content Include="docs\img\screen_shot.PNG" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="iRacingSDK.Net\iRacingSDK.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Autofac" Version="6.3.0" />
     <PackageReference Include="Autoupdater.NET.Official" Version="1.7.0" />
     <PackageReference Include="DSharpPlus" Version="4.1.0" />
@@ -564,6 +561,9 @@
     <Compile Remove="Slipstream.UnitTests\TestData\TestState.cs" />
     <EmbeddedResource Remove="iRacingSDK.Net\Sample\LogMessages.resx" />
     <EmbeddedResource Remove="iRacingSDK.Net\Sample\MainForm.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\iRacingSDK.Net\iRacingSDK.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">

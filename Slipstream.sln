@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slipstream", "Slipstream.csproj", "{E5742D4E-121B-4C6F-8133-C63BCE6600BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slipstream", "Slipstream\Slipstream.csproj", "{E5742D4E-121B-4C6F-8133-C63BCE6600BC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRacingSDK", "iRacingSDK.Net\iRacingSDK.csproj", "{5422AE20-F220-4BE1-9E61-5296981ABB5C}"
 EndProject

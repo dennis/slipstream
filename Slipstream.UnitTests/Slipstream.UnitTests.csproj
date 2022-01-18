@@ -22,6 +22,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\iRacingSDK.Net\iRacingSDK.csproj" />
-		<ProjectReference Include="..\Slipstream.csproj" />
+		<ProjectReference Include="..\Slipstream\Slipstream.csproj" />
 	</ItemGroup>
 </Project>

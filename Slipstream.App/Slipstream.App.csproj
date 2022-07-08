@@ -36,7 +36,7 @@
     <Reference Include="System.Speech" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Backend\Bootstrap\init.lua" />
+      <EmbeddedResource Include="Backend\Bootstrap\init.lua" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">

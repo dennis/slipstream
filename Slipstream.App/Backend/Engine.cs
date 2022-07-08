@@ -1,12 +1,12 @@
 ﻿using Serilog;
 
-using Slipstream.Components.Internal;
 using Slipstream.Components.Lua.Lua;
 using Slipstream.Shared;
 using Slipstream.Shared.Lua;
 
 using System;
 using System.IO;
+using System.Linq;
 
 #nullable enable
 
@@ -51,7 +51,8 @@ namespace Slipstream.Backend
         private void CreateInitLua(string initFilename)
         {
             var assembly = GetType().Assembly;
-            using var initLuaStream = assembly.GetManifestResourceStream("Slipstream.Backend.Bootstrap.init.lua");
+            var resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith("init.lua"));
+            using var initLuaStream = assembly.GetManifestResourceStream(resourceName);
 
             if (initLuaStream != null)
             {
@@ -62,7 +63,7 @@ namespace Slipstream.Backend
             }
             else
             {
-                throw new Exception("Resource not available: Slipstream.Backend.Bootstrap.init.lua");
+                throw new Exception($"Resource not available: {resourceName}");
             }
         }
 
